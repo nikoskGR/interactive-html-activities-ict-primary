@@ -1,0 +1,263 @@
+<!--
+ICT Educational Simulation
+Created by Nikos Kalakos
+Copyright © 2026 Nikos Kalakos
+
+Original educational content and simulation design licensed under CC BY-NC 4.0.
+Source code © 2026 Nikos Kalakos.
+Third-party and textbook materials remain subject to the rights and licences of their respective copyright holders.
+-->
+<!doctype html>
+<html lang="el">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="author" content="Nikos Kalakos">
+<meta name="copyright" content="© 2026 Nikos Kalakos">
+<meta name="license" content="Original educational content and simulation design: CC BY-NC 4.0; source code © 2026 Nikos Kalakos; third-party and textbook materials excluded.">
+<title>Μάθημα 13 - Προστασία από κακόβουλα λογισμικά και κανόνες ασφαλείας στο διαδίκτυο</title>
+<style>
+:root{
+  --unit:#B8BE25;--unit-dark:#8F9517;--unit-soft:#F5F7D9;
+  --secondary:#545F99;--secondary-dark:#414A7B;--secondary-soft:#EEF0F8;
+  --ink:#253149;--muted:#6B7689;--line:#D5DCE6;
+  --good:#EDF7DE;--bad:#FFF0ED;--shadow:0 8px 24px rgba(35,49,71,.10)
+}
+*{box-sizing:border-box}
+body{margin:0;background:#F4F7FA;color:var(--ink);font-family:Arial,"Noto Sans",sans-serif}
+button,select,input{font:inherit}button{cursor:pointer}
+button:focus-visible,select:focus-visible,input:focus-visible{outline:4px solid #F0B83A;outline-offset:3px}
+.shell{max-width:1580px;margin:auto;padding:10px}
+.coursebar{min-height:64px;background:var(--secondary);color:#fff;border-radius:17px 17px 8px 8px;display:flex;align-items:center;justify-content:space-between;gap:20px;padding:10px 18px;box-shadow:var(--shadow)}
+.unit-label{font-size:14px;font-weight:900;letter-spacing:.2px;opacity:.95}.lesson-name{font-size:clamp(20px,2.3vw,26px);font-weight:900;margin-top:2px;line-height:1.15}.lesson-number{min-width:54px;height:42px;padding:0 14px;border-radius:12px;background:#fff;color:var(--secondary);display:grid;place-items:center;font-size:18px;font-weight:900}
+.progress-wrap{background:#fff;border:2px solid #D8E0E9;border-top:0;border-radius:0 0 17px 17px;padding:10px 16px 11px;display:flex;align-items:center;gap:14px}.progress-text{font-size:13px;font-weight:900;color:var(--muted);white-space:nowrap}.progress-line{height:8px;flex:1;background:#E4E9F0;border-radius:7px;overflow:hidden}.progress-fill{height:100%;background:var(--unit);width:0;transition:.25s}.stepdots{display:flex;gap:7px;flex-wrap:wrap}.stepdot{width:30px;height:30px;border-radius:9px;background:#fff;border:2px solid #B6C0CE;color:#647187;display:grid;place-items:center;font-size:13px;font-weight:900}.stepdot.active{background:var(--unit);border-color:var(--unit-dark);color:#273000}.stepdot.done{background:var(--secondary);border-color:var(--secondary-dark);color:#fff}
+.workspace{margin-top:14px;background:#fff;border:2px solid #D8E0E9;border-radius:18px;box-shadow:var(--shadow);min-height:760px;padding:18px}.stagehead{display:grid;grid-template-columns:1fr auto;gap:16px;align-items:start;border-bottom:2px solid #E4E9EF;padding-bottom:13px}.stage-kicker{font-size:13px;font-weight:900;color:var(--unit-dark);text-transform:uppercase;letter-spacing:.4px}.stagehead h1{font-size:31px;margin:4px 0 0}.help{border:2px solid #B7BF50;background:var(--unit-soft);color:#575D10;border-radius:11px;padding:9px 15px;font-weight:900}.instruction{max-width:1120px;margin:15px auto 10px;text-align:center;font-size:20px;font-weight:800;line-height:1.42}.feedback{display:none;max-width:1100px;margin:0 auto 10px;border-radius:12px;padding:10px 16px;text-align:center;font-weight:900;font-size:17px}.feedback.good{display:block;background:var(--good);border:2px solid #9DBD57}.feedback.bad{display:block;background:var(--bad);border:2px solid #E2A096}.activity{max-width:1510px;margin:auto;border:2px solid #D9E0E9;border-radius:17px;background:#FBFCFE;padding:16px;min-height:610px}
+.primary{border:0;border-radius:11px;background:var(--secondary);color:#fff;padding:11px 24px;font-weight:900;font-size:18px;box-shadow:0 4px 0 var(--secondary-dark)}.center-btn{display:block;margin:16px auto 0}.choice-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;max-width:1050px;margin:24px auto}.choice{min-height:108px;border:3px solid #B7C0CE;border-radius:14px;background:#fff;padding:18px;font-size:18px;font-weight:900;line-height:1.4}.choice:hover,.choice.selected{border-color:var(--unit-dark);background:var(--unit-soft)}
+.info-card{max-width:1000px;margin:15px auto;padding:16px 18px;border:3px solid var(--secondary);border-radius:16px;background:var(--secondary-soft);font-size:18px;font-weight:800;line-height:1.5;text-align:center}.real-icon{width:78px;height:78px;display:grid;place-items:center;color:#4B566A;margin:auto}.real-icon .real-svg{width:100%;height:100%;display:block}.real-icon.small{width:50px;height:50px}.real-icon.large{width:105px;height:105px}
+/* intro */
+.hero-row{display:grid;grid-template-columns:210px 1fr;gap:22px;align-items:center;max-width:1120px;margin:20px auto}.hero-visual{border:3px solid var(--secondary);border-radius:20px;background:#fff;min-height:210px;display:grid;place-items:center;padding:18px}.shield-symbol{width:116px;height:132px;border:9px solid var(--secondary);border-radius:58% 58% 44% 44%/38% 38% 64% 64%;display:grid;place-items:center;font-size:58px;background:var(--secondary-soft);color:var(--secondary-dark);font-weight:900}.bug-symbol{font-size:62px;line-height:1}
+/* classification */
+.classify-list{max-width:1120px;margin:18px auto;display:grid;gap:12px}.classify-row{border:3px solid #B8C1CE;border-radius:16px;background:#fff;padding:14px;display:grid;grid-template-columns:1fr auto;gap:18px;align-items:center;font-size:18px;font-weight:800;line-height:1.35}.classify-actions{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end}.classify-actions button{min-width:150px;min-height:50px;border:3px solid #AEB8C5;border-radius:11px;background:#fff;font-weight:900}.classify-actions button.selected{border-color:var(--unit-dark);background:var(--unit-soft)}
+/* matching */
+.match-layout{display:grid;grid-template-columns:1fr 1fr;gap:22px;max-width:1220px;margin:18px auto}.match-side{border:3px solid var(--secondary);border-radius:18px;background:#fff;padding:14px}.match-side h3{text-align:center;color:var(--secondary);margin:0 0 12px}.match-bank{display:grid;gap:11px}.match-card,.target-card{min-height:92px;border:3px solid #B6C0CE;border-radius:13px;background:#fff;padding:11px 14px;font-weight:900;display:flex;align-items:center;gap:12px;text-align:left}.match-card.selected{border-color:var(--unit-dark);background:var(--unit-soft)}.match-card.used{opacity:.42;cursor:default}.target-card{border-style:dashed}.target-card.matched{border-style:solid;border-color:var(--unit-dark);background:var(--unit-soft)}
+/* multi select */
+.multi-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:13px;max-width:1120px;margin:20px auto}.multi{position:relative;min-height:112px;border:3px solid #B8C1CE;border-radius:15px;background:#fff;padding:16px 18px 34px;font-size:17px;font-weight:850;line-height:1.4;text-align:left}.multi.selected{border-color:var(--unit-dark);background:var(--unit-soft)}.multi.selected::after{content:"✓ Επιλεγμένο";position:absolute;right:12px;bottom:8px;font-size:13px;font-weight:900;color:#59620F}.multi[aria-pressed="false"]::after{content:""}
+/* password cards */
+.password-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:15px;max-width:1150px;margin:20px auto}.password-card{position:relative;border:3px solid #B8C1CE;border-radius:16px;background:#fff;padding:16px 16px 40px;text-align:left;min-height:154px}.password-card.selected{border-color:var(--unit-dark);background:var(--unit-soft)}.password-code{font-family:Consolas,"Courier New",monospace;font-size:25px;font-weight:900;color:var(--secondary-dark);margin-bottom:10px;overflow-wrap:anywhere}.password-desc{font-size:16px;font-weight:800;line-height:1.4;color:#4B566A}.password-card.selected::after{content:"✓ Επιλεγμένο";position:absolute;right:12px;bottom:9px;font-size:13px;font-weight:900;color:#59620F}
+/* overall */
+.overall{max-width:1080px;margin:16px auto;display:grid;gap:13px}.qcard{border:3px solid #B8C1CE;border-radius:14px;background:#fff;padding:16px;font-size:17px;font-weight:800;line-height:1.45}.qcard select{margin:5px 6px;padding:7px;border:2px solid #9FAAB9;border-radius:9px;background:#fff;font-weight:900}
+/* create password */
+.password-builder{max-width:930px;margin:18px auto;display:grid;gap:15px}.password-entry-card{border:3px solid var(--secondary);border-radius:18px;background:#fff;padding:20px}.password-entry-card label{display:block;font-size:19px;font-weight:900;margin-bottom:9px}.password-input-row{display:grid;grid-template-columns:1fr auto;gap:10px;align-items:stretch}.password-input{width:100%;min-height:54px;border:3px solid #AEB8C5;border-radius:12px;background:#fff;padding:10px 14px;font-family:Consolas,"Courier New",monospace;font-size:21px;font-weight:900;color:var(--secondary-dark)}.show-pass{min-width:120px;border:3px solid #B8C1CE;border-radius:12px;background:var(--secondary-soft);color:var(--secondary-dark);font-weight:900;padding:8px 14px}.password-rules{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.password-rule{border:2px solid #CDD5E0;border-radius:12px;background:#F8FAFC;padding:11px 13px;font-size:16px;font-weight:850;line-height:1.35;display:flex;align-items:center;gap:10px;transition:.2s}.password-rule .rule-mark{width:28px;height:28px;flex:0 0 28px;border:2px solid #AEB8C5;border-radius:8px;background:#fff;display:grid;place-items:center;font-size:18px;font-weight:900;color:transparent}.password-rule.met{border-color:#8EAD3E;background:var(--good)}.password-rule.met .rule-mark{border-color:#6F8F25;background:var(--unit);color:#273000}.privacy-check{display:flex;gap:11px;align-items:flex-start;border:3px solid var(--unit);border-radius:15px;background:var(--unit-soft);padding:13px 15px;font-weight:850;line-height:1.4}.privacy-check input{width:23px;height:23px;flex:0 0 23px;margin-top:2px}.practice-note{border:2px solid #D7C06A;border-radius:13px;background:#FFF9E4;padding:12px 15px;text-align:center;font-size:16px;font-weight:850;line-height:1.4}
+/* final */
+.final-box{max-width:1050px;margin:20px auto}.summary{border:4px solid var(--unit);border-radius:18px;background:var(--unit-soft);padding:20px;text-align:center;font-size:20px;font-weight:850;line-height:1.45}.faces{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin:20px auto}.face{min-height:145px;border:3px solid #B8C1CE;border-radius:17px;background:#fff;padding:14px;font-size:16px;font-weight:900;line-height:1.35}.face span{display:block;font-size:48px;margin-bottom:8px}.face.sel{border-color:var(--secondary);background:var(--secondary-soft)}.repeat{display:block;margin:14px auto 0;border:2px solid #AAB5C4;border-radius:11px;background:#fff;color:var(--ink);padding:10px 20px;font-weight:900}
+.modal{position:fixed;inset:0;background:rgba(25,35,55,.5);display:none;align-items:center;justify-content:center;padding:18px;z-index:100}.modal.show{display:flex}.modal-card{max-width:700px;background:#fff;border:4px solid var(--unit);border-radius:22px;padding:22px;box-shadow:0 18px 44px rgba(0,0,0,.23)}.modal-card h2{margin-top:0}.modal-card p{font-size:20px;line-height:1.5;font-weight:750}.modal-card .primary{float:right}
+@media(max-width:850px){.password-rules,.password-input-row{grid-template-columns:1fr}.coursebar{align-items:flex-start}.progress-wrap{align-items:flex-start;flex-wrap:wrap}.progress-line{min-width:150px}.workspace{padding:12px}.activity{padding:10px}.stagehead h1{font-size:26px}.choice-grid,.multi-grid,.password-grid,.faces,.match-layout{grid-template-columns:1fr}.hero-row{grid-template-columns:1fr}.classify-row{grid-template-columns:1fr}.classify-actions{justify-content:center}.lesson-name{font-size:19px}}
+</style>
+
+<style id="nk-license-style">
+.nk-license{max-width:1100px;margin:14px auto 24px;padding:10px 16px;text-align:center;font:13px/1.45 Arial,"Noto Sans",sans-serif;color:#4e657c}
+.nk-license a{color:inherit;text-decoration:underline;text-underline-offset:2px}
+.nk-license .cc-badge{display:inline-block;margin:0 4px;padding:2px 7px;border:1px solid #8aa0b8;border-radius:6px;background:#fff;font-weight:700;white-space:nowrap}
+</style>
+</head>
+<body>
+<div class="shell">
+  <header class="coursebar">
+    <div><div class="unit-label">Ενότητα 2 · Υπολογιστικά συστήματα – Ψηφιακές συσκευές – Δίκτυα</div><div class="lesson-name">Προστασία από κακόβουλα λογισμικά και κανόνες ασφαλείας στο διαδίκτυο</div></div>
+    <div class="lesson-number">13</div>
+  </header>
+  <div class="progress-wrap"><div class="progress-text" id="progressText"></div><div class="progress-line"><div class="progress-fill" id="progressFill"></div></div><div class="stepdots" id="stepdots"></div></div>
+  <section class="workspace">
+    <div class="stagehead"><div><div class="stage-kicker" id="kicker"></div><h1 id="title"></h1></div><button class="help" onclick="openHelp()">? Βοήθεια</button></div>
+    <div class="instruction" id="instruction"></div>
+    <div class="feedback" id="feedback" role="status" aria-live="polite"></div>
+    <div class="activity" id="activity"></div>
+  </section>
+</div>
+<div class="modal" id="helpModal" role="dialog" aria-modal="true" aria-labelledby="helpTitle"><div class="modal-card"><h2 id="helpTitle">Βοήθεια</h2><p id="helpText"></p><button class="primary" onclick="closeHelp()">Κλείσιμο</button><div style="clear:both"></div></div></div>
+<script>
+const REAL_ICONS={
+ computer:`<svg class="real-svg" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><!-- Font Awesome Free 6.7.2 computer; CC BY 4.0 --><path fill="currentColor" d="M384 96l0 224L64 320 64 96l320 0zM64 32C28.7 32 0 60.7 0 96L0 320c0 35.3 28.7 64 64 64l117.3 0-10.7 32L96 416c-17.7 0-32 14.3-32 32s14.3 32 32 32l256 0c17.7 0 32-14.3 32-32s-14.3-32-32-32l-74.7 0-10.7-32L384 384c35.3 0 64-28.7 64-64l0-224c0-35.3-28.7-64-64-64L64 32zm464 0c-26.5 0-48 21.5-48 48l0 352c0 26.5 21.5 48 48 48l64 0c26.5 0 48-21.5 48-48l0-352c0-26.5-21.5-48-48-48l-64 0zm16 64l32 0c8.8 0 16 7.2 16 16s-7.2 16-16 16l-32 0c-8.8 0-16-7.2-16-16s7.2-16 16-16zm-16 80c0-8.8 7.2-16 16-16l32 0c8.8 0 16 7.2 16 16s-7.2 16-16 16l-32 0c-8.8 0-16-7.2-16-16zm32 160a32 32 0 1 1 0 64 32 32 0 1 1 0-64z"/></svg>`
+};
+function icon(id,cls=''){return `<span class="real-icon ${cls}">${REAL_ICONS[id]||''}</span>`}
+function shuffled(a){const b=[...a];for(let i=b.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[b[i],b[j]]=[b[j],b[i]]}return b}
+function optionHTML(items){return `<option value="">— επίλεξε —</option>`+shuffled(items).map(o=>`<option value="${o.v}">${o.t}</option>`).join('')}
+const stages=[
+ {title:'Τι είναι κακόβουλο λογισμικό;',instruction:'Διάλεξε την περιγραφή που ταιριάζει καλύτερα στο κακόβουλο λογισμικό ή ιό.',help:'Το βιβλίο εξηγεί ότι το κακόβουλο λογισμικό δημιουργείται για να προκαλέσει ζημιά στον υπολογιστή ή να κλέψει προσωπικές πληροφορίες.',kind:'malware'},
+ {title:'Κακόβουλο λογισμικό ή antivirus;',instruction:'Για κάθε πρόταση διάλεξε σε ποιο από τα δύο είδη λογισμικού αναφέρεται.',help:'Το κακόβουλο λογισμικό αποτελεί απειλή. Το λογισμικό προστασίας από ιούς (antivirus) έχει σκοπό να προστατεύει τον υπολογιστή και ενημερώνεται τακτικά.',kind:'classify'},
+ {title:'Τι προσφέρει το antivirus;',instruction:'Ταίριαξε κάθε περιγραφή με το αντίστοιχο όφελος του λογισμικού προστασίας από ιούς.',help:'Στο βιβλίο αναφέρονται τρία οφέλη: προστασία εφαρμογών, προστασία δεδομένων και προστασία από πρόσβαση χωρίς άδεια.',kind:'benefits'},
+ {title:'Προστατεύομαι από κακόβουλο λογισμικό',instruction:'Επίλεξε όλες τις ενέργειες που συμφωνούν με τις συμβουλές του βιβλίου.',help:'Θυμήσου τις τέσσερις συμβουλές: προσοχή στα λογισμικά που επιτρέπουμε, εγκατάσταση antivirus, ενημέρωση antivirus και αποφυγή ύποπτων σημείων ή μηνυμάτων.',kind:'tips'},
+ {title:'Γιατί να εγκαταστήσω antivirus;',instruction:'Επίλεξε δύο σωστούς λόγους για να εγκαταστήσουμε λογισμικό προστασίας από ιούς.',help:'Σκέψου τι προστατεύει το antivirus σύμφωνα με το βιβλίο: τις εφαρμογές και τα δεδομένα του υπολογιστή.',kind:'reasons'},
+ {title:'Ποιος κωδικός είναι ισχυρός;',instruction:'Διάλεξε τον κωδικό που ακολουθεί καλύτερα τους κανόνες του βιβλίου.',help:'Ένας ισχυρός κωδικός έχει τουλάχιστον 8 χαρακτήρες, συνδυάζει γράμματα, αριθμούς και σύμβολα και δεν βασίζεται σε εύκολα προβλέψιμες προσωπικές πληροφορίες.',kind:'passwords'},
+ {title:'Κανόνες για ασφαλή λογαριασμό',instruction:'Επίλεξε όλες τις συμπεριφορές που προτείνει το βιβλίο για τον λογαριασμό χρήστη.',help:'Το βιβλίο προτείνει ισχυρό και μοναδικό κωδικό για κάθε λογαριασμό, αποφυγή εύκολα προβλέψιμων προσωπικών στοιχείων και αποσύνδεση όταν σταματάμε να χρησιμοποιούμε την ιστοσελίδα.',kind:'account'},
+ {title:'Συνολική δοκιμή',instruction:'Απάντησε στις ερωτήσεις για να ελέγξεις όσα έμαθες στο μάθημα.',help:'Θυμήσου τον σκοπό του κακόβουλου λογισμικού, τον ρόλο και την ενημέρωση του antivirus, τις ασφαλείς συμπεριφορές και τους κανόνες ισχυρού κωδικού.',kind:'overall'},
+ {title:'Φτιάξε έναν ισχυρό κωδικό',instruction:'Γράψε έναν δοκιμαστικό κωδικό που να ακολουθεί όλους τους κανόνες. Κάθε πλαίσιο θα σημειώνεται μόλις ικανοποιήσεις την αντίστοιχη προϋπόθεση.',help:'Ο κωδικός πρέπει να έχει τουλάχιστον 8 χαρακτήρες και να περιέχει κεφαλαία γράμματα, πεζά γράμματα, αριθμούς και σύμβολα. Δεν πρέπει να βασίζεται σε όνομα, ημερομηνία γέννησης ή άλλο εύκολα προβλέψιμο προσωπικό στοιχείο. Μην χρησιμοποιήσεις πραγματικό κωδικό λογαριασμού.',kind:'createPassword'},
+ {title:'Τι έμαθα;',instruction:'Σκέψου πόσο σίγουρα μπορείς να χρησιμοποιήσεις όσα έμαθες και επίλεξε μία απάντηση.',help:'Δεν υπάρχει σωστή ή λάθος επιλογή. Διάλεξε αυτή που περιγράφει καλύτερα πώς νιώθεις.',kind:'final'}
+];
+let stage=0,selfChoice=null;
+let classAnswers={},benefitSelected=null,benefitDone=new Set();
+let tipSelected=new Set(),reasonSelected=new Set(),passwordSelected=new Set(),accountSelected=new Set();
+const activity=document.getElementById('activity');
+function setFeedback(t,ok){const f=document.getElementById('feedback');f.className='feedback '+(ok?'good':'bad');f.textContent=t}
+function clearFeedback(){const f=document.getElementById('feedback');f.className='feedback';f.textContent=''}
+function advance(ms=850){setTimeout(()=>{stage++;render()},ms)}
+function updateProgress(){const v=Math.min(stage,stages.length-1);document.getElementById('progressText').textContent=stage>=stages.length?'Ολοκληρώθηκε':`Δραστηριότητα ${v+1} από ${stages.length}`;document.getElementById('progressFill').style.width=`${stage>=stages.length?100:((v+1)/stages.length)*100}%`;document.getElementById('stepdots').innerHTML=stages.map((_,i)=>`<div class="stepdot ${i<stage?'done':i===stage?'active':''}">${i+1}</div>`).join('')}
+function render(){clearFeedback();updateProgress();const s=stages[stage];document.getElementById('kicker').textContent=`Δραστηριότητα ${stage+1}`;document.getElementById('title').textContent=s.title;document.getElementById('instruction').textContent=s.instruction;if(s.kind==='malware')renderMalware();if(s.kind==='classify')renderClassify();if(s.kind==='benefits')renderBenefits();if(s.kind==='tips')renderTips();if(s.kind==='reasons')renderReasons();if(s.kind==='passwords')renderPasswords();if(s.kind==='account')renderAccount();if(s.kind==='overall')renderOverall();if(s.kind==='createPassword')renderCreatePassword();if(s.kind==='final')renderFinal()}
+function openHelp(){document.getElementById('helpText').textContent=stages[Math.min(stage,stages.length-1)].help;document.getElementById('helpModal').classList.add('show')}
+function closeHelp(){document.getElementById('helpModal').classList.remove('show')}
+
+/* Activity 1 */
+function renderMalware(){const opts=shuffled([
+ {ok:true,text:'Εφαρμογή που δημιουργήθηκε για να προκαλέσει ζημιά στον υπολογιστή ή να κλέψει προσωπικές πληροφορίες.'},
+ {ok:false,text:'Εφαρμογή που δημιουργήθηκε για να προστατεύει τον υπολογιστή από ιούς και άλλες απειλές.'},
+ {ok:false,text:'Εφαρμογή που χρησιμοποιούμε μόνο για να γράφουμε και να μορφοποιούμε κείμενα.'}
+]);activity.innerHTML=`<div class="hero-row"><div class="hero-visual">${icon('computer','large')}<div class="bug-symbol" aria-hidden="true">⚠</div></div><div class="choice-grid" style="grid-template-columns:1fr;margin:0">${opts.map(o=>`<button class="choice" onclick="malwareAnswer(${o.ok})">${o.text}</button>`).join('')}</div></div>`}
+function malwareAnswer(ok){if(!ok)return setFeedback('Δοκίμασε ξανά. Σκέψου ποιο λογισμικό αποτελεί απειλή για τον υπολογιστή ή τις πληροφορίες μας.',false);setFeedback('Σωστά! Το κακόβουλο λογισμικό μπορεί να προκαλέσει ζημιά ή να κλέψει προσωπικές πληροφορίες.',true);advance()}
+
+/* Activity 2 */
+const classifyStatements=[
+ {id:'c1',text:'Μπορεί να σχεδιαστεί για να κλέψει έναν κωδικό πρόσβασης.',ans:'malware'},
+ {id:'c2',text:'Προστατεύει υπολογιστές και συσκευές από ιούς και άλλες απειλές ασφάλειας.',ans:'antivirus'},
+ {id:'c3',text:'Μπορεί να παρακολουθεί δραστηριότητες στο διαδίκτυο ή να καταστρέψει δεδομένα.',ans:'malware'},
+ {id:'c4',text:'Συνδέεται συχνά στο διαδίκτυο και ενημερώνεται για παλιούς και καινούργιους ιούς.',ans:'antivirus'}
+];
+function renderClassify(){classAnswers={};const rows=shuffled(classifyStatements);activity.innerHTML=`<div class="classify-list">${rows.map(r=>{const buttons=shuffled([{v:'malware',t:'Κακόβουλο λογισμικό'},{v:'antivirus',t:'Antivirus'}]);return `<div class="classify-row" data-id="${r.id}"><span>${r.text}</span><div class="classify-actions">${buttons.map(b=>`<button onclick="pickClass('${r.id}','${b.v}',this)">${b.t}</button>`).join('')}</div></div>`}).join('')}</div><button class="primary center-btn" onclick="checkClassify()">Έλεγχος</button>`}
+function pickClass(id,v,el){classAnswers[id]=v;const row=el.closest('.classify-row');row.querySelectorAll('button').forEach(b=>b.classList.remove('selected'));el.classList.add('selected')}
+function checkClassify(){if(Object.keys(classAnswers).length<4)return setFeedback('Απάντησε πρώτα και στις τέσσερις προτάσεις.',false);const wrong=classifyStatements.filter(s=>classAnswers[s.id]!==s.ans);if(wrong.length)return setFeedback('Κάποια πρόταση έχει μπει στη λάθος κατηγορία. Δοκίμασε ξανά.',false);setFeedback('Μπράβο! Ξεχώρισες την απειλή από το λογισμικό που προστατεύει.',true);advance()}
+
+/* Activity 3 */
+const benefitSources=[
+ {id:'apps',label:'Βοηθά τον υπολογιστή να μπλοκάρει επικίνδυνους ιούς που μπορούν να προκαλέσουν προβλήματα στις εφαρμογές.'},
+ {id:'data',label:'Προστατεύει φωτογραφίες, κωδικούς και άλλα δεδομένα από ιούς που θέλουν να τα κλέψουν.'},
+ {id:'access',label:'Ο υπολογιστής προστατεύεται ώστε να μην μπορεί κάποιος άλλος να μπει χωρίς άδεια.'}
+];
+const benefitTargets=[
+ {id:'apps',label:'Γενική προστασία των εφαρμογών'},
+ {id:'data',label:'Προστασία των δεδομένων'},
+ {id:'access',label:'Πρόσβαση μόνο με άδεια'}
+];
+function renderBenefits(){benefitSelected=null;benefitDone=new Set();const left=shuffled(benefitSources),right=shuffled(benefitTargets);activity.innerHTML=`<div class="match-layout"><div class="match-side"><h3>Περιγραφές</h3><div class="match-bank">${left.map(x=>`<button class="match-card" data-id="${x.id}" onclick="selectBenefit('${x.id}',this)">${x.label}</button>`).join('')}</div></div><div class="match-side"><h3>Οφέλη</h3><div class="match-bank">${right.map(x=>`<button class="target-card" data-id="${x.id}" onclick="matchBenefit('${x.id}',this)">${x.label}</button>`).join('')}</div></div></div>`}
+function selectBenefit(id,el){if(benefitDone.has(id))return;benefitSelected=benefitSelected===id?null:id;document.querySelectorAll('.match-card').forEach(x=>x.classList.toggle('selected',x.dataset.id===benefitSelected))}
+function matchBenefit(id,el){if(!benefitSelected)return setFeedback('Επίλεξε πρώτα μία περιγραφή από την αριστερή πλευρά.',false);if(id!==benefitSelected)return setFeedback('Αυτή η περιγραφή ταιριάζει σε άλλο όφελος. Δοκίμασε ξανά.',false);benefitDone.add(id);const src=document.querySelector(`.match-card[data-id="${id}"]`);src.classList.remove('selected');src.classList.add('used');el.classList.add('matched');benefitSelected=null;if(benefitDone.size===3){setFeedback('Σωστά! Ταίριαξες τα τρία οφέλη που παρουσιάζει το βιβλίο.',true);advance()}else setFeedback('Σωστά. Συνέχισε.',true)}
+
+/* common multi selection */
+function toggleSet(id,set,el){if(set.has(id)){set.delete(id);el.classList.remove('selected');el.setAttribute('aria-pressed','false')}else{set.add(id);el.classList.add('selected');el.setAttribute('aria-pressed','true')}}
+
+/* Activity 4 */
+const tipCards=[
+ {id:'permissions',ok:true,text:'Προσέχω ποια λογισμικά επιτρέπω να χρησιμοποιεί ο υπολογιστής όταν μου ζητείται.'},
+ {id:'install',ok:true,text:'Εγκαθιστώ στον υπολογιστή λογισμικό προστασίας από ιούς.'},
+ {id:'update',ok:true,text:'Ενημερώνω το αντι-ιικό λογισμικό από το διαδίκτυο.'},
+ {id:'careful',ok:true,text:'Αποφεύγω κλικ σε σημεία που υπόσχονται δώρα και σε ασυνήθιστα μηνύματα ηλεκτρονικού ταχυδρομείου.'},
+ {id:'gift',ok:false,text:'Πατάω κάθε μήνυμα που υπόσχεται δώρο, ακόμη κι αν μου φαίνεται ασυνήθιστο.'},
+ {id:'neverupdate',ok:false,text:'Δεν ενημερώνω ποτέ το antivirus αφού εγκατασταθεί.'}
+];
+function renderTips(){tipSelected=new Set();const items=shuffled(tipCards);activity.innerHTML=`<div class="multi-grid">${items.map(x=>`<button class="multi" aria-pressed="false" onclick="toggleSet('${x.id}',tipSelected,this)">${x.text}</button>`).join('')}</div><button class="primary center-btn" onclick="checkTips()">Έλεγχος</button>`}
+function checkTips(){const correct=new Set(tipCards.filter(x=>x.ok).map(x=>x.id));if(tipSelected.size!==correct.size||[...correct].some(id=>!tipSelected.has(id)))return setFeedback('Κάποιες επιλογές δεν συμφωνούν ακόμη με τις συμβουλές του βιβλίου.',false);setFeedback('Σωστά! Επέλεξες τις τέσσερις συμβουλές προστασίας του βιβλίου.',true);advance()}
+
+/* Activity 5 */
+const reasonCards=[
+ {id:'apps',ok:true,text:'Για να προστατεύονται οι εφαρμογές του υπολογιστή από επικίνδυνους ιούς.'},
+ {id:'data',ok:true,text:'Για να προστατεύονται φωτογραφίες, κωδικοί και άλλα δεδομένα από κακόβουλο λογισμικό.'},
+ {id:'speed',ok:false,text:'Για να αυξάνεται πάντα η ταχύτητα του υπολογιστή.'},
+ {id:'colors',ok:false,text:'Για να εμφανίζει η οθόνη περισσότερα χρώματα.'}
+];
+function renderReasons(){reasonSelected=new Set();const items=shuffled(reasonCards);activity.innerHTML=`<div class="info-card">Ο Ήρωνας και η Υπατία θέλουν <b>δύο λόγους</b> για να εγκαταστήσουν λογισμικό προστασίας από ιούς.</div><div class="multi-grid">${items.map(x=>`<button class="multi" aria-pressed="false" onclick="toggleSet('${x.id}',reasonSelected,this)">${x.text}</button>`).join('')}</div><button class="primary center-btn" onclick="checkReasons()">Έλεγχος</button>`}
+function checkReasons(){const correct=new Set(reasonCards.filter(x=>x.ok).map(x=>x.id));if(reasonSelected.size!==2||[...correct].some(id=>!reasonSelected.has(id)))return setFeedback('Χρειάζονται ακριβώς δύο λόγοι που σχετίζονται με την προστασία εφαρμογών και δεδομένων.',false);setFeedback('Σωστά! Αυτοί είναι δύο λόγοι που αναφέρει το βιβλίο για τη χρήση antivirus.',true);advance()}
+
+/* Activity 6 */
+const passwordCards=[
+ {id:'p1',code:'ypatia123',desc:'Το όνομα της Υπατίας και οι αριθμοί 123 με τη σειρά.',ok:false},
+ {id:'p2',code:'Yp@l@g!st!s',desc:'Η λέξη Ypologistis, με αντικατάσταση του o με @ και του i με !.',ok:false},
+ {id:'p3',code:'&p@t#@2030',desc:'Το όνομα της Υπατίας και ένας αριθμός. Κάθε φωνήεν έχει αντικατασταθεί με σύμβολο.',ok:false},
+ {id:'p4',code:'7fmlfmnp!',desc:'Βασίζεται στα αρχικά των λέξεων μιας φράσης, μαζί με αριθμό και σύμβολο.',ok:true}
+];
+function renderPasswords(){passwordSelected=new Set();const items=shuffled(passwordCards);activity.innerHTML=`<div class="info-card">Ο ισχυρός κωδικός πρέπει να έχει τουλάχιστον 8 χαρακτήρες, γράμματα, αριθμούς και σύμβολα και να μην βασίζεται σε εύκολα προβλέψιμες προσωπικές πληροφορίες.</div><div class="password-grid">${items.map(x=>`<button class="password-card" aria-pressed="false" onclick="togglePassword('${x.id}',this)"><div class="password-code">${x.code}</div><div class="password-desc">${x.desc}</div></button>`).join('')}</div><button class="primary center-btn" onclick="checkPasswords()">Έλεγχος</button>`}
+function togglePassword(id,el){if(passwordSelected.has(id)){passwordSelected.delete(id);el.classList.remove('selected');el.setAttribute('aria-pressed','false')}else{passwordSelected.add(id);el.classList.add('selected');el.setAttribute('aria-pressed','true')}}
+function checkPasswords(){const correct=passwordCards.filter(x=>x.ok).map(x=>x.id);if(passwordSelected.size!==correct.length||correct.some(id=>!passwordSelected.has(id)))return setFeedback('Έλεγξε ξανά τους κανόνες: μήκος, γράμματα, αριθμοί, σύμβολα και αποφυγή εύκολα προβλέψιμων προσωπικών στοιχείων.',false);setFeedback('Σωστά! Ο κωδικός 7fmlfmnp! ακολουθεί καλύτερα τους κανόνες που παρουσιάζει το βιβλίο.',true);advance()}
+
+/* Activity 7 */
+const accountCards=[
+ {id:'unique',ok:true,text:'Χρησιμοποιώ ισχυρό και μοναδικό κωδικό για κάθε λογαριασμό.'},
+ {id:'logout',ok:true,text:'Αποσυνδέομαι από τον λογαριασμό όταν σταματάω να χρησιμοποιώ την ιστοσελίδα.'},
+ {id:'personal',ok:true,text:'Δεν χρησιμοποιώ το όνομά μου, την ημερομηνία γέννησης ή κάτι γνωστό για εμένα που προβλέπεται εύκολα.'},
+ {id:'same',ok:false,text:'Χρησιμοποιώ τον ίδιο εύκολο κωδικό σε όλους τους λογαριασμούς.'},
+ {id:'name',ok:false,text:'Χρησιμοποιώ το όνομά μου ώστε να θυμάμαι εύκολα τον κωδικό.'}
+];
+function renderAccount(){accountSelected=new Set();const items=shuffled(accountCards);activity.innerHTML=`<div class="multi-grid">${items.map(x=>`<button class="multi" aria-pressed="false" onclick="toggleSet('${x.id}',accountSelected,this)">${x.text}</button>`).join('')}</div><button class="primary center-btn" onclick="checkAccount()">Έλεγχος</button>`}
+function checkAccount(){const correct=new Set(accountCards.filter(x=>x.ok).map(x=>x.id));if(accountSelected.size!==correct.size||[...correct].some(id=>!accountSelected.has(id)))return setFeedback('Κάποιες επιλογές δεν συμφωνούν ακόμη με τους κανόνες του βιβλίου.',false);setFeedback('Μπράβο! Επέλεξες τις συμπεριφορές που προστατεύουν καλύτερα τον λογαριασμό χρήστη.',true);advance()}
+
+/* Activity 8 */
+function renderOverall(){activity.innerHTML=`<div class="overall">
+ <div class="qcard"><b>1.</b> Το κακόβουλο λογισμικό μπορεί να δημιουργηθεί για να <select id="o1">${optionHTML([{v:'harm',t:'προκαλέσει ζημιά ή να κλέψει πληροφορίες'},{v:'protect',t:'προστατεύει από ιούς'},{v:'draw',t:'ζωγραφίζει εικόνες'}])}</select>.</div>
+ <div class="qcard"><b>2.</b> Το λογισμικό προστασίας από ιούς πρέπει να <select id="o2">${optionHTML([{v:'update',t:'ενημερώνεται συχνά'},{v:'never',t:'μην ενημερώνεται ποτέ'},{v:'delete',t:'διαγράφει όλα τα αρχεία'}])}</select>.</div>
+ <div class="qcard"><b>3.</b> Σε ένα ασυνήθιστο μήνυμα που υπόσχεται δώρο είναι ασφαλέστερο να <select id="o3">${optionHTML([{v:'avoid',t:'μην κάνω κλικ'},{v:'click',t:'κάνω αμέσως κλικ'}])}</select>.</div>
+ <div class="qcard"><b>4.</b> Ένας ισχυρός κωδικός πρέπει να έχει τουλάχιστον <select id="o4">${optionHTML([{v:'8',t:'8 χαρακτήρες'},{v:'3',t:'3 χαρακτήρες'},{v:'1',t:'1 χαρακτήρα'}])}</select> και να συνδυάζει γράμματα, αριθμούς και σύμβολα.</div>
+ <div class="qcard"><b>5.</b> Όταν τελειώσω τη χρήση μιας ιστοσελίδας όπου έχω συνδεθεί, πρέπει να <select id="o5">${optionHTML([{v:'logout',t:'αποσυνδεθώ από τον λογαριασμό'},{v:'stay',t:'αφήσω τον λογαριασμό ανοιχτό'}])}</select>.</div>
+ </div><button class="primary center-btn" onclick="checkOverall()">Έλεγχος</button>`}
+function checkOverall(){const ok=document.getElementById('o1').value==='harm'&&document.getElementById('o2').value==='update'&&document.getElementById('o3').value==='avoid'&&document.getElementById('o4').value==='8'&&document.getElementById('o5').value==='logout';if(!ok)return setFeedback('Κάποιες απαντήσεις χρειάζονται διόρθωση. Δοκίμασε ξανά.',false);setFeedback('Εξαιρετικά! Ολοκλήρωσες τη συνολική δοκιμή.',true);advance()}
+
+/* Activity 9 */
+function renderCreatePassword(){activity.innerHTML=`<div class="password-builder">
+ <div class="practice-note"><b>Προσοχή:</b> Γράψε μόνο ένα δοκιμαστικό παράδειγμα. Μην χρησιμοποιήσεις πραγματικό κωδικό λογαριασμού ή αληθινά προσωπικά στοιχεία.</div>
+ <div class="password-entry-card">
+  <label for="studentPassword">Ο δοκιμαστικός κωδικός μου</label>
+  <div class="password-input-row"><input class="password-input" id="studentPassword" type="password" autocomplete="off" spellcheck="false" maxlength="40" aria-describedby="passwordRules" placeholder="Γράψε εδώ τον κωδικό"><button class="show-pass" type="button" id="showPassword" onclick="togglePasswordVisibility()">Εμφάνιση</button></div>
+ </div>
+ <div class="password-rules" id="passwordRules">
+  <div class="password-rule" id="ruleLength"><span class="rule-mark">✓</span><span>Τουλάχιστον <b>8 χαρακτήρες</b></span></div>
+  <div class="password-rule" id="ruleUpper"><span class="rule-mark">✓</span><span>Περιέχει τουλάχιστον <b>ένα κεφαλαίο γράμμα</b></span></div>
+  <div class="password-rule" id="ruleLower"><span class="rule-mark">✓</span><span>Περιέχει τουλάχιστον <b>ένα πεζό γράμμα</b></span></div>
+  <div class="password-rule" id="ruleNumber"><span class="rule-mark">✓</span><span>Περιέχει τουλάχιστον <b>έναν αριθμό</b></span></div>
+  <div class="password-rule" id="ruleSymbol"><span class="rule-mark">✓</span><span>Περιέχει τουλάχιστον <b>ένα σύμβολο</b></span></div>
+  <div class="password-rule" id="rulePersonal"><span class="rule-mark">✓</span><span>Δεν βασίζεται σε <b>εύκολα προβλέψιμα προσωπικά στοιχεία</b></span></div>
+ </div>
+ <label class="privacy-check"><input type="checkbox" id="noPersonalInfo"><span>Επιβεβαιώνω ότι το παράδειγμά μου <b>δεν βασίζεται στο όνομά μου, στην ημερομηνία γέννησής μου ή σε άλλο εύκολα προβλέψιμο προσωπικό στοιχείο</b>.</span></label>
+ </div><button class="primary center-btn" onclick="checkCreatedPassword()">Έλεγχος κωδικού</button>`;
+ const p=document.getElementById('studentPassword'),ack=document.getElementById('noPersonalInfo');
+ p?.addEventListener('input',updatePasswordRules);ack?.addEventListener('change',updatePasswordRules);
+ updatePasswordRules();setTimeout(()=>p?.focus(),0)}
+function togglePasswordVisibility(){const p=document.getElementById('studentPassword'),b=document.getElementById('showPassword');if(!p||!b)return;const hidden=p.type==='password';p.type=hidden?'text':'password';b.textContent=hidden?'Απόκρυψη':'Εμφάνιση'}
+function passwordChecks(value){const ack=document.getElementById('noPersonalInfo');return{
+ length:value.length>=8,
+ upper:/[A-ZΑ-ΩΆΈΉΊΌΎΏ]/.test(value),
+ lower:/[a-zα-ωάέήίόύώϊϋΐΰ]/.test(value),
+ number:/[0-9]/.test(value),
+ symbol:/[^A-Za-zΑ-Ωα-ωΆΈΉΊΌΎΏάέήίόύώϊϋΐΰ0-9\s]/.test(value),
+ personal:!!ack?.checked
+}}
+function setRule(id,met){const el=document.getElementById(id);if(el)el.classList.toggle('met',met)}
+function updatePasswordRules(){const value=document.getElementById('studentPassword')?.value||'';const c=passwordChecks(value);setRule('ruleLength',c.length);setRule('ruleUpper',c.upper);setRule('ruleLower',c.lower);setRule('ruleNumber',c.number);setRule('ruleSymbol',c.symbol);setRule('rulePersonal',c.personal)}
+function checkCreatedPassword(){
+ const p=document.getElementById('studentPassword');const value=(p?.value||'');const c=passwordChecks(value);
+ updatePasswordRules();
+ if(!value)return setFeedback('Γράψε πρώτα έναν δοκιμαστικό κωδικό.',false);
+ if(!c.length)return setFeedback(`Ο κωδικός έχει ${value.length} χαρακτήρες. Χρειάζεται τουλάχιστον 8.`,false);
+ if(!c.upper)return setFeedback('Χρειάζεται να προσθέσεις τουλάχιστον ένα κεφαλαίο γράμμα.',false);
+ if(!c.lower)return setFeedback('Χρειάζεται να προσθέσεις τουλάχιστον ένα πεζό γράμμα.',false);
+ if(!c.number)return setFeedback('Χρειάζεται να προσθέσεις τουλάχιστον έναν αριθμό.',false);
+ if(!c.symbol)return setFeedback('Χρειάζεται να προσθέσεις τουλάχιστον ένα σύμβολο, όπως !, @, # ή $.',false);
+ const low=value.toLocaleLowerCase('el-GR');
+ const predictable=/(123|234|345|456|567|678|789|012|abc|qwerty|password|κωδικο|ypatia|υπατια|19\d{2}|20\d{2})/i;
+ if(predictable.test(low))return setFeedback('Ο κωδικός περιέχει ένα εύκολα προβλέψιμο στοιχείο ή μοτίβο. Άλλαξέ το ώστε να είναι δυσκολότερο να το μαντέψει κάποιος.',false);
+ if(value==='7fmlfmnp!')return setFeedback('Αυτό είναι το παράδειγμα του βιβλίου. Φτιάξε έναν δικό σου διαφορετικό δοκιμαστικό κωδικό.',false);
+ if(!c.personal)return setFeedback('Πριν συνεχίσεις, επιβεβαίωσε ότι ο δοκιμαστικός κωδικός δεν βασίζεται σε προσωπικά στοιχεία που μπορεί κάποιος να γνωρίζει ή να μαντέψει εύκολα.',false);
+ setFeedback('Μπράβο! Ο κωδικός σου έχει τουλάχιστον 8 χαρακτήρες, κεφαλαία και πεζά γράμματα, αριθμό και σύμβολο και δεν βασίζεται σε εύκολα προβλέψιμα προσωπικά στοιχεία. Προχωράς στην τελική αυτοαξιολόγηση.',true);advance(1400)
+}
+
+/* Activity 10 */
+function renderFinal(){selfChoice=null;activity.innerHTML=`<div class="final-box"><div class="summary">Έμαθες τη σημασία του λογισμικού προστασίας από ιούς και πώς να επιλέγεις και να δημιουργείς κατάλληλο κωδικό λογαριασμού χρήστη.</div><div class="faces"><button class="face" onclick="pickSelf(1,this)"><span>🙂</span>Χρειάζομαι λίγη ακόμη εξάσκηση</button><button class="face" onclick="pickSelf(2,this)"><span>😊</span>Ξεχωρίζω βασικούς τρόπους προστασίας και μπορώ να φτιάξω έναν ισχυρό κωδικό</button><button class="face" onclick="pickSelf(3,this)"><span>😎</span>Μπορώ να εξηγώ πώς προστατεύω τον υπολογιστή και τον λογαριασμό μου</button></div><button class="primary center-btn" onclick="finish()">Ολοκλήρωση</button><button class="repeat" onclick="restart()">↻ Επανάληψη δραστηριότητας</button></div>`}
+function pickSelf(v,el){selfChoice=v;document.querySelectorAll('.face').forEach(x=>x.classList.remove('sel'));el.classList.add('sel')}
+function finish(){if(!selfChoice)return setFeedback('Επίλεξε πρώτα μία επιλογή αυτοαξιολόγησης.',false);stage=stages.length;updateProgress();setFeedback('Μπράβο! Ολοκλήρωσες το Μάθημα 13.',true)}
+function restart(){stage=0;selfChoice=null;classAnswers={};benefitSelected=null;benefitDone=new Set();tipSelected=new Set();reasonSelected=new Set();passwordSelected=new Set();accountSelected=new Set();render()}
+render();
+</script>
+
+<footer class="nk-license" aria-label="Πληροφορίες δημιουργού και άδειας χρήσης">
+  <div><strong>Created by Nikos Kalakos · © 2026</strong></div>
+  <div>Original educational content and simulation design licensed under <a class="cc-badge" href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank" rel="license noopener noreferrer">CC BY-NC 4.0</a>.</div>
+  <div>Source code © 2026 Nikos Kalakos.</div>
+  <div>Third-party and textbook materials remain subject to the rights and licences of their respective copyright holders.</div>
+</footer>
+</body>
+</html>

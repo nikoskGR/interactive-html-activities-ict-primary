@@ -1,0 +1,199 @@
+<!--
+ICT Educational Simulation
+Created by Nikos Kalakos
+Copyright © 2026 Nikos Kalakos
+
+Original educational content and simulation design licensed under CC BY-NC 4.0.
+Source code © 2026 Nikos Kalakos.
+Third-party and textbook materials remain subject to the rights and licences of their respective copyright holders.
+-->
+<!doctype html>
+<html lang="el">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="author" content="Nikos Kalakos">
+<meta name="copyright" content="© 2026 Nikos Kalakos">
+<meta name="license" content="Original educational content and simulation design: CC BY-NC 4.0; source code © 2026 Nikos Kalakos; third-party and textbook materials excluded.">
+<title>Μάθημα 30 - Κανόνες και όρια για τη χρήση ψηφιακών συσκευών στο διαδίκτυο</title>
+<style>
+:root{
+  --unit:#84648F; --unit-dark:#684E72; --unit-soft:#F2ECF5;
+  --secondary:#545F99; --secondary-dark:#404978; --secondary-soft:#EEF0F8;
+  --ink:#253149; --muted:#667187; --line:#D8DFE8; --good:#EAF7EF; --bad:#FFF0ED;
+  --shadow:0 10px 26px rgba(35,49,71,.10);
+}
+*{box-sizing:border-box}
+body{margin:0;background:#F4F7FA;color:var(--ink);font-family:Arial,"Noto Sans",sans-serif}
+button{font:inherit;cursor:pointer}button:focus-visible{outline:4px solid #CDB6D5;outline-offset:3px}
+.shell{max-width:1500px;margin:auto;padding:10px}
+.coursebar{min-height:64px;background:var(--secondary);color:#fff;border-radius:17px 17px 8px 8px;display:flex;align-items:center;justify-content:space-between;gap:18px;padding:10px 18px;box-shadow:var(--shadow)}
+.unit-label{font-size:14px;font-weight:900;opacity:.96}.lesson-name{font-size:clamp(20px,2.3vw,27px);font-weight:900;margin-top:2px}.lesson-number{min-width:56px;height:42px;padding:0 14px;border-radius:12px;background:#fff;color:var(--secondary);display:grid;place-items:center;font-size:18px;font-weight:900}
+.progress-wrap{background:#fff;border:2px solid #D8E0E9;border-top:0;border-radius:0 0 17px 17px;padding:10px 16px 11px;display:flex;align-items:center;gap:14px}.progress-text{font-size:13px;font-weight:900;color:var(--muted);white-space:nowrap}.progress-line{height:8px;flex:1;background:#E4E9F0;border-radius:7px;overflow:hidden}.progress-fill{height:100%;background:var(--unit);width:0;transition:.25s}.stepdots{display:flex;gap:7px;flex-wrap:wrap}.stepdot{width:30px;height:30px;border-radius:9px;background:#fff;border:2px solid #B6C0CE;color:#647187;display:grid;place-items:center;font-size:13px;font-weight:900}.stepdot.active{background:var(--unit);border-color:var(--unit-dark);color:#fff}.stepdot.done{background:var(--secondary);border-color:var(--secondary-dark);color:#fff}
+.workspace{margin-top:14px;background:#fff;border:2px solid #D8E0E9;border-radius:18px;box-shadow:var(--shadow);min-height:760px;padding:18px}.stagehead{display:grid;grid-template-columns:1fr auto;gap:16px;align-items:start;border-bottom:2px solid #E4E9EF;padding-bottom:13px}.stage-kicker{font-size:13px;font-weight:900;color:var(--unit-dark);text-transform:uppercase;letter-spacing:.4px}.stagehead h1{font-size:31px;margin:4px 0 0}.help{border:2px solid #AA8AB5;background:var(--unit-soft);color:#563F60;border-radius:11px;padding:9px 15px;font-weight:900}.instruction{max-width:1200px;margin:15px auto 10px;text-align:center;font-size:20px;font-weight:800;line-height:1.45}.feedback{display:none;max-width:1180px;margin:0 auto 10px;border-radius:12px;padding:10px 16px;text-align:center;font-weight:900;font-size:17px}.feedback.good{display:block;background:var(--good);border:2px solid #7DC699}.feedback.bad{display:block;background:var(--bad);border:2px solid #E2A096}.feedback.info{display:block;background:#F2F4FB;border:2px solid #AEB7D5;color:#35406F}.activity{max-width:1400px;margin:auto;border:2px solid #D9E0E9;border-radius:17px;background:#FBFCFE;padding:16px;min-height:575px}.primary{border:0;border-radius:11px;background:var(--secondary);color:#fff;padding:11px 24px;font-weight:900;font-size:18px;box-shadow:0 4px 0 var(--secondary-dark)}.center-btn{display:block;margin:16px auto 0}.note{max-width:1050px;margin:12px auto;border:2px solid #B9C2D0;border-radius:13px;background:#fff;padding:11px 15px;text-align:center;font-size:15px;color:#5D687A;font-weight:700}
+.hero{max-width:1080px;margin:16px auto;border:3px solid var(--unit);border-radius:20px;background:linear-gradient(135deg,#fff,var(--unit-soft));padding:20px;text-align:center}.hero h3{font-size:25px;margin:0 0 8px}.hero p{font-size:18px;line-height:1.5;margin:0;color:#566177;font-weight:700}.sum-strip{display:flex;justify-content:center;gap:12px;flex-wrap:wrap;margin:18px auto}.sum-chip{border:2px solid #B8C1CE;border-radius:13px;background:#fff;padding:12px 16px;font-weight:900;min-width:180px}.sum-chip strong{display:block;color:var(--secondary-dark);font-size:20px;margin-top:5px}
+.choice-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:13px;max-width:1100px;margin:16px auto}.choice{position:relative;min-height:106px;border:3px solid #B8C1CE;border-radius:15px;background:#fff;padding:16px 15px 34px;text-align:left;font-weight:900;font-size:17px;line-height:1.35}.choice.selected{border-color:var(--unit-dark);background:var(--unit-soft)}.choice.selected:after,.answer.selected:after,.face.sel:after,.zone.selected:after,.plan.selected:after{content:"✓ Επιλεγμένο";position:absolute;right:9px;bottom:7px;font-size:12px;font-weight:900;color:#563F60}.choice.correct{border-color:#42A56B;background:#EEF9F2}.choice.wrong{border-color:#D77979;background:#FFF1EF}
+.plan-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px;max-width:1100px;margin:18px auto}.plan{position:relative;border:3px solid #B8C2D0;border-radius:17px;background:#fff;padding:17px;text-align:left;min-height:240px}.plan h3{text-align:center;margin:0 0 10px}.plan ul{line-height:1.65;font-weight:800;color:#566177}.plan.selected{border-color:var(--unit-dark);background:var(--unit-soft)}
+.match-wrap{max-width:1180px;margin:14px auto;position:relative;display:grid;grid-template-columns:1fr 1fr;gap:180px;padding:10px 12px;user-select:none}.match-col{display:flex;flex-direction:column;gap:18px}.match-card{position:relative;min-height:96px;border:3px solid #B8C1CE;border-radius:14px;background:#fff;padding:13px 18px;display:flex;align-items:center;font-weight:900;font-size:17px;line-height:1.35;z-index:2}.dot{position:absolute;width:19px;height:19px;border-radius:50%;background:var(--secondary);border:4px solid #fff;box-shadow:0 0 0 2px var(--secondary);top:50%;transform:translateY(-50%)}.left .dot{right:-12px}.right .dot{left:-12px}.match-card.done{border-color:#4AA671;background:#EFF9F3}.match-svg{position:absolute;inset:0;width:100%;height:100%;z-index:1;pointer-events:none}.match-instructions{max-width:900px;margin:8px auto;color:#5D687A;text-align:center;font-weight:800}
+.rule-board{max-width:1100px;margin:16px auto;display:grid;grid-template-columns:repeat(3,1fr);gap:14px}.rule-card{border:3px solid #C1CAD7;border-radius:15px;background:#fff;padding:16px;text-align:center}.rule-card .n{width:38px;height:38px;border-radius:50%;background:var(--secondary);color:#fff;display:grid;place-items:center;margin:0 auto 10px;font-weight:900}.rule-card p{margin:0;font-weight:850;line-height:1.45}
+.scenario{max-width:950px;margin:18px auto;border:3px solid var(--secondary);border-radius:18px;background:#fff;padding:18px}.scenario h3{text-align:center;margin:0 0 8px}.scenario p{font-size:19px;line-height:1.45;text-align:center;font-weight:800}.mini-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:12px;max-width:1000px;margin:16px auto}.mini-card{position:relative;border:3px solid #BBC5D2;border-radius:14px;background:#fff;padding:14px 14px 34px;font-weight:900;text-align:left;min-height:96px}.mini-card.selected{border-color:var(--unit-dark);background:var(--unit-soft)}.mini-card.selected:after{content:"✓ Επιλεγμένο";position:absolute;right:9px;bottom:7px;font-size:12px;font-weight:900;color:#563F60}
+.zone-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px;max-width:980px;margin:16px auto}.zone{position:relative;border:3px solid #B8C2D0;border-radius:16px;background:#fff;padding:18px 16px 34px;font-weight:900;min-height:122px}.zone h3{text-align:center;margin:0 0 8px}.zone.selected{border-color:var(--unit-dark);background:var(--unit-soft)}
+.quality-box{max-width:1040px;margin:18px auto;border:3px solid var(--secondary);border-radius:17px;background:var(--secondary-soft);padding:18px}.quality-box h3{text-align:center;margin:0 0 10px}.quality-pair{display:grid;grid-template-columns:1fr 1fr;gap:15px}.quality-item{border:2px solid #B7C0D4;border-radius:13px;background:#fff;padding:14px;font-weight:850;line-height:1.45}
+.overall{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;max-width:1120px;margin:15px auto}.qcard{border:3px solid #C4CCD8;border-radius:15px;background:#fff;padding:15px}.qprompt{font-size:17px;font-weight:900;line-height:1.4;margin-bottom:11px}.answer-row{display:grid;gap:8px}.answer{position:relative;border:2px solid #AFB9C8;border-radius:10px;background:#fff;padding:10px 12px 30px;font-weight:900;text-align:left}.answer.selected{border-color:var(--unit-dark);background:var(--unit-soft)}
+.final-box{max-width:1050px;margin:22px auto;text-align:center}.summary{border:3px solid var(--unit);border-radius:18px;background:var(--unit-soft);padding:18px;font-size:19px;font-weight:800;line-height:1.5}.faces{display:grid;grid-template-columns:repeat(3,1fr);gap:15px;margin:20px auto}.face{position:relative;min-height:155px;border:3px solid #B7C0CE;border-radius:17px;background:#fff;padding:14px 12px 33px;font-weight:900}.face span{font-size:52px;display:block;margin-bottom:8px}.face.sel{border-color:var(--unit-dark);background:var(--unit-soft)}.repeat{display:block;margin:16px auto 0;border:2px solid var(--secondary);border-radius:11px;background:#fff;color:var(--secondary-dark);padding:10px 18px;font-weight:900}
+.modal{position:fixed;inset:0;background:rgba(30,36,55,.55);display:none;align-items:center;justify-content:center;padding:18px;z-index:50}.modal.open{display:flex}.modal-box{width:min(640px,95vw);background:#fff;border-radius:18px;border:4px solid var(--unit);padding:20px;box-shadow:0 20px 50px rgba(0,0,0,.25)}.modal-box h3{margin:0 0 10px;font-size:25px}.modal-box p{font-size:18px;line-height:1.5}.modal-actions{display:flex;justify-content:flex-end;gap:10px;flex-wrap:wrap}.secondary-btn{border:2px solid var(--secondary);border-radius:10px;background:var(--secondary-soft);color:var(--secondary-dark);padding:9px 14px;font-weight:900}
+@media(max-width:900px){.plan-grid,.overall,.quality-pair{grid-template-columns:1fr}.rule-board{grid-template-columns:1fr}.zone-grid{grid-template-columns:1fr}.match-wrap{gap:70px}.faces{grid-template-columns:1fr}}
+@media(max-width:560px){.workspace{padding:10px}.activity{padding:9px}.stagehead h1{font-size:25px}.match-wrap{gap:42px;padding:4px}.match-card{font-size:14px;padding:9px}.coursebar{align-items:flex-start}}
+</style>
+
+<style id="nk-license-style">
+.nk-license{max-width:1100px;margin:14px auto 24px;padding:10px 16px;text-align:center;font:13px/1.45 Arial,"Noto Sans",sans-serif;color:#4e657c}
+.nk-license a{color:inherit;text-decoration:underline;text-underline-offset:2px}
+.nk-license .cc-badge{display:inline-block;margin:0 4px;padding:2px 7px;border:1px solid #8aa0b8;border-radius:6px;background:#fff;font-weight:700;white-space:nowrap}
+</style></head>
+<body>
+<div class="shell">
+  <header class="coursebar">
+    <div><div class="unit-label">Ενότητα 5 · Ψηφιακές τεχνολογίες και κοινωνία</div><div class="lesson-name">Κανόνες και όρια για τη χρήση ψηφιακών συσκευών στο διαδίκτυο</div></div>
+    <div class="lesson-number">30</div>
+  </header>
+  <div class="progress-wrap"><div class="progress-text" id="progressText"></div><div class="progress-line"><div class="progress-fill" id="progressFill"></div></div><div class="stepdots" id="stepdots"></div></div>
+  <main class="workspace">
+    <div class="stagehead"><div><div class="stage-kicker" id="kicker"></div><h1 id="title"></h1></div><button class="help" id="helpBtn">❔ Βοήθεια</button></div>
+    <p class="instruction" id="instruction"></p>
+    <div class="feedback" id="feedback"></div>
+    <section class="activity" id="activity"></section>
+  </main>
+</div>
+<div class="modal" id="helpModal"><div class="modal-box"><h3>Βοήθεια</h3><p id="helpText"></p><div class="modal-actions"><button class="secondary-btn" id="speakHelp">🔊 Άκουσε</button><button class="primary" id="closeHelp">Το κατάλαβα</button></div></div></div>
+<script>
+(()=>{'use strict';
+const activity=document.getElementById('activity'),feedback=document.getElementById('feedback');
+let stage=0,completed=new Set(),selfChoice=null;const total=9;
+const stages=[
+ {title:'Ο συνολικός χρόνος μετράει',instruction:'Διάλεξε την πρόταση που συμφωνεί με το μάθημα.',help:'Ο χρόνος ενασχόλησης με ψηφιακές συσκευές είναι ο συνολικός χρόνος μπροστά σε οθόνες. Δεν ξεκινά από την αρχή όταν αλλάζεις συσκευή.'},
+ {title:'Χρόνος, όρια και διαλείμματα',instruction:'Διάλεξε το πρόγραμμα χρήσης που εφαρμόζει όσα αναφέρει το μάθημα.',help:'Στο μάθημα αναφέρεται ότι ο χρόνος πρέπει να έχει κανόνες που ορίζονται μαζί με τους γονείς, με στόχο να περιορίζεται σε δύο ώρες την ημέρα και να υπάρχουν τακτικά διαλείμματα.'},
+ {title:'Τρεις βασικοί κανόνες',instruction:'Σύνδεσε κάθε περίπτωση με τον κανόνα που ταιριάζει.',help:'Σύρε μια γραμμή από κάθε περίπτωση προς τον κατάλληλο κανόνα. Αν η σύνδεση είναι λάθος, η γραμμή θα εξαφανιστεί.'},
+ {title:'Γιατί χρειάζομαι το διαδίκτυο;',instruction:'Διάλεξε τη χρήση που έχει έναν σαφή σκοπό πριν συνδεθείς.',help:'Το μάθημα σε καλεί να σκέφτεσαι πρώτα ποιες είναι οι ανάγκες σου για να χρησιμοποιήσεις το διαδίκτυο.'},
+ {title:'Κανόνες οικογένειας και σχολείου',instruction:'Διάλεξε την ενέργεια που εφαρμόζει συμφωνημένους κανόνες πρόσβασης.',help:'Σκέψου τους κανόνες της οικογένειας και του σχολείου, καθώς και σε ποιους ιστοτόπους, εφαρμογές, προγράμματα ή ταινίες επιτρέπεται να έχεις πρόσβαση.'},
+ {title:'Προσωπικές πληροφορίες',instruction:'Επίλεξε ό,τι δεν πρέπει να μοιράζεσαι με άλλους στο διαδίκτυο.',help:'Το μάθημα αναφέρει ότι υπεύθυνη χρήση σημαίνει να μη μοιράζεσαι προσωπικές πληροφορίες, όπως τη διεύθυνση και τον αριθμό τηλεφώνου σου.'},
+ {title:'Ζώνες χωρίς τεχνολογία και ποιότητα χρόνου',instruction:'Ολοκλήρωσε τα δύο μικρά μέρη της δραστηριότητας.',help:'Το μάθημα προτείνει ζώνες χωρίς τεχνολογία, όπως το μεσημεριανό τραπέζι ή τα παιχνίδια στο προαύλιο. Επίσης ξεχωρίζει την ποσότητα του χρόνου από την ποιότητα: άλλο να είσαι παθητικός θεατής και άλλο να δημιουργείς ένα ψηφιακό έργο.'},
+ {title:'Συνολική δοκιμή',instruction:'Απάντησε στις ερωτήσεις χρησιμοποιώντας όσα έμαθες.',help:'Έλεγξε μία-μία τις ερωτήσεις. Θυμήσου τον συνολικό χρόνο, τα διαλείμματα, τους τρεις βασικούς κανόνες, τις προσωπικές πληροφορίες, τις ζώνες χωρίς τεχνολογία και την ποιότητα του χρόνου.'},
+ {title:'Τι έμαθα;',instruction:'Διάλεξε το πρόσωπο που ταιριάζει περισσότερο στο πώς νιώθεις για όσα έμαθες.',help:'Αυτή είναι η αυτοαξιολόγησή σου. Δεν υπάρχει σωστή ή λάθος επιλογή.'}
+];
+function shuffled(a){return [...a].sort(()=>Math.random()-.5)}
+function speak(t){if(!('speechSynthesis'in window))return;speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(t);u.lang='el-GR';u.rate=.86;speechSynthesis.speak(u)}
+function updateProgress(){document.getElementById('progressText').textContent=`${stage+1} / ${total}`;document.getElementById('progressFill').style.width=`${(completed.size/total)*100}%`;const dots=document.getElementById('stepdots');dots.innerHTML='';for(let i=0;i<total;i++){const d=document.createElement('div');d.className='stepdot'+(i===stage?' active':'')+(completed.has(i)?' done':'');d.textContent=i+1;dots.appendChild(d)}}
+function setFeedback(t,ok){feedback.className='feedback '+(ok===true?'good':ok===false?'bad':'info');feedback.textContent=t}
+function clearFeedback(){feedback.className='feedback';feedback.textContent=''}
+function advance(delay=900){completed.add(stage);updateProgress();setTimeout(()=>{if(stage<total-1){stage++;render()}},delay)}
+function selectOne(selector,el){document.querySelectorAll(selector).forEach(x=>x.classList.remove('selected'));el.classList.add('selected')}
+
+/* 1 */
+let a1=null;
+function r1(){a1=null;activity.innerHTML=`<div class="hero"><h3>Μία μέρα, πολλές συσκευές</h3><p>Ένας μαθητής χρησιμοποιεί διαφορετικές ψηφιακές συσκευές μέσα στην ίδια μέρα.</p><div class="sum-strip"><div class="sum-chip">Ταμπλέτα<strong>πρωί</strong></div><div class="sum-chip">Υπολογιστής<strong>μεσημέρι</strong></div><div class="sum-chip">Κινητό<strong>απόγευμα</strong></div></div></div><div class="choice-grid">${shuffled([
+ ['total','Ο χρόνος από όλες τις ψηφιακές συσκευές υπολογίζεται μαζί.'],['reset','Κάθε φορά που αλλάζω συσκευή, ο χρόνος ξεκινά πάλι από την αρχή.'],['computer','Μετράει μόνο ο χρόνος στον υπολογιστή.']
+ ]).map(x=>`<button class="choice" data-v="${x[0]}" onclick="pick1(this)">${x[1]}</button>`).join('')}</div><button class="primary center-btn" onclick="check1()">Έλεγχος</button>`}
+function pick1(el){a1=el.dataset.v;selectOne('.choice',el);setFeedback('Η επιλογή καταγράφηκε.',null)}
+function check1(){if(!a1)return setFeedback('Διάλεξε πρώτα μία πρόταση.',false);if(a1!=='total')return setFeedback('Ξανασκέψου τι σημαίνει «συνολικός χρόνος» μπροστά σε οθόνες.',false);setFeedback('Σωστά! Ο χρόνος υπολογίζεται συνολικά, ανεξάρτητα από τη συσκευή.',true);advance()}
+
+/* 2 */
+let a2=null;
+function r2(){a2=null;const plans=shuffled([
+ {id:'balanced',title:'Πρόγραμμα Α',items:['Ο χρόνος έχει συμφωνηθεί μαζί με τους γονείς.','Στόχος: έως δύο ώρες μέσα στην ημέρα.','Υπάρχουν τακτικά διαλείμματα.','Μένει χρόνος και για δραστηριότητες χωρίς οθόνη.']},
+ {id:'unlimited',title:'Πρόγραμμα Β',items:['Χρησιμοποιώ συσκευές όσο θέλω.','Δεν χρειάζονται διαλείμματα.','Αλλάζω συσκευή όταν κουράζομαι.','Δεν υπάρχουν συμφωνημένοι κανόνες.']}
+]);activity.innerHTML=`<div class="plan-grid">${plans.map(p=>`<button class="plan" data-id="${p.id}" onclick="pick2(this)"><h3>${p.title}</h3><ul>${p.items.map(i=>`<li>${i}</li>`).join('')}</ul></button>`).join('')}</div><button class="primary center-btn" onclick="check2()">Έλεγχος</button>`}
+function pick2(el){a2=el.dataset.id;selectOne('.plan',el);setFeedback('Η επιλογή καταγράφηκε.',null)}
+function check2(){if(!a2)return setFeedback('Διάλεξε πρώτα ένα πρόγραμμα.',false);if(a2!=='balanced')return setFeedback('Αυτό το πρόγραμμα δεν εφαρμόζει τα όρια και τα διαλείμματα του μαθήματος.',false);setFeedback('Σωστά! Συμφωνημένοι κανόνες, όριο χρόνου και τακτικά διαλείμματα ταιριάζουν με το μάθημα.',true);advance()}
+
+/* 3 - drag line matching */
+const matchPairs={m1:'r1',m2:'r2',m3:'r3'};let matched=new Set(),dragStart=null,tempLine=null;
+function r3(){matched=new Set();const left=shuffled([
+ {id:'m1',t:'Ανεβάζω κάτι για κοινή χρήση στο διαδίκτυο.'},
+ {id:'m2',t:'Ανεβάζω κάτι και αργότερα αλλάζω γνώμη.'},
+ {id:'m3',t:'Διαβάζω μια πληροφορία σε μια ιστοσελίδα.'}
+]);const right=shuffled([
+ {id:'r1',t:'Αυτό που αναρτώ γίνεται δημόσιο.'},
+ {id:'r2',t:'Αυτό που αναρτώ μπορεί να μείνει εκεί για πάντα.'},
+ {id:'r3',t:'Δεν σημαίνει ότι η πληροφορία είναι σωστή ή αξιόπιστη.'}
+]);activity.innerHTML=`<div class="rule-board"><div class="rule-card"><span class="n">1</span><p>Ό,τι αναρτάς γίνεται «δημόσιο».</p></div><div class="rule-card"><span class="n">2</span><p>Ό,τι αναρτάς μένει στο διαδίκτυο.</p></div><div class="rule-card"><span class="n">3</span><p>Ό,τι διαβάζεις δεν είναι απαραίτητα σωστό ή αξιόπιστο.</p></div></div><div class="match-instructions">Σύρε από την τελεία μιας περίπτωσης προς την τελεία του σωστού κανόνα.</div><div class="match-wrap" id="matchWrap"><svg class="match-svg" id="matchSvg"></svg><div class="match-col">${left.map(x=>`<div class="match-card left" data-id="${x.id}"><span>${x.t}</span><span class="dot" data-side="left" data-id="${x.id}"></span></div>`).join('')}</div><div class="match-col">${right.map(x=>`<div class="match-card right" data-id="${x.id}"><span class="dot" data-side="right" data-id="${x.id}"></span><span>${x.t}</span></div>`).join('')}</div></div>`;bindMatch()}
+function pointFor(dot){const wrap=document.getElementById('matchWrap').getBoundingClientRect(),r=dot.getBoundingClientRect();return{x:r.left+r.width/2-wrap.left,y:r.top+r.height/2-wrap.top}}
+function addLine(a,b,temporary=false){const svg=document.getElementById('matchSvg');const p1=pointFor(a),p2=b instanceof Element?pointFor(b):b;const line=document.createElementNS('http://www.w3.org/2000/svg','line');line.setAttribute('x1',p1.x);line.setAttribute('y1',p1.y);line.setAttribute('x2',p2.x);line.setAttribute('y2',p2.y);line.setAttribute('stroke',temporary?'#84648F':'#545F99');line.setAttribute('stroke-width',temporary?'4':'5');line.setAttribute('stroke-linecap','round');if(temporary)line.setAttribute('stroke-dasharray','8 7');svg.appendChild(line);return line}
+function redrawMatches(){const svg=document.getElementById('matchSvg');svg.innerHTML='';matched.forEach(id=>{const a=document.querySelector(`.dot[data-side="left"][data-id="${id}"]`),b=document.querySelector(`.dot[data-side="right"][data-id="${matchPairs[id]}"]`);if(a&&b)addLine(a,b,false)})}
+function bindMatch(){const wrap=document.getElementById('matchWrap');wrap.querySelectorAll('.dot[data-side="left"]').forEach(d=>d.addEventListener('pointerdown',e=>{if(matched.has(d.dataset.id))return;e.preventDefault();dragStart=d;d.setPointerCapture?.(e.pointerId);const r=wrap.getBoundingClientRect();tempLine=addLine(d,{x:e.clientX-r.left,y:e.clientY-r.top},true)}));wrap.addEventListener('pointermove',e=>{if(!dragStart||!tempLine)return;const r=wrap.getBoundingClientRect();tempLine.setAttribute('x2',e.clientX-r.left);tempLine.setAttribute('y2',e.clientY-r.top)});wrap.addEventListener('pointerup',e=>{if(!dragStart)return;const target=document.elementFromPoint(e.clientX,e.clientY)?.closest('.dot[data-side="right"]');if(tempLine)tempLine.remove();const leftId=dragStart.dataset.id;dragStart=null;tempLine=null;if(!target||target.dataset.id!==matchPairs[leftId]){setFeedback('Η σύνδεση δεν ταιριάζει. Η γραμμή εξαφανίστηκε.',false);return}matched.add(leftId);document.querySelector(`.match-card.left[data-id="${leftId}"]`).classList.add('done');document.querySelector(`.match-card.right[data-id="${target.dataset.id}"]`).classList.add('done');redrawMatches();if(matched.size===3){setFeedback('Μπράβο! Σύνδεσες σωστά και τους τρεις βασικούς κανόνες.',true);advance()}else setFeedback('Σωστή σύνδεση! Συνέχισε.',true)});window.addEventListener('resize',redrawMatches,{once:true})}
+
+/* 4 */
+let a4=null;
+function r4(){a4=null;const opts=shuffled([
+ ['purpose','Θέλω να βρω πληροφορίες για μια σχολική εργασία, οπότε συνδέομαι για αυτόν τον σκοπό.'],
+ ['nopurpose','Ανοίγω εφαρμογές και ιστοσελίδες χωρίς να έχω σκεφτεί τι χρειάζομαι.'],
+ ['endless','Συνδέομαι μόνο και μόνο για να μείνω όσο περισσότερο γίνεται online.']
+]);activity.innerHTML=`<div class="scenario"><h3>Πριν συνδεθώ...</h3><p>Σκέφτομαι πρώτα ποια ανάγκη θέλω να καλύψω.</p></div><div class="choice-grid">${opts.map(o=>`<button class="choice" data-v="${o[0]}" onclick="pick4(this)">${o[1]}</button>`).join('')}</div><button class="primary center-btn" onclick="check4()">Έλεγχος</button>`}
+function pick4(el){a4=el.dataset.v;selectOne('.choice',el);setFeedback('Η επιλογή καταγράφηκε.',null)}
+function check4(){if(!a4)return setFeedback('Διάλεξε πρώτα μία χρήση.',false);if(a4!=='purpose')return setFeedback('Ξανασκέψου ποια επιλογή ξεκινά από μια συγκεκριμένη ανάγκη.',false);setFeedback('Σωστά! Ένας σαφής σκοπός σε βοηθά να χρησιμοποιείς το διαδίκτυο πιο συνειδητά.',true);advance()}
+
+/* 5 */
+let a5=null;
+function r5(){a5=null;const opts=shuffled([
+ ['rules','Πριν ανοίξω έναν νέο ιστότοπο ή εφαρμογή, ελέγχω αν επιτρέπεται από τους κανόνες της οικογένειας και του σχολείου.'],
+ ['ignore','Ανοίγω όποιον ιστότοπο ή εφαρμογή θέλω, ακόμη κι αν οι κανόνες λένε κάτι διαφορετικό.'],
+ ['secret','Αν κάτι δεν επιτρέπεται, το χρησιμοποιώ κρυφά ώστε να μη το μάθει κανείς.']
+]);activity.innerHTML=`<div class="scenario"><h3>Νέος ιστότοπος ή εφαρμογή</h3><p>Ποια ενέργεια εφαρμόζει τους συμφωνημένους κανόνες πρόσβασης;</p></div><div class="choice-grid">${opts.map(o=>`<button class="choice" data-v="${o[0]}" onclick="pick5(this)">${o[1]}</button>`).join('')}</div><button class="primary center-btn" onclick="check5()">Έλεγχος</button>`}
+function pick5(el){a5=el.dataset.v;selectOne('.choice',el);setFeedback('Η επιλογή καταγράφηκε.',null)}
+function check5(){if(!a5)return setFeedback('Διάλεξε πρώτα μία ενέργεια.',false);if(a5!=='rules')return setFeedback('Η επιλογή αυτή δεν εφαρμόζει τους κανόνες που έχουν συμφωνηθεί.',false);setFeedback('Σωστά! Οι κανόνες της οικογένειας και του σχολείου καθοδηγούν και την πρόσβαση σε περιεχόμενο.',true);advance()}
+
+/* 6 */
+let selectedPrivate=new Set();
+function r6(){selectedPrivate=new Set();const items=shuffled([
+ ['address','Διεύθυνση κατοικίας',true],['phone','Αριθμός τηλεφώνου',true],['project','Τίτλος μιας σχολικής εργασίας',false],['color','Αγαπημένο χρώμα',false]
+]);activity.innerHTML=`<div class="note">Το μάθημα δίνει ως παραδείγματα προσωπικών πληροφοριών τη διεύθυνση και τον αριθμό τηλεφώνου.</div><div class="mini-grid">${items.map(x=>`<button class="mini-card" data-id="${x[0]}" data-correct="${x[2]}" onclick="toggle6(this)">${x[1]}</button>`).join('')}</div><button class="primary center-btn" onclick="check6()">Έλεγχος</button>`}
+function toggle6(el){const id=el.dataset.id;if(selectedPrivate.has(id)){selectedPrivate.delete(id);el.classList.remove('selected')}else{selectedPrivate.add(id);el.classList.add('selected')}setFeedback('Η επιλογή ενημερώθηκε.',null)}
+function check6(){const cards=[...document.querySelectorAll('.mini-card')];if(selectedPrivate.size===0)return setFeedback('Κάνε πρώτα την επιλογή σου.',false);const wrong=cards.some(c=>selectedPrivate.has(c.dataset.id)!==(c.dataset.correct==='true'));if(wrong)return setFeedback('Κάποια επιλογή χρειάζεται διόρθωση. Θυμήσου τα παραδείγματα του μαθήματος.',false);setFeedback('Σωστά! Δεν μοιράζεσαι προσωπικές πληροφορίες όπως τη διεύθυνση και το τηλέφωνό σου.',true);advance()}
+
+/* 7 */
+let zoneChoice=null,qualityChoice=null,phase7=0;
+function r7(){phase7=0;zoneChoice=null;qualityChoice=null;render7Zones()}
+function render7Zones(){document.getElementById('instruction').textContent='Πρώτα διάλεξε ποιο παράδειγμα είναι ζώνη χωρίς τεχνολογία, όπως προτείνει το μάθημα.';const opts=shuffled([
+ ['lunch','Μεσημεριανό τραπέζι χωρίς ψηφιακές συσκευές'],['search','Χρήση του διαδικτύου για σχολική αναζήτηση'],['video','Παρακολούθηση ενός διαδικτυακού βίντεο']
+]);activity.innerHTML=`<div class="zone-grid">${opts.map(o=>`<button class="zone" data-v="${o[0]}" onclick="pick7Zone(this)"><h3>${o[1]}</h3></button>`).join('')}</div><button class="primary center-btn" onclick="check7Zone()">Έλεγχος</button>`}
+function pick7Zone(el){zoneChoice=el.dataset.v;selectOne('.zone',el);setFeedback('Η επιλογή καταγράφηκε.',null)}
+function check7Zone(){if(!zoneChoice)return setFeedback('Διάλεξε πρώτα μία επιλογή.',false);if(zoneChoice!=='lunch')return setFeedback('Ξανασκέψου ποιο παράδειγμα είναι χώρος ή στιγμή όπου τηρείται χωρίς τεχνολογία.',false);setFeedback('Σωστά! Το μεσημεριανό τραπέζι αναφέρεται ως παράδειγμα ζώνης χωρίς τεχνολογία.',true);setTimeout(render7Quality,700)}
+function render7Quality(){phase7=1;qualityChoice=null;document.getElementById('instruction').textContent='Τώρα διάλεξε τη χρήση που δίνει περισσότερο «ποιότητα» στον χρόνο σου σύμφωνα με το παράδειγμα του μαθήματος.';activity.innerHTML=`<div class="quality-box"><h3>Ποσότητα ≠ ποιότητα</h3><div class="quality-pair"><button class="zone" data-v="passive" onclick="pick7Quality(this)"><h3>Παθητικός θεατής</h3><div class="quality-item">Παρακολουθώ πληροφορίες χωρίς να δημιουργώ κάτι.</div></button><button class="zone" data-v="create" onclick="pick7Quality(this)"><h3>Δημιουργώ</h3><div class="quality-item">Χρησιμοποιώ το διαδίκτυο για να δημιουργήσω ένα ψηφιακό έργο.</div></button></div></div><button class="primary center-btn" onclick="check7Quality()">Έλεγχος</button>`}
+function pick7Quality(el){qualityChoice=el.dataset.v;selectOne('.zone',el);setFeedback('Η επιλογή καταγράφηκε.',null)}
+function check7Quality(){if(!qualityChoice)return setFeedback('Διάλεξε πρώτα μία επιλογή.',false);if(qualityChoice!=='create')return setFeedback('Το μάθημα ξεχωρίζει την παθητική κατανάλωση από τη δημιουργία ενός ψηφιακού έργου.',false);setFeedback('Σωστά! Δεν μετρά μόνο πόσο χρόνο χρησιμοποιείς μια οθόνη, αλλά και πώς αξιοποιείς αυτόν τον χρόνο.',true);advance()}
+
+/* 8 */
+const overallQs=[
+ {id:'q1',q:'Πώς υπολογίζεται ο χρόνος ενασχόλησης με ψηφιακές συσκευές;',a:'Συνολικά από όλες τις οθόνες και συσκευές',opts:['Συνολικά από όλες τις οθόνες και συσκευές','Μόνο από τον υπολογιστή','Ξεκινά από την αρχή όταν αλλάζω συσκευή']},
+ {id:'q2',q:'Ποια συνήθεια αναφέρει το μάθημα μαζί με το όριο χρόνου;',a:'Τακτικά διαλείμματα',opts:['Τακτικά διαλείμματα','Χρήση χωρίς διακοπή','Αλλαγή συσκευής όταν κουράζομαι']},
+ {id:'q3',q:'Τι ισχύει για ό,τι αναρτάς στο διαδίκτυο;',a:'Γίνεται δημόσιο και μπορεί να μείνει εκεί',opts:['Γίνεται δημόσιο και μπορεί να μείνει εκεί','Το βλέπεις μόνο εσύ','Εξαφανίζεται πάντα όταν το διαγράψεις']},
+ {id:'q4',q:'Τι ισχύει για τις πληροφορίες που διαβάζεις στο διαδίκτυο;',a:'Δεν είναι απαραίτητα σωστές ή αξιόπιστες',opts:['Δεν είναι απαραίτητα σωστές ή αξιόπιστες','Είναι πάντα σωστές','Είναι σωστές μόνο επειδή εμφανίζονται πρώτες']},
+ {id:'q5',q:'Ποιο παράδειγμα προσωπικής πληροφορίας αναφέρεται στο μάθημα;',a:'Αριθμός τηλεφώνου',opts:['Αριθμός τηλεφώνου','Τίτλος σχολικής εργασίας','Αγαπημένο χρώμα']},
+ {id:'q6',q:'Ποιο παράδειγμα αναφέρεται ως ζώνη χωρίς τεχνολογία;',a:'Μεσημεριανό τραπέζι',opts:['Μεσημεριανό τραπέζι','Πλαίσιο αναζήτησης','Εφαρμογή ζωγραφικής']},
+ {id:'q7',q:'Ποια χρήση δίνεται ως παράδειγμα χρόνου με περισσότερη «ποιότητα»;',a:'Δημιουργώ ένα ψηφιακό έργο',opts:['Δημιουργώ ένα ψηφιακό έργο','Είμαι μόνο παθητικός θεατής','Μένω συνδεδεμένος χωρίς σκοπό']}
+];let overallAnswers={};
+function r8(){overallAnswers={};activity.innerHTML=`<div class="overall">${shuffled(overallQs).map(q=>`<div class="qcard"><div class="qprompt">${q.q}</div><div class="answer-row">${shuffled(q.opts).map(o=>`<button class="answer" data-q="${q.id}" data-v="${encodeURIComponent(o)}" onclick="pickOverall(this)">${o}</button>`).join('')}</div></div>`).join('')}</div><button class="primary center-btn" onclick="check8()">Έλεγχος</button>`}
+function pickOverall(el){const q=el.dataset.q;overallAnswers[q]=decodeURIComponent(el.dataset.v);document.querySelectorAll(`.answer[data-q="${q}"]`).forEach(x=>x.classList.remove('selected'));el.classList.add('selected');setFeedback('Η επιλογή καταγράφηκε.',null)}
+function check8(){if(Object.keys(overallAnswers).length!==overallQs.length)return setFeedback('Απάντησε πρώτα σε όλες τις ερωτήσεις.',false);if(overallQs.some(q=>overallAnswers[q.id]!==q.a))return setFeedback('Κάποια απάντηση χρειάζεται διόρθωση. Έλεγξε ξανά τις επιλογές σου.',false);setFeedback('Εξαιρετικά! Ολοκλήρωσες τη συνολική δοκιμή.',true);advance()}
+
+/* 9 */
+function r9(){selfChoice=null;activity.innerHTML=`<div class="final-box"><div class="summary">Έμαθες να χρησιμοποιείς κανόνες και όρια για τον συνολικό χρόνο μπροστά σε οθόνες, να κάνεις τακτικά διαλείμματα, να προστατεύεις προσωπικές πληροφορίες, να θυμάσαι ότι οι πληροφορίες στο διαδίκτυο δεν είναι πάντα αξιόπιστες και να σκέφτεσαι την ποιότητα του χρόνου σου.</div><div class="faces"><button class="face" onclick="pickSelf(1,this)"><span>🙂</span>Χρειάζομαι λίγη ακόμη εξάσκηση</button><button class="face" onclick="pickSelf(2,this)"><span>😊</span>Μπορώ να εφαρμόζω τους περισσότερους κανόνες με λίγη βοήθεια</button><button class="face" onclick="pickSelf(3,this)"><span>😎</span>Μπορώ να εξηγώ και να εφαρμόζω τους κανόνες και τα όρια</button></div><button class="primary center-btn" onclick="finish()">Ολοκλήρωση</button><button class="repeat" onclick="restart()">↻ Επανάληψη δραστηριότητας</button></div>`}
+function pickSelf(v,el){selfChoice=v;document.querySelectorAll('.face').forEach(x=>x.classList.remove('sel'));el.classList.add('sel');setFeedback('Η επιλογή αυτοαξιολόγησης καταγράφηκε.',null)}
+function finish(){if(!selfChoice)return setFeedback('Επίλεξε πρώτα μία επιλογή αυτοαξιολόγησης.',false);completed.add(stage);updateProgress();setFeedback('Μπράβο! Ολοκλήρωσες το Μάθημα 30.',true)}
+function restart(){stage=0;completed=new Set();selfChoice=null;render()}
+
+const renderers=[r1,r2,r3,r4,r5,r6,r7,r8,r9];
+function render(){clearFeedback();updateProgress();const s=stages[stage];document.getElementById('kicker').textContent=`Δραστηριότητα ${stage+1}`;document.getElementById('title').textContent=s.title;document.getElementById('instruction').textContent=s.instruction;renderers[stage]();window.scrollTo({top:0,behavior:'smooth'})}
+Object.assign(window,{pick1,check1,pick2,check2,pick4,check4,pick5,check5,toggle6,check6,pick7Zone,check7Zone,pick7Quality,check7Quality,pickOverall,check8,pickSelf,finish,restart});
+const modal=document.getElementById('helpModal'),helpText=document.getElementById('helpText');document.getElementById('helpBtn').onclick=()=>{helpText.textContent=stages[stage].help;modal.classList.add('open')};document.getElementById('closeHelp').onclick=()=>modal.classList.remove('open');document.getElementById('speakHelp').onclick=()=>speak(helpText.textContent);modal.onclick=e=>{if(e.target===modal)modal.classList.remove('open')};
+render();
+})();
+</script>
+
+<footer class="nk-license" aria-label="Πληροφορίες δημιουργού και άδειας χρήσης">
+  <div><strong>Created by Nikos Kalakos · © 2026</strong></div>
+  <div>Original educational content and simulation design licensed under <a class="cc-badge" href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank" rel="license noopener noreferrer">CC BY-NC 4.0</a>.</div>
+  <div>Source code © 2026 Nikos Kalakos.</div>
+  <div>Third-party and textbook materials remain subject to the rights and licences of their respective copyright holders.</div>
+</footer></body>
+</html>

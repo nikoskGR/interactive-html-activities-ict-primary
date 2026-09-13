@@ -1,0 +1,764 @@
+<!--
+ICT Educational Simulation
+Created by Nikos Kalakos
+Copyright © 2026 Nikos Kalakos
+
+Original educational content and simulation design licensed under CC BY-NC 4.0.
+Source code © 2026 Nikos Kalakos.
+Third-party and textbook materials remain subject to the rights and licences of their respective copyright holders.
+-->
+<!doctype html>
+<html lang="el">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="author" content="Nikos Kalakos">
+<meta name="copyright" content="© 2026 Nikos Kalakos">
+<meta name="license" content="Original educational content and simulation design: CC BY-NC 4.0; source code © 2026 Nikos Kalakos; third-party and textbook materials excluded.">
+<style id="nk-license-style">
+.nk-license{max-width:1100px;margin:14px auto 24px;padding:10px 16px;text-align:center;font:13px/1.45 Arial,"Noto Sans",sans-serif;color:#4e657c}
+.nk-license a{color:inherit;text-decoration:underline;text-underline-offset:2px}
+.nk-license .cc-badge{display:inline-block;margin:0 4px;padding:2px 7px;border:1px solid #8aa0b8;border-radius:6px;background:#fff;font-weight:700;white-space:nowrap}
+</style>
+<title>Μάθημα 3 - Οι υπολογιστές παίρνουν αποφάσεις</title>
+<style>
+:root{
+  --unit-blue:#0F5575;
+  --unit-blue-dark:#0A3F58;
+  --unit-blue-soft:#EAF5FA;
+  --unit-purple:#5B62A2;
+  --unit-purple-dark:#464C82;
+  --unit-purple-soft:#EEF0FA;
+  --roe:#5B4EB5;
+  --roe-dark:#433782;
+  --ink:#243248;
+  --muted:#68768B;
+  --line:#CFD7E2;
+  --good:#EDF7DE;
+  --bad:#FFF0ED;
+  --decision:#67AD45;
+  --connector:#5D6C7E;
+  --shadow:0 8px 24px rgba(35,49,71,.10);
+}
+*{box-sizing:border-box}
+body{margin:0;background:#F4F7FA;color:var(--ink);font-family:Arial,"Noto Sans",sans-serif}
+button{font:inherit;cursor:pointer}
+button:focus-visible{outline:4px solid #F0B83A;outline-offset:3px}
+.shell{max-width:1220px;margin:auto;padding:14px}
+.coursebar{
+  min-height:58px;background:var(--unit-blue);color:#fff;border-radius:17px 17px 8px 8px;
+  display:flex;align-items:center;justify-content:space-between;gap:20px;padding:10px 18px;
+  box-shadow:var(--shadow)
+}
+.unit-label{font-size:14px;font-weight:900;letter-spacing:.2px;opacity:.92}
+.lesson-name{font-size:26px;font-weight:900;margin-top:2px}
+.lesson-number{
+  min-width:50px;height:42px;padding:0 14px;border-radius:12px;background:#fff;color:var(--unit-blue);
+  display:grid;place-items:center;font-size:18px;font-weight:900
+}
+.progress-wrap{
+  background:#fff;border:2px solid #D8E0E9;border-top:0;border-radius:0 0 17px 17px;
+  padding:10px 16px 11px;display:flex;align-items:center;gap:14px
+}
+.progress-text{font-size:13px;font-weight:900;color:var(--muted);white-space:nowrap}
+.progress-line{height:8px;flex:1;background:#E4E9F0;border-radius:7px;overflow:hidden}
+.progress-fill{height:100%;background:var(--unit-purple);width:0;transition:.25s}
+.stepdots{display:flex;gap:7px}
+.stepdot{
+  width:30px;height:30px;border-radius:9px;background:#fff;border:2px solid #B6C0CE;color:#647187;
+  display:grid;place-items:center;font-size:13px;font-weight:900
+}
+.stepdot.active{background:var(--unit-purple);border-color:var(--unit-purple-dark);color:#fff}
+.stepdot.done{background:var(--unit-blue);border-color:var(--unit-blue-dark);color:#fff}
+.workspace{
+  margin-top:14px;background:#fff;border:2px solid #D8E0E9;border-radius:18px;box-shadow:var(--shadow);
+  min-height:710px;padding:18px
+}
+.stagehead{
+  display:grid;grid-template-columns:1fr auto;gap:16px;align-items:start;
+  border-bottom:2px solid #E4E9EF;padding-bottom:13px
+}
+.stage-kicker{font-size:13px;font-weight:900;color:var(--unit-purple);text-transform:uppercase;letter-spacing:.4px}
+.stagehead h1{font-size:31px;margin:4px 0 0}
+.help{
+  border:2px solid #9AC6D8;background:var(--unit-blue-soft);color:var(--unit-blue-dark);
+  border-radius:11px;padding:9px 15px;font-weight:900
+}
+.instruction{
+  max-width:980px;margin:15px auto 17px;text-align:center;font-size:20px;font-weight:800;line-height:1.42
+}
+.activity{
+  max-width:1050px;margin:auto;border:2px solid #D9E0E9;border-radius:17px;
+  background:#FBFCFE;padding:18px;min-height:490px
+}
+.feedback{
+  display:none;max-width:870px;margin:14px auto 0;border-radius:12px;padding:11px 16px;
+  text-align:center;font-weight:900;font-size:17px
+}
+.feedback.good{display:block;background:var(--good);border:2px solid #9DBD57}
+.feedback.bad{display:block;background:var(--bad);border:2px solid #E2A096}
+.primary{
+  border:0;border-radius:11px;background:var(--unit-purple);color:#fff;padding:11px 24px;
+  font-weight:900;font-size:18px;box-shadow:0 4px 0 var(--unit-purple-dark)
+}
+.primary:active{transform:translateY(2px);box-shadow:0 2px 0 var(--unit-purple-dark)}
+.center-btn{display:block;margin:16px auto 0}
+.note{font-size:13px;color:var(--muted);text-align:center;font-weight:800;margin-top:8px}
+
+/* Stage 1 */
+.decision-intro{max-width:900px;margin:auto;display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.rule-card,.question-card{
+  border:2px solid #CCD5DF;border-radius:15px;background:#fff;padding:18px
+}
+.rule-card{
+  background:var(--unit-blue-soft);border-left:6px solid var(--unit-blue);
+  font-size:22px;font-weight:900;line-height:1.45;display:grid;place-items:center;text-align:center
+}
+.question-card h3{margin:0 0 12px;text-align:center}
+.weather-status{
+  width:128px;height:128px;border-radius:28px;background:#DDEAF2;margin:0 auto 14px;
+  display:grid;place-items:center;font-size:68px;border:3px solid #AFC3D1
+}
+.two-options{display:grid;grid-template-columns:1fr 1fr;gap:11px}
+.option{
+  min-height:78px;border:2px solid #AEB9C7;border-radius:11px;background:#fff;padding:11px;font-weight:900
+}
+
+/* Stage 2: symbols */
+.symbol-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;max-width:900px;margin:auto}
+.symbol-card{
+  border:2px solid #CBD4DF;border-radius:15px;background:#fff;padding:15px;
+  min-height:190px;text-align:center
+}
+.symbol-view{height:94px;display:grid;place-items:center}
+.flow-rect{width:150px;height:58px;border:3px solid #5D6B7D;border-radius:10px;background:#fff;display:grid;place-items:center;font-weight:900}
+.flow-diamond{
+  width:130px;height:78px;background:var(--decision);border:3px solid #4D7538;
+  clip-path:polygon(50% 0,100% 50%,50% 100%,0 50%);display:grid;place-items:center;font-weight:900;padding:15px 27px
+}
+.flow-arrow{width:150px;height:4px;background:var(--connector);position:relative}
+.flow-arrow:after{content:"";position:absolute;right:-1px;top:-6px;border-left:11px solid var(--connector);border-top:7px solid transparent;border-bottom:7px solid transparent}
+.symbol-options{display:grid;gap:7px}
+.symbol-choice{border:2px solid #AEB8C5;border-radius:9px;background:#fff;padding:8px;font-weight:900}
+
+/* Roe shell */
+.roe{
+  max-width:940px;margin:auto;border:5px solid #3F475C;border-radius:20px;overflow:hidden;background:#fff;
+  box-shadow:0 12px 28px rgba(20,28,45,.18)
+}
+.roe-title{
+  height:40px;background:linear-gradient(90deg,var(--roe),#7764D0);color:#fff;
+  display:flex;align-items:center;justify-content:space-between;padding:0 12px;font-weight:900
+}
+.roe-controls{letter-spacing:7px}
+.roe-menu{
+  height:34px;background:#F0F2F6;border-bottom:2px solid #D8DDE5;
+  display:flex;align-items:center;gap:17px;padding:0 11px;font-size:13px;font-weight:900
+}
+.roe-toolbar{
+  height:46px;background:#FAFBFC;border-bottom:2px solid #E0E4EA;
+  display:flex;align-items:center;gap:7px;padding:6px 9px
+}
+.roe-tool{
+  min-width:38px;height:32px;border:2px solid #B7C0CC;border-radius:8px;background:#fff;
+  display:grid;place-items:center;font-size:12px;font-weight:900;padding:0 8px
+}
+.roe-tool.active{border-color:var(--roe);background:#F1EEFB}
+.roe-main{display:grid;grid-template-columns:150px 1fr;height:430px}
+.roe-palette{background:#F5F7FA;border-right:2px solid #D7DDE5;padding:8px}
+.roe-palette h4{text-align:center;margin:2px 0 8px}
+.palette-block{
+  width:100%;border:2px solid #AAB5C3;border-radius:10px;background:#fff;margin:7px 0;padding:8px;
+  min-height:70px;font-size:12px;font-weight:900;text-align:center;display:grid;place-items:center
+}
+.mini-rect{width:90px;height:32px;border:2px solid #647487;border-radius:7px;background:#fff;display:grid;place-items:center}
+.mini-diamond{
+  width:65px;height:42px;background:var(--decision);border:2px solid #4D7538;
+  clip-path:polygon(50% 0,100% 50%,50% 100%,0 50%)
+}
+.roe-canvas{
+  position:relative;overflow:hidden;background:
+    linear-gradient(#E8EDF2 1px,transparent 1px),
+    linear-gradient(90deg,#E8EDF2 1px,transparent 1px),
+    #fff;
+  background-size:24px 24px
+}
+.flow-svg{position:absolute;inset:0;width:100%;height:100%;z-index:2;pointer-events:none}
+.flow-node{
+  position:absolute;z-index:5;border:3px solid #5D6B7D;background:#fff;border-radius:10px;
+  display:grid;place-items:center;text-align:center;padding:7px;font-weight:900;font-size:14px
+}
+.flow-node.decision{
+  background:var(--decision);border-color:#4D7538;clip-path:polygon(50% 0,100% 50%,50% 100%,0 50%);
+  border-radius:0;padding:15px 28px
+}
+.branch-label{
+  position:absolute;z-index:7;background:#fff;border:2px solid #B6C0CC;border-radius:6px;
+  padding:3px 7px;font-size:11px;font-weight:900
+}
+.roe-status{font-size:11px;background:#F1F3F6;border-top:2px solid #D9DEE6;padding:5px 8px;color:#627084;font-weight:800}
+
+/* stage 3 highlight */
+.path-overlay{stroke:#E09D24!important;stroke-width:6!important}
+
+/* Stage 4 actual textbook image */
+.game-layout{display:grid;grid-template-columns:390px 1fr;gap:18px;max-width:950px;margin:auto}
+.book-maze{
+  width:100%;border:2px solid #CBD4DF;border-radius:15px;background:#fff;padding:10px;
+  display:flex;align-items:center;justify-content:center;overflow:hidden
+}
+.book-maze img{
+  display:block;width:100%;height:auto;max-height:390px;object-fit:contain;border-radius:10px
+}
+.game-case{
+  border:3px solid var(--unit-blue);border-radius:15px;background:#fff;padding:17px;
+  display:flex;flex-direction:column;justify-content:center
+}
+.game-case h3{margin:0 0 9px;text-align:center}
+.case-icon{font-size:58px;text-align:center;margin:6px}
+.case-text{font-size:20px;font-weight:900;text-align:center;line-height:1.4}
+.case-options{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px}
+.case-btn{border:2px solid #AEB8C5;border-radius:10px;background:#fff;padding:11px;font-weight:900}
+
+/* Stage 5/6 builder */
+.builder-top{display:flex;gap:9px;justify-content:center;flex-wrap:wrap;margin-bottom:10px}
+.drag-token{
+  border:2px solid #9EAAB8;border-radius:10px;background:#fff;padding:8px 11px;font-weight:900;
+  cursor:grab;user-select:none
+}
+.drag-token.pick{outline:4px solid #CAC2F0;background:#F1EEFB}
+.drag-token.locked{opacity:.3}
+.target-node{
+  border-style:dashed!important;color:#7B8795;background:#FBFCFD!important
+}
+.target-node.filled{border-style:solid!important;color:var(--ink);background:#fff!important}
+.flow-node.decision.target-node{
+  background:var(--decision)!important;
+  color:#17301A;
+}
+.flow-node.decision.target-node.filled{
+  background:var(--decision)!important;
+  color:#17301A;
+}
+.label-target{
+  position:absolute;z-index:8;border:2px dashed var(--roe);border-radius:7px;background:#F8F6FF;
+  min-width:78px;min-height:28px;display:grid;place-items:center;padding:3px 7px;font-size:11px;font-weight:900;color:#766C93
+}
+.label-target.filled{border-style:solid;background:#fff;color:var(--ink)}
+
+/* Quiz */
+.quiz{
+  max-width:900px;margin:auto;border:3px solid var(--unit-purple);border-radius:16px;background:#fff;padding:18px
+}
+.quiz-top{display:flex;align-items:center;gap:12px;margin-bottom:15px}
+.quiz-bar{height:9px;flex:1;background:#E4E8EF;border-radius:7px;overflow:hidden}
+.quiz-bar span{display:block;height:100%;background:var(--unit-purple)}
+.quiz-count{font-size:13px;font-weight:900;color:var(--muted)}
+.quiz-q{text-align:center;font-size:22px;font-weight:900;line-height:1.4;margin:13px auto 16px;max-width:760px}
+.quiz-options{display:grid;grid-template-columns:repeat(3,1fr);gap:11px}
+.quiz-choice{min-height:105px;border:2px solid #B5BFCC;border-radius:12px;background:#fff;padding:11px;font-weight:900}
+
+/* Final */
+.final-box{max-width:820px;margin:auto;text-align:center}
+.final-icon{
+  width:90px;height:90px;border-radius:24px;margin:10px auto 13px;
+  background:linear-gradient(145deg,var(--unit-blue),var(--unit-purple));color:#fff;
+  display:grid;place-items:center;font-size:48px
+}
+.summary{
+  border:3px solid var(--unit-blue);background:var(--unit-blue-soft);
+  border-radius:15px;padding:17px;font-size:19px;font-weight:900;line-height:1.45
+}
+.faces{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:16px}
+.face{min-height:112px;border:2px solid #C5CED9;border-radius:13px;background:#fff;font-weight:900}
+.face span{display:block;font-size:43px;margin-bottom:5px}
+.face.sel{border-color:var(--unit-purple);background:var(--unit-purple-soft)}
+.repeat{
+  margin:13px auto 0;border:2px solid #AAB5C3;border-radius:10px;background:#fff;
+  padding:9px 15px;font-weight:900;color:#526075
+}
+
+/* Help */
+.modal{
+  position:fixed;inset:0;background:rgba(31,43,60,.55);display:none;place-items:center;padding:20px;z-index:50
+}
+.modal.show{display:grid}
+.modal-box{
+  width:min(610px,96vw);background:#fff;border-radius:17px;border:3px solid var(--unit-blue);
+  padding:20px;box-shadow:0 18px 45px rgba(0,0,0,.20)
+}
+.modal-box h2{margin:0 0 10px}
+.modal-box p{font-size:18px;line-height:1.45;font-weight:700}
+.modal-close{
+  display:block;margin-left:auto;border:0;border-radius:9px;background:var(--unit-blue);color:#fff;
+  padding:9px 16px;font-weight:900
+}
+@media(max-width:900px){
+  .decision-intro,.game-layout{grid-template-columns:1fr}
+  .symbol-grid,.quiz-options{grid-template-columns:1fr}
+  .stepdots{display:none}
+}
+</style>
+</head>
+<body>
+<div class="shell">
+  <header>
+    <div class="coursebar">
+      <div>
+        <div class="unit-label">ΕΝΟΤΗΤΑ 1 · ΑΛΓΟΡΙΘΜΙΚΗ – ΠΡΟΓΡΑΜΜΑΤΙΣΜΟΣ – ΡΟΜΠΟΤΙΚΗ</div>
+        <div class="lesson-name">Οι υπολογιστές παίρνουν αποφάσεις</div>
+      </div>
+      <div class="lesson-number">Μ3</div>
+    </div>
+    <div class="progress-wrap">
+      <div class="progress-text" id="progressText">Δραστηριότητα 1 από 8</div>
+      <div class="progress-line"><div class="progress-fill" id="progressFill"></div></div>
+      <div class="stepdots" id="stepdots"></div>
+    </div>
+  </header>
+
+  <main class="workspace">
+    <div class="stagehead">
+      <div>
+        <div class="stage-kicker" id="kicker"></div>
+        <h1 id="title"></h1>
+      </div>
+      <button class="help" onclick="openHelp()">? Βοήθεια</button>
+    </div>
+    <div class="instruction" id="instruction"></div>
+    <section class="activity" id="activity"></section>
+    <div class="feedback" id="feedback"></div>
+  </main>
+</div>
+
+<div class="modal" id="helpModal">
+  <div class="modal-box">
+    <h2>Βοήθεια</h2>
+    <p id="helpText"></p>
+    <button class="modal-close" onclick="closeHelp()">Κλείσιμο</button>
+  </div>
+</div>
+
+<script>
+const stages=[
+ {title:"Ο υπολογιστής αποφασίζει",instruction:"Δες τη συνθήκη και διάλεξε ποια ενέργεια πρέπει να εκτελεστεί.",help:"Η απόφαση είναι η ίδια που χρησιμοποιήθηκε στο προηγούμενο μάθημα: «Αν βρέχει, τότε πάρε ομπρέλα».",kind:"intro"},
+ {title:"Διαβάζω ένα διάγραμμα ροής",instruction:"Ταίριαξε κάθε σύμβολο με τον ρόλο του σε ένα διάγραμμα ροής.",help:"Το διάγραμμα χρησιμοποιεί σχήματα και βέλη. Το σχήμα της απόφασης περιέχει τη συνθήκη, ενώ τα ορθογώνια περιέχουν ενέργειες.",kind:"symbols"},
+ {title:"Ακολουθώ τη σωστή διαδρομή",instruction:"Στο Roe διάλεξε τι ισχύει για τον καιρό και ακολούθησε τη διαδρομή του διαγράμματος.",help:"Από το «Βρέχει;» ακολούθησε το βέλος «ΑΝ ΝΑΙ» όταν βρέχει και το «ΑΝ ΟΧΙ» όταν δεν βρέχει.",kind:"weatherflow"},
+ {title:"Κανόνες σε ηλεκτρονικό παιχνίδι",instruction:"Παρατήρησε το παιχνίδι και διάλεξε την ενέργεια που πρέπει να εκτελέσει ο υπολογιστής σε κάθε περίπτωση.",help:"Στο παιχνίδι του βιβλίου, όταν ο ήρωας αγγίζει ένα φρούτο κερδίζει έναν πόντο και όταν αγγίζει το φαντασματάκι χάνει μία ζωή.",kind:"game"},
+ {title:"Σχεδιάζω την απόφαση για το φρούτο",instruction:"Στο Roe συμπλήρωσε το διάγραμμα που δείχνει τι γίνεται όταν ο ήρωας αγγίζει ένα φρούτο.",help:"Το διάγραμμα ξεκινά με έλεγχο, συνεχίζει σε συνθήκη και οδηγεί είτε στην προσθήκη ενός πόντου είτε απευθείας στη συνέχιση του παιχνιδιού.",kind:"fruitbuilder"},
+ {title:"Συμπληρώνω την απόφαση για το φαντασματάκι",instruction:"Στο Roe συμπλήρωσε τα κενά στοιχεία του διαγράμματος.",help:"Αν ο ήρωας αγγίξει το φαντασματάκι, αφαιρείται μία ζωή. Αν όχι, το παιχνίδι συνεχίζεται.",kind:"ghostbuilder"},
+ {title:"Τελική δοκιμή",instruction:"Απάντησε στις ερωτήσεις χρησιμοποιώντας όσα έμαθες για αποφάσεις και διαγράμματα ροής.",help:"Θυμήσου ότι οι υπολογιστές ελέγχουν συνθήκες και εκτελούν τις αντίστοιχες εντολές. Τα διαγράμματα αναπαριστούν αυτή τη διαδικασία γραφικά.",kind:"quiz"},
+ {title:"Ολοκλήρωση",instruction:"Σκέψου τι έμαθες και επίλεξε πώς νιώθεις για τα διαγράμματα ροής.",help:"Η αυτοαξιολόγηση δεν είναι τεστ. Διάλεξε την επιλογή που περιγράφει καλύτερα πόσο άνετα νιώθεις.",kind:"final"}
+];
+
+let stage=0,selfChoice=null;
+let symbolIndex=0,symbolOrder=[],symbolOpts=[];
+let weatherIndex=0,weatherOrder=[];
+let gameIndex=0,gameOrder=[];
+let dragSelected=null,locked=new Set(),tokens=[];
+let quizIndex=0,quizOrder=[],quizOptions=[];
+
+function shuffle(arr){
+ const a=[...arr];
+ for(let i=a.length-1;i>0;i--){
+  const j=Math.floor(Math.random()*(i+1));
+  [a[i],a[j]]=[a[j],a[i]];
+ }
+ return a;
+}
+function setFeedback(text,ok){
+ const f=document.getElementById("feedback");
+ f.className="feedback "+(ok?"good":"bad");f.textContent=text;
+}
+function clearFeedback(){
+ const f=document.getElementById("feedback");f.className="feedback";f.textContent="";
+}
+function advance(delay=850){setTimeout(()=>{stage++;render()},delay)}
+function updateProgress(){
+ const visible=Math.min(stage,stages.length-1);
+ document.getElementById("progressText").textContent=stage>=stages.length?"Ολοκληρώθηκε":`Δραστηριότητα ${visible+1} από ${stages.length}`;
+ document.getElementById("progressFill").style.width=`${stage>=stages.length?100:((visible+1)/stages.length)*100}%`;
+ document.getElementById("stepdots").innerHTML=stages.map((_,i)=>`<div class="stepdot ${i<stage?"done":i===stage?"active":""}">${i+1}</div>`).join("");
+}
+function render(){
+ clearFeedback();updateProgress();
+ const s=stages[stage];
+ document.getElementById("kicker").textContent=`Δραστηριότητα ${stage+1}`;
+ document.getElementById("title").textContent=s.title;
+ document.getElementById("instruction").textContent=s.instruction;
+ if(s.kind==="intro")renderIntro();
+ if(s.kind==="symbols")renderSymbols();
+ if(s.kind==="weatherflow")renderWeatherFlow();
+ if(s.kind==="game")renderGame();
+ if(s.kind==="fruitbuilder")renderFruitBuilder();
+ if(s.kind==="ghostbuilder")renderGhostBuilder();
+ if(s.kind==="quiz")renderQuizStart();
+ if(s.kind==="final")renderFinal();
+}
+function openHelp(){
+ document.getElementById("helpText").textContent=stages[Math.min(stage,stages.length-1)].help;
+ document.getElementById("helpModal").classList.add("show");
+}
+function closeHelp(){document.getElementById("helpModal").classList.remove("show")}
+
+/* Stage 1 */
+function renderIntro(){
+ document.getElementById("activity").innerHTML=`
+  <div class="decision-intro">
+   <div class="rule-card">Αν βρέχει,<br>τότε πάρε ομπρέλα.</div>
+   <div class="question-card">
+    <h3>Βρέχει.</h3>
+    <div class="weather-status">🌧️</div>
+    <div class="two-options">
+     ${shuffle([
+      {ok:true,txt:"Πάρε ομπρέλα."},
+      {ok:false,txt:"Βγες έξω χωρίς να ελέγξεις τον καιρό."}
+     ]).map(x=>`<button class="option" onclick="introAnswer(${x.ok})">${x.txt}</button>`).join("")}
+    </div>
+   </div>
+  </div>`;
+}
+function introAnswer(ok){
+ if(!ok){setFeedback("Η συνθήκη «βρέχει» είναι αλήθεια, επομένως εφαρμόζεται η αντίστοιχη ενέργεια.",false);return}
+ setFeedback("Σωστά! Οι υπολογιστές, όπως και οι άνθρωποι, χρειάζεται να παίρνουν αποφάσεις καθώς εκτελούν προγράμματα.",true);
+ advance();
+}
+
+/* Stage 2 */
+const symbols=[
+ {type:"decision",correct:"Συνθήκη / απόφαση",wrong:["Ενέργεια","Βέλος σύνδεσης"]},
+ {type:"process",correct:"Ενέργεια",wrong:["Συνθήκη / απόφαση","Βέλος σύνδεσης"]},
+ {type:"arrow",correct:"Βέλος σύνδεσης",wrong:["Ενέργεια","Συνθήκη / απόφαση"]}
+];
+function renderSymbols(){
+ symbolIndex=0;symbolOrder=shuffle(symbols);drawSymbol();
+}
+function drawSymbol(){
+ const q=symbolOrder[symbolIndex];
+ symbolOpts=shuffle([{ok:true,txt:q.correct},...q.wrong.map(txt=>({ok:false,txt}))]);
+ let visual=q.type==="decision"?'<div class="flow-diamond">Βρέχει;</div>':
+            q.type==="process"?'<div class="flow-rect">Πάρε ομπρέλα</div>':
+            '<div class="flow-arrow"></div>';
+ document.getElementById("activity").innerHTML=`
+  <div class="symbol-grid" style="grid-template-columns:1fr;max-width:540px">
+   <div class="symbol-card">
+    <div class="symbol-view">${visual}</div>
+    <div class="symbol-options">
+     ${symbolOpts.map((o,i)=>`<button class="symbol-choice" onclick="symbolAnswer(${i})">${o.txt}</button>`).join("")}
+    </div>
+   </div>
+  </div>
+  <div class="note">${symbolIndex+1} από ${symbolOrder.length}</div>`;
+}
+function symbolAnswer(i){
+ if(!symbolOpts[i].ok){setFeedback("Δοκίμασε ξανά. Σκέψου τι δείχνει αυτό το σύμβολο στο διάγραμμα.",false);return}
+ symbolIndex++;
+ if(symbolIndex<symbolOrder.length){
+  setFeedback("Σωστά!",true);setTimeout(()=>{clearFeedback();drawSymbol()},600);
+ }else{setFeedback("Μπράβο! Αναγνώρισες τα βασικά στοιχεία ενός διαγράμματος ροής.",true);advance()}
+}
+
+/* Roe UI and aligned orthogonal flowchart */
+function roeShell(canvasContent,status="Roe · Διάγραμμα ροής"){
+ return `<div class="roe">
+  <div class="roe-title"><span>Roe — Διάγραμμα ροής</span><span class="roe-controls">— □ ×</span></div>
+  <div class="roe-menu"><span>Αρχείο</span><span>Επεξεργασία</span><span>Προβολή</span><span>Βοήθεια</span></div>
+  <div class="roe-toolbar">
+   <button class="roe-tool">Νέο</button><button class="roe-tool">Άνοιγμα</button><button class="roe-tool">Αποθήκευση</button>
+   <button class="roe-tool active">↖ Επιλογή</button><button class="roe-tool">→ Σύνδεση</button>
+  </div>
+  <div class="roe-main">
+   <div class="roe-palette">
+    <h4>Σχήματα</h4>
+    <div class="palette-block"><div class="mini-rect">Ενέργεια</div></div>
+    <div class="palette-block"><div class="mini-diamond"></div><span>Απόφαση</span></div>
+    <div class="palette-block"><div class="flow-arrow" style="width:90px"></div></div>
+   </div>
+   <div class="roe-canvas">${canvasContent}</div>
+  </div>
+  <div class="roe-status">${status}</div>
+ </div>`;
+}
+
+function weatherSvg(){
+ return `<svg class="flow-svg" viewBox="0 0 790 430" preserveAspectRatio="none">
+   <defs><marker id="arrowW" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0,0 L0,6 L9,3 z" fill="#5D6C7E"/></marker></defs>
+   <path d="M395 72 V115" stroke="#5D6C7E" stroke-width="3" fill="none" marker-end="url(#arrowW)"/>
+   <path d="M395 202 V250" stroke="#5D6C7E" stroke-width="3" fill="none" marker-end="url(#arrowW)"/>
+   <path d="M395 310 V350" stroke="#5D6C7E" stroke-width="3" fill="none" marker-end="url(#arrowW)"/>
+   <path d="M480 158 H610 V380 H500" stroke="#5D6C7E" stroke-width="3" fill="none" marker-end="url(#arrowW)"/>
+  </svg>`;
+}
+function weatherNodes(){
+ return `
+  <div class="flow-node" style="left:305px;top:24px;width:180px;height:48px">Έλεγξε τον καιρό</div>
+  <div class="flow-node decision" style="left:310px;top:115px;width:170px;height:88px">Βρέχει;</div>
+  <div class="flow-node" style="left:320px;top:250px;width:150px;height:60px">Πάρε ομπρέλα</div>
+  <div class="flow-node" style="left:320px;top:350px;width:180px;height:60px">Βγες έξω</div>
+  <div class="branch-label" style="left:322px;top:215px">ΑΝ ΝΑΙ</div>
+  <div class="branch-label" style="left:500px;top:125px">ΑΝ ΟΧΙ</div>
+  <div class="branch-label" style="left:268px;top:322px">ΤΟΤΕ</div>`;
+}
+
+/* Stage 3 */
+const weatherCases=[
+ {rain:true,label:"Βρέχει.",branch:"yes",answer:"Πάρε ομπρέλα και μετά βγες έξω."},
+ {rain:false,label:"Δεν βρέχει.",branch:"no",answer:"Βγες έξω."}
+];
+function renderWeatherFlow(){
+ weatherIndex=0;weatherOrder=shuffle(weatherCases);drawWeatherFlow();
+}
+function drawWeatherFlow(){
+ const q=weatherOrder[weatherIndex];
+ const choices=shuffle([
+  {ok:true,txt:q.answer},
+  {ok:false,txt:q.rain?"Βγες έξω χωρίς ομπρέλα.":"Πάρε ομπρέλα πριν βγεις έξω."}
+ ]);
+ const content=`${weatherSvg()}${weatherNodes()}`;
+ document.getElementById("activity").innerHTML=`
+  <div style="text-align:center;font-size:20px;font-weight:900;margin-bottom:10px">${q.rain?"🌧️":"☁️"} ${q.label}</div>
+  ${roeShell(content,"Έλεγξε τη συνθήκη και ακολούθησε μόνος σου τη σωστή διαδρομή.")}
+  <div class="two-options" style="max-width:680px;margin:12px auto 0">
+   ${choices.map(x=>`<button class="option" onclick="weatherAnswer(${x.ok})">${x.txt}</button>`).join("")}
+  </div>
+  <div class="note">${weatherIndex+1} από ${weatherOrder.length}</div>`;
+}
+function weatherAnswer(ok){
+ if(!ok){setFeedback("Ακολούθησε το βέλος που ταιριάζει στην απάντηση της συνθήκης «Βρέχει;».",false);return}
+ weatherIndex++;
+ if(weatherIndex<weatherOrder.length){
+  setFeedback("Σωστά! Ακολούθησες τη σωστή διαδρομή.",true);
+  setTimeout(()=>{clearFeedback();drawWeatherFlow()},650);
+ }else{setFeedback("Μπράβο! Διάβασες σωστά και τις δύο διαδρομές του διαγράμματος.",true);advance()}
+}
+
+/* Stage 4 */
+const gameCases=[
+ {icon:"🍓",text:"Ο ήρωας άγγιξε ένα φρούτο.",correct:"Πρόσθεσε έναν πόντο.",wrong:"Αφαίρεσε μία ζωή."},
+ {icon:"👻",text:"Ο ήρωας άγγιξε το φαντασματάκι.",correct:"Αφαίρεσε μία ζωή.",wrong:"Πρόσθεσε έναν πόντο."}
+];
+function renderGame(){
+ gameIndex=0;gameOrder=shuffle(gameCases);drawGameCase();
+}
+function drawGameCase(){
+ const q=gameOrder[gameIndex];
+ const opts=shuffle([{ok:true,txt:q.correct},{ok:false,txt:q.wrong}]);
+ document.getElementById("activity").innerHTML=`
+  <div class="game-layout">
+   <div class="book-maze"><img src="data:image/png;base64,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" alt="Το ηλεκτρονικό παιχνίδι με τον λαβύρινθο από το βιβλίο"></div>
+   <div class="game-case">
+    <h3>Τι πρέπει να κάνει ο υπολογιστής;</h3>
+    <div class="case-icon">${q.icon}</div>
+    <div class="case-text">${q.text}</div>
+    <div class="case-options">
+     ${opts.map(x=>`<button class="case-btn" onclick="gameAnswer(${x.ok})">${x.txt}</button>`).join("")}
+    </div>
+   </div>
+  </div>
+  <div class="note">${gameIndex+1} από ${gameOrder.length}</div>`;
+}
+function gameAnswer(ok){
+ if(!ok){setFeedback("Αυτός είναι ο άλλος κανόνας του παιχνιδιού.",false);return}
+ gameIndex++;
+ if(gameIndex<gameOrder.length){
+  setFeedback("Σωστά!",true);setTimeout(()=>{clearFeedback();drawGameCase()},650);
+ }else{setFeedback("Μπράβο! Εφάρμοσες σωστά τους κανόνες του παιχνιδιού.",true);advance()}
+}
+
+/* Generic builder helpers */
+function tokenDragStart(ev,id){
+ dragSelected=id;
+ document.getElementById("tok_"+id)?.classList.add("pick");
+ ev.dataTransfer?.setData("text/plain",id);
+}
+function tokenDragEnd(ev){ev.currentTarget.classList.remove("pick")}
+function tokenPick(id){
+ if(locked.has(id))return;
+ document.querySelectorAll(".drag-token").forEach(x=>x.classList.remove("pick"));
+ dragSelected=dragSelected===id?null:id;
+ if(dragSelected)document.getElementById("tok_"+id)?.classList.add("pick");
+}
+function targetOver(ev){ev.preventDefault();ev.currentTarget.style.background="#F1EEFB"}
+function targetLeave(ev){if(!ev.currentTarget.classList.contains("filled"))ev.currentTarget.style.background=""}
+function targetDrop(ev,target){
+ ev.preventDefault();ev.currentTarget.style.background="";
+ const id=(ev.dataTransfer&&ev.dataTransfer.getData("text/plain"))||dragSelected;
+ if(id)placeBuilder(id,target);
+}
+function targetTap(target){if(dragSelected)placeBuilder(dragSelected,target)}
+
+/* Stage 5 */
+let builderType="";
+function renderFruitBuilder(){
+ builderType="fruit";dragSelected=null;locked=new Set();
+ tokens=shuffle([
+  {id:"check",target:"check",txt:"Έλεγξε αν ο ήρωας έφαγε ένα φρούτο"},
+  {id:"decision",target:"decision",txt:"Άγγιξε το φρούτο;"},
+  {id:"point",target:"point",txt:"Πρόσθεσε έναν πόντο"},
+  {id:"continue",target:"continue",txt:"Συνέχισε το παιχνίδι"},
+  {id:"yes",target:"yes",txt:"ΑΝ ΝΑΙ"},
+  {id:"no",target:"no",txt:"ΑΝ ΟΧΙ"}
+ ]);
+ drawFruitBuilder();
+}
+function drawFruitBuilder(){
+ const content=`
+  <svg class="flow-svg" viewBox="0 0 790 430" preserveAspectRatio="none">
+   <defs><marker id="arrF" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0,0 L0,6 L9,3 z" fill="#5D6C7E"/></marker></defs>
+   <path d="M395 72 V115" stroke="#5D6C7E" stroke-width="3" fill="none" marker-end="url(#arrF)"/>
+   <path d="M395 202 V250" stroke="#5D6C7E" stroke-width="3" fill="none" marker-end="url(#arrF)"/>
+   <path d="M395 310 V350" stroke="#5D6C7E" stroke-width="3" fill="none" marker-end="url(#arrF)"/>
+   <path d="M480 158 H610 V380 H500" stroke="#5D6C7E" stroke-width="3" fill="none" marker-end="url(#arrF)"/>
+  </svg>
+  <div class="flow-node target-node ${locked.has("check")?"filled":""}" id="bd_check" style="left:295px;top:24px;width:200px;height:48px" 
+    ondragover="targetOver(event)" ondragleave="targetLeave(event)" ondrop="targetDrop(event,'check')" onclick="targetTap('check')">${locked.has("check")?"Έλεγξε αν ο ήρωας έφαγε ένα φρούτο":"κείμενο ελέγχου"}</div>
+  <div class="flow-node decision target-node ${locked.has("decision")?"filled":""}" id="bd_decision" style="left:310px;top:115px;width:170px;height:88px"
+    ondragover="targetOver(event)" ondragleave="targetLeave(event)" ondrop="targetDrop(event,'decision')" onclick="targetTap('decision')">${locked.has("decision")?"Άγγιξε το φρούτο;":"συνθήκη"}</div>
+  <div class="flow-node target-node ${locked.has("point")?"filled":""}" id="bd_point" style="left:320px;top:250px;width:150px;height:60px"
+    ondragover="targetOver(event)" ondragleave="targetLeave(event)" ondrop="targetDrop(event,'point')" onclick="targetTap('point')">${locked.has("point")?"Πρόσθεσε έναν πόντο":"ενέργεια"}</div>
+  <div class="flow-node target-node ${locked.has("continue")?"filled":""}" id="bd_continue" style="left:320px;top:350px;width:180px;height:60px"
+    ondragover="targetOver(event)" ondragleave="targetLeave(event)" ondrop="targetDrop(event,'continue')" onclick="targetTap('continue')">${locked.has("continue")?"Συνέχισε το παιχνίδι":"επόμενο βήμα"}</div>
+  <div class="label-target ${locked.has("yes")?"filled":""}" id="bd_yes" style="left:316px;top:214px"
+    ondragover="targetOver(event)" ondragleave="targetLeave(event)" ondrop="targetDrop(event,'yes')" onclick="targetTap('yes')">${locked.has("yes")?"ΑΝ ΝΑΙ":"ετικέτα"}</div>
+  <div class="label-target ${locked.has("no")?"filled":""}" id="bd_no" style="left:500px;top:126px"
+    ondragover="targetOver(event)" ondragleave="targetLeave(event)" ondrop="targetDrop(event,'no')" onclick="targetTap('no')">${locked.has("no")?"ΑΝ ΟΧΙ":"ετικέτα"}</div>
+  <div class="branch-label" style="left:268px;top:322px">ΤΟΤΕ</div>`;
+ document.getElementById("activity").innerHTML=`
+  <div class="builder-top">
+   ${tokens.map(t=>`<div class="drag-token ${locked.has(t.id)?"locked":""}" id="tok_${t.id}" draggable="true"
+    ondragstart="tokenDragStart(event,'${t.id}')" ondragend="tokenDragEnd(event)" onclick="tokenPick('${t.id}')">${t.txt}</div>`).join("")}
+  </div>
+  ${roeShell(content,"Τοποθέτησε τα κείμενα στα σωστά σχήματα και στις σωστές ετικέτες.")}`;
+}
+function placeBuilder(id,target){
+ const item=tokens.find(x=>x.id===id);
+ if(!item||locked.has(id))return;
+ if(item.target!==target){setFeedback("Αυτό το στοιχείο ανήκει σε διαφορετικό σημείο του διαγράμματος.",false);return}
+ locked.add(id);dragSelected=null;
+ if(builderType==="fruit")drawFruitBuilder(); else drawGhostBuilder();
+ if(locked.size===tokens.length){
+  setFeedback(builderType==="fruit"?"Μπράβο! Συμπλήρωσες το διάγραμμα για το φρούτο.":"Μπράβο! Συμπλήρωσες το διάγραμμα για το φαντασματάκι.",true);
+  advance(1000);
+ }else setFeedback("Σωστά. Συνέχισε.",true);
+}
+
+/* Stage 6 */
+function renderGhostBuilder(){
+ builderType="ghost";dragSelected=null;locked=new Set();
+ tokens=shuffle([
+  {id:"yes",target:"yes",txt:"ΑΝ ΝΑΙ"},
+  {id:"no",target:"no",txt:"ΑΝ ΟΧΙ"},
+  {id:"life",target:"life",txt:"Αφαίρεσε μία ζωή"}
+ ]);
+ drawGhostBuilder();
+}
+function drawGhostBuilder(){
+ const content=`
+  <svg class="flow-svg" viewBox="0 0 790 430" preserveAspectRatio="none">
+   <defs><marker id="arrG" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0,0 L0,6 L9,3 z" fill="#5D6C7E"/></marker></defs>
+   <path d="M395 72 V115" stroke="#5D6C7E" stroke-width="3" fill="none" marker-end="url(#arrG)"/>
+   <path d="M395 202 V250" stroke="#5D6C7E" stroke-width="3" fill="none" marker-end="url(#arrG)"/>
+   <path d="M395 310 V350" stroke="#5D6C7E" stroke-width="3" fill="none" marker-end="url(#arrG)"/>
+   <path d="M480 158 H610 V380 H500" stroke="#5D6C7E" stroke-width="3" fill="none" marker-end="url(#arrG)"/>
+  </svg>
+  <div class="flow-node" style="left:290px;top:24px;width:210px;height:48px">Έλεγξε αν ο ήρωας άγγιξε το φαντασματάκι</div>
+  <div class="flow-node decision" style="left:310px;top:115px;width:170px;height:88px">Άγγιξε το φαντασματάκι;</div>
+  <div class="flow-node target-node ${locked.has("life")?"filled":""}" id="bd_life" style="left:320px;top:250px;width:150px;height:60px"
+    ondragover="targetOver(event)" ondragleave="targetLeave(event)" ondrop="targetDrop(event,'life')" onclick="targetTap('life')">${locked.has("life")?"Αφαίρεσε μία ζωή":"ενέργεια"}</div>
+  <div class="flow-node" style="left:320px;top:350px;width:180px;height:60px">Συνέχισε το παιχνίδι</div>
+  <div class="label-target ${locked.has("yes")?"filled":""}" id="bd_yes" style="left:316px;top:214px"
+    ondragover="targetOver(event)" ondragleave="targetLeave(event)" ondrop="targetDrop(event,'yes')" onclick="targetTap('yes')">${locked.has("yes")?"ΑΝ ΝΑΙ":"ΑΝ ..."}</div>
+  <div class="label-target ${locked.has("no")?"filled":""}" id="bd_no" style="left:500px;top:126px"
+    ondragover="targetOver(event)" ondragleave="targetLeave(event)" ondrop="targetDrop(event,'no')" onclick="targetTap('no')">${locked.has("no")?"ΑΝ ΟΧΙ":"ΑΝ ..."}</div>
+  <div class="branch-label" style="left:268px;top:322px">ΤΟΤΕ</div>
+  <div class="branch-label" style="left:620px;top:270px">ΤΟΤΕ</div>`;
+ document.getElementById("activity").innerHTML=`
+  <div class="builder-top">
+   ${tokens.map(t=>`<div class="drag-token ${locked.has(t.id)?"locked":""}" id="tok_${t.id}" draggable="true"
+    ondragstart="tokenDragStart(event,'${t.id}')" ondragend="tokenDragEnd(event)" onclick="tokenPick('${t.id}')">${t.txt}</div>`).join("")}
+  </div>
+  ${roeShell(content,"Συμπλήρωσε τα στοιχεία που λείπουν από το διάγραμμα.")}`;
+}
+
+/* Stage 7 */
+const quizQs=[
+ {q:"Γιατί οι υπολογιστές χρειάζεται να παίρνουν αποφάσεις;",correct:"Για να εκτελούν την κατάλληλη εντολή ανάλογα με τη συνθήκη.",wrong:["Για να αλλάζουν μόνοι τους τους κανόνες.","Για να μη χρειάζεται να εκτελούν προγράμματα."]},
+ {q:"Ποιο σχήμα χρησιμοποιείται στο μάθημα για μία συνθήκη όπως «Άγγιξε το φρούτο;»;",correct:"Το σχήμα απόφασης.",wrong:["Ένα απλό ορθογώνιο ενέργειας.","Μόνο ένα βέλος."]},
+ {q:"Αν ο ήρωας αγγίξει ένα φρούτο, τι κάνει ο υπολογιστής;",correct:"Προσθέτει έναν πόντο.",wrong:["Αφαιρεί μία ζωή.","Τερματίζει το παιχνίδι."]},
+ {q:"Αν ο ήρωας αγγίξει το φαντασματάκι, τι κάνει ο υπολογιστής;",correct:"Αφαιρεί μία ζωή.",wrong:["Προσθέτει έναν πόντο.","Αγνοεί πάντα το γεγονός."]},
+ {q:"Τι δείχνουν τα βέλη σε ένα διάγραμμα ροής;",correct:"Τη σειρά και τη διαδρομή που ακολουθεί η διαδικασία.",wrong:["Μόνο το χρώμα των σχημάτων.","Το όνομα του προγράμματος."]}
+];
+function renderQuizStart(){quizIndex=0;quizOrder=shuffle(quizQs);drawQuiz()}
+function drawQuiz(){
+ const q=quizOrder[quizIndex];
+ quizOptions=shuffle([{ok:true,txt:q.correct},...q.wrong.map(txt=>({ok:false,txt}))]);
+ document.getElementById("activity").innerHTML=`
+  <div class="quiz">
+   <div class="quiz-top">
+    <div class="quiz-bar"><span style="width:${(quizIndex/quizOrder.length)*100}%"></span></div>
+    <div class="quiz-count">${quizIndex+1} / ${quizOrder.length}</div>
+   </div>
+   <div class="quiz-q">${q.q}</div>
+   <div class="quiz-options">
+    ${quizOptions.map((x,i)=>`<button class="quiz-choice" onclick="quizAnswer(${i})">${x.txt}</button>`).join("")}
+   </div>
+  </div>`;
+}
+function quizAnswer(i){
+ if(!quizOptions[i].ok){setFeedback("Δοκίμασε ξανά. Χρησιμοποίησε όσα έμαθες στις προηγούμενες δραστηριότητες.",false);return}
+ quizIndex++;
+ if(quizIndex<quizOrder.length){
+  setFeedback("Σωστά!",true);setTimeout(()=>{clearFeedback();drawQuiz()},600);
+ }else{setFeedback("Μπράβο! Ολοκλήρωσες την τελική δοκιμή.",true);advance()}
+}
+
+/* Stage 8 */
+function renderFinal(){
+ selfChoice=null;
+ document.getElementById("activity").innerHTML=`
+  <div class="final-box">
+   <div class="final-icon">→</div>
+   <div class="summary">
+    Έμαθες ότι οι υπολογιστές χρειάζεται να παίρνουν αποφάσεις καθώς εκτελούν τα προγράμματά τους
+    και ότι ένα διάγραμμα ροής μπορεί να αναπαριστά γραφικά μία απόφαση με σχήματα και βέλη.
+   </div>
+   <div class="faces">
+    <button class="face" onclick="pickSelf(1,this)"><span>🙂</span>Χρειάζομαι λίγη ακόμη εξάσκηση</button>
+    <button class="face" onclick="pickSelf(2,this)"><span>😊</span>Μπορώ να διαβάζω ένα διάγραμμα ροής</button>
+    <button class="face" onclick="pickSelf(3,this)"><span>😎</span>Μπορώ να συμπληρώνω και να εξηγώ ένα διάγραμμα απόφασης</button>
+   </div>
+   <button class="primary center-btn" onclick="finishLesson()">Ολοκλήρωση</button>
+   <button class="repeat" onclick="restartLesson()">↻ Επανάληψη δραστηριότητας</button>
+  </div>`;
+}
+function pickSelf(v,el){
+ selfChoice=v;document.querySelectorAll(".face").forEach(x=>x.classList.remove("sel"));el.classList.add("sel");
+}
+function finishLesson(){
+ if(!selfChoice){setFeedback("Επίλεξε πρώτα μία επιλογή αυτοαξιολόγησης.",false);return}
+ stage=stages.length;
+ document.getElementById("progressText").textContent="Ολοκληρώθηκε";
+ document.getElementById("progressFill").style.width="100%";
+ document.getElementById("stepdots").innerHTML=stages.map((_,i)=>`<div class="stepdot done">${i+1}</div>`).join("");
+ setFeedback("Μπράβο! Ολοκλήρωσες το Μάθημα 3.",true);
+}
+function restartLesson(){
+ stage=0;selfChoice=null;
+ symbolIndex=0;symbolOrder=[];symbolOpts=[];
+ weatherIndex=0;weatherOrder=[];
+ gameIndex=0;gameOrder=[];
+ dragSelected=null;locked=new Set();tokens=[];
+ quizIndex=0;quizOrder=[];quizOptions=[];
+ render();
+}
+render();
+</script>
+
+<footer class="nk-license" aria-label="Πληροφορίες δημιουργού και άδειας χρήσης">
+  <div><strong>Created by Nikos Kalakos · © 2026</strong></div>
+  <div>Original educational content and simulation design licensed under <a class="cc-badge" href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank" rel="license noopener noreferrer">CC BY-NC 4.0</a>.</div>
+  <div>Source code © 2026 Nikos Kalakos.</div>
+  <div>Third-party and textbook materials remain subject to the rights and licences of their respective copyright holders.</div>
+</footer>
+</body>
+</html>

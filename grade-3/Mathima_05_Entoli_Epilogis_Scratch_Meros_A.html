@@ -1,0 +1,1811 @@
+<!--
+ICT Educational Simulation
+Created by Nikos Kalakos
+Copyright © 2026 Nikos Kalakos
+
+Original educational content and simulation design licensed under CC BY-NC 4.0.
+Source code © 2026 Nikos Kalakos.
+Third-party and textbook materials remain subject to the rights and licences of their respective copyright holders.
+-->
+<!doctype html>
+<html lang="el">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="author" content="Nikos Kalakos">
+<meta name="copyright" content="© 2026 Nikos Kalakos">
+<meta name="license" content="Original educational content and simulation design: CC BY-NC 4.0; source code © 2026 Nikos Kalakos; third-party and textbook materials excluded.">
+<style id="nk-license-style">
+.nk-license{max-width:1100px;margin:14px auto 24px;padding:10px 16px;text-align:center;font:13px/1.45 Arial,"Noto Sans",sans-serif;color:#4e657c}
+.nk-license a{color:inherit;text-decoration:underline;text-underline-offset:2px}
+.nk-license .cc-badge{display:inline-block;margin:0 4px;padding:2px 7px;border:1px solid #8aa0b8;border-radius:6px;background:#fff;font-weight:700;white-space:nowrap}
+</style>
+<title>Μάθημα 5 - Εντολή επιλογής στο Scratch (Μέρος Α΄)</title>
+<style>
+:root{
+  --unit-blue:#0F5575;
+  --unit-blue-dark:#0A3F58;
+  --unit-blue-soft:#EAF5FA;
+  --unit-purple:#5B62A2;
+  --unit-purple-dark:#464C82;
+  --unit-purple-soft:#EEF0FA;
+  --ink:#243248;
+  --muted:#68768B;
+  --line:#CFD7E2;
+  --good:#EDF7DE;
+  --bad:#FFF0ED;
+  --shadow:0 8px 24px rgba(35,49,71,.10);
+
+  --motion:#4C97FF;
+  --looks:#9966FF;
+  --events:#FFBF00;
+  --control:#FFAB19;
+  --sensing:#5CB1D6;
+  --operators:#59C059;
+  --variables:#FF8C1A;
+}
+*{box-sizing:border-box}
+body{margin:0;background:#F4F7FA;color:var(--ink);font-family:Arial,"Noto Sans",sans-serif}
+button,input,select{font:inherit}
+button{cursor:pointer}
+button:focus-visible,input:focus-visible,select:focus-visible{outline:4px solid #F0B83A;outline-offset:2px}
+.shell{max-width:1580px;margin:auto;padding:10px}
+
+/* Grade 3 shell */
+.coursebar{
+  min-height:58px;background:var(--unit-blue);color:#fff;border-radius:17px 17px 8px 8px;
+  display:flex;align-items:center;justify-content:space-between;gap:20px;padding:10px 18px;
+  box-shadow:var(--shadow)
+}
+.unit-label{font-size:14px;font-weight:900;letter-spacing:.2px;opacity:.92}
+.lesson-name{font-size:26px;font-weight:900;margin-top:2px}
+.lesson-number{
+  min-width:50px;height:42px;padding:0 14px;border-radius:12px;background:#fff;color:var(--unit-blue);
+  display:grid;place-items:center;font-size:18px;font-weight:900
+}
+.progress-wrap{
+  background:#fff;border:2px solid #D8E0E9;border-top:0;border-radius:0 0 17px 17px;
+  padding:10px 16px 11px;display:flex;align-items:center;gap:14px
+}
+.progress-text{font-size:13px;font-weight:900;color:var(--muted);white-space:nowrap}
+.progress-line{height:8px;flex:1;background:#E4E9F0;border-radius:7px;overflow:hidden}
+.progress-fill{height:100%;background:var(--unit-purple);width:0;transition:.25s}
+.stepdots{display:flex;gap:7px}
+.stepdot{
+  width:30px;height:30px;border-radius:9px;background:#fff;border:2px solid #B6C0CE;color:#647187;
+  display:grid;place-items:center;font-size:13px;font-weight:900
+}
+.stepdot.active{background:var(--unit-purple);border-color:var(--unit-purple-dark);color:#fff}
+.stepdot.done{background:var(--unit-blue);border-color:var(--unit-blue-dark);color:#fff}
+.workspace{
+  margin-top:14px;background:#fff;border:2px solid #D8E0E9;border-radius:18px;box-shadow:var(--shadow);
+  min-height:760px;padding:18px
+}
+.stagehead{
+  display:grid;grid-template-columns:1fr auto;gap:16px;align-items:start;
+  border-bottom:2px solid #E4E9EF;padding-bottom:13px
+}
+.stage-kicker{font-size:13px;font-weight:900;color:var(--unit-purple);text-transform:uppercase;letter-spacing:.4px}
+.stagehead h1{font-size:31px;margin:4px 0 0}
+.help{
+  border:2px solid #9AC6D8;background:var(--unit-blue-soft);color:var(--unit-blue-dark);
+  border-radius:11px;padding:9px 15px;font-weight:900
+}
+.instruction{
+  max-width:1120px;margin:15px auto 17px;text-align:center;font-size:20px;font-weight:800;line-height:1.42
+}
+.activity{
+  max-width:1510px;margin:auto;border:2px solid #D9E0E9;border-radius:17px;
+  background:#FBFCFE;padding:14px;min-height:635px
+}
+.feedback{
+  display:none;max-width:960px;margin:13px auto 0;border-radius:12px;padding:11px 16px;
+  text-align:center;font-weight:900;font-size:17px
+}
+.feedback.good{display:block;background:var(--good);border:2px solid #9DBD57}
+.feedback.bad{display:block;background:var(--bad);border:2px solid #E2A096}
+.note{font-size:14px;color:var(--muted);text-align:center;font-weight:800;margin-top:9px}
+
+/* =========================================================
+   NOESIS BLOCKS — Scratch-like permanent layout
+   categories | palette | code | stage + sprite list
+   ========================================================= */
+.noesis{
+  width:100%;max-width:1440px;margin:auto;border:4px solid #3E4858;border-radius:14px;
+  overflow-x:auto;background:#fff;box-shadow:0 10px 22px rgba(29,39,55,.16)
+}
+.nb-top{
+  height:44px;background:#4D97FF;color:#fff;display:flex;align-items:center;
+  padding:0 10px 0 13px;font-weight:900;min-width:1120px
+}
+.nb-brand{display:flex;align-items:center;gap:9px;white-space:nowrap}
+.nb-logo{width:27px;height:27px;border-radius:8px;background:#fff;color:#4D97FF;display:grid;place-items:center;font-size:16px}
+.nb-title-center{flex:1;display:flex;justify-content:flex-end;align-items:center;margin:0 12px}
+.project-title-input{
+  width:245px;height:30px;border:2px solid rgba(255,255,255,.8);border-radius:6px;
+  background:#fff;color:#334259;padding:3px 9px;font-weight:900
+}
+.nb-window{display:flex;gap:4px}
+.nb-window button{width:31px;height:27px;border:0;border-radius:5px;background:#EAF3FF;color:#3D6FAF;font-weight:900}
+.nb-menu{
+  height:34px;background:#F4F5F7;border-bottom:2px solid #D9DEE6;display:flex;align-items:center;
+  gap:14px;padding:0 10px;font-size:13px;font-weight:800;min-width:1120px
+}
+.nb-menu button{border:0;background:transparent;font-weight:800;padding:7px 2px}
+.menu-wrap{position:relative}
+.file-drop{
+  display:none;position:absolute;z-index:90;top:29px;left:0;width:190px;background:#fff;border:2px solid #AEB8C5;
+  border-radius:8px;padding:5px;box-shadow:0 8px 18px rgba(0,0,0,.14)
+}
+.menu-wrap.open .file-drop{display:block}
+.file-drop button{display:block;width:100%;text-align:left;padding:8px;border-radius:6px}
+.file-drop button:hover{background:#EEF4FC}
+.nb-toolbar{
+  height:43px;background:#fff;border-bottom:2px solid #DDE2E8;display:flex;align-items:center;
+  gap:7px;padding:5px 9px;min-width:1120px
+}
+.tool-icon{
+  width:35px;height:32px;border:2px solid #AEB8C5;border-radius:7px;background:#fff;
+  display:grid;place-items:center;font-weight:900;color:#526176
+}
+.save-icon{position:relative;width:20px;height:20px;border-radius:3px;background:#526176}
+.save-icon:before{content:"";position:absolute;left:3px;right:3px;top:2px;height:6px;background:#DCE5EB}
+.save-icon:after{content:"";position:absolute;left:4px;right:4px;bottom:2px;height:7px;background:#fff}
+.open-icon{width:21px;height:14px;background:#E9B94D;border:2px solid #7B6630;border-radius:3px;position:relative}
+.open-icon:before{content:"";position:absolute;left:1px;top:-7px;width:10px;height:7px;background:#F1C65D;border:2px solid #7B6630;border-bottom:0}
+
+.nb-main{
+  height:595px;display:grid!important;
+  grid-template-columns:88px 220px minmax(520px,1fr) 350px!important;
+  grid-template-rows:1fr!important;min-width:1178px!important;background:#fff
+}
+.categories{grid-column:1;grid-row:1;background:#fff;border-right:2px solid #E0E4E9;padding:7px 4px;overflow:auto}
+.cat-btn{
+  width:100%;border:0;background:#fff;padding:8px 3px;display:flex;align-items:center;gap:6px;
+  border-radius:8px;font-size:11px;font-weight:900;color:#536176
+}
+.cat-btn.active{background:#EDF3F9;color:#243248}
+.cat-dot{width:14px;height:14px;border-radius:50%;flex:0 0 14px}
+.palette{grid-column:2;grid-row:1;background:#F9F9F9;border-right:2px solid #DDE2E8;padding:10px;overflow:auto}
+.palette-title{font-size:14px;font-weight:900;margin:3px 0 10px}
+.script-area{
+  grid-column:3;grid-row:1;position:relative;min-width:0;overflow:hidden;
+  background:
+    linear-gradient(#E9EDF2 1px,transparent 1px),
+    linear-gradient(90deg,#E9EDF2 1px,transparent 1px),#F6F7F8;
+  background-size:24px 24px
+}
+.stage-side{
+  grid-column:4;grid-row:1;border-left:2px solid #DDE2E8;background:#F7F8FA;
+  display:grid!important;grid-template-rows:356px 1fr!important
+}
+.stage-panel{background:#fff;border-bottom:2px solid #DDE2E8;position:relative}
+.stage-controls{
+  height:39px;display:flex;align-items:center;justify-content:space-between;
+  padding:4px 8px;border-bottom:2px solid #E2E6EC
+}
+.flag-btn,.stop-btn{
+  width:34px;height:29px;border:2px solid #AEB8C5;border-radius:7px;background:#fff;
+  display:inline-grid;place-items:center;font-size:19px;margin-right:3px
+}
+.flag-btn{color:#2FA44A}.stop-btn{color:#E44F4F}
+.stage-title{font-size:12px;font-weight:900;color:#5E6D81}
+.stage-screen{height:316px;position:relative;background:#fff;overflow:hidden}
+.sprite-panel{padding:9px;overflow:auto}
+.sprite-toolbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:7px}
+.sprite-toolbar strong{font-size:13px}
+.choose-sprite{
+  width:34px;height:34px;border-radius:50%;border:0;background:#4D97FF;color:#fff;font-size:22px;
+  display:grid;place-items:center;font-weight:900;box-shadow:0 3px 0 #3574C7
+}
+.sprite-list{display:grid;grid-template-columns:1fr 1fr;gap:7px}
+.sprite-card{
+  position:relative;border:2px solid #C8D1DC;border-radius:10px;background:#fff;padding:6px;
+  text-align:center;min-height:112px;cursor:pointer
+}
+.sprite-card.selected{border-color:#4D97FF;background:#F0F6FF;box-shadow:inset 0 0 0 2px #BFD9FF}
+.sprite-thumb{height:70px;position:relative;background:#F6F8FA;border-radius:7px;overflow:hidden}
+.sprite-card-name{font-size:11px;font-weight:900;margin-top:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sprite-edit{
+  grid-column:1/-1;border-top:2px solid #DCE2E9;margin-top:3px;padding-top:7px;
+  display:grid;grid-template-columns:72px 1fr;gap:7px;align-items:center
+}
+.sprite-edit label{font-size:11px;font-weight:900;color:#5E6D81}
+.sprite-name-input{width:100%;border:2px solid #AEB8C5;border-radius:6px;padding:5px 7px;font-weight:900;font-size:12px}
+.nb-status{
+  height:25px;background:#F2F4F7;border-top:2px solid #D9DEE6;padding:4px 9px;
+  font-size:11px;font-weight:800;color:#66758A;min-width:1120px
+}
+
+/* Official Scratch library sprites */
+.sprite-img{
+  position:absolute;display:block;object-fit:contain;user-select:none;transform-origin:center;
+}
+.cat-stage{width:105px;left:22px;top:142px;pointer-events:none}
+.dog-stage{width:105px;left:185px;top:110px;transform:translate(-50%,-50%);pointer-events:auto;touch-action:none;cursor:grab}
+.thumb-img{width:62px;max-height:65px;left:50%;top:50%;transform:translate(-50%,-50%)}
+.sprite-img.draggable-cat{pointer-events:auto;touch-action:none;cursor:grab}
+.say-bubble{
+  position:absolute;min-width:105px;max-width:150px;background:#fff;border:2px solid #9DA8B6;
+  border-radius:14px;padding:8px;font-size:12px;font-weight:900;display:none;z-index:20
+}
+.say-bubble:after{content:"";position:absolute;left:-9px;bottom:10px;border-right:10px solid #9DA8B6;border-top:7px solid transparent;border-bottom:7px solid transparent}
+
+/* Scratch-like stack blocks */
+.block{
+  position:relative;width:max-content;max-width:330px;min-height:44px;color:#fff;font-size:13px;font-weight:900;
+  line-height:1.18;padding:11px 14px 12px;margin:8px 0;border-radius:5px;
+  box-shadow:inset 0 -3px rgba(0,0,0,.14),inset 0 1px rgba(255,255,255,.18);
+  user-select:none;cursor:grab;
+  clip-path:polygon(0 0,20px 0,20px 6px,42px 6px,42px 0,100% 0,100% calc(100% - 7px),42px calc(100% - 7px),42px 100%,20px 100%,20px calc(100% - 7px),0 calc(100% - 7px))
+}
+.block.hat{
+  min-height:49px;padding-top:15px;border-radius:19px 19px 5px 5px;
+  clip-path:polygon(0 14px,5px 7px,14px 3px,28px 1px,100% 1px,100% calc(100% - 7px),42px calc(100% - 7px),42px 100%,20px 100%,20px calc(100% - 7px),0 calc(100% - 7px))
+}
+.events{background:var(--events);color:#403300}
+.looks{background:var(--looks)}
+.motion{background:var(--motion)}
+.sensing{background:var(--sensing)}
+.control{background:var(--control);color:#4D3500}
+.palette .block{width:100%;max-width:194px;font-size:12px}
+.input-mini{
+  display:inline-flex;align-items:center;justify-content:center;background:#fff;color:#3B4554;
+  min-height:23px;border-radius:12px;padding:2px 7px;border:1px solid rgba(0,0,0,.18);
+  min-width:35px
+}
+.block-text-input{
+  width:118px;border:1px solid rgba(0,0,0,.2);border-radius:12px;background:#fff;color:#303B4B;
+  padding:3px 8px;font-weight:900;font-size:12px
+}
+.scratch-select{
+  appearance:auto;border:1px solid rgba(0,0,0,.2);border-radius:12px;background:#fff;color:#354357;
+  padding:3px 5px;font-weight:900;font-size:11px;max-width:105px
+}
+.boolean-block{
+  display:inline-flex;align-items:center;justify-content:center;min-height:34px;background:var(--sensing);
+  color:#fff;font-weight:900;font-size:11px;padding:6px 18px;cursor:grab;
+  clip-path:polygon(13px 0,calc(100% - 13px) 0,100% 50%,calc(100% - 13px) 100%,13px 100%,0 50%);
+  white-space:nowrap
+}
+
+/* Scratch-like IF C block */
+.if-block{
+  width:300px;color:#4D3500;font-size:13px;font-weight:900;cursor:grab;user-select:none
+}
+.if-top{
+  min-height:58px;background:var(--control);padding:14px 13px 8px;border-radius:5px 5px 0 0;
+  box-shadow:inset 0 -2px rgba(0,0,0,.12);
+  display:flex;align-items:center;gap:7px;
+  /* Scratch-like top socket: the bottom tab of the block above fits here. */
+  clip-path:polygon(
+    0 0,
+    20px 0,20px 7px,43px 7px,43px 0,
+    100% 0,100% 100%,0 100%
+  )
+}
+.bool-slot{
+  min-width:150px;height:36px;background:rgba(255,255,255,.4);
+  clip-path:polygon(13px 0,calc(100% - 13px) 0,100% 50%,calc(100% - 13px) 100%,13px 100%,0 50%);
+  display:flex;align-items:center;justify-content:center;color:#8A6816;font-size:11px
+}
+.if-cavity-wrap{display:grid;grid-template-columns:18px 1fr}
+.if-left{background:var(--control)}
+.if-cavity{
+  min-height:68px;background:#F6F7F8;border-left:0;padding:7px 7px 7px 5px;
+  display:flex;align-items:flex-start
+}
+.if-bottom{
+  height:26px;background:var(--control);border-radius:0 0 6px 6px;position:relative;
+  box-shadow:inset 0 -3px rgba(0,0,0,.12)
+}
+.if-bottom:after{
+  content:"";position:absolute;left:18px;bottom:-6px;width:25px;height:7px;background:var(--control);border-radius:0 0 5px 5px
+}
+.inner-drop{
+  width:255px;min-height:58px;border:3px dashed #8D9AAA;border-radius:8px;color:#6D7989;
+  display:flex;align-items:center;justify-content:center;text-align:center;padding:7px;font-size:12px;
+  background:#fff;position:relative;z-index:12;pointer-events:auto
+}
+.inner-drop:hover{
+  border-color:var(--unit-purple);background:var(--unit-purple-soft)
+}
+.condition-drop{
+  width:100%;height:100%;display:flex;align-items:center;justify-content:center
+}
+.block-target{
+  position:absolute;border:3px dashed #8997A8;border-radius:9px;background:rgba(255,255,255,.65);
+  display:flex;align-items:center;justify-content:center;color:#6D7B8E;font-size:12px;font-weight:900;
+  text-align:center;padding:5px;z-index:4
+}
+.block-target.hot,.inner-drop.hot,.bool-slot.hot{border-color:var(--unit-purple);background:var(--unit-purple-soft)}
+.assembled-if{position:absolute;z-index:8}
+.stack-connected{margin-top:-7px!important}
+.cat-stage{transition:left .28s ease, top .23s ease}
+.test-step-box{
+  max-width:980px;margin:0 auto 11px;border:2px solid #C9D3DF;border-radius:11px;
+  background:#fff;padding:10px 14px;text-align:center;font-weight:900;font-size:16px
+}
+.test-step-box strong{color:var(--unit-blue)}
+.test-condition-target{
+  min-width:160px;height:38px;border:3px dashed #7F8DA0;
+  clip-path:polygon(14px 0,calc(100% - 14px) 0,100% 50%,calc(100% - 14px) 100%,14px 100%,0 50%);
+  background:rgba(255,255,255,.55);display:flex;align-items:center;justify-content:center;
+  color:#667587;font-size:11px;font-weight:900
+}
+.test-condition-target.hot{background:var(--unit-purple-soft)}
+.order-choice-box{
+  max-width:850px;margin:0 auto 12px;padding:12px;
+  border:2px solid #C8D2DE;border-radius:12px;background:#fff
+}
+.order-choice-question{
+  text-align:center;font-size:17px;font-weight:900;margin-bottom:10px;color:var(--ink)
+}
+.order-choice-buttons{
+  display:grid;grid-template-columns:1fr 1fr;gap:10px
+}
+.order-choice-btn{
+  min-height:64px;border:3px solid #AEB9C7;border-radius:11px;background:#fff;
+  font-weight:900;padding:10px;color:#2E3D51
+}
+.order-choice-btn:hover{
+  border-color:var(--unit-purple);background:var(--unit-purple-soft)
+}
+@media(max-width:760px){
+  .order-choice-buttons{grid-template-columns:1fr}
+}
+.order-correction-note{
+  max-width:880px;margin:0 auto 11px;padding:11px 14px;
+  border:2px solid #E3AE75;border-radius:11px;background:#FFF7EB;
+  text-align:center;font-weight:900;line-height:1.4
+}
+.correction-if-wrap{
+  cursor:grab;
+}
+.correction-if-wrap.selected{
+  outline:4px solid #C8C0EE;outline-offset:4px;border-radius:7px
+}
+
+/* Block palette selection */
+.palette-block-wrap{cursor:grab}
+.palette-block-wrap.selected{outline:4px solid #C6BDEA;outline-offset:3px;border-radius:7px}
+
+/* Stage 1 */
+.anatomy-prompt{
+  max-width:860px;margin:0 auto 10px;border:2px solid #D0D8E2;background:#fff;border-radius:11px;
+  padding:10px;text-align:center;font-weight:900
+}
+.anatomy-click{cursor:pointer}
+.anatomy-click.correct-mark{outline:4px solid #7AA54F;outline-offset:2px}
+.anatomy-empty{min-height:48px;display:flex;align-items:center;justify-content:center;color:#8A6816}
+
+/* Sprite library */
+.sprite-library{
+  position:absolute;inset:0;background:rgba(255,255,255,.97);z-index:50;padding:16px;display:none
+}
+.sprite-library.open{display:block}
+.library-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+.library-head strong{font-size:16px}
+.library-close{border:2px solid #AEB8C5;border-radius:8px;background:#fff;padding:6px 10px;font-weight:900}
+.library-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.library-card{
+  border:2px solid #CBD4DF;border-radius:10px;background:#fff;padding:8px;text-align:center;font-weight:900
+}
+.library-card:hover{border-color:#4D97FF;background:#F0F6FF}
+.library-image{height:105px;position:relative}
+
+/* Stage 7 error */
+.error-panel{
+  max-width:760px;margin:auto;border:3px solid #D7DEE7;border-radius:15px;background:#fff;padding:20px
+}
+.error-script{width:360px;margin:auto;position:relative}
+.error-block{cursor:pointer}
+.error-block:hover{outline:4px solid #C9C2EE;outline-offset:3px}
+.error-block.chosen-wrong{outline:4px solid #E29C92;outline-offset:3px}
+.error-block.chosen-right{outline:5px solid #85AF5E;outline-offset:3px}
+.error-step-title{
+  margin:0 auto 14px;max-width:690px;text-align:center;font-size:17px;font-weight:900;
+  color:var(--unit-blue)
+}
+.error-correction{
+  display:grid;grid-template-columns:minmax(380px,1fr) 260px;gap:24px;align-items:start;
+  max-width:860px;margin:auto
+}
+.error-correct-script{
+  position:relative;min-height:420px;border:2px solid #D7DEE7;border-radius:14px;
+  background:
+    linear-gradient(#E9EDF2 1px,transparent 1px),
+    linear-gradient(90deg,#E9EDF2 1px,transparent 1px),#F6F7F8;
+  background-size:24px 24px;padding:22px
+}
+.error-move-tray{
+  border:2px solid #D4DCE6;border-radius:14px;background:#F8FAFC;padding:15px
+}
+.error-move-tray h3{margin:0 0 12px;text-align:center;font-size:15px}
+.error-move-token{cursor:grab}
+.error-move-token.selected{
+  outline:4px solid #C8C0EE;outline-offset:3px;border-radius:7px
+}
+.error-drop{
+  position:absolute;left:35px;top:318px;width:335px;height:70px;
+  border:3px dashed #8997A8;border-radius:9px;background:rgba(255,255,255,.72);
+  display:flex;align-items:center;justify-content:center;text-align:center;
+  color:#6D7B8E;font-size:12px;font-weight:900;padding:7px
+}
+.error-drop.hot{border-color:var(--unit-purple);background:var(--unit-purple-soft)}
+@media(max-width:900px){
+  .error-correction{grid-template-columns:1fr}
+}
+
+/* Final */
+.final-box{max-width:850px;margin:auto;text-align:center}
+.final-icon{
+  width:90px;height:90px;border-radius:24px;margin:10px auto 13px;
+  background:linear-gradient(145deg,var(--unit-blue),var(--unit-purple));color:#fff;
+  display:grid;place-items:center;font-size:46px
+}
+.summary{
+  border:3px solid var(--unit-blue);background:var(--unit-blue-soft);
+  border-radius:15px;padding:17px;font-size:19px;font-weight:900;line-height:1.45
+}
+.faces{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:16px}
+.face{min-height:112px;border:2px solid #C5CED9;border-radius:13px;background:#fff;font-weight:900}
+.face span{display:block;font-size:43px;margin-bottom:5px}
+.face.sel{border-color:var(--unit-purple);background:var(--unit-purple-soft)}
+.primary{
+  border:0;border-radius:11px;background:var(--unit-purple);color:#fff;padding:11px 24px;
+  font-weight:900;font-size:18px;box-shadow:0 4px 0 var(--unit-purple-dark)
+}
+.center-btn{display:block;margin:16px auto 0}
+.repeat{margin:13px auto 0;border:2px solid #AAB5C3;border-radius:10px;background:#fff;padding:9px 15px;font-weight:900;color:#526075}
+
+/* Help */
+.modal{position:fixed;inset:0;background:rgba(31,43,60,.55);display:none;place-items:center;padding:20px;z-index:100}
+.modal.show{display:grid}
+.modal-box{width:min(620px,96vw);background:#fff;border-radius:17px;border:3px solid var(--unit-blue);padding:20px;box-shadow:0 18px 45px rgba(0,0,0,.20)}
+.modal-box h2{margin:0 0 10px}
+.modal-box p{font-size:18px;line-height:1.45;font-weight:700}
+.modal-close{display:block;margin-left:auto;border:0;border-radius:9px;background:var(--unit-blue);color:#fff;padding:9px 16px;font-weight:900}
+
+@media(max-width:1280px){
+  .stepdots{display:none}
+  .nb-main{grid-template-columns:82px 200px 520px 340px!important;min-width:1142px!important}
+}
+@media(max-width:900px){
+  .noesis{overflow-x:auto}
+  .nb-main{grid-template-columns:78px 190px 500px 330px!important;min-width:1098px!important}
+  .faces{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+<div class="shell">
+<header>
+  <div class="coursebar">
+    <div>
+      <div class="unit-label">ΕΝΟΤΗΤΑ 1 · ΑΛΓΟΡΙΘΜΙΚΗ – ΠΡΟΓΡΑΜΜΑΤΙΣΜΟΣ – ΡΟΜΠΟΤΙΚΗ</div>
+      <div class="lesson-name">Εντολή επιλογής στο Scratch (Μέρος Α΄)</div>
+    </div>
+    <div class="lesson-number">Μ5</div>
+  </div>
+  <div class="progress-wrap">
+    <div class="progress-text" id="progressText"></div>
+    <div class="progress-line"><div class="progress-fill" id="progressFill"></div></div>
+    <div class="stepdots" id="stepdots"></div>
+  </div>
+</header>
+
+<main class="workspace">
+  <div class="stagehead">
+    <div>
+      <div class="stage-kicker" id="kicker"></div>
+      <h1 id="title"></h1>
+    </div>
+    <button class="help" onclick="openHelp()">? Βοήθεια</button>
+  </div>
+  <div class="instruction" id="instruction"></div>
+  <section class="activity" id="activity"></section>
+  <div class="feedback" id="feedback"></div>
+</main>
+</div>
+
+<div class="modal" id="helpModal">
+  <div class="modal-box">
+    <h2>Βοήθεια</h2>
+    <p id="helpText"></p>
+    <button class="modal-close" onclick="closeHelp()">Κλείσιμο</button>
+  </div>
+</div>
+
+<script>
+const SCRATCH_CAT="https://cdn.assets.scratch.mit.edu/internalapi/asset/bcf454acf82e4504149f7ffe07081dbc.svg/get/";
+const SCRATCH_DOG2="https://cdn.assets.scratch.mit.edu/internalapi/asset/66b435d333f34d02d5ae49a598bcc5b3.svg/get/";
+const SCRATCH_DOG1="https://cdn.assets.scratch.mit.edu/internalapi/asset/35cd78a8a71546a16c530d0b2d7d5a7f.svg/get/";
+const SCRATCH_DOT="https://cdn.assets.scratch.mit.edu/internalapi/asset/106461f60e34ce231b323e2dd2d9f05b.svg/get/";
+
+const stages=[
+ {title:"Ανοίγω το προηγούμενο έργο",instruction:"Άνοιξε το έργο που αποθήκευσες στο προηγούμενο μάθημα. Μπορείς να χρησιμοποιήσεις είτε το μενού «Αρχείο» είτε το εικονίδιο ανοίγματος.",help:"Στο βιβλίο, πριν προσθέσεις το σκυλάκι, ανοίγεις πρώτα το έργο του προηγούμενου μαθήματος. Χρησιμοποίησε «Αρχείο → Άνοιγμα» ή το εικονίδιο του φακέλου.",kind:"openproject"},
+ {title:"Προσθέτω το σκυλάκι",instruction:"Πρόσθεσε το μπλε σκυλάκι, σύρε το στην κάτω δεξιά περιοχή της σκηνής και δώσε του ένα δικό σου όνομα.",help:"Πάτησε το κουμπί επιλογής νέου αντικειμένου, διάλεξε το μπλε σκυλάκι, τοποθέτησέ το κάτω δεξιά και άλλαξε το όνομά του από τον χώρο των αντικειμένων.",kind:"dog"},
+ {title:"Επιστρέφω στη γατούλα",instruction:"Επίλεξε τη γατούλα από τον χώρο των αντικειμένων για να εμφανιστούν ξανά τα σενάριά της.",help:"Κάθε αντικείμενο έχει τα δικά του σενάρια. Πάτησε τη γατούλα στον χώρο των αντικειμένων.",kind:"catselect"},
+ {title:"Προσθέτω την εντολή επιλογής",instruction:"Βρες την εντολή επιλογής στην κατηγορία «Έλεγχος» και σύρε την στον χώρο προγραμματισμού.",help:"Σε αυτό το βήμα τοποθετείς μόνο την πορτοκαλί εντολή επιλογής στον χώρο προγραμματισμού. Θα τη συμπληρώσεις στο επόμενο βήμα.",kind:"addif"},
+ {title:"Ολοκληρώνω και δοκιμάζω το πρόγραμμα",instruction:"Συμπλήρωσε την επιλογή και σκέψου πού πρέπει να τοποθετηθεί σε σχέση με την κίνηση. Δοκίμασε την επιλογή σου στην πράξη για να ανακαλύψεις ποια σειρά λειτουργεί όπως θέλουμε.",help:"Μην προσπαθήσεις να μαντέψεις από το χρώμα ή τη θέση των blocks. Σκέψου τη σειρά εκτέλεσης: πότε πρέπει να κινηθεί η γατούλα και πότε πρέπει να ελεγχθεί αν αγγίζει το σκυλάκι; Θα δοκιμάσεις την επιλογή σου με το πραγματικό δεξί βέλος.",kind:"testsave"},
+ {title:"Εφαρμόζω αυτό που ανακάλυψα",instruction:"Χρησιμοποίησε το αποτέλεσμα των δοκιμών σου για να εντοπίσεις και να διορθώσεις τη λανθασμένη σειρά των blocks.",help:"Θυμήσου σε ποια σειρά ελεγχόταν πρώτα η συνθήκη και μετά εκτελούνταν η κίνηση.",kind:"error"},
+ {title:"Ολοκλήρωση",instruction:"Σκέψου τι έμαθες και επίλεξε πώς νιώθεις για την εντολή επιλογής.",help:"Σκέψου αν μπορείς να βρίσκεις την εντολή επιλογής, να δημιουργείς τη συνθήκη της και να προσθέτεις νέο αντικείμενο σε ένα έργο.",kind:"final"}
+];
+
+let stage=0,selfChoice=null;
+let currentCategory="motion";
+let anatomyPhase=0;
+let projectOpened=false;
+let dogAdded=false,dogMoved=false,dogName="Dog2",selectedSprite="cat",dogSetupDone=false;
+let dogPos={x:52,y:44};
+let ifPlaced=false,conditionPlaced=false,touchTarget="δείκτη ποντικιού";
+let sayPlaced=false,sayText="Γεια!",ifAttached=false;
+let selectedBlock=null,fileMenuOpen=false;
+let projectName="Νέο έργο",testPassed=false,saved=false;
+let dragSprite=null;
+let testCatX=20;
+let testPhase=0;
+let testConditionPlaced=false;
+let testTouchTarget="δείκτη ποντικιού";
+let testSayPlaced=false;
+let testSayText="Γεια!";
+let testIfAttached=false;
+let testOrderChoice=null;
+let testOrderOptions=[];
+let testCorrectionPlaced=false;
+let testKeyChoice="διάστημα";
+let errorPhase=0;
+let errorMoveSelected=false;
+
+function shuffle(a){
+ const b=[...a];
+ for(let i=b.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[b[i],b[j]]=[b[j],b[i]]}
+ return b;
+}
+function setFeedback(t,ok){
+ const f=document.getElementById("feedback");f.className="feedback "+(ok?"good":"bad");f.textContent=t
+}
+function clearFeedback(){const f=document.getElementById("feedback");f.className="feedback";f.textContent=""}
+function advance(ms=850){setTimeout(()=>{stage++;render()},ms)}
+function progress(){
+ const v=Math.min(stage,stages.length-1);
+ document.getElementById("progressText").textContent=stage>=stages.length?"Ολοκληρώθηκε":`Δραστηριότητα ${v+1} από ${stages.length}`;
+ document.getElementById("progressFill").style.width=`${stage>=stages.length?100:((v+1)/stages.length)*100}%`;
+ document.getElementById("stepdots").innerHTML=stages.map((_,i)=>`<div class="stepdot ${i<stage?"done":i===stage?"active":""}">${i+1}</div>`).join("")
+}
+function render(){
+ clearFeedback();progress();
+ const s=stages[stage];
+ document.getElementById("kicker").textContent=`Δραστηριότητα ${stage+1}`;
+ document.getElementById("title").textContent=s.title;
+ document.getElementById("instruction").textContent=s.instruction;
+ if(s.kind==="openproject")renderOpenProject();
+ if(s.kind==="dog")renderDogStage();
+ if(s.kind==="catselect")renderCatSelect();
+ if(s.kind==="addif")renderAddIf();
+ if(s.kind==="testsave")renderTestSave();
+ if(s.kind==="error")renderError();
+ if(s.kind==="final")renderFinal()
+}
+function openHelp(){
+ document.getElementById("helpText").textContent=stages[Math.min(stage,stages.length-1)].help;
+ document.getElementById("helpModal").classList.add("show")
+}
+function closeHelp(){document.getElementById("helpModal").classList.remove("show")}
+
+/* ---------- images ---------- */
+function catImg(cls=""){return `<img src="${SCRATCH_CAT}" class="sprite-img ${cls}" alt="Γατούλα Scratch" draggable="false">`}
+function dogImg(cls=""){return `<img src="${SCRATCH_DOG2}" class="sprite-img ${cls}" alt="Σκυλάκι Scratch" draggable="false">`}
+
+/* ---------- blocks ---------- */
+function eventKey(){
+ return `<div class="block events hat">όταν πατηθεί πλήκτρο <span class="input-mini">δεξί βέλος ▾</span></div>`
+}
+function move10(extra=""){
+ return `<div class="block motion ${extra}">κινήσου <span class="input-mini">10</span> βήματα</div>`
+}
+function previousLessonSayBlock(){
+ return `<div class="block looks">πες <span class="input-mini">Γεια!</span> για <span class="input-mini">2</span> δευτερόλεπτα</div>`
+}
+function sayBlock(editable=false,extra=""){
+ const content=editable
+  ? `<input class="block-text-input" id="sayInput" value="${escapeHTML(sayText)}" oninput="sayText=this.value;checkAssembleReady()">`
+  : `<span class="input-mini">Γεια σου, σκυλάκι!</span>`;
+ return `<div class="block looks ${extra}">πες ${content} για <span class="input-mini">2</span> δευτερόλεπτα</div>`
+}
+function touchingBlock(inSlot=false){
+ const options=["δείκτη ποντικιού","όριο",dogName].map(v=>`<option ${touchTarget===v?"selected":""}>${escapeHTML(v)}</option>`).join("");
+ return `<div class="boolean-block">αγγίζει <select class="scratch-select" id="touchSelect" onchange="touchTarget=this.value;checkConditionReady()">${options}</select> ;</div>`
+}
+
+/* Activity 6 uses neutral settings so the learner performs each textbook step. */
+function testTouchingBlock(){
+ const options=["δείκτη ποντικιού","όριο",dogName].map(v=>`<option ${testTouchTarget===v?"selected":""}>${escapeHTML(v)}</option>`).join("");
+ return `<div class="boolean-block">αγγίζει
+   <select class="scratch-select" id="testTouchSelect" onchange="testTouchTarget=this.value;checkTestTouchChoice()">${options}</select> ;
+ </div>`
+}
+function testSayBlock(editable=false){
+ const content=editable
+  ? `<input class="block-text-input" id="testSayInput" value="${escapeHTML(testSayText)}"
+      oninput="testSayText=this.value;checkTestSayText()">`
+  : `<span class="input-mini">Γεια!</span>`;
+ return `<div class="block looks">πες ${content} για <span class="input-mini">2</span> δευτερόλεπτα</div>`
+}
+function testEventKey(enabled=false){
+ const options=["διάστημα","πάνω βέλος","κάτω βέλος","αριστερό βέλος","δεξί βέλος"]
+  .map(v=>`<option ${testKeyChoice===v?"selected":""}>${v}</option>`).join("");
+ return `<div class="block events hat">όταν πατηθεί πλήκτρο
+   <select class="scratch-select" id="testKeySelect" ${enabled?"":"disabled"}
+     onchange="testKeyChoice=this.value;checkTestKeyChoice()">${options}</select>
+ </div>`
+}
+function testIfBlock(){
+ let condition;
+ if(testConditionPlaced){
+  condition=testTouchingBlock();
+ }else{
+  condition=`<div class="test-condition-target" id="testConditionTarget"
+    ondragover="testConditionOver(event)"
+    ondragleave="testConditionLeave(event)"
+    ondrop="testConditionDrop(event)"
+    onclick="testConditionTargetTap()">βάλε τη συνθήκη εδώ</div>`;
+ }
+
+ let inside;
+ if(testSayPlaced){
+  inside=testSayBlock(true);
+ }else{
+  inside=`<div class="inner-drop" id="testSayTarget"
+    ondragover="testSayOver(event)"
+    ondragleave="testSayLeave(event)"
+    ondrop="testSayDrop(event)"
+    onclick="testSayTargetTap()">βάλε εδώ την εντολή «πες …»</div>`;
+ }
+
+ return `<div class="if-block">
+  <div class="if-top">εάν
+    <div class="bool-slot">${condition}</div>
+    τότε
+  </div>
+  <div class="if-cavity-wrap"><div class="if-left"></div><div class="if-cavity">${inside}</div></div>
+  <div class="if-bottom"></div>
+ </div>`
+}
+function ifBlock(opts={}){
+ const condition=opts.condition?touchingBlock(true):`<div class="anatomy-empty">συνθήκη</div>`;
+ let inside;
+ if(opts.say){
+  inside=sayBlock(!!opts.editSay);
+ }else if(opts.sayTarget){
+  inside=`<div class="inner-drop" id="sayDropTarget"
+    ondragover="sayTargetOver(event)"
+    ondragleave="sayTargetLeave(event)"
+    ondrop="sayTargetDrop(event)"
+    onclick="sayTargetTap()">Σύρε εδώ την εντολή «πες …»</div>`;
+ }else{
+  inside=`<div class="inner-drop ${opts.innerTarget?"anatomy-click":""}" id="${opts.innerTarget?"anatomyInner":""}"
+    onclick="${opts.innerTarget?"anatomyClick('inner')":""}">εντολές</div>`;
+ }
+ return `<div class="if-block ${opts.draggable?"palette-block-wrap":""}" ${opts.draggable?'draggable="true" ondragstart="ifDragStart(event)" onclick="ifBlockClick(event)"':""}>
+  <div class="if-top">εάν
+    <div class="bool-slot ${opts.condTarget?"anatomy-click":""}" id="${opts.condTarget?"anatomyCond":""}" onclick="${opts.condTarget?"anatomyClick('condition')":""}">${condition}</div>
+    τότε
+  </div>
+  <div class="if-cavity-wrap"><div class="if-left"></div><div class="if-cavity">${inside}</div></div>
+  <div class="if-bottom"></div>
+ </div>`
+}
+function escapeHTML(s){return String(s).replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;").replaceAll('"',"&quot;")}
+
+/* ---------- categories/palette ---------- */
+const cats=[
+ ["motion","Κίνηση","var(--motion)"],
+ ["looks","Όψεις","var(--looks)"],
+ ["events","Συμβάντα","var(--events)"],
+ ["control","Έλεγχος","var(--control)"],
+ ["sensing","Αισθητήρες","var(--sensing)"],
+ ["operators","Τελεστές","var(--operators)"],
+ ["variables","Μεταβλητές","var(--variables)"]
+];
+function categories(){
+ return cats.map(c=>`<button class="cat-btn ${currentCategory===c[0]?"active":""}" onclick="setCategory('${c[0]}')"><span class="cat-dot" style="background:${c[2]}"></span>${c[1]}</button>`).join("")
+}
+function setCategory(c){
+ currentCategory=c;selectedBlock=null;
+ if(stage===3)renderAddIf();
+ if(stage===4)renderTestSave();
+}
+function palette(){
+ let h="";
+ if(currentCategory==="motion")h=`${move10()}`;
+ if(currentCategory==="events")h=`${eventKey()}`;
+ if(currentCategory==="control")h=`<div id="palIf">${ifBlock({draggable:true})}</div>`;
+ if(currentCategory==="sensing"){
+  const touchHTML=(stage===4&&testPhase===0)?testTouchingBlock():touchingBlock();
+  h=`<div class="palette-block-wrap" id="palTouch" draggable="true" ondragstart="simpleDrag(event,'touch')" onclick="selectSimple('touch')">${touchHTML}</div>`;
+ }
+ if(currentCategory==="looks"){
+  const sayHTML=(stage===4&&testPhase===2)?testSayBlock(false):sayBlock(false);
+  h=`<div class="palette-block-wrap" id="palSay" draggable="true" ondragstart="simpleDrag(event,'say')" onclick="selectSimple('say')">${sayHTML}</div>`;
+ }
+ return `<div class="palette-title">${cats.find(x=>x[0]===currentCategory)?.[1]||""}</div>${h||'<div class="note">Δεν χρειάζεσαι block από αυτή την κατηγορία τώρα.</div>'}`
+}
+function selectIfBlock(){selectedBlock="if";document.getElementById("palIf")?.classList.add("selected")}
+function ifBlockClick(ev){
+ if(ev.target.closest("input,select"))return;
+ if(stage===999&&sayPlaced){selectedBlock="assembledIf"}
+ else{selectIfBlock()}
+}
+function ifDragStart(ev){selectedBlock="if";ev.dataTransfer.setData("text/plain","if")}
+function selectSimple(t){selectedBlock=t;document.getElementById(t==="touch"?"palTouch":"palSay")?.classList.add("selected")}
+function simpleDrag(ev,t){
+ selectedBlock=t;
+ ev.dataTransfer.effectAllowed="move";
+ ev.dataTransfer.setData("text/plain",t);
+ document.getElementById(t==="touch"?"palTouch":"palSay")?.classList.add("selected");
+}
+
+/* ---------- Noesis shell ---------- */
+function spriteCards(opts={}){
+ const dogCard=dogAdded?`<div class="sprite-card ${selectedSprite==="dog"?"selected":""}" onclick="selectSprite('dog')">
+    <div class="sprite-thumb">${dogImg("thumb-img")}</div><div class="sprite-card-name" id="dogCardName">${escapeHTML(dogName)}</div>
+  </div>`:"";
+ const edit=opts.editDog&&dogAdded?`<div class="sprite-edit"><label>Όνομα:</label>
+    <input class="sprite-name-input" id="dogNameInput" value="${escapeHTML(dogName)}"
+      oninput="updateDogName(this.value)"
+      onblur="confirmDogName()"
+      onkeydown="if(event.key==='Enter'){event.preventDefault();this.blur()}">
+  </div>`:"";
+ return `<div class="sprite-list">
+  <div class="sprite-card ${selectedSprite==="cat"?"selected":""}" onclick="selectSprite('cat')">
+    <div class="sprite-thumb">${catImg("thumb-img")}</div><div class="sprite-card-name">Γατούλα</div>
+  </div>
+  ${dogCard}
+  ${edit}
+ </div>`
+}
+function noesisShell(scriptHTML,stageHTML,opts={}){
+ const spriteButton=opts.chooser?`<button class="choose-sprite" onclick="openSpriteLibrary()" title="Διάλεξε αντικείμενο">＋</button>`:`<span></span>`;
+ const library=opts.chooser?spriteLibraryHTML():"";
+ return `<div class="noesis">
+  <div class="nb-top">
+    <div class="nb-brand"><div class="nb-logo">N</div>Noesis Blocks</div>
+    <div class="nb-title-center"><input class="project-title-input" id="projectTitle" value="${escapeHTML(projectName)}" oninput="projectName=this.value" aria-label="Όνομα έργου"></div>
+    <div class="nb-window"><button>—</button><button>□</button><button>×</button></div>
+  </div>
+  <div class="nb-menu">
+    <div class="menu-wrap ${fileMenuOpen?"open":""}" id="fileMenu"><button onclick="toggleFileMenu(event)">Αρχείο</button>
+      <div class="file-drop"><button>Νέο έργο</button><button onclick="event.stopPropagation();openProject()">Άνοιγμα</button><button onclick="event.stopPropagation();saveProject()">Αποθήκευση</button></div>
+    </div>
+    <button>Επεξεργασία</button><button>Οδηγοί</button>
+  </div>
+  <div class="nb-toolbar">
+    <button class="tool-icon">＋</button><button class="tool-icon" onclick="openProject()" title="Άνοιγμα"><span class="open-icon"></span></button>
+    <button class="tool-icon" onclick="saveProject()" title="Αποθήκευση"><span class="save-icon"></span></button>
+  </div>
+  <div class="nb-main">
+    <div class="categories">${categories()}</div>
+    <div class="palette">${palette()}</div>
+    <div class="script-area" id="scriptArea">${scriptHTML}</div>
+    <div class="stage-side">
+      <div class="stage-panel"><div class="stage-controls"><div><button class="flag-btn">⚑</button><button class="stop-btn">●</button></div><span class="stage-title">Σκηνή</span></div>
+        <div class="stage-screen" id="stageScreen">${stageHTML}${library}</div>
+      </div>
+      <div class="sprite-panel"><div class="sprite-toolbar"><strong>Αντικείμενα</strong>${spriteButton}</div>${spriteCards(opts)}</div>
+    </div>
+  </div>
+  <div class="nb-status">Noesis Blocks · περιβάλλον προγραμματισμού</div>
+ </div>`
+}
+function toggleFileMenu(ev){ev.stopPropagation();fileMenuOpen=!fileMenuOpen;document.getElementById("fileMenu")?.classList.toggle("open",fileMenuOpen)}
+document.addEventListener("click",()=>{fileMenuOpen=false;document.getElementById("fileMenu")?.classList.remove("open")});
+function openProject(){
+ fileMenuOpen=false;
+ if(stage!==0){
+  setFeedback("Το άνοιγμα του προηγούμενου έργου χρησιμοποιείται στη σχετική δραστηριότητα.",false);
+  return;
+ }
+ projectOpened=true;
+ projectName="1ο Έργο Scratch";
+ selectedSprite="cat";
+ renderOpenProject();
+ setFeedback("Το προηγούμενο έργο άνοιξε. Η γατούλα και τα σενάριά της είναι διαθέσιμα.",true);
+ advance(850);
+}
+
+function saveProject(){
+ fileMenuOpen=false;
+ if(stage!==4){setFeedback("Η αποθήκευση θα χρησιμοποιηθεί στη δραστηριότητα δοκιμής και αποθήκευσης.",false);return}
+ if(testPhase<9||!testPassed){setFeedback("Ολοκλήρωσε πρώτα όλες τις δοκιμές και τη διόρθωση της σειράς, αν χρειάστηκε.",false);return}
+ const title=(document.getElementById("projectTitle")?.value||projectName).trim();
+ projectName=title;
+ if(!title||title==="1ο Έργο Scratch"){setFeedback("Δώσε στο έργο ένα νέο όνομα πριν το αποθηκεύσεις.",false);return}
+ saved=true;setFeedback(`Αποθηκεύτηκε το έργο «${projectName}».`,true);advance(950)
+}
+
+/* ---------- Stage 1 ---------- */
+function renderAnatomy(){
+ const phaseText=[
+  "Βρες πρώτα την κατηγορία όπου βρίσκεται η εντολή επιλογής.",
+  "Τώρα πάτησε στο εξάγωνο όπου μπαίνει η συνθήκη.",
+  "Τέλος, πάτησε στον εσωτερικό χώρο όπου μπαίνουν οι εντολές."
+ ][anatomyPhase];
+ const script=anatomyPhase===0
+   ? `<div class="note" style="margin-top:190px">Επίλεξε την κατάλληλη κατηγορία στα αριστερά.</div>`
+   : `<div style="position:absolute;left:90px;top:85px">${ifBlock({condTarget:anatomyPhase===1,innerTarget:anatomyPhase===2})}</div>`;
+ document.getElementById("activity").innerHTML=`<div class="anatomy-prompt">${phaseText}</div>${noesisShell(script,catImg("cat-stage"))}`;
+ if(anatomyPhase===0&&currentCategory==="control"){
+   anatomyPhase=1;setFeedback("Σωστά! Η εντολή επιλογής βρίσκεται στην κατηγορία «Έλεγχος».",true);
+   setTimeout(()=>{clearFeedback();renderAnatomy()},550)
+ }
+}
+function anatomyClick(which){
+ if(anatomyPhase===1&&which==="condition"){
+  document.getElementById("anatomyCond")?.classList.add("correct-mark");
+  anatomyPhase=2;setFeedback("Σωστά! Στο εξάγωνο τοποθετείται η συνθήκη.",true);
+  setTimeout(()=>{clearFeedback();renderAnatomy()},650);return
+ }
+ if(anatomyPhase===2&&which==="inner"){
+  setFeedback("Μπράβο! Μέσα στην εντολή μπαίνουν όσα πρέπει να εκτελεστούν όταν η συνθήκη ισχύει.",true);
+  advance(850);return
+ }
+ setFeedback("Δοκίμασε ξανά στο σημείο που ζητά η οδηγία.",false)
+}
+
+/* ---------- Stage 2: open the previous project ---------- */
+function previousProjectScripts(){
+ return `<div style="position:absolute;left:58px;top:45px">
+   <div class="block events hat">όταν γίνει κλικ στη ⚑</div>
+   <div class="stack-connected">${previousLessonSayBlock()}</div>
+  </div>
+  <div style="position:absolute;left:58px;top:220px">
+   ${eventKey()}
+   <div class="stack-connected">${move10()}</div>
+  </div>`;
+}
+function renderOpenProject(){
+ currentCategory="events";
+ const script=projectOpened
+  ? previousProjectScripts()
+  : `<div class="script-hint" style="display:block">Ο χώρος προγραμματισμού είναι κενός.<br>Άνοιξε το αποθηκευμένο έργο.</div>`;
+ document.getElementById("activity").innerHTML=noesisShell(script,catImg("cat-stage"));
+}
+
+/* ---------- Stage 2 ---------- */
+function spriteLibraryHTML(){
+ return `<div class="sprite-library" id="spriteLibrary">
+   <div class="library-head"><strong>Διάλεξε αντικείμενο</strong><button class="library-close" onclick="closeSpriteLibrary()">Κλείσιμο</button></div>
+   <div class="library-grid">
+    <button class="library-card" onclick="chooseDog2()"><div class="library-image"><img src="${SCRATCH_DOG2}" class="sprite-img thumb-img" style="width:90px" alt="Dog2"></div>Dog2</button>
+    <button class="library-card" onclick="wrongSprite()"><div class="library-image"><img src="${SCRATCH_DOG1}" class="sprite-img thumb-img" style="width:95px" alt="Dog1"></div>Dog1</button>
+    <button class="library-card" onclick="wrongSprite()"><div class="library-image"><img src="${SCRATCH_DOT}" class="sprite-img thumb-img" style="width:75px" alt="Dot"></div>Dot</button>
+   </div>
+  </div>`
+}
+function openSpriteLibrary(){document.getElementById("spriteLibrary")?.classList.add("open")}
+function closeSpriteLibrary(){document.getElementById("spriteLibrary")?.classList.remove("open")}
+function wrongSprite(){setFeedback("Διάλεξε το μπλε σκυλάκι που χρησιμοποιείται στο μάθημα.",false)}
+function chooseDog2(){
+ dogAdded=true;selectedSprite="dog";dogPos={x:50,y:40};closeSpriteLibrary();
+ setFeedback("Σωστά. Τώρα σύρε το σκυλάκι στην κάτω δεξιά περιοχή της σκηνής και άλλαξε το όνομά του.",true);
+ setTimeout(()=>{clearFeedback();renderDogStage()},500)
+}
+function dogStageHTML(draggable=true){
+ let h=catImg("cat-stage");
+ if(dogAdded){
+  h+=`<img src="${SCRATCH_DOG2}" id="dogStage" class="sprite-img dog-stage" alt="Σκυλάκι Scratch" draggable="false"
+    style="left:${dogPos.x}%;top:${dogPos.y}%"
+    ${draggable?'onpointerdown="startSpriteDrag(event,\'dog\')"':''}>`;
+ }
+ return h
+}
+function renderDogStage(){
+ currentCategory="motion";
+ const script=previousProjectScripts();
+ document.getElementById("activity").innerHTML=noesisShell(script,dogStageHTML(true),{chooser:true,editDog:dogAdded});
+ if(dogAdded)checkDogSetup(false)
+}
+function updateDogName(value){
+ dogName=value;
+ const cardName=document.getElementById("dogCardName");
+ if(cardName)cardName.textContent=value||"Dog2";
+}
+
+function confirmDogName(){
+ if(dogSetupDone||!dogAdded)return;
+
+ const input=document.getElementById("dogNameInput");
+ dogName=(input?.value??dogName).trim();
+
+ if(!dogMoved){
+  setFeedback("Τοποθέτησε πρώτα το σκυλάκι στην κάτω δεξιά περιοχή της σκηνής.",false);
+  return;
+ }
+
+ if(!dogName||dogName==="Dog2"){
+  setFeedback("Άλλαξε το όνομα «Dog2» σε ένα δικό σου όνομα.",false);
+  return;
+ }
+
+ dogSetupDone=true;
+ setFeedback("Μπράβο! Πρόσθεσες, τοποθέτησες και ονόμασες το σκυλάκι.",true);
+ advance(850);
+}
+
+function checkDogSetup(show=true){
+ if(!dogAdded||dogSetupDone)return;
+
+ if(show&&dogMoved){
+  setFeedback("Το σκυλάκι είναι στη σωστή περιοχή. Γράψε τώρα ολόκληρο το νέο όνομά του και πάτησε Enter ή κάνε κλικ έξω από το πλαίσιο.",true);
+ }else if(show&&!dogMoved){
+  setFeedback("Σύρε το σκυλάκι στην κάτω δεξιά περιοχή της σκηνής.",false);
+ }
+}
+
+/* ---------- sprite dragging ---------- */
+function startSpriteDrag(ev,type){
+ ev.preventDefault();
+ const screen=document.getElementById("stageScreen");if(!screen)return;
+ const img=type==="dog"?document.getElementById("dogStage"):document.getElementById("catStage");
+ if(!img)return;
+ const r=screen.getBoundingClientRect();
+ dragSprite={type,screen,img,rect:r,dx:ev.clientX-img.getBoundingClientRect().left,dy:ev.clientY-img.getBoundingClientRect().top};
+ img.setPointerCapture?.(ev.pointerId)
+}
+window.addEventListener("pointermove",ev=>{
+ if(!dragSprite)return;
+ const {type,rect,img}=dragSprite;
+ const iw=img.getBoundingClientRect().width,ih=img.getBoundingClientRect().height;
+ let px=ev.clientX-rect.left-dragSprite.dx+iw/2;
+ let py=ev.clientY-rect.top-dragSprite.dy+ih/2;
+ px=Math.max(iw/2,Math.min(rect.width-iw/2,px));
+ py=Math.max(ih/2,Math.min(rect.height-ih/2,py));
+ const xp=(px/rect.width)*100,yp=(py/rect.height)*100;
+ img.style.left=xp+"%";img.style.top=yp+"%";img.style.transform="translate(-50%,-50%)";
+ if(type==="dog"){dogPos={x:xp,y:yp};dogMoved=xp>68&&yp>62}
+});
+window.addEventListener("pointerup",()=>{
+ if(!dragSprite)return;
+ const type=dragSprite.type;dragSprite=null;
+
+ if(stage===1&&type==="dog"){
+  renderDogStage();
+  setTimeout(()=>checkDogSetup(),0);
+ }
+
+ if(stage===4&&type==="cat"){checkTouchNow()}
+});
+
+/* ---------- Stage 3 ---------- */
+function selectSprite(which){
+ selectedSprite=which;
+ if(stage===2&&which==="cat"){
+  setFeedback("Σωστά! Τα σενάρια που ανήκουν στη γατούλα εμφανίστηκαν ξανά.",true);renderCatSelect(true);advance(750);return
+ }
+ if(stage===1)renderDogStage()
+}
+function renderCatSelect(showScripts=false){
+ currentCategory="events";selectedSprite=showScripts?"cat":"dog";
+ const script=showScripts
+   ? previousProjectScripts()
+   : `<div class="script-hint" style="display:block">Το σκυλάκι είναι επιλεγμένο και δεν έχει ακόμη δικό του σενάριο.<br>Επίλεξε τη γατούλα από τα αντικείμενα.</div>`;
+ document.getElementById("activity").innerHTML=noesisShell(script,dogStageHTML(false),{editDog:false})
+}
+
+/* ---------- Stage 5: place the IF block in the programming area ---------- */
+function renderAddIf(){
+ if(!ifPlaced && currentCategory!=="control"){
+  currentCategory=currentCategory||"motion";
+ }
+ const previous=previousProjectScripts();
+
+ const target=ifPlaced
+  ? `<div style="position:absolute;left:430px;top:70px">${ifBlock({})}</div>`
+  : `<div class="block-target" id="addIfTarget"
+      style="left:440px;top:80px;width:340px;height:180px"
+      ondragover="targetOver(event)"
+      ondragleave="targetLeave(event)"
+      ondrop="addIfDrop(event)"
+      onclick="addIfTap()">Σύρε εδώ την εντολή επιλογής</div>`;
+
+ document.getElementById("activity").innerHTML=noesisShell(previous+target,dogStageHTML(false));
+
+ if(ifPlaced){
+  setFeedback("Σωστά! Η εντολή επιλογής βρίσκεται στον χώρο προγραμματισμού. Θα τη συμπληρώσεις στο επόμενο βήμα.",true);
+  advance(850);
+ }
+}
+function addIfDrop(ev){
+ ev.preventDefault();
+ ev.currentTarget.classList.remove("hot");
+ const t=ev.dataTransfer.getData("text/plain")||selectedBlock;
+ if(t!=="if"){
+  setFeedback("Χρειάζεσαι την πορτοκαλί εντολή επιλογής από την κατηγορία «Έλεγχος».",false);
+  return;
+ }
+ ifPlaced=true;selectedBlock=null;renderAddIf();
+}
+function addIfTap(){
+ if(selectedBlock==="if"){
+  ifPlaced=true;selectedBlock=null;renderAddIf();
+ }else{
+  setFeedback("Επίλεξε πρώτα την εντολή επιλογής από την κατηγορία «Έλεγχος».",false);
+ }
+}
+
+/* ---------- Stage 4 ---------- */
+function renderCondition(){
+ const ifHTML=ifPlaced?ifBlock({condition:conditionPlaced}):"";
+ const script=`
+  <div class="block-target" id="ifTarget" style="left:72px;top:65px;width:330px;height:150px" ondragover="targetOver(event)" ondragleave="targetLeave(event)" ondrop="dropIf(event)" onclick="tapIfTarget()">${ifPlaced?`<div style="position:absolute;left:12px;top:8px">${ifHTML}</div>`:"Τοποθέτησε εδώ την εντολή επιλογής"}</div>
+  ${ifPlaced&&!conditionPlaced?`<div class="note" style="position:absolute;left:80px;top:235px;width:310px">Βρες τώρα τη συνθήκη στους «Αισθητήρες».</div>`:""}
+ `;
+ document.getElementById("activity").innerHTML=noesisShell(script,dogStageHTML(false));
+ if(ifPlaced&&conditionPlaced){
+  const sel=document.getElementById("touchSelect");if(sel)sel.value=touchTarget
+ }
+}
+function targetOver(ev){ev.preventDefault();ev.currentTarget.classList.add("hot")}
+function targetLeave(ev){ev.currentTarget.classList.remove("hot")}
+function dropIf(ev){ev.preventDefault();ev.currentTarget.classList.remove("hot");const t=ev.dataTransfer.getData("text/plain")||selectedBlock;if(t==="if")placeIf()}
+function tapIfTarget(){if(selectedBlock==="if")placeIf()}
+function placeIf(){
+ ifPlaced=true;selectedBlock=null;setFeedback("Σωστά. Τώρα πρόσθεσε τη συνθήκη «αγγίζει …;» στο εξάγωνο.",true);
+ setTimeout(()=>{clearFeedback();currentCategory="sensing";renderCondition()},500)
+}
+function conditionDrop(ev){
+ ev.preventDefault();const t=ev.dataTransfer.getData("text/plain")||selectedBlock;
+ if(t!=="touch"){setFeedback("Χρειάζεσαι τη συνθήκη «αγγίζει …;».",false);return}
+ conditionPlaced=true;selectedBlock=null;renderCondition();setFeedback("Η συνθήκη μπήκε στη θέση της. Τώρα άλλαξε την επιλογή ώστε να ελέγχει το σκυλάκι.",true)
+}
+function checkConditionReady(){
+ if(conditionPlaced&&touchTarget===dogName){
+  setFeedback("Μπράβο! Η συνθήκη ελέγχει αν η γατούλα αγγίζει το σκυλάκι.",true);advance(850)
+ }
+}
+
+/* After renderCondition, make the bool slot droppable by event delegation. */
+document.addEventListener("dragover",ev=>{
+ if(stage===999&&ev.target.closest(".bool-slot")){ev.preventDefault();ev.target.closest(".bool-slot").classList.add("hot")}
+ if(stage===999&&ev.target.closest(".inner-drop")){ev.preventDefault();ev.target.closest(".inner-drop").classList.add("hot")}
+});
+document.addEventListener("dragleave",ev=>{
+ ev.target.closest(".bool-slot")?.classList.remove("hot");
+ ev.target.closest(".inner-drop")?.classList.remove("hot")
+});
+document.addEventListener("drop",ev=>{
+ if(stage===999){
+  const bs=ev.target.closest(".bool-slot");
+  if(bs){ev.preventDefault();bs.classList.remove("hot");conditionDrop(ev)}
+ }
+ if(stage===999){
+  const inner=ev.target.closest(".inner-drop");
+  if(inner && inner.id!=="sayDropTarget"){
+   ev.preventDefault();inner.classList.remove("hot");dropSay(ev)
+  }
+ }
+});
+
+/* ---------- Stage 5 ---------- */
+function renderAssemble(){
+ /* Before the message is placed, keep the correct Scratch category open. */
+ if(!sayPlaced) currentCategory="looks";
+
+ const condBuilt=true;
+ const ifHtml=ifBlock({
+   condition:condBuilt,
+   say:sayPlaced,
+   editSay:sayPlaced,
+   draggable:sayPlaced,
+   sayTarget:!sayPlaced
+ });
+
+ const script=ifAttached
+ ? `<div style="position:absolute;left:65px;top:55px">${eventKey()}<div class="stack-connected">${ifHtml}</div></div>`
+ : `<div style="position:absolute;left:65px;top:45px">${eventKey()}</div>
+    <div class="block-target" id="attachTarget"
+      style="left:65px;top:102px;width:350px;height:92px"
+      ondragover="targetOver(event)"
+      ondragleave="targetLeave(event)"
+      ondrop="attachIfDrop(event)"
+      onclick="attachIfTap()">Σύνδεσε εδώ την εντολή επιλογής</div>
+    <div class="assembled-if" id="assembledIf" style="left:455px;top:68px">${ifHtml}</div>`;
+
+ document.getElementById("activity").innerHTML=noesisShell(script,dogStageHTML(false));
+
+ if(!sayPlaced){
+  setFeedback("Σύρε τη μοβ εντολή «πες … για 2 δευτερόλεπτα» μέσα στο διακεκομμένο πλαίσιο της επιλογής. Μπορείς επίσης να πατήσεις πρώτα το block και μετά το πλαίσιο.",true);
+ }
+}
+
+function sayTargetOver(ev){
+ ev.preventDefault();
+ ev.stopPropagation();
+ ev.dataTransfer.dropEffect="move";
+ ev.currentTarget.classList.add("hot");
+}
+function sayTargetLeave(ev){
+ ev.currentTarget.classList.remove("hot");
+}
+function sayTargetDrop(ev){
+ ev.preventDefault();
+ ev.stopPropagation();
+ ev.currentTarget.classList.remove("hot");
+ const t=ev.dataTransfer.getData("text/plain")||selectedBlock;
+ if(t!=="say"){
+  setFeedback("Χρειάζεσαι τη μοβ εντολή «πες … για 2 δευτερόλεπτα».",false);
+  return;
+ }
+ placeSayBlock();
+}
+function sayTargetTap(){
+ if(selectedBlock==="say"){
+  placeSayBlock();
+ }else{
+  setFeedback("Επίλεξε πρώτα τη μοβ εντολή «πες … για 2 δευτερόλεπτα» από τις «Όψεις».",false);
+ }
+}
+function placeSayBlock(){
+ sayPlaced=true;
+ selectedBlock=null;
+ renderAssemble();
+ setFeedback("Σωστά! Η εντολή μπήκε μέσα στην επιλογή. Γράψε τώρα ακριβώς «Γεια σου, σκυλάκι!» στο λευκό πλαίσιο.",true);
+}
+function dropSay(ev){
+ const t=(ev.dataTransfer&&ev.dataTransfer.getData("text/plain"))||selectedBlock;
+ if(t!=="say"){
+  setFeedback("Χρειάζεσαι τη μοβ εντολή «πες … για 2 δευτερόλεπτα».",false);
+  return;
+ }
+ placeSayBlock();
+}
+function ifDragStart(ev){
+ ev.dataTransfer.effectAllowed="move";
+ if(stage===999&&sayPlaced){
+  selectedBlock="assembledIf";
+  ev.dataTransfer.setData("text/plain","assembledIf");
+ }else{
+  selectedBlock="if";
+  ev.dataTransfer.setData("text/plain","if");
+ }
+}
+function attachIfDrop(ev){
+ ev.preventDefault();
+ ev.stopPropagation();
+ ev.currentTarget.classList.remove("hot");
+ const t=ev.dataTransfer.getData("text/plain")||selectedBlock;
+ if(t==="assembledIf")attachIf();
+ else setFeedback("Σύρε ολόκληρη την πορτοκαλί εντολή επιλογής σε αυτό το πλαίσιο.",false);
+}
+function attachIfTap(){
+ if(selectedBlock==="assembledIf")attachIf();
+ else setFeedback("Πάτησε πρώτα την πορτοκαλί εντολή επιλογής και μετά αυτό το πλαίσιο.",false);
+}
+function attachIf(){
+ ifAttached=true;selectedBlock=null;renderAssemble();checkAssembleReady()
+}
+function checkAssembleReady(){
+ if(sayPlaced&&sayText==="Γεια σου, σκυλάκι!"&&ifAttached){
+  setFeedback("Μπράβο! Η εντολή επιλογής είναι ολοκληρωμένη και βρίσκεται αμέσως κάτω από το συμβάν.",true);advance(950)
+ }else if(sayPlaced&&sayText==="Γεια σου, σκυλάκι!"&&!ifAttached){
+  setFeedback("Το μήνυμα είναι σωστό. Σύρε τώρα ολόκληρη την επιλογή κάτω από το συμβάν.",true)
+ }
+}
+
+/* ---------- Stage 6 ---------- */
+function completeScript(){
+ const key=testEventKey(testPhase>=5);
+
+ /* Build the IF separately until the prediction is made. */
+ if(testPhase<4 || !testOrderChoice){
+  return `<div style="position:absolute;left:65px;top:55px">
+    ${key}
+    <div class="stack-connected">${move10()}</div>
+   </div>
+   <div class="assembled-if" id="testIfSeparate" style="left:455px;top:72px">${testIfBlock()}</div>`;
+ }
+
+ /* After a wrong first test, require the learner to actually replace
+    the order: IF goes into the dashed gap before MOVE. */
+ if(testPhase===7 && !testCorrectionPlaced){
+  return `<div style="position:absolute;left:65px;top:55px">${key}</div>
+   <div class="block-target" id="testCorrectionTarget"
+    style="left:65px;top:108px;width:350px;height:190px"
+    ondragover="testCorrectionOver(event)"
+    ondragleave="testCorrectionLeave(event)"
+    ondrop="testCorrectionDrop(event)"
+    onclick="testCorrectionTargetTap()">
+      Τοποθέτησε εδώ την εντολή «εάν»
+   </div>
+   <div style="position:absolute;left:65px;top:305px">${move10()}</div>
+   <div class="assembled-if correction-if-wrap" id="testCorrectionIf"
+    style="left:455px;top:72px"
+    draggable="true"
+    ondragstart="testCorrectionDragStart(event)"
+    ondragend="testCorrectionDragEnd(event)"
+    onclick="testCorrectionPick()">
+      ${testIfBlock()}
+   </div>`;
+ }
+
+ /* Corrected / correct program: event -> IF -> MOVE. */
+ if(testOrderChoice==="before" || testCorrectionPlaced){
+  return `<div style="position:absolute;left:65px;top:55px">
+    ${key}
+    <div class="stack-connected">${testIfBlock()}</div>
+    <div class="stack-connected">${move10()}</div>
+   </div>`;
+ }
+
+ /* Wrong hypothesis: event -> MOVE -> IF. */
+ return `<div style="position:absolute;left:65px;top:55px">
+   ${key}
+   <div class="stack-connected">${move10()}</div>
+   <div class="stack-connected">${testIfBlock()}</div>
+  </div>`;
+}
+
+function renderTestSave(){
+ selectedSprite="cat";
+
+ if(testPhase===0) currentCategory="sensing";
+ else if(testPhase===2 || testPhase===3) currentCategory="looks";
+ else currentCategory="control";
+
+ const catStyle=`left:${testCatX}%;top:67%;transform:translate(-50%,-50%)`;
+ const dogStyle=`left:76%;top:67%;transform:translate(-50%,-50%)`;
+
+ const stageHTML=`
+   <img src="${SCRATCH_CAT}" id="catStage" class="sprite-img cat-stage"
+     alt="Γατούλα Scratch" draggable="false" style="${catStyle}">
+   <img src="${SCRATCH_DOG2}" id="dogStageFixed" class="sprite-img dog-stage"
+     alt="Σκυλάκι Scratch" draggable="false" style="${dogStyle}">
+   <div class="say-bubble" id="sayBubble" style="left:38%;top:36%">Γεια σου, σκυλάκι!</div>`;
+
+ let stepText="";
+ if(testPhase===0){
+  stepText="<strong>Βήμα 1:</strong> Από τους «Αισθητήρες», σύρε τη συνθήκη «αγγίζει …;» στο εξάγωνο της επιλογής.";
+ }else if(testPhase===1){
+  stepText=`<strong>Βήμα 2:</strong> Στη συνθήκη «αγγίζει …;» επίλεξε «${escapeHTML(dogName)}».`;
+ }else if(testPhase===2){
+  stepText="<strong>Βήμα 3:</strong> Από τις «Όψεις», βάλε την εντολή «πες … για 2 δευτερόλεπτα» μέσα στην επιλογή.";
+ }else if(testPhase===3){
+  stepText="<strong>Βήμα 4:</strong> Γράψε ακριβώς «Γεια σου, σκυλάκι!» στο λευκό πλαίσιο.";
+ }else if(testPhase===4){
+  stepText="<strong>Βήμα 5:</strong> Σκέψου τη σειρά εκτέλεσης και κάνε μία πρόβλεψη.";
+ }else if(testPhase===5){
+  stepText="<strong>Βήμα 6:</strong> Στο κίτρινο block συμβάντος επίλεξε «δεξί βέλος».";
+ }else if(testPhase===6){
+  stepText="<strong>Βήμα 7:</strong> Δοκίμασε την πρόβλεψή σου πατώντας επανειλημμένα το πραγματικό πλήκτρο →.";
+ }else if(testPhase===7){
+  stepText="<strong>Βήμα 8:</strong> Άλλαξε τη σειρά των blocks με βάση το αποτέλεσμα της πρώτης δοκιμής.";
+ }else if(testPhase===8){
+  stepText="<strong>Βήμα 9:</strong> Δοκίμασε ξανά το διορθωμένο πρόγραμμα με το πραγματικό πλήκτρο → και παρατήρησε τι συμβαίνει ακριβώς όταν η γατούλα αγγίζει το σκυλάκι.";
+ }else{
+  stepText="<strong>Βήμα 10:</strong> Ολοκλήρωσες τη δοκιμή. Δώσε νέο όνομα στο έργο και αποθήκευσέ το.";
+ }
+
+ let prediction="";
+ if(testPhase===4){
+  if(!testOrderOptions.length){
+   testOrderOptions=shuffle([
+    {value:"before",label:"Η εντολή «εάν» πριν από το «κινήσου 10 βήματα»"},
+    {value:"after",label:"Η εντολή «εάν» μετά από το «κινήσου 10 βήματα»"}
+   ]);
+  }
+  prediction=`<div class="order-choice-box">
+    <div class="order-choice-question">
+      Πού πιστεύεις ότι πρέπει να βρίσκεται η εντολή «εάν», ώστε η γατούλα να χαιρετήσει αμέσως μόλις φτάσει το σκυλάκι;
+    </div>
+    <div class="order-choice-buttons">
+      ${testOrderOptions.map(o=>`<button class="order-choice-btn" onclick="chooseTestOrder('${o.value}')">${o.label}</button>`).join("")}
+    </div>
+   </div>`;
+ }
+
+ let correctionNote="";
+ if(testPhase===7){
+  correctionNote=`<div class="order-correction-note">
+    Η πρώτη δοκιμή έδειξε ότι το <strong>«κινήσου 10 βήματα» πριν από το «εάν»</strong>
+    δεν είναι η σειρά που θέλουμε εδώ. Μετακίνησε τώρα την εντολή «εάν» πριν από την κίνηση και δοκίμασε ξανά.
+  </div>`;
+ }
+
+ document.getElementById("activity").innerHTML=`
+  <div class="test-step-box">${stepText}</div>
+  ${prediction}
+  ${correctionNote}
+  ${noesisShell(completeScript(),stageHTML)}
+ `;
+}
+
+function testConditionOver(ev){
+ ev.preventDefault();ev.stopPropagation();ev.dataTransfer.dropEffect="move";
+ ev.currentTarget.classList.add("hot");
+}
+function testConditionLeave(ev){ev.currentTarget.classList.remove("hot")}
+function testConditionDrop(ev){
+ ev.preventDefault();ev.stopPropagation();ev.currentTarget.classList.remove("hot");
+ const t=ev.dataTransfer.getData("text/plain")||selectedBlock;
+ if(t!=="touch"){
+  setFeedback("Χρειάζεσαι τη γαλάζια συνθήκη «αγγίζει …;».",false);return;
+ }
+ placeTestCondition();
+}
+function testConditionTargetTap(){
+ if(selectedBlock==="touch")placeTestCondition();
+ else setFeedback("Επίλεξε πρώτα τη συνθήκη «αγγίζει …;» από τους «Αισθητήρες».",false);
+}
+function placeTestCondition(){
+ testConditionPlaced=true;
+ testTouchTarget="δείκτη ποντικιού";
+ selectedBlock=null;
+ testPhase=1;
+ renderTestSave();
+ setFeedback(`Σωστά! Τώρα άλλαξε το «δείκτη ποντικιού» σε «${dogName}».`,true);
+}
+
+function checkTestTouchChoice(){
+ if(testPhase!==1)return;
+ if(testTouchTarget===dogName){
+  testPhase=2;
+  setFeedback("Σωστά! Η συνθήκη ελέγχει τώρα αν η γατούλα αγγίζει το σκυλάκι.",true);
+  setTimeout(()=>{clearFeedback();renderTestSave()},650);
+ }else{
+  setFeedback(`Επίλεξε «${dogName}».`,false);
+ }
+}
+
+function testSayOver(ev){
+ ev.preventDefault();ev.stopPropagation();ev.dataTransfer.dropEffect="move";
+ ev.currentTarget.classList.add("hot");
+}
+function testSayLeave(ev){ev.currentTarget.classList.remove("hot")}
+function testSayDrop(ev){
+ ev.preventDefault();ev.stopPropagation();ev.currentTarget.classList.remove("hot");
+ const t=ev.dataTransfer.getData("text/plain")||selectedBlock;
+ if(t!=="say"){
+  setFeedback("Χρειάζεσαι τη μοβ εντολή «πες … για 2 δευτερόλεπτα».",false);return;
+ }
+ placeTestSay();
+}
+function testSayTargetTap(){
+ if(selectedBlock==="say")placeTestSay();
+ else setFeedback("Επίλεξε πρώτα τη μοβ εντολή «πες … για 2 δευτερόλεπτα».",false);
+}
+function placeTestSay(){
+ testSayPlaced=true;
+ testSayText="Γεια!";
+ selectedBlock=null;
+ testPhase=3;
+ renderTestSave();
+ setFeedback("Σωστά! Γράψε τώρα ακριβώς «Γεια σου, σκυλάκι!» στο λευκό πλαίσιο.",true);
+}
+function checkTestSayText(){
+ if(testPhase!==3)return;
+ if(testSayText==="Γεια σου, σκυλάκι!"){
+  testPhase=4;
+  testOrderChoice=null;
+  testOrderOptions=[];
+  setFeedback("Το μήνυμα είναι σωστό. Τώρα σκέψου αν η επιλογή πρέπει να εκτελείται πριν ή μετά από την κίνηση.",true);
+  setTimeout(()=>{clearFeedback();renderTestSave()},650);
+ }
+}
+
+function chooseTestOrder(choice){
+ testOrderChoice=choice;
+ testIfAttached=true;
+ testCorrectionPlaced=false;
+ selectedBlock=null;
+
+ /* If the right-arrow event was already selected during a previous trial,
+    return directly to practical testing. */
+ if(testKeyChoice==="δεξί βέλος"){
+  testPhase=6;
+  testCatX=20;
+  renderTestSave();
+  setFeedback("Δοκίμασε τώρα αυτή τη σειρά με το πραγματικό πλήκτρο →.",true);
+ }else{
+  testPhase=5;
+  renderTestSave();
+  setFeedback("Η πρόβλεψή σου τοποθετήθηκε στο πρόγραμμα. Ρύθμισε τώρα το συμβάν στο «δεξί βέλος» και δοκίμασέ την.",true);
+ }
+}
+
+function testCorrectionDragStart(ev){
+ selectedBlock="correctionIf";
+ ev.dataTransfer.effectAllowed="move";
+ ev.dataTransfer.setData("text/plain","correctionIf");
+ document.getElementById("testCorrectionIf")?.classList.add("selected");
+}
+function testCorrectionDragEnd(ev){
+ ev.currentTarget.classList.remove("selected");
+}
+function testCorrectionPick(){
+ selectedBlock="correctionIf";
+ document.getElementById("testCorrectionIf")?.classList.add("selected");
+}
+function testCorrectionOver(ev){
+ ev.preventDefault();
+ ev.dataTransfer.dropEffect="move";
+ ev.currentTarget.classList.add("hot");
+}
+function testCorrectionLeave(ev){
+ ev.currentTarget.classList.remove("hot");
+}
+function testCorrectionDrop(ev){
+ ev.preventDefault();
+ ev.currentTarget.classList.remove("hot");
+ const t=ev.dataTransfer.getData("text/plain")||selectedBlock;
+ if(t==="correctionIf"){
+  completeTestCorrection();
+ }else{
+  setFeedback("Μετακίνησε την πορτοκαλί εντολή «εάν» στο διακεκομμένο πλαίσιο.",false);
+ }
+}
+function testCorrectionTargetTap(){
+ if(selectedBlock==="correctionIf"){
+  completeTestCorrection();
+ }else{
+  setFeedback("Επίλεξε πρώτα την πορτοκαλί εντολή «εάν» και μετά το διακεκομμένο πλαίσιο.",false);
+ }
+}
+function completeTestCorrection(){
+ testCorrectionPlaced=true;
+ testOrderChoice="before";
+ selectedBlock=null;
+ testCatX=20;
+ testPhase=8;
+ renderTestSave();
+ setFeedback("Η σειρά άλλαξε. Τώρα η εντολή «εάν» βρίσκεται πριν από το «κινήσου 10 βήματα». Δοκίμασε ξανά το πρόγραμμα με →.",true);
+}
+
+function checkTestKeyChoice(){
+ if(testPhase!==5)return;
+ if(testKeyChoice==="δεξί βέλος"){
+  testPhase=6;
+  setFeedback("Σωστά! Το συμβάν ενεργοποιείται τώρα με το δεξί βέλος.",true);
+  setTimeout(()=>{clearFeedback();renderTestSave()},650);
+ }else{
+  setFeedback("Επίλεξε «δεξί βέλος».",false);
+ }
+}
+
+function checkTouchNow(){
+ if(stage!==4)return false;
+
+ const c=document.getElementById("catStage");
+ const d=document.getElementById("dogStageFixed");
+ if(!c||!d)return false;
+
+ const a=c.getBoundingClientRect();
+ const b=d.getBoundingClientRect();
+
+ /* Treat the sprites as touching when their visible screen rectangles
+    meet or come within a few pixels. This is much more responsive than
+    comparing only the distance between their centres. */
+ const tolerance=8;
+
+ const horizontalTouch=
+   a.right >= b.left-tolerance &&
+   b.right >= a.left-tolerance;
+
+ const verticalTouch=
+   a.bottom >= b.top-tolerance &&
+   b.bottom >= a.top-tolerance;
+
+ return horizontalTouch && verticalTouch;
+}
+
+function showTouchMessage(){
+ const bubble=document.getElementById("sayBubble");
+ if(!bubble)return;
+
+ const cat=document.getElementById("catStage");
+ const screen=document.getElementById("stageScreen");
+
+ if(cat&&screen){
+  const a=cat.getBoundingClientRect();
+  const s=screen.getBoundingClientRect();
+
+  /* Keep the speech bubble close to the cat at the exact contact point. */
+  const left=Math.min(s.width-155,Math.max(8,a.right-s.left+4));
+  const top=Math.max(10,a.top-s.top-26);
+
+  bubble.style.left=left+"px";
+  bubble.style.top=top+"px";
+ }
+
+ bubble.style.display="block";
+}
+
+document.addEventListener("keydown",ev=>{
+ if(stage!==4 || ![6,8].includes(testPhase) || ev.key!=="ArrowRight")return;
+
+ const active=document.activeElement;
+ if(active && ["INPUT","TEXTAREA","SELECT"].includes(active.tagName))return;
+
+ ev.preventDefault();
+ if(testPassed)return;
+
+ const cat=document.getElementById("catStage");
+ if(!cat||!testOrderChoice)return;
+
+ /* --------------------------------------------------------------
+    FIRST TEST — WRONG ORDER:
+    move 10 steps before IF.
+    The cat can reach the dog, but the greeting is intentionally not
+    triggered in this trial. The learner then corrects the order.
+    -------------------------------------------------------------- */
+ if(testOrderChoice==="after" && testPhase===6){
+  testCatX=Math.min(76,testCatX+7);
+  cat.style.left=testCatX+"%";
+
+  setTimeout(()=>{
+   if(checkTouchNow()){
+    setFeedback(
+      "Η γατούλα έφτασε το σκυλάκι, αλλά με αυτή τη σειρά το «κινήσου 10 βήματα» εκτελείται πριν από την εντολή «εάν». Δοκίμασε να αλλάξεις τη σειρά των δύο blocks.",
+      false
+    );
+
+    setTimeout(()=>{
+     testCatX=20;
+     testPhase=7;
+     testCorrectionPlaced=false;
+     renderTestSave();
+     setFeedback(
+       "Μετακίνησε τώρα την εντολή «εάν» πριν από το «κινήσου 10 βήματα» και έπειτα δοκίμασε ξανά.",
+       true
+     );
+    },1800);
+   }else{
+    setFeedback(
+      "Η γατούλα κινήθηκε προς το σκυλάκι. Συνέχισε να πατάς → μέχρι να το αγγίξει.",
+      true
+    );
+   }
+  },280);
+
+  return;
+ }
+
+ /* --------------------------------------------------------------
+    EXPECTED / CORRECTED ORDER:
+    IF before MOVE.
+    For this educational simulation the touch sensing remains active
+    during the movement, so the response appears immediately at the
+    moment the sprites make contact rather than one key press later.
+    -------------------------------------------------------------- */
+
+ if(checkTouchNow()){
+  showTouchMessage();
+
+  const wasRetest=(testPhase===8);
+  testPassed=true;
+  testPhase=9;
+
+  setFeedback(
+    wasRetest
+      ? "Μπράβο! Με τη νέα σειρά, η γατούλα αντέδρασε μόλις άγγιξε το σκυλάκι και είπε «Γεια σου, σκυλάκι!». "
+      : "Μπράβο! Η γατούλα αντέδρασε μόλις άγγιξε το σκυλάκι.",
+    true
+  );
+
+  setTimeout(()=>{
+   const bubble=document.getElementById("sayBubble");
+   if(bubble)bubble.style.display="none";
+   renderTestSave();
+   setFeedback("Η δοκιμή ολοκληρώθηκε. Δώσε νέο όνομα στο έργο και αποθήκευσέ το.",true);
+  },1800);
+
+  return;
+ }
+
+ testCatX=Math.min(76,testCatX+7);
+ cat.style.left=testCatX+"%";
+
+ /* Wait for the movement animation to finish, then check contact.
+    This makes the touch response happen on the SAME key press that
+    visually brings the cat into contact with the dog. */
+ setTimeout(()=>{
+  if(checkTouchNow()){
+   showTouchMessage();
+
+   const wasRetest=(testPhase===8);
+   testPassed=true;
+   testPhase=9;
+
+   setFeedback(
+    wasRetest
+      ? "Μπράβο! Μόλις η γατούλα άγγιξε το σκυλάκι, εμφανίστηκε αμέσως το μήνυμα «Γεια σου, σκυλάκι!». Η δεύτερη δοκιμή λειτούργησε όπως θέλαμε."
+      : "Μπράβο! Η γατούλα αντέδρασε αμέσως μόλις άγγιξε το σκυλάκι.",
+    true
+   );
+
+   setTimeout(()=>{
+    const bubble=document.getElementById("sayBubble");
+    if(bubble)bubble.style.display="none";
+    renderTestSave();
+    setFeedback("Η δοκιμή ολοκληρώθηκε. Δώσε νέο όνομα στο έργο και αποθήκευσέ το.",true);
+   },1900);
+
+  }else{
+   setFeedback(
+    "Η γατούλα κινήθηκε προς τα δεξιά. Συνέχισε να πατάς → μέχρι να αγγίξει το σκυλάκι.",
+    true
+   );
+  }
+ },300);
+});
+
+/* ---------- Stage 7 ---------- */
+function renderError(){
+ if(errorPhase===0){
+  const wrongIf=ifBlock({condition:true,say:true});
+  document.getElementById("activity").innerHTML=`
+   <div class="error-step-title">Βήμα 1: Πάτησε το block που βρίσκεται σε λάθος θέση.</div>
+   <div class="error-panel">
+    <div class="error-script">
+     <div class="error-block" id="errEvent" onclick="errorPick('event',this)">${eventKey()}</div>
+     <div class="error-block" id="errMove" style="margin-top:-1px" onclick="errorPick('move',this)">${move10()}</div>
+     <div class="error-block" id="errIf" style="margin-top:-1px" onclick="errorPick('if',this)">${wrongIf}</div>
+    </div>
+   </div>`;
+  return;
+ }
+
+ const correctIf=ifBlock({condition:true,say:true});
+ document.getElementById("activity").innerHTML=`
+  <div class="error-step-title">Βήμα 2: Μετακίνησε το block «κινήσου 10 βήματα» μετά από την εντολή επιλογής.</div>
+  <div class="error-correction">
+   <div class="error-correct-script">
+    <div style="position:absolute;left:35px;top:38px">
+      ${eventKey()}
+      <div class="stack-connected">${correctIf}</div>
+    </div>
+
+    <div class="error-drop" id="errorMoveDrop"
+      style="left:35px;top:318px;width:335px;height:70px"
+      ondragover="errorMoveOver(event)"
+      ondragleave="errorMoveLeave(event)"
+      ondrop="errorMoveDrop(event)"
+      onclick="errorMoveTargetTap()">
+      Τοποθέτησε εδώ το block
+    </div>
+   </div>
+
+   <div class="error-move-tray">
+    <h3>Το block που βρήκες</h3>
+    <div id="errorMoveToken" class="error-move-token" draggable="true"
+      ondragstart="errorMoveDragStart(event)"
+      ondragend="errorMoveDragEnd(event)"
+      onclick="errorMovePick()">
+      ${move10()}
+    </div>
+    <div class="note">Σύρε το block ή πάτησέ το και μετά πάτησε το διακεκομμένο πλαίσιο.</div>
+   </div>
+  </div>`;
+}
+
+function errorPick(which,el){
+ document.querySelectorAll(".error-block").forEach(x=>x.classList.remove("chosen-wrong","chosen-right"));
+
+ if(which==="move"){
+  el.classList.add("chosen-right");
+  setFeedback("Σωστά! Το «κινήσου 10 βήματα» βρίσκεται πριν από την επιλογή, ενώ πρέπει να εκτελείται μετά από αυτή.",true);
+  errorPhase=1;
+  errorMoveSelected=false;
+  setTimeout(()=>{
+   clearFeedback();
+   renderError();
+  },850);
+ }else{
+  el.classList.add("chosen-wrong");
+  setFeedback("Αυτό το block δεν είναι το λάθος. Έλεγξε ποιο block πρέπει να μετακινηθεί μετά από την εντολή επιλογής.",false);
+ }
+}
+
+function errorMoveDragStart(ev){
+ errorMoveSelected=true;
+ ev.dataTransfer.effectAllowed="move";
+ ev.dataTransfer.setData("text/plain","move10");
+ document.getElementById("errorMoveToken")?.classList.add("selected");
+}
+function errorMoveDragEnd(ev){
+ ev.currentTarget.classList.remove("selected");
+}
+function errorMovePick(){
+ errorMoveSelected=!errorMoveSelected;
+ document.getElementById("errorMoveToken")?.classList.toggle("selected",errorMoveSelected);
+}
+function errorMoveOver(ev){
+ ev.preventDefault();
+ ev.dataTransfer.dropEffect="move";
+ ev.currentTarget.classList.add("hot");
+}
+function errorMoveLeave(ev){
+ ev.currentTarget.classList.remove("hot");
+}
+function errorMoveDrop(ev){
+ ev.preventDefault();
+ ev.currentTarget.classList.remove("hot");
+ const value=ev.dataTransfer.getData("text/plain");
+ if(value==="move10" || errorMoveSelected){
+  completeErrorCorrection();
+ }
+}
+function errorMoveTargetTap(){
+ if(errorMoveSelected){
+  completeErrorCorrection();
+ }else{
+  setFeedback("Επίλεξε πρώτα το block «κινήσου 10 βήματα» και μετά τοποθέτησέ το στο διακεκομμένο πλαίσιο.",false);
+ }
+}
+function completeErrorCorrection(){
+ errorMoveSelected=false;
+ const drop=document.getElementById("errorMoveDrop");
+ if(drop){
+  drop.className="error-drop";
+  drop.style.borderStyle="solid";
+  drop.style.borderColor="#7F8DA0";
+  drop.style.background="#fff";
+  drop.innerHTML=move10();
+ }
+ const token=document.getElementById("errorMoveToken");
+ if(token)token.style.opacity=".3";
+
+ setFeedback("Μπράβο! Τώρα η σωστή σειρά είναι: συμβάν → εντολή επιλογής → κινήσου 10 βήματα.",true);
+ advance(1250);
+}
+
+/* ---------- Final ---------- */
+function renderFinal(){
+ selfChoice=null;
+ document.getElementById("activity").innerHTML=`
+  <div class="final-box">
+   <div class="final-icon">εάν</div>
+   <div class="summary">
+    Έμαθες να βρίσκεις και να χρησιμοποιείς την εντολή επιλογής, να τοποθετείς
+    τη σωστή συνθήκη στο εξάγωνο, να βάζεις τις εντολές μέσα στην επιλογή
+    και να προσθέτεις νέο αντικείμενο σε ένα έργο.
+   </div>
+   <div class="faces">
+    <button class="face" onclick="pickSelf(1,this)"><span>🙂</span>Χρειάζομαι λίγη ακόμη εξάσκηση</button>
+    <button class="face" onclick="pickSelf(2,this)"><span>😊</span>Μπορώ να χρησιμοποιώ μία απλή εντολή επιλογής</button>
+    <button class="face" onclick="pickSelf(3,this)"><span>😎</span>Μπορώ να φτιάχνω και να εξηγώ τη συνθήκη της</button>
+   </div>
+   <button class="primary center-btn" onclick="finish()">Ολοκλήρωση</button>
+   <button class="repeat" onclick="restart()">↻ Επανάληψη δραστηριότητας</button>
+  </div>`
+}
+function pickSelf(v,el){selfChoice=v;document.querySelectorAll(".face").forEach(x=>x.classList.remove("sel"));el.classList.add("sel")}
+function finish(){
+ if(!selfChoice){setFeedback("Επίλεξε πρώτα μία επιλογή αυτοαξιολόγησης.",false);return}
+ stage=stages.length;progress();setFeedback("Μπράβο! Ολοκλήρωσες το Μάθημα 5.",true)
+}
+function restart(){
+ stage=0;selfChoice=null;currentCategory="events";anatomyPhase=0;
+ projectOpened=false;
+ dogAdded=false;dogMoved=false;dogName="Dog2";selectedSprite="cat";dogSetupDone=false;dogPos={x:52,y:44};
+ ifPlaced=false;conditionPlaced=false;touchTarget="δείκτη ποντικιού";
+ sayPlaced=false;sayText="Γεια!";ifAttached=false;selectedBlock=null;
+ fileMenuOpen=false;projectName="Νέο έργο";testPassed=false;saved=false;dragSprite=null;testCatX=20;
+ testPhase=0;testConditionPlaced=false;testTouchTarget="δείκτη ποντικιού";
+ testSayPlaced=false;testSayText="Γεια!";testIfAttached=false;testOrderChoice=null;testOrderOptions=[];testCorrectionPlaced=false;testKeyChoice="διάστημα";
+ errorPhase=0;errorMoveSelected=false;
+ render()
+}
+
+render();
+</script>
+
+<footer class="nk-license" aria-label="Πληροφορίες δημιουργού και άδειας χρήσης">
+  <div><strong>Created by Nikos Kalakos · © 2026</strong></div>
+  <div>Original educational content and simulation design licensed under <a class="cc-badge" href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank" rel="license noopener noreferrer">CC BY-NC 4.0</a>.</div>
+  <div>Source code © 2026 Nikos Kalakos.</div>
+  <div>Third-party and textbook materials remain subject to the rights and licences of their respective copyright holders.</div>
+</footer>
+</body>
+</html>

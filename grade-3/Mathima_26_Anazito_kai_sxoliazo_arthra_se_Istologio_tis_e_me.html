@@ -1,0 +1,283 @@
+<!--
+ICT Educational Simulation
+Created by Nikos Kalakos
+Copyright © 2026 Nikos Kalakos
+
+Original educational content and simulation design licensed under CC BY-NC 4.0.
+Source code © 2026 Nikos Kalakos.
+Third-party and textbook materials remain subject to the rights and licences of their respective copyright holders.
+-->
+<!doctype html>
+<html lang="el">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="author" content="Nikos Kalakos">
+<meta name="copyright" content="© 2026 Nikos Kalakos">
+<meta name="license" content="Original educational content and simulation design: CC BY-NC 4.0; source code © 2026 Nikos Kalakos; third-party and textbook materials excluded.">
+<title>Μάθημα 26 - Αναζητώ και σχολιάζω άρθρα σε ιστολόγιο της Agora | Ploigos · AthenaOS</title>
+<style>
+:root{
+ --unit:#BC1930;--unit-dark:#8E1022;--unit-soft:#FDECEF;
+ --secondary:#545F99;--secondary-dark:#414A7B;--secondary-soft:#EEF0F8;
+ --ink:#263149;--muted:#6B7689;--line:#D8DFE8;--good:#EAF7EF;--bad:#FFF0ED;
+ --shadow:0 8px 24px rgba(35,49,71,.11);--athena:#4B4F92;--gold:#F2B632;
+ --blog:#356B52;--blog-dark:#214735;--blog-soft:#EEF5E8;--blog-gold:#C7A45A
+}
+*{box-sizing:border-box}
+body{margin:0;background:#F4F7FA;color:var(--ink);font-family:Arial,"Noto Sans",sans-serif}
+button,input,textarea{font:inherit}button{cursor:pointer}
+button:focus-visible,input:focus-visible,textarea:focus-visible{outline:4px solid #F2A4AF;outline-offset:3px}
+.shell{max-width:1500px;margin:auto;padding:10px}
+.coursebar{min-height:64px;background:var(--secondary);color:#fff;border-radius:17px 17px 8px 8px;display:flex;align-items:center;justify-content:space-between;gap:20px;padding:10px 18px;box-shadow:var(--shadow)}
+.unit-label{font-size:14px;font-weight:900}.lesson-name{font-size:clamp(20px,2.3vw,27px);font-weight:900;margin-top:2px}.lesson-number{min-width:54px;height:42px;padding:0 14px;border-radius:12px;background:#fff;color:var(--secondary);display:grid;place-items:center;font-size:18px;font-weight:900}
+.progress-wrap{background:#fff;border:2px solid #D8E0E9;border-top:0;border-radius:0 0 17px 17px;padding:10px 16px 11px;display:flex;align-items:center;gap:14px}.progress-text{font-size:13px;font-weight:900;color:var(--muted);white-space:nowrap}.progress-line{height:8px;flex:1;background:#E4E9F0;border-radius:7px;overflow:hidden}.progress-fill{height:100%;background:var(--unit);width:0;transition:.25s}.stepdots{display:flex;gap:7px;flex-wrap:wrap}.stepdot{width:30px;height:30px;border-radius:9px;background:#fff;border:2px solid #B6C0CE;color:#647187;display:grid;place-items:center;font-size:13px;font-weight:900}.stepdot.active{background:var(--unit);border-color:var(--unit-dark);color:#fff}.stepdot.done{background:var(--secondary);border-color:var(--secondary-dark);color:#fff}
+.workspace{margin-top:14px;background:#fff;border:2px solid #D8E0E9;border-radius:18px;box-shadow:var(--shadow);min-height:780px;padding:18px}.stagehead{display:grid;grid-template-columns:1fr auto;gap:16px;align-items:start;border-bottom:2px solid #E4E9EF;padding-bottom:13px}.stage-kicker{font-size:13px;font-weight:900;color:var(--unit-dark);text-transform:uppercase;letter-spacing:.4px}.stagehead h1{font-size:31px;margin:4px 0 0}.help{border:2px solid #D86070;background:var(--unit-soft);color:#7A1020;border-radius:11px;padding:9px 15px;font-weight:900}.instruction{max-width:1230px;margin:15px auto 10px;text-align:center;font-size:20px;font-weight:800;line-height:1.42}.feedback{display:none;max-width:1200px;margin:0 auto 10px;border-radius:12px;padding:10px 16px;text-align:center;font-weight:900;font-size:17px}.feedback.good{display:block;background:var(--good);border:2px solid #7DC699}.feedback.bad{display:block;background:var(--bad);border:2px solid #E2A096}.feedback.info{display:block;background:#F2F4FB;border:2px solid #AEB7D5;color:#35406F}.activity{max-width:1440px;margin:auto;border:2px solid #D9E0E9;border-radius:17px;background:#FBFCFE;padding:16px;min-height:590px}
+.primary{border:0;border-radius:11px;background:var(--secondary);color:#fff;padding:11px 24px;font-weight:900;font-size:18px;box-shadow:0 4px 0 var(--secondary-dark)}.secondary-btn{border:2px solid var(--secondary);border-radius:10px;background:#fff;color:var(--secondary-dark);padding:9px 16px;font-weight:900}.center-btn{display:block;margin:16px auto 0}.small-note{text-align:center;font-weight:800;color:var(--muted);font-size:14px;margin:9px auto}
+.choice-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;max-width:1060px;margin:20px auto}.choice,.answer-tile{position:relative;min-height:105px;border:3px solid #B9C2CF;border-radius:16px;background:#fff;padding:16px 16px 34px;font-size:18px;font-weight:900;line-height:1.35}.choice.selected,.answer-tile.selected{border-color:var(--unit-dark);background:var(--unit-soft)}.choice.selected:after,.answer-tile.selected:after,.face.sel:after{content:"✓ Επιλεγμένο";position:absolute;right:9px;bottom:7px;font-size:12px;font-weight:900;color:#7A1020}
+.info-card{max-width:980px;margin:16px auto;border:3px solid var(--secondary);background:var(--secondary-soft);border-radius:18px;padding:18px;text-align:center;font-size:20px;font-weight:800;line-height:1.45}
+/* matching */
+.match-area{position:relative;max-width:1100px;margin:18px auto;display:grid;grid-template-columns:1fr 1fr;gap:140px;min-height:390px;padding:10px 0}.match-col{display:flex;flex-direction:column;gap:14px;justify-content:center}.match-item{position:relative;z-index:4;min-height:76px;border:3px solid #B7C1CE;border-radius:14px;background:#fff;padding:15px 20px;font-size:17px;font-weight:900;display:flex;align-items:center}.match-item.left{justify-content:flex-end;text-align:right}.match-item.right{justify-content:flex-start}.match-item.done{border-color:#6BA77D;background:#EDF8F0}.match-item.active{border-color:var(--unit);background:var(--unit-soft)}.match-dot{width:17px;height:17px;border-radius:50%;background:var(--secondary);border:3px solid #fff;box-shadow:0 0 0 2px var(--secondary);position:absolute;top:50%;transform:translateY(-50%)}.left .match-dot{right:-11px}.right .match-dot{left:-11px}.match-svg{position:absolute;inset:0;width:100%;height:100%;z-index:2;pointer-events:none}.match-line{stroke:#6E7792;stroke-width:4;fill:none;stroke-linecap:round}.match-line.temp{stroke:var(--unit);stroke-dasharray:7 6}
+/* AthenaOS and Ploigos */
+.athena-os{max-width:1240px;height:660px;margin:14px auto;border:6px solid #22283D;border-radius:23px;overflow:hidden;position:relative;background:linear-gradient(135deg,#DCE5FF,#F5E7FF 62%,#E7F7FF);box-shadow:0 12px 24px rgba(0,0,0,.16)}.os-top{height:38px;background:#292D51;color:#fff;display:flex;align-items:center;justify-content:space-between;padding:0 14px;font-size:14px;font-weight:900;position:relative;z-index:20}.os-brand{display:flex;align-items:center;gap:8px}.owl{width:29px;height:27px}.owl svg{width:29px;height:27px;display:block}.desktop{position:absolute;inset:38px 0 0;padding:34px 38px}.desktop-icons{display:flex;gap:26px;align-items:flex-start}.desktop-icon{width:112px;border:0;background:transparent;color:#263149;font-weight:900;text-align:center;padding:8px;border-radius:14px}.desktop-icon:hover{background:rgba(255,255,255,.55)}.app-square{width:72px;height:72px;margin:0 auto 7px;border-radius:20px;display:grid;place-items:center;box-shadow:0 5px 12px rgba(48,52,95,.16);overflow:hidden}.ploigos-icon{background:#EAF5FA;border:3px solid #356D8A;color:#2E6784;font-size:38px}
+.os-window{position:absolute;left:35px;right:35px;top:56px;bottom:28px;border:3px solid #9AA6C4;border-radius:15px;background:#FBFCFF;box-shadow:0 12px 25px rgba(0,0,0,.22);overflow:hidden}.browser-chrome{height:76px;background:#F4F6FA;border-bottom:2px solid #C9D2DF;display:grid;grid-template-rows:34px 42px}.browser-tabs{display:flex;align-items:end;padding:0 10px;gap:5px;background:#E6EBF2}.browser-tab{height:29px;min-width:165px;background:#fff;border:1px solid #C4CDD9;border-bottom:0;border-radius:9px 9px 0 0;padding:6px 12px;font-size:13px;font-weight:900;color:#435169}.browser-toolbar{display:flex;align-items:center;gap:7px;padding:6px 10px;background:#fff}.browser-nav{width:28px;height:28px;border:0;border-radius:8px;background:#EEF2F6;color:#536176;font-weight:900}.address-bar{flex:1;height:30px;border:1px solid #C6CFDC;border-radius:9px;background:#F8FAFC;padding:6px 12px;font-size:13px;font-weight:800;color:#4F5C70}.browser-name{font-weight:1000;color:#356D8A;padding:0 4px}.browser-page{height:calc(100% - 76px);min-height:0;overflow:hidden}
+/* Agora */
+.agora-shell{height:100%;display:grid;grid-template-columns:210px 1fr;background:#F6F7FB;min-height:0}.agora-side{background:#fff;border-right:2px solid #D7DDEA;padding:14px 12px}.agora-brand{font-size:25px;font-weight:1000;color:var(--secondary);margin:3px 8px 18px}.nav-item{width:100%;border:0;background:transparent;border-radius:10px;padding:11px 12px;text-align:left;font-weight:900;color:#47536B;margin-bottom:4px}.nav-item.active{background:var(--secondary-soft);color:var(--secondary-dark)}.agora-main{min-width:0;min-height:0;display:grid;grid-template-rows:54px 1fr}.agora-top{background:#fff;border-bottom:2px solid #D7DDEA;display:flex;align-items:center;justify-content:space-between;padding:0 17px}.agora-top strong{color:var(--secondary)}.avatar-mini{width:31px;height:31px;border-radius:50%;background:#E7D6C7;display:grid;place-items:center;font-size:18px}.agora-content{min-height:0;overflow:auto;padding:18px}
+/* blog identity */
+.blog-icon{width:78px;height:78px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#E8D6A7 0 18%,var(--blog-gold) 19% 31%,var(--blog) 32% 100%);border:5px double #F2E2B6;box-shadow:0 4px 0 var(--blog-dark),0 8px 18px rgba(33,71,53,.18);display:grid;place-items:center;color:#FFF9E8;font-family:Georgia,"Times New Roman",serif;font-size:49px;font-weight:900;line-height:1;text-shadow:0 2px 0 #173327}.blog-icon.small{width:42px;height:42px;border-width:3px;font-size:26px;box-shadow:0 3px 0 var(--blog-dark)}.blogs-home{max-width:920px;margin:auto}.blogs-banner{display:flex;align-items:center;gap:18px;border:3px solid #91AD8D;background:linear-gradient(135deg,#F6F5E8,#E6EFE2);border-radius:20px;padding:18px}.blogs-banner h2{margin:0;color:var(--blog-dark);font-family:Georgia,"Times New Roman",serif;font-size:29px}.blogs-actions{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin:24px 0}.blog-btn{border:3px solid var(--blog);background:#fff;color:var(--blog-dark);border-radius:12px;padding:12px 18px;font-weight:900}.blog-btn:hover{background:var(--blog-soft)}
+.blog-page{height:100%;display:grid;grid-template-rows:82px 1fr;background:#F7F6EF;min-height:0}.blog-head{display:flex;align-items:center;gap:13px;padding:10px 18px;background:linear-gradient(90deg,#244B3A,#4F775D);color:#fff;border-bottom:5px solid var(--blog-gold)}.blog-head h2{margin:0;font-family:Georgia,"Times New Roman",serif;font-size:27px}.blog-head small{display:block;color:#E8F0E8;font-weight:800;margin-top:3px}.blog-layout{min-height:0;display:grid;grid-template-columns:minmax(0,1fr) 255px;gap:14px;padding:14px}.blog-scroll{min-height:0;overflow:auto;padding:4px 6px 34px 2px}.sidebar{min-height:0;overflow:auto;background:#fff;border:2px solid #D3DACF;border-radius:13px;padding:13px}.sidebar h3{font-family:Georgia,"Times New Roman",serif;color:var(--blog-dark);margin:5px 0 9px;border-bottom:2px solid #DBE5D7;padding-bottom:6px}.sidebar-search{display:flex;gap:5px}.sidebar-search input{width:100%;min-width:0;border:2px solid #B9C7B6;border-radius:8px;padding:7px}.side-link{width:100%;display:block;border:0;background:transparent;text-align:left;padding:7px 5px;border-radius:7px;color:#455546;font-weight:800;line-height:1.25}.side-link:hover{background:var(--blog-soft);color:var(--blog-dark)}.side-date{display:block;font-size:11px;color:#758276;font-weight:700}.category-link{width:100%;border:0;background:#F7FAF6;border:2px solid #D8E3D5;border-radius:8px;padding:8px;text-align:left;margin:5px 0;font-weight:900;color:#385343}.category-link:hover{border-color:var(--blog)}
+.article-card{background:#fff;border:2px solid #D3DACF;border-radius:14px;margin:0 0 14px;overflow:hidden}.article-hero{height:155px;display:grid;place-items:center;font-size:88px;background:linear-gradient(135deg,#D6E7D1,#A8C59F)}.article-content{padding:16px 18px}.article-title{font-family:Georgia,"Times New Roman",serif;color:var(--blog-dark);font-size:27px;font-weight:900;margin:0 0 7px}.article-meta{display:flex;gap:8px;flex-wrap:wrap;margin:6px 0 12px}.meta-chip{border:2px solid #AEC2AA;background:var(--blog-soft);border-radius:999px;padding:5px 9px;font-size:12px;font-weight:900}.article-content p{line-height:1.5;color:#4D5A51;font-size:16px}.read-more,.comment-link,.reply-btn{border:0;background:transparent;color:var(--blog-dark);text-decoration:underline;font-weight:900;padding:4px 0}.comments{margin-top:18px;border-top:3px solid #E2E8DE;padding-top:12px}.comment{border:2px solid #D5DDD2;background:#FAFCF9;border-radius:11px;padding:11px;margin:9px 0}.comment.published{border-color:var(--blog);background:#EFF7EC;box-shadow:0 0 0 3px rgba(79,119,93,.10)}.comment strong{color:var(--blog-dark)}.comment-form{margin-top:12px;border:3px solid #AEC2AA;background:#F7FAF6;border-radius:13px;padding:13px}.comment-form textarea{width:100%;min-height:90px;border:2px solid #BBC8B8;border-radius:9px;padding:9px;resize:vertical}.comment-form .actions-row{display:flex;justify-content:flex-end;gap:9px;margin-top:9px}.blog-action{border:0;border-radius:9px;background:var(--blog);color:#fff;padding:9px 14px;font-weight:900;box-shadow:0 3px 0 var(--blog-dark)}.blog-secondary{border:2px solid var(--blog);border-radius:9px;background:#fff;color:var(--blog-dark);padding:8px 13px;font-weight:900}
+.side-highlight{border-color:var(--unit)!important;background:var(--unit-soft)!important}
+.overall{max-width:1120px;margin:12px auto;display:grid;gap:14px}.qcard{border:2px solid #D0D8E3;border-radius:15px;background:#fff;padding:15px}.qprompt{font-size:18px;font-weight:900;margin-bottom:10px}.answer-row{display:flex;gap:10px;flex-wrap:wrap}.answer-tile{min-height:66px;min-width:170px;font-size:16px}.final-box{max-width:950px;margin:28px auto;text-align:center}.summary{border:3px solid var(--secondary);background:var(--secondary-soft);border-radius:18px;padding:20px;font-size:20px;font-weight:800;line-height:1.45}.faces{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin:22px 0}.face{position:relative;min-height:150px;border:3px solid #BDC6D2;background:#fff;border-radius:17px;padding:14px 14px 35px;font-weight:900}.face span{display:block;font-size:48px;margin-bottom:8px}.face.sel{border-color:var(--unit);background:var(--unit-soft)}.repeat{display:block;margin:18px auto 0;border:2px solid #B9C2CF;background:#fff;color:#45536A;border-radius:11px;padding:10px 17px;font-weight:900}
+.modal{position:fixed;inset:0;background:rgba(29,35,55,.55);display:none;align-items:center;justify-content:center;padding:20px;z-index:50}.modal.open{display:flex}.modal-box{max-width:620px;width:100%;background:#fff;border-radius:19px;padding:22px;box-shadow:0 18px 50px rgba(0,0,0,.28)}.modal-box h3{margin-top:0;font-size:25px}.modal-box p{font-size:18px;line-height:1.5}.actions{display:flex;justify-content:flex-end;gap:10px;flex-wrap:wrap}
+@media(max-width:900px){.choice-grid,.faces{grid-template-columns:1fr}.match-area{gap:55px}.athena-os{height:760px}.blog-layout{grid-template-columns:1fr}.sidebar{max-height:260px}.agora-shell{grid-template-columns:150px 1fr}.workspace{padding:11px}.activity{padding:9px}.stagehead h1{font-size:25px}}
+</style>
+<style id="nk-license-style">
+.nk-license{max-width:1100px;margin:14px auto 24px;padding:10px 16px;text-align:center;font:13px/1.45 Arial,"Noto Sans",sans-serif;color:#4e657c}
+.nk-license a{color:inherit;text-decoration:underline;text-underline-offset:2px}
+.nk-license .cc-badge{display:inline-block;margin:0 4px;padding:2px 7px;border:1px solid #8aa0b8;border-radius:6px;background:#fff;font-weight:700;white-space:nowrap}
+</style>
+</head>
+<body>
+<div class="shell">
+ <header class="coursebar">
+  <div><div class="unit-label">Ενότητα 4 · Ψηφιακός γραμματισμός</div><div class="lesson-name">Αναζητώ και σχολιάζω άρθρα σε ιστολόγιο της Agora</div></div>
+  <div class="lesson-number">26</div>
+ </header>
+ <div class="progress-wrap"><div class="progress-text" id="progressText"></div><div class="progress-line"><div class="progress-fill" id="progressFill"></div></div><div class="stepdots" id="stepDots"></div></div>
+ <main class="workspace">
+  <div class="stagehead"><div><div class="stage-kicker" id="kicker"></div><h1 id="title"></h1></div><button class="help" id="helpBtn">❔ Βοήθεια</button></div>
+  <div class="instruction" id="instruction"></div>
+  <div class="feedback" id="feedback"></div>
+  <section class="activity" id="activity"></section>
+ </main>
+</div>
+<div class="modal" id="helpModal"><div class="modal-box"><h3>Βοήθεια</h3><p id="helpText"></p><div class="actions"><button class="secondary-btn" id="speakHelp">🔊 Άκουσε</button><button class="primary" id="closeHelp">Το κατάλαβα</button></div></div></div>
+<script>
+(()=>{'use strict';
+const activity=document.getElementById('activity'),feedback=document.getElementById('feedback');
+const total=9;let stage=0,completed=new Set(),selfChoice=null;
+const stages=[
+ {title:'Ποιο άρθρο εμφανίζεται πρώτο;',instruction:'Διάλεξε το άρθρο που θα βρίσκεται στην κορυφή της λίστας ενός ιστολογίου.',help:'Παρατήρησε προσεκτικά τις ημερομηνίες των άρθρων και σκέψου τη σειρά με την οποία εμφανίζονται σε ένα ιστολόγιο.'},
+ {title:'Γνωρίζω το πλευρικό μενού',instruction:'Σύρε γραμμές για να αντιστοιχίσεις κάθε επιλογή του πλευρικού μενού με τη λειτουργία της.',help:'Ξεκίνα από μία κουκκίδα αριστερά και σύρε μέχρι τη σωστή κουκκίδα δεξιά. Η σωστή γραμμή μένει, ενώ η λανθασμένη εξαφανίζεται.'},
+ {title:'Μπαίνω στο ιστολόγιο',instruction:'Στο AthenaOS άνοιξε το Ploigos με διπλό κλικ. Στην Agora πάτησε «Ιστολόγια», μετά «Τα ιστολόγιά μου» και άνοιξε το ιστολόγιο «Φυσικές Επιστήμες».',help:'Η Agora είναι διαδικτυακή πλατφόρμα, επομένως ανοίγει μέσα στον Ploigos. Ακολούθησε τα ονόματα των κουμπιών που δίνονται στην οδηγία.'},
+ {title:'Βρίσκω άρθρο από την ημερομηνία',instruction:'Στο πλευρικό μενού, στην ενότητα «Άρθρα», βρες και πάτησε το άρθρο που δημοσιεύτηκε στις 9 Ιανουαρίου 2024.',help:'Κοίταξε τις ημερομηνίες που εμφανίζονται κάτω από τους τίτλους στην ενότητα «Άρθρα» του πλευρικού μενού.'},
+ {title:'Βρίσκω άρθρο από κατηγορία',instruction:'Στο πλευρικό μενού πάτησε την κατηγορία «Τα ζώα της θάλασσας» και μετά άνοιξε το άρθρο που εμφανίζεται.',help:'Οι κατηγορίες συγκεντρώνουν άρθρα με κοινό θέμα. Πάτησε πρώτα την κατηγορία που ζητείται και έπειτα τον τίτλο του άρθρου.'},
+ {title:'Σχολιάζω ένα άρθρο',instruction:'Κύλησε προς τα κάτω, πάτησε «Άφησε ένα σχόλιο», γράψε ακριβώς «Πολύ ενδιαφέρον άρθρο!» και πάτησε «Δημοσίευση σχολίου».',help:'Το κουμπί για σχόλιο βρίσκεται κάτω από το άρθρο. Αφού ανοίξει η φόρμα, γράψε το κείμενο και ολοκλήρωσε με το κουμπί «Δημοσίευση σχολίου».'},
+ {title:'Απαντώ σε ένα σχόλιο',instruction:'Κύλησε προς τα κάτω, βρες το σχόλιο της Μαρίας, πάτησε «Απάντηση», γράψε ακριβώς «Συμφωνώ!» και πάτησε «Δημοσίευση απάντησης».',help:'Η απάντηση συνδέεται με ένα συγκεκριμένο σχόλιο. Χρησιμοποίησε το κουμπί «Απάντηση» κάτω από το σχόλιο της Μαρίας.'},
+ {title:'Συνολική δοκιμή',instruction:'Ξεκίνα από το AthenaOS. Άνοιξε το Ploigos με διπλό κλικ, πάτησε «Ιστολόγια», μετά «Τα ιστολόγιά μου» και άνοιξε το «Φυσικές Επιστήμες». Στο πλευρικό μενού, στην ενότητα «Άρθρα», πάτησε το άρθρο της 14 Φεβρουαρίου 2024. Κύλησε προς τα κάτω, πάτησε «Άφησε ένα σχόλιο», γράψε ακριβώς «Πολύ ωραίες πληροφορίες για τη θαλάσσια χελώνα!» και πάτησε «Δημοσίευση σχολίου». Έπειτα βρες το σχόλιο της Σοφίας, πάτησε «Απάντηση», γράψε ακριβώς «Κι εγώ θέλω να μάθω περισσότερα!» και πάτησε «Δημοσίευση απάντησης».',help:'Ακολούθησε όλη τη διαδρομή: Ploigos → Agora → Ιστολόγια → Τα ιστολόγιά μου → Φυσικές Επιστήμες. Χρησιμοποίησε την ημερομηνία για να βρεις το νέο άρθρο. Μετά δημοσίευσε ακριβώς το σχόλιο που ζητείται και απάντησε στο σχόλιο της Σοφίας με το ακριβές κείμενο της οδηγίας.'},
+ {title:'Τι έμαθα;',instruction:'Διάλεξε το πρόσωπο που δείχνει πόσο καλά έμαθες το μάθημα.',help:'Σκέψου αν μπορείς να βρίσκεις άρθρα από την ημερομηνία τους και να γράφεις ή να απαντάς σε σχόλια.'}
+];
+function shuffled(a){return [...a].sort(()=>Math.random()-.5)}
+function speak(t){if(!('speechSynthesis'in window))return;speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(t);u.lang='el-GR';u.rate=.86;speechSynthesis.speak(u)}
+function clearFeedback(){feedback.className='feedback';feedback.textContent=''}
+function setFeedback(t,ok=null){feedback.className='feedback '+(ok===true?'good':ok===false?'bad':'info');feedback.textContent=t;if(ok!==null)speak(t)}
+function updateProgress(){document.getElementById('progressText').textContent=`${Math.min(stage+1,total)} / ${total}`;document.getElementById('progressFill').style.width=`${((stage+1)/total)*100}%`;document.getElementById('stepDots').innerHTML=Array.from({length:total},(_,i)=>`<div class="stepdot ${i===stage?'active':''} ${completed.has(i)?'done':''}">${completed.has(i)?'✓':i+1}</div>`).join('')}
+function advance(delay=1000){completed.add(stage);updateProgress();setTimeout(()=>{if(stage<total-1){stage++;render()}},delay)}
+function owl(){return `<span class="owl"><svg viewBox="0 0 100 90" aria-hidden="true"><path d="M14 28 7 6 31 18Q50 6 69 18L93 6 86 28Q94 39 91 55Q87 75 69 83Q50 91 31 83Q13 75 9 55Q6 39 14 28Z" fill="#5B43D4" stroke="#D8DBFF" stroke-width="5"/><circle cx="33" cy="43" r="14" fill="#fff"/><circle cx="67" cy="43" r="14" fill="#fff"/><circle cx="33" cy="43" r="5" fill="#1E1E2E"/><circle cx="67" cy="43" r="5" fill="#1E1E2E"/><path d="M44 55 50 66 56 55Z" fill="#FFC642"/></svg></span>`}
+function osTop(){return `<div class="os-top"><div class="os-brand">${owl()}<span>AthenaOS</span></div><div>⌁ &nbsp; 🔊 &nbsp; 10:30</div></div>`}
+function desktop(){return `<div class="athena-os">${osTop()}<div class="desktop"><div class="desktop-icons"><button class="desktop-icon" onclick="singlePloigos()" ondblclick="openPloigos()"><span class="app-square ploigos-icon">◎</span>Ploigos</button></div></div></div>`}
+function browser(inner,address='agora.edu'){return `<div class="athena-os">${osTop()}<div class="os-window"><div class="browser-chrome"><div class="browser-tabs"><div class="browser-tab">Agora — Ploigos</div></div><div class="browser-toolbar"><button class="browser-nav">←</button><button class="browser-nav">→</button><button class="browser-nav">↻</button><div class="address-bar">${address}</div><div class="browser-name">Ploigos</div></div></div><div class="browser-page">${inner}</div></div></div>`}
+function blogIcon(sm=false){return `<span class="blog-icon ${sm?'small':''}" aria-label="Ιστολόγια">Β</span>`}
+function agoraShell(content,active='Ιστολόγια'){return `<div class="agora-shell"><aside class="agora-side"><div class="agora-brand">Agora</div><button class="nav-item">⌂ Αρχική</button><button class="nav-item">◉ Kykloi</button><button class="nav-item ${active==='Ιστολόγια'?'active':''}" onclick="openBlogsApp()">Β Ιστολόγια</button><button class="nav-item">✉ Μηνύματα</button><button class="nav-item">☻ Επαφές</button></aside><section class="agora-main"><div class="agora-top"><strong>Agora · Εκπαιδευτική πλατφόρμα</strong><span class="avatar-mini">🧑</span></div><div class="agora-content">${content}</div></section></div>`}
+function blogsHome(){return `<div class="blogs-home"><div class="blogs-banner">${blogIcon()}<div><h2>Ιστολόγια</h2><div style="font-weight:800;color:#526253;margin-top:5px">Προσωπικά και συνεργατικά ιστολόγια στην Agora</div></div></div><div class="blogs-actions"><button class="blog-btn" onclick="openMyBlogs()">Τα ιστολόγιά μου</button><button class="blog-btn">Δημιουργία ιστολογίου</button></div></div>`}
+function myBlogs(){return `<div class="blogs-home"><div class="blogs-banner">${blogIcon()}<div><h2>Τα ιστολόγιά μου</h2><div style="font-weight:800;color:#526253;margin-top:5px">Διάλεξε ένα ιστολόγιο για να το ανοίξεις.</div></div></div><div class="choice-grid" style="grid-template-columns:repeat(2,minmax(0,1fr));max-width:820px"><button class="choice" onclick="wrongBlog()">Προσωπικό ιστολόγιο<br><small>Οι ιδέες μου</small></button><button class="choice" onclick="openGroupBlog()">${blogIcon(true)}<br>Φυσικές Επιστήμες<br><small>Ιστολόγιο Kykloi</small></button></div></div>`}
+const articles=[
+ {id:'cow',title:'Αγελάδα',date:'10 Ιανουαρίου 2024',cat:'Κατοικίδια ζώα',tag:'ζώα',emoji:'🐄',text:'Η αγελάδα είναι ένα ζώο που συναντάμε συχνά σε αγροκτήματα.'},
+ {id:'dolphin',title:'Δελφίνι',date:'9 Ιανουαρίου 2024',cat:'Τα ζώα της θάλασσας',tag:'θάλασσα',emoji:'🐬',text:'Τα δελφίνια ζουν στη θάλασσα και κινούνται γρήγορα μέσα στο νερό.'},
+ {id:'cat',title:'Η γάτα',date:'23 Δεκεμβρίου 2023',cat:'Κατοικίδια ζώα',tag:'κατοικίδια',emoji:'🐈',text:'Η γάτα είναι ένα από τα πιο γνωστά κατοικίδια ζώα.'},
+ {id:'parrot',title:'Παπαγάλος',date:'22 Δεκεμβρίου 2023',cat:'Κατοικίδια ζώα',tag:'πουλιά',emoji:'🦜',text:'Ο παπαγάλος είναι πουλί με εντυπωσιακό ράμφος και φτερά.'}
+];
+const finalArticles=[
+ {id:'turtle',title:'Θαλάσσια χελώνα',date:'14 Φεβρουαρίου 2024',cat:'Ζώα της θάλασσας',tag:'χελώνα',emoji:'🐢',text:'Οι θαλάσσιες χελώνες ζουν στη θάλασσα και βγαίνουν σε παραλίες για να γεννήσουν τα αυγά τους.'},
+ {id:'seahorse',title:'Ιππόκαμπος',date:'11 Φεβρουαρίου 2024',cat:'Ζώα της θάλασσας',tag:'ιππόκαμπος',emoji:'🐟',text:'Ο ιππόκαμπος είναι ένα μικρό θαλάσσιο ζώο με ξεχωριστό σχήμα.'},
+ {id:'eagle',title:'Αετός',date:'6 Φεβρουαρίου 2024',cat:'Πουλιά',tag:'πουλιά',emoji:'🦅',text:'Ο αετός είναι αρπακτικό πουλί με δυνατά φτερά και πολύ καλή όραση.'}
+];
+let selectedArticle='cow';
+function sidebar(mode='normal'){
+ const isFinal=mode==='final';
+ const a=isFinal?finalArticles:articles;
+ const categories=isFinal
+  ?`<button class="category-link" type="button">Ζώα της θάλασσας (2)</button><button class="category-link" type="button">Πουλιά (1)</button>`
+  :`<button class="category-link" onclick="pickCategory('pets')">Κατοικίδια ζώα (3)</button><button class="category-link" onclick="pickCategory('sea')">Τα ζώα της θάλασσας (1)</button>`;
+ return `<aside class="sidebar">
+  <h3>Αναζήτηση</h3><div class="sidebar-search"><input aria-label="Αναζήτηση" placeholder="Λέξη ή φράση"><button class="blog-secondary">Αναζήτηση</button></div>
+  <h3>Άρθρα</h3>
+  ${a.map(x=>`<button class="side-link" onclick="sideArticle('${x.id}')">${x.title}<span class="side-date">${x.date}</span></button>`).join('')}
+  <h3>Κατηγορίες</h3>${categories}
+ </aside>`;
+}
+function articleCard(id,comments=false,replyMode=false,finalMode=false){
+ const a=[...articles,...finalArticles].find(x=>x.id===id)||articles[0];
+ const baseComments=id==='turtle'
+  ?[{name:'Μαρία',text:'Δεν ήξερα ότι οι θαλάσσιες χελώνες βγαίνουν στις παραλίες για να γεννήσουν.'},{name:'Σοφία',text:'Θα ήθελα να μάθω περισσότερα για το πώς προστατεύονται οι φωλιές τους.'},{name:'Κώστας',text:'Μου άρεσε πολύ η εικόνα της χελώνας.'}]
+  :id==='dolphin'
+  ?[{name:'Μαρία',text:'Μου άρεσαν πολύ οι πληροφορίες για τα δελφίνια.'},{name:'Νίκος',text:'Κι εγώ τα βρίσκω πολύ ενδιαφέροντα!'},{name:'Ελένη',text:'Θα ήθελα να μάθω περισσότερα για το πώς επικοινωνούν τα δελφίνια.'}]
+  :id==='cat'
+  ?[{name:'Ελένη',text:'Έχω κι εγώ μία γάτα στο σπίτι.'}]
+  :[{name:'Άννα',text:'Πολύ ωραίο άρθρο!'}];
+ const showFinalReplyButtons=finalMode&&finalState.commentDone&&!finalState.replyDone;
+ const commentHtml=baseComments.map(c=>{
+  const normalReplyButton=replyMode&&c.name==='Μαρία'?`<button class="reply-btn" onclick="openReply()">Απάντηση</button>`:'';
+  const finalReplyButton=showFinalReplyButtons&&c.name==='Σοφία'?`<button class="reply-btn" onclick="finalOpenReply('${c.name}')">Απάντηση</button>`:'';
+  const normalPublished=replyMode&&replyPublished&&c.name==='Μαρία'?`<div class="comment published" id="publishedReply" style="margin-left:34px"><strong>Εσύ · απάντηση στη Μαρία</strong><div>${replyPublished}</div></div>`:'';
+  const finalPublished=finalMode&&finalReplyPublished&&c.name===finalReplyTarget?`<div class="comment published" id="finalPublishedReply" style="margin-left:34px"><strong>Εσύ · απάντηση στον/στη ${finalReplyTarget}</strong><div>${finalReplyPublished}</div></div>`:'';
+  return `<div class="comment"><strong>${c.name}</strong><div>${c.text}</div>${normalReplyButton}${finalReplyButton}</div>${normalPublished}${finalPublished}`;
+ }).join('');
+ return `<article class="article-card"><div class="article-hero">${a.emoji}</div><div class="article-content">
+  <h2 class="article-title">${a.title}</h2><div class="article-meta"><span class="meta-chip">${a.cat}</span><span class="meta-chip">#${a.tag}</span><span class="meta-chip">${a.date}</span></div>
+  <p>${a.text}</p><p>Το άρθρο περιλαμβάνει σύντομες πληροφορίες και μία εικόνα σχετική με το θέμα του.</p>
+  ${comments?`<div class="comments" id="comments"><h3>Σχόλια</h3>${commentHtml}
+  ${commentPublished?`<div class="comment published" id="publishedComment"><strong>Εσύ</strong><div>${commentPublished}</div></div>`:''}
+  ${!replyMode&&!finalMode?`<button class="comment-link" onclick="openCommentForm()">Άφησε ένα σχόλιο</button>`:''}
+  ${finalMode&&!finalState.commentDone?`<button class="comment-link" onclick="finalOpenComment()">Άφησε ένα σχόλιο</button>`:''}
+  <div id="formHost"></div></div>`:''}
+ </div></article>`;
+}
+function blogPage(mainId='cow',mode='normal',comments=false,replyMode=false,finalMode=false){
+ return `<div class="blog-page"><header class="blog-head">${blogIcon(true)}<div><h2>Φυσικές Επιστήμες</h2><small>Ιστολόγιο Kykloi · Agora</small></div></header><div class="blog-layout"><main class="blog-scroll" id="blogScroll">${articleCard(mainId,comments,replyMode,finalMode)}</main>${sidebar(mode)}</div></div>`;
+}
+function groupBlog(mainId='cow',mode='normal',comments=false,replyMode=false,finalMode=false){return agoraShell(blogPage(mainId,mode,comments,replyMode,finalMode))}
+function wrongBlog(){setFeedback('Για αυτή τη δραστηριότητα άνοιξε το ιστολόγιο «Φυσικές Επιστήμες».',false)}
+/* Stage 1 */
+function renderStage1(){
+ const opts=shuffled([
+  {id:'newest',t:'«Αγελάδα» — 10 Ιανουαρίου 2024'},
+  {id:'middle',t:'«Η γάτα» — 23 Δεκεμβρίου 2023'},
+  {id:'oldest',t:'«Παπαγάλος» — 22 Δεκεμβρίου 2023'}
+ ]);
+ activity.innerHTML=`<div class="choice-grid">${opts.map(o=>`<button class="choice" onclick="pickNewest('${o.id}',this)">${o.t}</button>`).join('')}</div>`;
+}
+function pickNewest(id,el){activity.querySelectorAll('.choice').forEach(x=>x.classList.remove('selected'));el.classList.add('selected');if(id!=='newest')return setFeedback('Δοκίμασε ξανά. Σύγκρινε προσεκτικά τις ημερομηνίες.',false);setFeedback('Σωστά! Το πιο πρόσφατο άρθρο εμφανίζεται πρώτο στη λίστα.',true);advance()}
+/* Stage 2 matching */
+const matchPairs={articles:'recent',categories:'topic',search:'word'};
+let matchDone={},lineDrag=null;
+function renderStage2(){matchDone={};lineDrag=null;const right=shuffled([
+ {id:'recent',t:'Βρίσκω τίτλους άρθρων μαζί με τις ημερομηνίες τους.'},
+ {id:'topic',t:'Βρίσκω άρθρα που ανήκουν στο ίδιο θέμα.'},
+ {id:'word',t:'Ψάχνω χρησιμοποιώντας μία λέξη ή φράση.'}
+ ]);activity.innerHTML=`<div class="match-area" id="matchArea"><svg class="match-svg" id="matchSvg"></svg><div class="match-col">
+ ${[['articles','Άρθρα'],['categories','Κατηγορίες'],['search','Αναζήτηση']].map(([id,t])=>`<div class="match-item left" id="L_${id}">${t}<span class="match-dot" onpointerdown="lineStart(event,'${id}')"></span></div>`).join('')}
+ </div><div class="match-col">
+ ${right.map(o=>`<div class="match-item right" id="R_${o.id}"><span class="match-dot" data-right="${o.id}"></span>${o.t}</div>`).join('')}
+ </div></div>`;
+ setTimeout(redrawMatchLines,50)
+}
+function centerInArea(el){const area=document.getElementById('matchArea').getBoundingClientRect(),r=el.getBoundingClientRect();return {x:r.left+r.width/2-area.left,y:r.top+r.height/2-area.top}}
+function lineStart(ev,id){if(stage!==1||matchDone[id])return;ev.preventDefault();lineDrag={id};document.getElementById('L_'+id)?.classList.add('active');drawTemp(ev.clientX,ev.clientY)}
+function drawTemp(cx,cy){if(!lineDrag)return;const svg=document.getElementById('matchSvg'),area=document.getElementById('matchArea').getBoundingClientRect(),start=centerInArea(document.querySelector(`#L_${lineDrag.id} .match-dot`));redrawMatchLines();svg.insertAdjacentHTML('beforeend',`<line class="match-line temp" x1="${start.x}" y1="${start.y}" x2="${cx-area.left}" y2="${cy-area.top}"/>`)}
+function lineMove(ev){if(lineDrag)drawTemp(ev.clientX,ev.clientY)}
+function lineEnd(ev){if(!lineDrag)return;const target=document.elementFromPoint(ev.clientX,ev.clientY)?.closest('[data-right]');const id=lineDrag.id;document.getElementById('L_'+id)?.classList.remove('active');lineDrag=null;if(!target){redrawMatchLines();return setFeedback('Άφησε τη γραμμή πάνω σε μία κουκκίδα της δεξιάς στήλης.',false)}const right=target.dataset.right;if(matchPairs[id]!==right){redrawMatchLines();return setFeedback('Η γραμμή δεν ταιριάζει. Δοκίμασε ξανά.',false)}matchDone[id]=right;document.getElementById('L_'+id)?.classList.add('done');document.getElementById('R_'+right)?.classList.add('done');redrawMatchLines();setFeedback('Σωστή αντιστοίχιση!',true);if(Object.keys(matchDone).length===3){setFeedback('Μπράβο! Αντιστοίχισες σωστά τις λειτουργίες του πλευρικού μενού.',true);advance(1200)}}
+function lineCancel(){if(!lineDrag)return;document.getElementById('L_'+lineDrag.id)?.classList.remove('active');lineDrag=null;redrawMatchLines()}
+function redrawMatchLines(){const svg=document.getElementById('matchSvg');if(!svg)return;svg.innerHTML='';for(const [l,r] of Object.entries(matchDone)){const le=document.querySelector(`#L_${l} .match-dot`),re=document.querySelector(`#R_${r} .match-dot`);if(!le||!re)continue;const a=centerInArea(le),b=centerInArea(re);svg.insertAdjacentHTML('beforeend',`<line class="match-line" x1="${a.x}" y1="${a.y}" x2="${b.x}" y2="${b.y}"/>`)}}
+/* Stage 3 path */
+let s3={browser:false,blogs:false,my:false};
+function renderStage3(){s3={browser:false,blogs:false,my:false};activity.innerHTML=desktop()}
+function singlePloigos(){setFeedback('Χρησιμοποίησε διπλό κλικ για να ανοίξεις το Ploigos.',false)}
+function openPloigos(){if(stage===2){s3.browser=true;activity.innerHTML=browser(agoraShell(`<div class="info-card">Βρίσκεσαι στην αρχική σελίδα της Agora.</div>`,'Αρχική'));setFeedback('Η Agora άνοιξε μέσα στον Ploigos. Τώρα πάτησε «Ιστολόγια».',null);return}if(stage===7){finalState.browser=true;activity.innerHTML=browser(agoraShell(`<div class="info-card">Βρίσκεσαι στην αρχική σελίδα της Agora.</div>`,'Αρχική'));setFeedback('Τώρα πάτησε «Ιστολόγια».',null)}}
+function openBlogsApp(){if(stage===2&&s3.browser){s3.blogs=true;activity.innerHTML=browser(agoraShell(blogsHome()));setFeedback('Πάτησε «Τα ιστολόγιά μου».',null);return}if(stage===7&&finalState.browser){finalState.blogs=true;activity.innerHTML=browser(agoraShell(blogsHome()));setFeedback('Πάτησε «Τα ιστολόγιά μου».',null)}}
+function openMyBlogs(){if(stage===2&&s3.blogs){s3.my=true;activity.innerHTML=browser(agoraShell(myBlogs()));setFeedback('Άνοιξε το ιστολόγιο «Φυσικές Επιστήμες».',null);return}if(stage===7&&finalState.blogs){finalState.my=true;activity.innerHTML=browser(agoraShell(myBlogs()));setFeedback('Άνοιξε το ιστολόγιο «Φυσικές Επιστήμες».',null)}}
+function openGroupBlog(){if(stage===2&&s3.my){activity.innerHTML=browser(groupBlog(),'agora.edu/blogs/fysikes-epistimes');setFeedback('Σωστά! Άνοιξες το ιστολόγιο «Φυσικές Επιστήμες».',true);advance(2500);return}if(stage===7&&finalState.my){finalState.group=true;activity.innerHTML=browser(groupBlog('seahorse','final',false,false,true),'agora.edu/blogs/fysikes-epistimes');setFeedback('Τώρα χρησιμοποίησε την ενότητα «Άρθρα» στο πλευρικό μενού για να βρεις την ημερομηνία που ζητείται.',null)}}
+/* Stage 4 date */
+function renderStage4(){selectedArticle='cow';activity.innerHTML=browser(groupBlog('cow','date'),'agora.edu/blogs/fysikes-epistimes')}
+function sideArticle(id){
+ if(stage===3){if(id!=='dolphin')return setFeedback('Δεν είναι η ημερομηνία που ζητείται. Δοκίμασε άλλο άρθρο.',false);selectedArticle=id;activity.innerHTML=browser(groupBlog(id,'normal'),'agora.edu/blogs/fysikes-epistimes/'+id);setFeedback('Σωστά! Βρήκες το άρθρο από την ημερομηνία του.',true);advance(2200);return}
+ if(stage===7&&finalState.group){if(id!=='turtle')return setFeedback('Έλεγξε ξανά την ημερομηνία στο πλευρικό μενού.',false);finalState.article=true;activity.innerHTML=browser(groupBlog('turtle','final',true,false,true),'agora.edu/blogs/fysikes-epistimes/turtle');setFeedback('Σωστά! Κύλησε προς τα κάτω και πάτησε «Άφησε ένα σχόλιο».',null)}
+}
+/* Stage 5 category */
+let categoryMode=false;
+function renderStage5(){categoryMode=false;activity.innerHTML=browser(groupBlog('cow','category'),'agora.edu/blogs/fysikes-epistimes')}
+function pickCategory(which){
+ if(stage!==4)return;
+ if(which!=='sea')return setFeedback('Για αυτή τη δραστηριότητα χρειάζεται η κατηγορία που αναφέρεται στην οδηγία.',false);
+ categoryMode=true;
+ const main=`<div class="blog-page"><header class="blog-head">${blogIcon(true)}<div><h2>Φυσικές Επιστήμες</h2><small>Κατηγορία · Τα ζώα της θάλασσας</small></div></header><div class="blog-layout"><main class="blog-scroll"><div class="article-card"><div class="article-content"><h2 class="article-title">Άρθρα κατηγορίας</h2><button class="blog-btn" onclick="openSeaArticle()">Δελφίνι</button></div></div></main>${sidebar('normal')}</div></div>`;
+ activity.innerHTML=browser(agoraShell(main),'agora.edu/blogs/category/thalassa');setFeedback('Η κατηγορία άνοιξε. Τώρα πάτησε τον τίτλο «Δελφίνι».',null)
+}
+function openSeaArticle(){if(stage!==4||!categoryMode)return;activity.innerHTML=browser(groupBlog('dolphin'),'agora.edu/blogs/fysikes-epistimes/dolphin');setFeedback('Μπράβο! Βρήκες άρθρο χρησιμοποιώντας την κατηγορία.',true);advance(2200)}
+/* Stage 6 comment */
+let commentPublished='';
+function renderStage6(){commentPublished='';activity.innerHTML=browser(groupBlog('dolphin','normal',true,false,false),'agora.edu/blogs/fysikes-epistimes/dolphin');setFeedback('Χρησιμοποίησε τη ροδέλα κύλισης μέσα στο άρθρο για να φτάσεις στα σχόλια.',null)}
+function openCommentForm(){if(stage!==5)return;const h=document.getElementById('formHost');if(!h)return;h.innerHTML=`<div class="comment-form"><label for="commentText"><strong>Νέο σχόλιο</strong></label><textarea id="commentText" autocomplete="off"></textarea><div class="actions-row"><button class="blog-action" onclick="publishComment()">Δημοσίευση σχολίου</button></div></div>`;h.scrollIntoView({behavior:'smooth',block:'center'});setFeedback('Γράψε το σχόλιο και πάτησε «Δημοσίευση σχολίου».',null)}
+function publishComment(){if(stage!==5)return;const v=document.getElementById('commentText')?.value.trim();if(v!=='Πολύ ενδιαφέρον άρθρο!')return setFeedback('Γράψε ακριβώς το σχόλιο που ζητείται στην οδηγία.',false);commentPublished=v;activity.innerHTML=browser(groupBlog('dolphin','normal',true,false,false),'agora.edu/blogs/fysikes-epistimes/dolphin');setFeedback('Το σχόλιό σου δημοσιεύτηκε και εμφανίζεται κάτω από το άρθρο.',true);setTimeout(()=>document.getElementById('comments')?.scrollIntoView({behavior:'smooth',block:'center'}),100);advance(2600)}
+/* Stage 7 reply */
+let replyPublished='';
+function renderStage7(){replyPublished='';activity.innerHTML=browser(groupBlog('dolphin','normal',true,true,false),'agora.edu/blogs/fysikes-epistimes/dolphin');setFeedback('Κύλησε προς τα κάτω μέχρι το σχόλιο της Μαρίας.',null)}
+function openReply(){if(stage!==6)return;const h=document.getElementById('formHost');if(!h)return;h.innerHTML=`<div class="comment-form"><label for="replyText"><strong>Απάντηση στη Μαρία</strong></label><textarea id="replyText" autocomplete="off"></textarea><div class="actions-row"><button class="blog-action" onclick="publishReply()">Δημοσίευση απάντησης</button></div></div>`;h.scrollIntoView({behavior:'smooth',block:'center'});setFeedback('Γράψε την απάντηση και πάτησε «Δημοσίευση απάντησης».',null)}
+function publishReply(){if(stage!==6)return;const v=document.getElementById('replyText')?.value.trim();if(v!=='Συμφωνώ!')return setFeedback('Γράψε ακριβώς την απάντηση που ζητείται στην οδηγία.',false);replyPublished=v;activity.innerHTML=browser(groupBlog('dolphin','normal',true,true,false),'agora.edu/blogs/fysikes-epistimes/dolphin');setFeedback('Η απάντησή σου δημοσιεύτηκε και εμφανίζεται κάτω από το σχόλιο της Μαρίας.',true);setTimeout(()=>{const scroller=document.getElementById('blogScroll');const reply=document.getElementById('publishedReply');if(scroller)scroller.scrollTop=scroller.scrollHeight;if(reply)reply.scrollIntoView({behavior:'smooth',block:'center'});},120);advance(4200)}
+/* Stage 8 overall */
+let finalState={},finalComment='',finalReplyPublished='',finalReplyTarget='';
+function renderOverall(){
+ finalState={browser:false,blogs:false,my:false,group:false,article:false,form:false,commentDone:false,replyDone:false};
+ finalComment='';finalReplyPublished='';finalReplyTarget='';
+ commentPublished='';replyPublished='';
+ activity.innerHTML=desktop();
+}
+function finalOpenComment(){if(stage!==7||!finalState.article||finalState.commentDone)return;finalState.form=true;const h=document.getElementById('formHost');if(!h)return;h.innerHTML=`<div class="comment-form"><label for="finalComment"><strong>Νέο σχόλιο</strong></label><textarea id="finalComment" autocomplete="off"></textarea><div class="actions-row"><button class="blog-action" onclick="finalPublishComment()">Δημοσίευση σχολίου</button></div></div>`;h.scrollIntoView({behavior:'smooth',block:'center'});setFeedback('Γράψε ακριβώς «Πολύ ωραίες πληροφορίες για τη θαλάσσια χελώνα!» και πάτησε «Δημοσίευση σχολίου».',null)}
+function finalPublishComment(){
+ if(stage!==7||!finalState.form||finalState.commentDone)return;
+ const v=document.getElementById('finalComment')?.value.trim();
+ if(v!=='Πολύ ωραίες πληροφορίες για τη θαλάσσια χελώνα!')return setFeedback('Γράψε ακριβώς το σχόλιο που ζητείται στην οδηγία.',false);
+ finalComment=v;commentPublished=v;finalState.commentDone=true;finalState.form=false;
+ activity.innerHTML=browser(groupBlog('turtle','final',true,false,true),'agora.edu/blogs/fysikes-epistimes/turtle');
+ setFeedback('Το σχόλιό σου δημοσιεύτηκε. Τώρα βρες το σχόλιο της Σοφίας και πάτησε «Απάντηση».',true);
+ setTimeout(()=>{const scroller=document.getElementById('blogScroll');const own=document.getElementById('publishedComment');if(scroller)scroller.scrollTop=scroller.scrollHeight;if(own)own.scrollIntoView({behavior:'smooth',block:'center'});},120);
+}
+function finalOpenReply(name){
+ if(stage!==7||!finalState.commentDone||finalState.replyDone||name!=='Σοφία')return;
+ finalReplyTarget=name;
+ const h=document.getElementById('formHost');if(!h)return;
+ h.innerHTML=`<div class="comment-form"><label for="finalReplyText"><strong>Απάντηση στη Σοφία</strong></label><textarea id="finalReplyText" autocomplete="off"></textarea><div class="actions-row"><button class="blog-action" onclick="finalPublishReply()">Δημοσίευση απάντησης</button></div></div>`;
+ h.scrollIntoView({behavior:'smooth',block:'center'});
+ setFeedback('Γράψε ακριβώς «Κι εγώ θέλω να μάθω περισσότερα!» και πάτησε «Δημοσίευση απάντησης».',null);
+}
+function finalPublishReply(){
+ if(stage!==7||!finalState.commentDone||finalState.replyDone||!finalReplyTarget)return;
+ const v=document.getElementById('finalReplyText')?.value.trim()||'';
+ if(v!=='Κι εγώ θέλω να μάθω περισσότερα!')return setFeedback('Γράψε ακριβώς την απάντηση που ζητείται στην οδηγία.',false);
+ finalReplyPublished=v;finalState.replyDone=true;
+ activity.innerHTML=browser(groupBlog('turtle','final',true,false,true),'agora.edu/blogs/fysikes-epistimes/turtle');
+ setFeedback('Μπράβο! Η απάντησή σου δημοσιεύτηκε κάτω από το σχόλιο που επέλεξες.',true);
+ setTimeout(()=>{const scroller=document.getElementById('blogScroll');const reply=document.getElementById('finalPublishedReply');if(scroller)scroller.scrollTop=scroller.scrollHeight;if(reply)reply.scrollIntoView({behavior:'smooth',block:'center'});},120);
+ advance(4000);
+}
+/* Stage 9 */
+function renderFinal(){selfChoice=null;activity.innerHTML=`<div class="final-box"><div class="summary">Έμαθες να χρησιμοποιείς το πλευρικό μενού ενός ιστολογίου, να βρίσκεις άρθρα από την ημερομηνία ή την κατηγορία τους, να γράφεις σχόλια και να απαντάς σε σχόλια άλλων χρηστών.</div><div class="faces"><button class="face" onclick="pickSelf(1,this)"><span>🙂</span>Χρειάζομαι λίγη ακόμη εξάσκηση</button><button class="face" onclick="pickSelf(2,this)"><span>😊</span>Μπορώ να βρω και να σχολιάσω άρθρα με λίγη βοήθεια</button><button class="face" onclick="pickSelf(3,this)"><span>😎</span>Μπορώ να βρίσκω και να σχολιάζω άρθρα μόνος/μόνη μου</button></div><button class="primary center-btn" onclick="finish()">Ολοκλήρωση</button><button class="repeat" onclick="restart()">↻ Επανάληψη δραστηριότητας</button></div>`}
+function pickSelf(v,el){selfChoice=v;activity.querySelectorAll('.face').forEach(x=>x.classList.remove('sel'));el.classList.add('sel');setFeedback('Η επιλογή αυτοαξιολόγησης καταγράφηκε.',null)}
+function finish(){if(!selfChoice)return setFeedback('Επίλεξε πρώτα μία επιλογή αυτοαξιολόγησης.',false);completed.add(stage);updateProgress();setFeedback('Μπράβο! Ολοκλήρωσες το Μάθημα 26.',true)}
+function restart(){stage=0;completed=new Set();selfChoice=null;commentPublished='';replyPublished='';finalComment='';finalReplyPublished='';finalReplyTarget='';render()}
+function render(){clearFeedback();updateProgress();const s=stages[stage];document.getElementById('kicker').textContent=`Δραστηριότητα ${stage+1}`;document.getElementById('title').textContent=s.title;document.getElementById('instruction').textContent=s.instruction;[renderStage1,renderStage2,renderStage3,renderStage4,renderStage5,renderStage6,renderStage7,renderOverall,renderFinal][stage]();window.scrollTo({top:0,behavior:'smooth'})}
+Object.assign(window,{pickNewest,lineStart,lineMove,lineEnd,lineCancel,singlePloigos,openPloigos,openBlogsApp,openMyBlogs,openGroupBlog,wrongBlog,sideArticle,pickCategory,openSeaArticle,openCommentForm,publishComment,openReply,publishReply,finalOpenComment,finalPublishComment,finalOpenReply,finalPublishReply,pickSelf,finish,restart});
+const modal=document.getElementById('helpModal'),helpText=document.getElementById('helpText');document.getElementById('helpBtn').onclick=()=>{helpText.textContent=stages[stage].help;modal.classList.add('open')};document.getElementById('closeHelp').onclick=()=>modal.classList.remove('open');document.getElementById('speakHelp').onclick=()=>speak(helpText.textContent);modal.onclick=e=>{if(e.target===modal)modal.classList.remove('open')};
+window.addEventListener('pointermove',e=>{if(lineDrag)lineMove(e)});window.addEventListener('pointerup',e=>{if(lineDrag)lineEnd(e)});window.addEventListener('pointercancel',()=>lineCancel());window.addEventListener('resize',()=>{if(stage===1)redrawMatchLines()});
+render();
+})();
+</script>
+<footer class="nk-license" aria-label="Πληροφορίες δημιουργού και άδειας χρήσης">
+  <div><strong>Created by Nikos Kalakos · © 2026</strong></div>
+  <div>Original educational content and simulation design licensed under <a class="cc-badge" href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank" rel="license noopener noreferrer">CC BY-NC 4.0</a>.</div>
+  <div>Source code © 2026 Nikos Kalakos.</div>
+  <div>Third-party and textbook materials remain subject to the rights and licences of their respective copyright holders.</div>
+</footer>
+</body>
+</html>
