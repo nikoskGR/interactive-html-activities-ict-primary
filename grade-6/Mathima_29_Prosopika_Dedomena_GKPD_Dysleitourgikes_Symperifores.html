@@ -1,0 +1,255 @@
+<!--
+ICT Educational Simulation
+Created by Nikos Kalakos
+Copyright © 2026 Nikos Kalakos
+
+Original educational content and simulation design licensed under CC BY-NC 4.0.
+Source code © 2026 Nikos Kalakos.
+Third-party and textbook materials remain subject to the rights and licences of their respective copyright holders.
+-->
+<!DOCTYPE html>
+<html lang="el">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta name="author" content="Nikos Kalakos">
+<meta name="copyright" content="© 2026 Nikos Kalakos">
+<meta name="license" content="Original educational content and simulation design: CC BY-NC 4.0; source code © 2026 Nikos Kalakos; third-party and textbook materials excluded.">
+<title>Μάθημα 29 – Προσωπικά δεδομένα, ΓΚΠΔ/GDPR και δυσλειτουργικές διαδικτυακές συμπεριφορές</title>
+<style>
+:root{
+  --unit:#EA922C;--unit-dark:#B86610;--unit-soft:#FFF4E6;
+  --secondary:#545F99;--secondary-dark:#3D477C;--secondary-soft:#EEF0F8;
+  --ink:#273247;--muted:#667389;--line:#D8DEEA;--bg:#F4F6FA;
+  --good:#23845A;--good-soft:#E9F7F0;--bad:#B64242;--bad-soft:#FDEEEE;
+  --panel:#fff;--shadow:0 12px 32px rgba(43,54,84,.10)
+}
+*{box-sizing:border-box}html{scroll-behavior:smooth}
+body{margin:0;font-family:Inter,"Segoe UI",Arial,sans-serif;color:var(--ink);background:radial-gradient(circle at 7% 7%,rgba(234,146,44,.11),transparent 29%),radial-gradient(circle at 93% 10%,rgba(84,95,153,.12),transparent 30%),var(--bg);font-size:17px}
+button,input,select,textarea{font:inherit}button{cursor:pointer}
+button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:3px solid rgba(84,95,153,.35);outline-offset:2px}
+.page{max-width:1560px;margin:0 auto;padding:18px}
+.hero{background:#fff;border:1px solid #E1E6EF;border-top:9px solid var(--unit);border-radius:18px;padding:20px 24px;display:grid;grid-template-columns:1fr auto;gap:18px;align-items:center;box-shadow:var(--shadow)}
+.eyebrow{font-size:14px;font-weight:950;letter-spacing:.08em;text-transform:uppercase;color:var(--secondary)}
+.hero h1{margin:5px 0 0;font-size:31px;line-height:1.15;color:var(--secondary-dark)}
+.hero p{margin:8px 0 0;color:var(--muted);font-weight:700;line-height:1.45}
+.lesson-mark{width:140px;height:78px;border-radius:16px;background:linear-gradient(135deg,var(--secondary),var(--secondary-dark));color:#fff;display:grid;place-items:center;text-align:center;box-shadow:0 9px 22px rgba(84,95,153,.24)}
+.lesson-mark b{font-size:30px;line-height:1}.lesson-mark span{font-size:11px;font-weight:900;letter-spacing:.08em;text-transform:uppercase}
+.progress{margin:13px 0;background:#fff;border:1px solid #E1E5EC;border-radius:15px;padding:12px 15px;box-shadow:0 7px 20px rgba(48,58,87,.06)}
+.progress-top{display:flex;justify-content:space-between;gap:12px;align-items:center;color:#59667B;font-size:15px;font-weight:850}.bar{height:8px;background:#ECEFF4;border-radius:999px;overflow:hidden;margin:8px 0 10px}.fill{height:100%;width:0;background:linear-gradient(90deg,var(--unit),var(--secondary));transition:.3s ease}.steps{display:flex;gap:8px;flex-wrap:wrap;justify-content:center}.step-dot{width:32px;height:32px;border-radius:9px;border:1px solid #CDD3DE;background:#fff;color:#758197;display:grid;place-items:center;font-size:14px;font-weight:900}.step-dot.current{border:2px solid var(--unit);color:var(--unit-dark);background:var(--unit-soft)}.step-dot.done{border-color:var(--secondary);background:var(--secondary);color:#fff}
+.stage{background:#fff;border:1px solid #E0E5EF;border-radius:18px;box-shadow:0 10px 28px #27364b12;overflow:hidden}.stage-head{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;padding:18px 20px;border-bottom:1px solid #E8ECF3}.stage-kicker{font-size:14px;font-weight:950;color:var(--unit-dark);text-transform:uppercase;letter-spacing:.04em}.stage-title{font-size:26px;margin:4px 0}.instruction{margin:0;color:#5C687C;font-weight:650;line-height:1.5}.help-btn{border:1px solid #C9D1E0;background:#fff;border-radius:11px;padding:10px 14px;font-weight:850;color:var(--secondary-dark);white-space:nowrap}.help-btn:hover{background:var(--secondary-soft)}.workspace{padding:18px 20px 22px;min-height:620px}.task-strip{border-left:5px solid var(--unit);background:#FFF9F1;padding:13px 15px;border-radius:11px;margin-bottom:14px;font-weight:800;line-height:1.48}.feedback{min-height:0;margin-top:12px;border-radius:11px;font-weight:800;line-height:1.45}.feedback.show{padding:11px 13px;border:1px solid}.feedback.info{background:#F2F6FF;border-color:#C8D5EF;color:#46577C}.feedback.good{background:var(--good-soft);border-color:#AADBC5;color:#176943}.feedback.bad{background:var(--bad-soft);border-color:#F0BABA;color:#9B3030}
+.choice-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:11px;max-width:1120px;margin:12px auto}.choice{min-height:72px;border:1.5px solid #C9D2E2;background:#fff;border-radius:12px;padding:14px 16px;text-align:left;font-weight:850;color:#283650;transition:.15s;font-size:17px;line-height:1.4}.choice:hover{border-color:#8897B3;transform:translateY(-1px)}.choice.correct{background:var(--good-soft);border-color:#7DC7A4}.choice.selected{background:var(--secondary-soft);border-color:var(--secondary);box-shadow:inset 0 0 0 1px var(--secondary)}.choice.wrong{animation:shake .28s;background:var(--bad-soft);border-color:#E49A9A}@keyframes shake{25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
+.actions{display:flex;justify-content:center;gap:10px;margin-top:16px}.primary{border:0;background:var(--secondary);color:#fff;border-radius:11px;padding:11px 18px;font-weight:900}.primary:hover{background:var(--secondary-dark)}.primary:disabled{opacity:.48;cursor:default}.secondary-btn{border:1px solid #C8D1E0;background:#fff;color:var(--secondary-dark);border-radius:10px;padding:10px 15px;font-weight:850}
+.case-count{text-align:center;font-weight:900;color:var(--secondary-dark);margin-bottom:9px}.scenario{max-width:1080px;margin:0 auto 14px;border:1px solid #D8DFEA;background:#F8F9FC;border-radius:14px;padding:16px 18px;line-height:1.5;font-weight:750}.scenario b{color:var(--secondary-dark)}
+.info-card{max-width:1120px;margin:0 auto 14px;background:var(--secondary-soft);border:1px solid #C9CEE4;border-radius:14px;padding:16px 18px;line-height:1.52}.info-card h3{margin:0 0 8px;color:var(--secondary-dark)}.info-card ul{margin:8px 0 0;padding-left:24px}.info-card li{margin:6px 0}
+.multi-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;max-width:1180px;margin:12px auto}.multi{border:1.5px solid #C9D2E2;background:#fff;border-radius:12px;padding:14px 15px;text-align:left;font-weight:820;min-height:66px;color:#2E3C55;display:flex;align-items:center;gap:10px}.multi:before{content:'□';font-size:24px;color:#8390A6;line-height:1}.multi.selected{background:var(--secondary-soft);border-color:var(--secondary)}.multi.selected:before{content:'☑';color:var(--secondary)}.multi.correct{background:var(--good-soft);border-color:#7DC7A4}.multi.wrong{animation:shake .28s;background:var(--bad-soft);border-color:#E49A9A}
+/* Matching */
+.match-area{position:relative;max-width:1240px;margin:14px auto;padding:6px 30px}.match-grid{display:grid;grid-template-columns:1fr 1fr;gap:78px}.match-col{display:flex;flex-direction:column;gap:12px}.match-card{position:relative;min-height:78px;border:1.5px solid #C9D2E2;background:#fff;border-radius:13px;padding:14px 18px;font-weight:800;line-height:1.38;display:flex;align-items:center}.match-card.matched{background:var(--good-soft);border-color:#7DC7A4}.match-dot{position:absolute;width:18px;height:18px;border-radius:50%;background:#fff;border:4px solid var(--secondary);top:50%;transform:translateY(-50%);z-index:4}.left .match-dot{right:-30px}.right .match-dot{left:-30px}.match-dot:hover{transform:translateY(-50%) scale(1.15)}.match-svg{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;overflow:visible;z-index:2}.match-svg line{stroke:var(--secondary);stroke-width:4;stroke-linecap:round}.match-svg line.temp{stroke:#8A96B2;stroke-dasharray:7 7}
+/* Resource cards */
+.resource-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:11px;max-width:1080px;margin:12px auto}.resource{border:1.5px solid #CBD3E0;background:#fff;border-radius:13px;padding:14px 16px;display:flex;align-items:center;gap:13px;font-weight:850}.resource .site-icon{width:43px;height:43px;border-radius:10px;background:var(--secondary-soft);display:grid;place-items:center;font-size:22px;flex:0 0 auto}.resource.selected{border-color:var(--secondary);background:var(--secondary-soft)}.resource.correct{border-color:#7DC7A4;background:var(--good-soft)}.resource.wrong{animation:shake .28s;border-color:#E49A9A;background:var(--bad-soft)}
+/* Self assessment */
+.self-wrap{overflow:auto}.self-table{display:grid;grid-template-columns:minmax(300px,1.55fr) repeat(4,minmax(145px,1fr));min-width:920px;border:1px solid #D7DEEA;border-radius:13px;overflow:hidden}.self-head,.self-objective,.self-cell{padding:12px;border-right:1px solid #D7DEEA;border-bottom:1px solid #D7DEEA}.self-head{background:#FFF7EC;color:#6B4C20;font-size:15px;font-weight:900;text-align:center}.self-objective{font-size:15px;font-weight:850;background:#fff}.self-cell{font-size:15px;background:#fff;border-top:0;border-left:0;text-align:center;color:#42506B;font-weight:800}.self-cell.selected{background:var(--secondary-soft);box-shadow:inset 0 0 0 2px var(--secondary);color:var(--secondary-dark)}.finish-actions{display:flex;justify-content:center;margin-top:16px}.completion{text-align:center;padding:42px 20px}.badge{display:inline-block;background:var(--unit-soft);color:var(--unit-dark);border-radius:99px;padding:7px 11px;font-size:12px;font-weight:900}.completion h2{font-size:29px;margin:12px 0 8px;color:var(--secondary-dark)}.completion p{max-width:760px;margin:0 auto 20px;color:#5F6C80;font-weight:700;line-height:1.5}
+.modal-backdrop{position:fixed;inset:0;background:#11182788;display:none;align-items:center;justify-content:center;padding:18px;z-index:50}.modal-backdrop.open{display:flex}.modal{width:min(590px,100%);background:#fff;border-radius:16px;box-shadow:0 18px 60px #0004;overflow:hidden}.modal-head{padding:14px 16px;background:var(--secondary);color:#fff;font-weight:900;display:flex;justify-content:space-between;align-items:center}.modal-close{border:0;background:#ffffff1f;color:#fff;width:32px;height:32px;border-radius:8px;font-size:20px}.modal-body{padding:17px;line-height:1.55;color:#3F4D68;font-weight:700}.modal-actions{display:flex;justify-content:flex-end;gap:8px;padding:0 17px 17px}
+@media(max-width:900px){.multi-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.match-grid{grid-template-columns:1fr 1fr;gap:28px}.match-area{padding:6px 30px}.left .match-dot{right:-37px}.right .match-dot{left:-37px}}
+@media(max-width:720px){.page{padding:9px}.hero{padding:16px}.hero h1{font-size:25px}.lesson-mark{width:105px;height:68px}.stage-head{flex-direction:column}.workspace{padding:14px}.choice-grid,.multi-grid,.resource-grid{grid-template-columns:1fr}.match-area{padding:0}.match-grid{grid-template-columns:1fr;gap:24px}.left .match-dot{right:12px}.right .match-dot{left:12px}.match-svg{display:none}.match-card{padding-left:42px;padding-right:42px}.self-head,.self-objective,.self-cell{font-size:13px}}
+</style>
+<style id="nk-license-style">
+.nk-license{max-width:1100px;margin:14px auto 24px;padding:10px 16px;text-align:center;font:13px/1.45 Arial,"Noto Sans",sans-serif;color:#4e657c}
+.nk-license a{color:inherit;text-decoration:underline;text-underline-offset:2px}
+.nk-license .cc-badge{display:inline-block;margin:0 4px;padding:2px 7px;border:1px solid #8aa0b8;border-radius:6px;background:#fff;font-weight:700;white-space:nowrap}
+</style>
+</head>
+<body>
+<div class="page">
+<header class="hero">
+  <div>
+    <div class="eyebrow">Ενότητα 5 · Ψηφιακές τεχνολογίες και κοινωνία</div>
+    <h1>Προσωπικά δεδομένα, ΓΚΠΔ/GDPR και δυσλειτουργικές διαδικτυακές συμπεριφορές</h1>
+    <p>Αναγνώρισε προσωπικά δεδομένα και δικαιώματα προστασίας και ξεχώρισε συμπεριφορές που μπορεί να δημιουργούν προβλήματα στο διαδίκτυο.</p>
+  </div>
+  <div class="lesson-mark"><div><b>29</b><br><span>Μάθημα</span></div></div>
+</header>
+<section class="progress"><div class="progress-top"><span id="progressText"></span><span id="progressPct"></span></div><div class="bar"><div class="fill" id="fill"></div></div><div class="steps" id="steps"></div></section>
+<main class="stage">
+  <div class="stage-head"><div><div class="stage-kicker" id="kicker"></div><h2 class="stage-title" id="stageTitle"></h2><p class="instruction" id="instruction"></p></div><button class="help-btn" id="helpBtn">❔ Βοήθεια</button></div>
+  <div class="workspace"><div id="activity"></div><div class="feedback" id="feedback"></div></div>
+</main>
+</div>
+<div class="modal-backdrop" id="helpModal"><div class="modal"><div class="modal-head"><span>Βοήθεια</span><button class="modal-close" id="closeHelp">×</button></div><div class="modal-body" id="helpText"></div><div class="modal-actions"><button class="secondary-btn" id="understoodBtn">Κατάλαβα</button></div></div></div>
+<script>
+const ACTIVITIES=[
+ {t:'Ποια είναι προσωπικά δεδομένα;',i:'Επίλεξε μόνο τις πληροφορίες που, σύμφωνα με το μάθημα, μπορούν να σε αναγνωρίσουν.'},
+ {t:'Προστάτευσε την ιδιωτικότητά σου',i:'Διάλεξε την ενέργεια που ταιριάζει καλύτερα με την προσεκτική διαχείριση προσωπικών δεδομένων στο διαδίκτυο.'},
+ {t:'Γνώρισε τον ΓΚΠΔ/GDPR',i:'Εντόπισε τι είναι ο ΓΚΠΔ/GDPR και ποιες αρχές αναφέρονται στο μάθημα.'},
+ {t:'Σύνδεσε τα δικαιώματα του ΓΚΠΔ',i:'Σύρε γραμμή από κάθε δικαίωμα προς την περιγραφή που του αντιστοιχεί.'},
+ {t:'Τι ρυθμίζει ο ΓΚΠΔ/GDPR;',i:'Αναγνώρισε ποιες ενέργειες επεξεργασίας προσωπικών δεδομένων καλύπτει ο κανονισμός.'},
+ {t:'Δυσλειτουργική χρήση του διαδικτύου',i:'Εντόπισε χαρακτηριστικά και συμπτώματα που αναφέρονται στο μάθημα.'},
+ {t:'Grooming, cyberbullying και ενημέρωση',i:'Ξεχώρισε τις δύο έννοιες και αναγνώρισε πηγές ενημερωτικού υλικού που προτείνονται στο βιβλίο.'},
+ {t:'Συνολική δοκιμή',i:'Εφάρμοσε όσα έμαθες σε μικρές περιπτώσεις από όλο το μάθημα.'},
+ {t:'Τι έμαθα;',i:'Διάλεξε το επίπεδο που εκφράζει καλύτερα πόσο καλά νιώθεις ότι κατέκτησες κάθε στόχο.'}
+];
+const HELP=[
+ 'Προσωπικά δεδομένα είναι πληροφορίες που αναφέρονται σε εσένα και μπορούν να σε αναγνωρίσουν, όπως όνομα, διεύθυνση, τηλέφωνο, αριθμός ταυτότητας και δεδομένα υγείας.',
+ 'Σκέψου ποια επιλογή περιορίζει την άσκοπη κοινοποίηση στοιχείων που μπορούν να σε αναγνωρίσουν.',
+ 'Ο ΓΚΠΔ/GDPR αφορά την προστασία δεδομένων και ιδιωτικότητας στην ΕΕ και στον ΕΟΧ. Το μάθημα αναφέρει έξι αρχές.',
+ 'Ξεκίνα από τη μικρή τελεία δεξιά ενός δικαιώματος και σύρε μέχρι την τελεία της σωστής περιγραφής. Η σωστή γραμμή μένει στην οθόνη.',
+ 'Το μάθημα αναφέρει ότι ο ΓΚΠΔ καθορίζει πώς επιτρέπεται να χρησιμοποιούνται, αποθηκεύονται, διαγράφονται, μεταβιβάζονται και γενικότερα να επεξεργάζονται προσωπικά δεδομένα.',
+ 'Βασίσου αποκλειστικά στα χαρακτηριστικά και στα συμπτώματα που παρουσιάζονται στο μάθημα.',
+ 'Grooming είναι η διαδικτυακή επικοινωνία ενήλικα με παιδί ή έφηβο με στόχο να κερδίσει την εμπιστοσύνη του. Cyberbullying είναι η κακόβουλη παρενόχληση μέσω διαδικτύου.',
+ 'Η δοκιμή συνδυάζει προσωπικά δεδομένα, δικαιώματα ΓΚΠΔ και δυσλειτουργικές διαδικτυακές συμπεριφορές.',
+ 'Δεν υπάρχουν σωστές ή λάθος επιλογές στην αυτοαξιολόγηση. Διάλεξε ένα επίπεδο για κάθε στόχο.'
+];
+let stage=0,finished=false,renderEpoch=0,pendingTimers=[];const completed=new Set();
+const q=s=>document.querySelector(s),qa=s=>[...document.querySelectorAll(s)];
+const activity=q('#activity'),feedback=q('#feedback'),kicker=q('#kicker'),stageTitle=q('#stageTitle'),instruction=q('#instruction');
+function clearTimers(){pendingTimers.forEach(clearTimeout);pendingTimers=[]}
+function later(fn,ms){const s=stage,e=renderEpoch;const id=setTimeout(()=>{if(stage===s&&renderEpoch===e)fn()},ms);pendingTimers.push(id);return id}
+function beginSubrender(){clearTimers();renderEpoch++;clearFeedback()}
+function setFeedback(txt,type='info'){feedback.className='feedback show '+type;feedback.innerHTML=txt}
+function clearFeedback(){feedback.className='feedback';feedback.textContent=''}
+function wrong(el,msg){el.classList.remove('wrong');void el.offsetWidth;el.classList.add('wrong');setFeedback(msg,'bad');later(()=>{el.classList.remove('wrong');clearFeedback()},620)}
+function advance(delay=0){later(()=>{completed.add(stage);stage++;render()},delay)}
+function updateProgress(){const n=ACTIVITIES.length;const pct=finished?100:Math.round(stage/(n-1)*100);q('#progressText').textContent=finished?'Ολοκληρώθηκε':`Δραστηριότητα ${stage+1} από ${n}`;q('#progressPct').textContent=pct+'%';q('#fill').style.width=pct+'%';q('#steps').innerHTML=ACTIVITIES.map((_,i)=>`<span class="step-dot ${completed.has(i)?'done':''} ${i===stage&&!finished?'current':''}">${i+1}</span>`).join('')}
+const shuffleCache={};function shuffleCopy(arr){const a=[...arr];for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}function shuffleOnce(key,arr){if(!shuffleCache[key])shuffleCache[key]=shuffleCopy(arr);return shuffleCache[key]}
+function exactSet(a,b){return a.size===b.size&&[...a].every(x=>b.has(x))}
+
+/* Activity 1 */
+const a1Targets=new Set(['name','address','phone','id','health']);let a1Selected=new Set(),a1Done=false;
+function r1(){beginSubrender();const items=shuffleOnce('a1items',[
+ ['name','Το όνομά μου'],['address','Η διεύθυνση του σπιτιού μου'],['phone','Ο αριθμός τηλεφώνου μου'],['id','Ο αριθμός ταυτότητάς μου'],['health','Δεδομένα της υγείας μου'],['weather','Η σημερινή θερμοκρασία'],['color','Το αγαπημένο μου χρώμα'],['bell','Η ώρα που χτυπά το κουδούνι του σχολείου']
+]);activity.innerHTML=`<div class="task-strip">Κάνε κλικ στις πληροφορίες που αποτελούν προσωπικά δεδομένα. Κάνε ξανά κλικ για αποεπιλογή και μετά πάτησε <b>Έλεγχος</b>.</div><div class="multi-grid">${items.map(([id,txt])=>`<button class="multi ${a1Selected.has(id)?'selected':''} ${a1Done&&a1Targets.has(id)?'correct':''}" data-a1="${id}">${txt}</button>`).join('')}</div><div class="actions"><button class="primary" id="a1check">Έλεγχος</button></div>`;
+ qa('[data-a1]').forEach(b=>b.onclick=()=>{if(a1Done)return;const id=b.dataset.a1;a1Selected.has(id)?a1Selected.delete(id):a1Selected.add(id);r1()});
+ q('#a1check').onclick=()=>{if(exactSet(a1Selected,a1Targets)){a1Done=true;r1();setFeedback('✓ Εντόπισες σωστά όλα τα προσωπικά δεδομένα.','good');advance(1800);return}setFeedback('Δεν είναι σωστό ακόμη. Άλλαξε μία ή περισσότερες επιλογές και δοκίμασε ξανά.','bad')}
+}
+
+/* Activity 2 */
+const a2Cases=[
+ {s:'Ένα άγνωστο μήνυμα ζητά τον αριθμό ταυτότητάς σου για να σου δώσει ένα «δώρο».',ok:'avoid',why:'Ο αριθμός ταυτότητας είναι προσωπικό δεδομένο.'},
+ {s:'Μια δημόσια ανάρτηση ζητά να γράψεις τη διεύθυνση του σπιτιού σου για να μπεις σε κλήρωση.',ok:'avoid',why:'Η διεύθυνση του σπιτιού είναι προσωπικό δεδομένο.'},
+ {s:'Θέλεις να γράψεις σε μια εργασία ότι σήμερα η θερμοκρασία είναι 22°C.',ok:'share',why:'Η θερμοκρασία της ημέρας δεν είναι πληροφορία που σε αναγνωρίζει.'},
+ {s:'Μια άγνωστη ιστοσελίδα ζητά τον αριθμό τηλεφώνου σου χωρίς να εξηγεί γιατί τον χρειάζεται.',ok:'avoid',why:'Το μάθημα τονίζει ότι χρειάζεται προσοχή σε ό,τι κοινοποιούμε.'}
+];let a2i=0,a2hold=false;
+function r2(){beginSubrender();const d=a2Cases[a2i];const opts=shuffleOnce('a2'+a2i,[['avoid','Δεν κοινοποιώ το στοιχείο'],['share','Μπορώ να το χρησιμοποιήσω χωρίς θέμα ιδιωτικότητας']]);activity.innerHTML=`<div class="case-count">Περίπτωση ${a2i+1} από ${a2Cases.length}</div><div class="scenario">${d.s}</div><div class="choice-grid">${opts.map(o=>`<button class="choice ${a2hold&&o[0]===d.ok?'correct':''}" data-a2="${o[0]}">${o[1]}</button>`).join('')}</div>`;if(a2hold){setFeedback('✓ '+d.why,'good');later(()=>{a2hold=false;a2i++;a2i<a2Cases.length?r2():advance()},1550);return}qa('[data-a2]').forEach(b=>b.onclick=()=>{if(b.dataset.a2!==d.ok)return wrong(b,'Σκέψου αν η πληροφορία μπορεί να σε αναγνωρίσει και αν υπάρχει λόγος να τη δώσεις.');a2hold=true;r2()})}
+
+/* Activity 3 */
+let a3step=0,a3selected=new Set(),a3done=false;
+const gdprPrinciples=new Set(['lawful','purpose','minimum','accuracy','storage','integrity']);
+function r3(){beginSubrender();if(a3step===0){const opts=shuffleOnce('a3def',[['gdpr','Κανονισμός για την προστασία των δεδομένων και της ιδιωτικότητας στην ΕΕ και στον ΕΟΧ.'],['browser','Εφαρμογή για την περιήγηση σε ιστοσελίδες.'],['antivirus','Πρόγραμμα που χρησιμοποιείται μόνο για τον έλεγχο ιών.']]);activity.innerHTML=`<div class="task-strip">Ποια περιγραφή αντιστοιχεί στον ΓΚΠΔ/GDPR;</div><div class="choice-grid">${opts.map(o=>`<button class="choice" data-a3def="${o[0]}">${o[1]}</button>`).join('')}</div>`;qa('[data-a3def]').forEach(b=>b.onclick=()=>{if(b.dataset.a3def!=='gdpr')return wrong(b,'Δεν είναι σωστό. Δοκίμασε ξανά.');b.classList.add('correct');setFeedback('✓ Σωστά. Ο ΓΚΠΔ/GDPR αφορά την προστασία δεδομένων και ιδιωτικότητας.','good');later(()=>{a3step=1;r3()},1500)});return}
+ const items=shuffleOnce('a3principles',[
+ ['lawful','Νόμιμος, δίκαιος και διαφανής τρόπος'],['purpose','Περιορισμός του σκοπού'],['minimum','Ελαχιστοποίηση των δεδομένων'],['accuracy','Ακρίβεια'],['storage','Περιορισμός της αποθήκευσης'],['integrity','Ακεραιότητα και εμπιστευτικότητα'],['speed','Μεγαλύτερη ταχύτητα διαδικτύου'],['ads','Περισσότερες διαφημίσεις'],['screen','Αύξηση φωτεινότητας οθόνης']
+ ]);activity.innerHTML=`<div class="task-strip">Επίλεξε μόνο τις αρχές που αναφέρονται στο μάθημα ως αρχές του ΓΚΠΔ/GDPR και πάτησε <b>Έλεγχος</b>.</div><div class="multi-grid">${items.map(([id,txt])=>`<button class="multi ${a3selected.has(id)?'selected':''} ${a3done&&gdprPrinciples.has(id)?'correct':''}" data-a3p="${id}">${txt}</button>`).join('')}</div><div class="actions"><button class="primary" id="a3check">Έλεγχος</button></div>`;qa('[data-a3p]').forEach(b=>b.onclick=()=>{if(a3done)return;const id=b.dataset.a3p;a3selected.has(id)?a3selected.delete(id):a3selected.add(id);r3()});q('#a3check').onclick=()=>{if(exactSet(a3selected,gdprPrinciples)){a3done=true;r3();setFeedback('✓ Εντόπισες σωστά όλες τις αρχές που ζητούνται.','good');advance(1900);return}setFeedback('Δεν είναι σωστό ακόμη. Άλλαξε μία ή περισσότερες επιλογές και δοκίμασε ξανά.','bad')}
+}
+
+/* Activity 4 matching */
+const a4Pairs={forget:'del',access:'info',correct:'fix',object:'opp'};const a4Matched=new Map();let matchDrag=null;
+const a4Left=[['forget','Δικαίωμα στη λήθη'],['access','Δικαίωμα ενημέρωσης και πρόσβασης στα δεδομένα'],['correct','Δικαίωμα διόρθωσης'],['object','Δικαίωμα εναντίωσης στην επεξεργασία']];
+const a4Right=shuffleOnce('a4right',[
+ ['del','Μπορώ να ζητήσω τη διαγραφή των δεδομένων μου.'],['info','Έχω δικαίωμα σε σαφέστερη ενημέρωση και πρόσβαση στα δεδομένα μου.'],['fix','Μπορώ να ζητήσω διόρθωση ανακριβών στοιχείων και συμπλήρωση ελλιπών δεδομένων.'],['opp','Μπορώ, υπό συγκεκριμένες προϋποθέσεις, να εναντιωθώ στην επεξεργασία των δεδομένων μου.']
+]);
+function r4(){beginSubrender();activity.innerHTML=`<div class="task-strip">Τράβηξε μια γραμμή από την τελεία κάθε δικαιώματος προς την τελεία της σωστής περιγραφής.</div><div class="match-area" id="matchArea"><svg class="match-svg" id="matchSvg"></svg><div class="match-grid"><div class="match-col left">${a4Left.map(([id,txt])=>`<div class="match-card ${a4Matched.has(id)?'matched':''}" data-left-card="${id}">${txt}<span class="match-dot" data-left="${id}"></span></div>`).join('')}</div><div class="match-col right">${a4Right.map(([id,txt])=>`<div class="match-card ${[...a4Matched.values()].includes(id)?'matched':''}" data-right-card="${id}"><span class="match-dot" data-right="${id}"></span>${txt}</div>`).join('')}</div></div></div>`;drawSavedLines();attachMatching();if(a4Matched.size===4){setFeedback('✓ Όλα τα δικαιώματα συνδέθηκαν σωστά.','good');advance(1900)}}
+function dotCenter(el,area){const r=el.getBoundingClientRect(),a=area.getBoundingClientRect();return{x:r.left+r.width/2-a.left,y:r.top+r.height/2-a.top}}
+function addLine(svg,p1,p2,cls=''){const l=document.createElementNS('http://www.w3.org/2000/svg','line');l.setAttribute('x1',p1.x);l.setAttribute('y1',p1.y);l.setAttribute('x2',p2.x);l.setAttribute('y2',p2.y);if(cls)l.setAttribute('class',cls);svg.appendChild(l);return l}
+function drawSavedLines(){const area=q('#matchArea'),svg=q('#matchSvg');if(!area||!svg)return;svg.innerHTML='';a4Matched.forEach((rid,lid)=>{const le=q(`[data-left="${lid}"]`),re=q(`[data-right="${rid}"]`);if(le&&re)addLine(svg,dotCenter(le,area),dotCenter(re,area))})}
+function rightMatchFromPoint(clientX,clientY){
+ const direct=document.elementFromPoint(clientX,clientY)?.closest('[data-right]');
+ if(direct)return direct;
+ const card=document.elementFromPoint(clientX,clientY)?.closest('[data-right-card]');
+ if(card)return q(`[data-right="${card.dataset.rightCard}"]`);
+ let nearest=null,best=Infinity;
+ qa('[data-right]').forEach(dot=>{const r=dot.getBoundingClientRect();const cx=r.left+r.width/2,cy=r.top+r.height/2;const d=Math.hypot(clientX-cx,clientY-cy);if(d<best){best=d;nearest=dot}});
+ return best<=42?nearest:null
+}
+function attachMatching(){
+ const area=q('#matchArea'),svg=q('#matchSvg');
+ qa('[data-left]').forEach(dot=>{
+  dot.onpointerdown=e=>{
+   const lid=dot.dataset.left;if(a4Matched.has(lid))return;
+   e.preventDefault();clearFeedback();
+   const p=dotCenter(dot,area),temp=addLine(svg,p,p,'temp');
+   matchDrag={lid,temp,pid:e.pointerId};
+   try{dot.setPointerCapture(e.pointerId)}catch(_){ }
+  };
+  dot.onpointermove=e=>{
+   if(!matchDrag||matchDrag.pid!==e.pointerId)return;
+   const a=area.getBoundingClientRect();
+   matchDrag.temp.setAttribute('x2',e.clientX-a.left);
+   matchDrag.temp.setAttribute('y2',e.clientY-a.top)
+  };
+  dot.onpointerup=e=>{
+   if(!matchDrag||matchDrag.pid!==e.pointerId)return;
+   const lid=matchDrag.lid;
+   matchDrag.temp.remove();matchDrag=null;
+   const target=rightMatchFromPoint(e.clientX,e.clientY);
+   if(!target){setFeedback('Άφησε τη γραμμή πάνω στην τελεία ή στην κάρτα της περιγραφής που επιλέγεις.','bad');later(clearFeedback,850);return}
+   const rid=target.dataset.right;
+   if(a4Pairs[lid]!==rid){
+    const card=target.closest('.match-card');card?.classList.add('wrong');
+    setFeedback('Η σύνδεση δεν είναι σωστή. Δοκίμασε ξανά.','bad');
+    later(()=>{card?.classList.remove('wrong');clearFeedback()},650);return
+   }
+   a4Matched.set(lid,rid);r4()
+  };
+  dot.onpointercancel=()=>{if(matchDrag){matchDrag.temp?.remove();matchDrag=null}}
+ })
+}
+window.addEventListener('resize',()=>{if(stage===3)drawSavedLines()});
+
+/* Activity 5 */
+const a5Targets=new Set(['use','store','delete','transfer','process']);let a5selected=new Set(),a5done=false;
+function r5(){beginSubrender();const items=shuffleOnce('a5items',[
+ ['use','Χρήση προσωπικών δεδομένων'],['store','Αποθήκευση προσωπικών δεδομένων'],['delete','Διαγραφή προσωπικών δεδομένων'],['transfer','Μεταβίβαση προσωπικών δεδομένων'],['process','Γενικότερη επεξεργασία προσωπικών δεδομένων'],['sound','Ρύθμιση της έντασης ήχου του υπολογιστή'],['wifi','Αύξηση της ταχύτητας Wi-Fi'],['battery','Φόρτιση μιας συσκευής']
+]);activity.innerHTML=`<div class="task-strip">Επίλεξε όσα, σύμφωνα με το μάθημα, καθορίζει ο ΓΚΠΔ/GDPR για τα προσωπικά δεδομένα και πάτησε <b>Έλεγχος</b>.</div><div class="multi-grid">${items.map(([id,txt])=>`<button class="multi ${a5selected.has(id)?'selected':''} ${a5done&&a5Targets.has(id)?'correct':''}" data-a5="${id}">${txt}</button>`).join('')}</div><div class="actions"><button class="primary" id="a5check">Έλεγχος</button></div>`;qa('[data-a5]').forEach(b=>b.onclick=()=>{if(a5done)return;const id=b.dataset.a5;a5selected.has(id)?a5selected.delete(id):a5selected.add(id);r5()});q('#a5check').onclick=()=>{if(exactSet(a5selected,a5Targets)){a5done=true;r5();setFeedback('✓ Ο ΓΚΠΔ/GDPR καθορίζει πώς επιτρέπεται να χρησιμοποιούνται, αποθηκεύονται, διαγράφονται, μεταβιβάζονται και γενικότερα να επεξεργάζονται προσωπικά δεδομένα.','good');advance(2100);return}const bad=[...a5selected].filter(x=>!a5Targets.has(x));bad.forEach(id=>q(`[data-a5="${id}"]`)?.classList.add('wrong'));setFeedback('Έλεγξε ξανά ποιες ενέργειες αφορούν την επεξεργασία προσωπικών δεδομένων.','bad');later(()=>{bad.forEach(id=>a5selected.delete(id));r5()},760)}
+}
+
+/* Activity 6 */
+let a6step=0,a6selected=new Set(),a6done=false;const a6CharTargets=new Set(['more','emotion','limit','relations','lies','irritation']);const a6SymTargets=new Set(['headache','eyes','time','neglect','diet','grades','hygiene','isolation','violent','old']);
+function r6(){beginSubrender();if(a6step===0){const items=shuffleOnce('a6chars',[
+ ['more','Αυξανόμενη ενασχόληση με το διαδίκτυο'],['emotion','Πρόβλημα στη διαχείριση συναισθημάτων'],['limit','Μη τήρηση χρονικού ορίου ενασχόλησης'],['relations','Προβλήματα στις σχέσεις με άλλους ανθρώπους'],['lies','Ψεύδη για να μη φαίνεται η πραγματική διάρκεια χρήσης'],['irritation','Εκνευρισμός και διάθεση για συγκρούσεις όταν δεν υπάρχει χρήση'],['printer','Συχνή χρήση εκτυπωτή'],['camera','Πολλές φωτογραφίες σε μια σχολική εργασία']
+ ]);activity.innerHTML=`<div class="task-strip">Επίλεξε μόνο τα χαρακτηριστικά της δυσλειτουργικής χρήσης του διαδικτύου που αναφέρονται στο μάθημα.</div><div class="multi-grid">${items.map(([id,txt])=>`<button class="multi ${a6selected.has(id)?'selected':''}" data-a6="${id}">${txt}</button>`).join('')}</div><div class="actions"><button class="primary" id="a6check">Έλεγχος</button></div>`;qa('[data-a6]').forEach(b=>b.onclick=()=>{const id=b.dataset.a6;a6selected.has(id)?a6selected.delete(id):a6selected.add(id);r6()});q('#a6check').onclick=()=>{if(exactSet(a6selected,a6CharTargets)){a6step=1;a6selected=new Set();r6();return}const bad=[...a6selected].filter(x=>!a6CharTargets.has(x));bad.forEach(id=>q(`[data-a6="${id}"]`)?.classList.add('wrong'));setFeedback('Έλεγξε ξανά τα χαρακτηριστικά που περιγράφει το μάθημα.','bad');later(()=>{bad.forEach(id=>a6selected.delete(id));r6()},760)};return}
+ const items=shuffleOnce('a6sym',[
+ ['headache','Πονοκέφαλος'],['eyes','Ξηρότητα οφθαλμών'],['time','Υπερβολικός χρόνος ενασχόλησης'],['neglect','Παραμέληση υποχρεώσεων και χόμπι'],['diet','Διατροφικές παρεκτροπές'],['grades','Απότομη πτώση σχολικής επίδοσης'],['hygiene','Παραμέληση σωματικής υγιεινής'],['isolation','Απομόνωση από οικογένεια και φίλους'],['violent','Βίαιη συμπεριφορά'],['old','Αδιαφορία για παλιές ασχολίες'],['fast','Γρήγορη πληκτρολόγηση'],['search','Καλή χρήση μηχανής αναζήτησης']
+ ]);activity.innerHTML=`<div class="task-strip">Τώρα επίλεξε μόνο τα <b>βασικά συμπτώματα</b> που παρουσιάζονται στο μάθημα.</div><div class="multi-grid">${items.map(([id,txt])=>`<button class="multi ${a6selected.has(id)?'selected':''} ${a6done&&a6SymTargets.has(id)?'correct':''}" data-a6s="${id}">${txt}</button>`).join('')}</div><div class="actions"><button class="primary" id="a6check2">Έλεγχος</button></div>`;qa('[data-a6s]').forEach(b=>b.onclick=()=>{if(a6done)return;const id=b.dataset.a6s;a6selected.has(id)?a6selected.delete(id):a6selected.add(id);r6()});q('#a6check2').onclick=()=>{if(exactSet(a6selected,a6SymTargets)){a6done=true;r6();setFeedback('✓ Αναγνώρισες τα συμπτώματα που παρουσιάζει το μάθημα.','good');advance(2100);return}const bad=[...a6selected].filter(x=>!a6SymTargets.has(x));bad.forEach(id=>q(`[data-a6s="${id}"]`)?.classList.add('wrong'));setFeedback('Έλεγξε ξανά τις επιλογές σου με βάση τα συμπτώματα του μαθήματος.','bad');later(()=>{bad.forEach(id=>a6selected.delete(id));r6()},760)}
+}
+
+/* Activity 7 */
+const a7cases=[
+ {s:'Ένας ενήλικας ξεκινά συχνή διαδικτυακή επικοινωνία με παιδί, προσπαθεί να κερδίσει την εμπιστοσύνη του και επιμένει να συναντηθούν μόνοι τους.',ok:'groom',why:'Η περιγραφή αντιστοιχεί στη διαδικτυακή αποπλάνηση (grooming).'},
+ {s:'Κάποιος στέλνει επανειλημμένα προσβλητικά μηνύματα και διαδίδει ψεύτικες φήμες για συμμαθητή μέσω διαδικτύου.',ok:'bully',why:'Η περιγραφή αντιστοιχεί στον διαδικτυακό εκφοβισμό (cyberbullying).'},
+ {s:'Κάποιος δημοσιεύει χωρίς άδεια μια ντροπιαστική φωτογραφία άλλου παιδιού για να το ενοχλήσει.',ok:'bully',why:'Η δημοσίευση χωρίς άδεια με σκοπό παρενόχλησης αναφέρεται στα παραδείγματα cyberbullying.'}
+];let a7step=0,a7i=0,a7hold=false,a7resources=new Set(),a7resDone=false;const resourceTargets=new Set(['safeline','safer','cyberkid','psd']);
+function r7(){beginSubrender();if(a7step===0){const d=a7cases[a7i],opts=shuffleOnce('a7'+a7i,[['groom','Διαδικτυακή αποπλάνηση (Grooming)'],['bully','Διαδικτυακός εκφοβισμός (Cyberbullying)']]);activity.innerHTML=`<div class="case-count">Περίπτωση ${a7i+1} από ${a7cases.length}</div><div class="scenario">${d.s}</div><div class="choice-grid">${opts.map(o=>`<button class="choice ${a7hold&&o[0]===d.ok?'correct':''}" data-a7="${o[0]}">${o[1]}</button>`).join('')}</div>`;if(a7hold){setFeedback('✓ '+d.why,'good');later(()=>{a7hold=false;a7i++;if(a7i<a7cases.length)r7();else{a7step=1;r7()}},1550);return}qa('[data-a7]').forEach(b=>b.onclick=()=>{if(b.dataset.a7!==d.ok)return wrong(b,'Ξαναδιάβασε τι προσπαθεί να κάνει το άτομο στο συγκεκριμένο σενάριο.');a7hold=true;r7()});return}
+ const sites=shuffleOnce('a7sites',[
+ ['safeline','Safeline.gr','Ελληνική Ανοιχτή Γραμμή για το παράνομο περιεχόμενο στο διαδίκτυο'],['safer','SaferInternet4Kids','Για ένα ασφαλέστερο διαδίκτυο'],['cyberkid','Cyberkid','Ιστότοπος που αναφέρεται στο μάθημα'],['psd','Ασφάλεια στο διαδίκτυο – ΠΣΔ','Ιστότοπος που αναφέρεται στο μάθημα'],['game','GameScore','Ιστότοπος βαθμολογίας παιχνιδιών'],['weather','WeatherNow','Ιστότοπος πρόγνωσης καιρού']
+ ]);activity.innerHTML=`<div class="task-strip">Επίλεξε μόνο τις ιστοσελίδες που το βιβλίο προτείνει να επισκεφθεί η ομάδα για ενημερωτικό υλικό σχετικά με δυσλειτουργική χρήση και απειλές στο διαδίκτυο.</div><div class="resource-grid">${sites.map(([id,name,desc])=>`<button class="resource ${a7resources.has(id)?'selected':''} ${a7resDone&&resourceTargets.has(id)?'correct':''}" data-res="${id}"><span class="site-icon">🌐</span><span><b>${name}</b><br><small>${desc}</small></span></button>`).join('')}</div><div class="actions"><button class="primary" id="a7check">Έλεγχος</button></div>`;qa('[data-res]').forEach(b=>b.onclick=()=>{if(a7resDone)return;const id=b.dataset.res;a7resources.has(id)?a7resources.delete(id):a7resources.add(id);r7()});q('#a7check').onclick=()=>{if(exactSet(a7resources,resourceTargets)){a7resDone=true;r7();setFeedback('✓ Εντόπισες τις τέσσερις πηγές που αναφέρει το μάθημα.','good');advance(2100);return}const bad=[...a7resources].filter(x=>!resourceTargets.has(x));bad.forEach(id=>q(`[data-res="${id}"]`)?.classList.add('wrong'));setFeedback('Έλεγξε ξανά τις ιστοσελίδες που αναφέρονται ονομαστικά στο μάθημα.','bad');later(()=>{bad.forEach(id=>a7resources.delete(id));r7()},760)}
+}
+
+/* Activity 8 */
+const a8cases=[
+ {q:'Ποιο από τα παρακάτω είναι προσωπικό δεδομένο σύμφωνα με το μάθημα;',opts:[['phone','Ο αριθμός τηλεφώνου μου'],['temp','Η σημερινή θερμοκρασία'],['month','Ο μήνας Μάιος']],ok:'phone',why:'Ο αριθμός τηλεφώνου είναι προσωπικό δεδομένο.'},
+ {q:'Ποιο δικαίωμα χρησιμοποιώ όταν ζητώ να διαγραφούν τα δεδομένα μου;',opts:[['forget','Δικαίωμα στη λήθη'],['correct','Δικαίωμα διόρθωσης'],['access','Δικαίωμα ενημέρωσης και πρόσβασης']],ok:'forget',why:'Το δικαίωμα στη λήθη αφορά αίτημα διαγραφής δεδομένων.'},
+ {q:'Ποια από τις παρακάτω φράσεις είναι αρχή του ΓΚΠΔ/GDPR που αναφέρεται στο μάθημα;',opts:[['accuracy','Ακρίβεια'],['wifi','Ταχύτητα σύνδεσης'],['battery','Διάρκεια μπαταρίας']],ok:'accuracy',why:'Η ακρίβεια αναφέρεται στις αρχές του ΓΚΠΔ/GDPR.'},
+ {q:'Ποιο από τα παρακάτω αναφέρεται ως χαρακτηριστικό δυσλειτουργικής χρήσης του διαδικτύου;',opts:[['limit','Μη τήρηση χρονικού ορίου ενασχόλησης'],['typing','Γρήγορη πληκτρολόγηση'],['search','Συχνή χρήση αναζήτησης']],ok:'limit',why:'Η μη τήρηση χρονικού ορίου αναφέρεται ρητά στο μάθημα.'},
+ {q:'Ένας ενήλικας προσπαθεί μέσω διαδικτύου να κερδίσει την εμπιστοσύνη παιδιού και να το πείσει να συναντηθούν. Ποιος όρος ταιριάζει;',opts:[['groom','Grooming'],['bully','Cyberbullying'],['filter','Φίλτρο δεδομένων']],ok:'groom',why:'Αυτό είναι το παράδειγμα που περιγράφει το grooming.'},
+ {q:'Κάποιος δημοσιεύει χωρίς άδεια ντροπιαστικές φωτογραφίες άλλου παιδιού για να το παρενοχλήσει. Ποιος όρος ταιριάζει;',opts:[['bully','Cyberbullying'],['groom','Grooming'],['gdpr','Ακρίβεια δεδομένων']],ok:'bully',why:'Η πράξη αυτή αναφέρεται στα παραδείγματα cyberbullying.'}
+];let a8i=0,a8hold=false;
+function r8(){beginSubrender();const d=a8cases[a8i],opts=shuffleOnce('a8'+a8i,d.opts);activity.innerHTML=`<div class="case-count">Ερώτηση ${a8i+1} από ${a8cases.length}</div><div class="scenario"><b>${d.q}</b></div><div class="choice-grid">${opts.map(o=>`<button class="choice ${a8hold&&o[0]===d.ok?'correct':''}" data-a8="${o[0]}">${o[1]}</button>`).join('')}</div>`;if(a8hold){setFeedback('✓ '+d.why,'good');later(()=>{a8hold=false;a8i++;a8i<a8cases.length?r8():advance()},1550);return}qa('[data-a8]').forEach(b=>b.onclick=()=>{if(b.dataset.a8!==d.ok)return wrong(b,'Ξανασκέψου την έννοια που εξετάζει η ερώτηση.');a8hold=true;r8()})}
+
+/* Activity 9 */
+const levels=['Έχω καταλάβει και μπορώ να εξηγήσω','Έχω καταλάβει αρκετά καλά','Έχω καταλάβει αλλά έχω απορίες','Χρειάζομαι βοήθεια'];
+const objectives=['Τα προσωπικά δεδομένα και τα βασικά χαρακτηριστικά του Γενικού Κανονισμού για την Προστασία Δεδομένων (ΓΚΠΔ/GDPR).','Να προσδιορίζω τις δυσλειτουργικές διαδικτυακές συμπεριφορές (συμπεριφορές εξάρτησης στο διαδίκτυο, διαδικτυακός εκφοβισμός κ.ά.) και τρόπους αντιμετώπισής τους.'];let selfSel=[null,null];
+function r9(){beginSubrender();activity.innerHTML=`<div class="self-wrap"><div class="self-table"><div class="self-head">Διαλέγω πόσο καλά έμαθα</div>${levels.map(x=>`<div class="self-head">${x}</div>`).join('')}${objectives.map((o,row)=>`<div class="self-objective">✓ ${o}</div>${levels.map((l,col)=>`<button class="self-cell ${selfSel[row]===col?'selected':''}" data-self="${row}:${col}">${l}</button>`).join('')}`).join('')}</div></div><div class="finish-actions"><button class="primary" id="finishBtn" ${selfSel.some(x=>x===null)?'disabled':''}>Ολοκλήρωση</button></div>`;qa('[data-self]').forEach(b=>b.onclick=()=>{const [r,c]=b.dataset.self.split(':').map(Number);selfSel[r]=c;r9()});q('#finishBtn').onclick=()=>{if(selfSel.some(x=>x===null))return;completed.add(stage);finished=true;render()}}
+
+const renderers=[r1,r2,r3,r4,r5,r6,r7,r8,r9];
+function renderCompletion(){kicker.textContent='ΟΛΟΚΛΗΡΩΣΗ';stageTitle.textContent='Μάθημα 29 ολοκληρώθηκε';instruction.textContent='Ολοκλήρωσες τις δραστηριότητες για προσωπικά δεδομένα, ΓΚΠΔ/GDPR και δυσλειτουργικές διαδικτυακές συμπεριφορές.';activity.innerHTML=`<div class="completion"><span class="badge">Ενότητα 5 · Μάθημα 29</span><h2>Ολοκλήρωσες το μάθημα!</h2><p>Αναγνώρισες προσωπικά δεδομένα και δικαιώματα προστασίας και ξεχώρισες βασικές δυσλειτουργικές διαδικτυακές συμπεριφορές που παρουσιάζονται στο μάθημα.</p><button class="secondary-btn" id="restartComplete">↻ Επανάληψη μαθήματος</button></div>`;q('#restartComplete').onclick=()=>location.reload();clearFeedback()}
+function render(){clearTimers();renderEpoch++;clearFeedback();updateProgress();if(finished){renderCompletion();window.scrollTo({top:0,behavior:'smooth'});return}const s=ACTIVITIES[stage];kicker.textContent=`Δραστηριότητα ${stage+1}`;stageTitle.textContent=s.t;instruction.textContent=s.i;renderers[stage]();window.scrollTo({top:0,behavior:'smooth'})}
+q('#helpBtn').onclick=()=>{q('#helpText').textContent=HELP[stage]||'';q('#helpModal').classList.add('open')};q('#closeHelp').onclick=q('#understoodBtn').onclick=()=>q('#helpModal').classList.remove('open');q('#helpModal').onclick=e=>{if(e.target===q('#helpModal'))q('#helpModal').classList.remove('open')};
+render();
+</script>
+<footer class="nk-license" aria-label="Πληροφορίες δημιουργού και άδειας χρήσης">
+  <div><strong>Created by Nikos Kalakos · © 2026</strong></div>
+  <div>Original educational content and simulation design licensed under <a class="cc-badge" href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank" rel="license noopener noreferrer">CC BY-NC 4.0</a>.</div>
+  <div>Source code © 2026 Nikos Kalakos.</div>
+  <div>Third-party and textbook materials remain subject to the rights and licences of their respective copyright holders.</div>
+</footer>
+</body>
+</html>

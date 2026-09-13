@@ -1,0 +1,286 @@
+<!--
+ICT Educational Simulation
+Created by Nikos Kalakos
+Copyright © 2026 Nikos Kalakos
+
+Original educational content and simulation design licensed under CC BY-NC 4.0.
+Source code © 2026 Nikos Kalakos.
+Third-party and textbook materials remain subject to the rights and licences of their respective copyright holders.
+-->
+<!DOCTYPE html>
+<html lang="el">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta name="author" content="Nikos Kalakos">
+<meta name="copyright" content="© 2026 Nikos Kalakos">
+<meta name="license" content="Original educational content and simulation design: CC BY-NC 4.0; source code © 2026 Nikos Kalakos; third-party and textbook materials excluded.">
+<title>Μάθημα 17 – Οργάνωση και διαχείριση δεδομένων έρευνας στο υπολογιστικό φύλλο</title>
+<style>
+:root{
+  --unit:#EA922C;--unit-dark:#B86610;--unit-soft:#FFF4E6;
+  --secondary:#545F99;--secondary-dark:#3D477C;--secondary-soft:#EEF0F8;
+  --ink:#273247;--muted:#667389;--line:#D8DEEA;--bg:#F4F6FA;
+  --good:#23845A;--good-soft:#E9F7F0;--bad:#B64242;--bad-soft:#FDEEEE;
+  --panel:#fff;--shadow:0 12px 32px rgba(43,54,84,.10);
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:Inter,"Segoe UI",Arial,sans-serif;color:var(--ink);background:radial-gradient(circle at 7% 7%,rgba(234,146,44,.10),transparent 28%),radial-gradient(circle at 94% 12%,rgba(84,95,153,.11),transparent 30%),var(--bg);font-size:17px}
+button,input{font:inherit}button{cursor:pointer}
+button:focus-visible,input:focus-visible{outline:3px solid rgba(84,95,153,.35);outline-offset:2px}
+.page{max-width:1540px;margin:auto;padding:18px}
+.hero{background:#fff;border:1px solid #E1E6EF;border-top:9px solid var(--unit);border-radius:18px;padding:20px 24px;display:grid;grid-template-columns:1fr auto;gap:18px;align-items:center;box-shadow:var(--shadow)}
+.eyebrow{font-size:14px;font-weight:950;letter-spacing:.08em;text-transform:uppercase;color:var(--secondary)}
+.hero h1{margin:5px 0 0;font-size:31px;line-height:1.14;color:var(--secondary-dark)}
+.hero p{margin:8px 0 0;color:var(--muted);font-weight:700;line-height:1.45}
+.lesson-mark{width:140px;height:78px;border-radius:16px;background:linear-gradient(135deg,var(--secondary),var(--secondary-dark));color:#fff;display:grid;place-items:center;text-align:center;box-shadow:0 9px 22px rgba(84,95,153,.24)}
+.lesson-mark b{font-size:30px;line-height:1}.lesson-mark span{font-size:11px;font-weight:900;letter-spacing:.08em;text-transform:uppercase}
+.progress{margin:13px 0;background:#fff;border:1px solid #E1E5EC;border-radius:15px;padding:12px 15px;box-shadow:0 7px 20px rgba(48,58,87,.06)}
+.progress-top{display:flex;justify-content:space-between;gap:12px;align-items:center;color:#59667B;font-size:15px;font-weight:850}
+.bar{height:8px;background:#ECEFF4;border-radius:999px;overflow:hidden;margin:8px 0 10px}.fill{height:100%;width:0;background:linear-gradient(90deg,var(--unit),var(--secondary));transition:.3s}
+.steps{display:flex;gap:8px;flex-wrap:wrap;justify-content:center}.step-dot{width:32px;height:32px;border-radius:9px;border:1px solid #CDD3DE;background:#fff;color:#758197;display:grid;place-items:center;font-size:14px;font-weight:900}.step-dot.current{border:2px solid var(--unit);color:var(--unit-dark);background:var(--unit-soft)}.step-dot.done{border-color:var(--secondary);background:var(--secondary);color:#fff}
+.stage{background:#fff;border:1px solid #E0E5EF;border-radius:18px;box-shadow:0 10px 28px #27364b12;overflow:hidden}
+.stage-head{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;padding:18px 20px;border-bottom:1px solid #E8ECF3}
+.stage-kicker{font-size:14px;font-weight:950;color:var(--unit-dark);text-transform:uppercase;letter-spacing:.04em}.stage-title{font-size:26px;margin:4px 0}.instruction{margin:0;color:#5C687C;font-weight:650;line-height:1.5}
+.help-btn{border:1px solid #C9D1E0;background:#fff;border-radius:11px;padding:10px 14px;font-weight:850;color:var(--secondary-dark);white-space:nowrap}
+.workspace{padding:18px 20px 22px;min-height:600px}.task-strip{border-left:5px solid var(--unit);background:#FFF9F1;padding:13px 15px;border-radius:11px;margin-bottom:14px;font-weight:800;line-height:1.48}
+.feedback{min-height:0;margin-top:12px;border-radius:11px;font-weight:800;line-height:1.45}.feedback.show{padding:11px 13px;border:1px solid}.feedback.info{background:#F2F6FF;border-color:#C8D5EF;color:#46577C}.feedback.good{background:var(--good-soft);border-color:#AADBC5;color:#176943}.feedback.bad{background:var(--bad-soft);border-color:#F0BABA;color:#9B3030}
+.choice-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:11px;max-width:1160px;margin:12px auto}
+.choice{min-height:72px;border:1.5px solid #C9D2E2;background:#fff;border-radius:12px;padding:14px 16px;text-align:left;font-weight:850;color:#283650;transition:.15s;font-size:17px;line-height:1.4}.choice:hover{border-color:#8897B3;transform:translateY(-1px)}.choice.correct{background:var(--good-soft);border-color:#7DC7A4}.choice.wrong{animation:shake .28s;background:var(--bad-soft);border-color:#E49A9A}@keyframes shake{25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
+.primary{border:0;background:var(--secondary);color:#fff;border-radius:10px;padding:10px 16px;font-weight:900}.primary:hover{background:var(--secondary-dark)}.primary:disabled{opacity:.45;cursor:default}
+.secondary-btn{border:1px solid #C7D0DF;background:#fff;color:var(--secondary-dark);border-radius:9px;padding:9px 13px;font-weight:850}
+.case-count{text-align:center;font-weight:900;color:var(--secondary-dark);margin-bottom:9px}.scenario{max-width:1100px;margin:0 auto 14px;border:1px solid #D8DFEA;background:#F8F9FC;border-radius:14px;padding:16px 18px;line-height:1.5;font-weight:750}
+
+/* Praxis */
+.praxis{max-width:1370px;margin:10px auto;border:1px solid #AEB8C8;border-radius:15px;overflow:hidden;box-shadow:0 13px 30px #26344a1c;background:#fff}
+.p-titlebar{height:44px;background:#343C52;color:#fff;display:flex;align-items:center;gap:12px;padding:0 14px;font-weight:850}.p-app{font-weight:950}.p-file{margin-left:auto;color:#DDE3EF;font-size:14px}
+.p-menubar{height:42px;background:#F7F8FA;border-bottom:1px solid #D6DCE6;display:flex;align-items:center;gap:3px;padding:0 10px;position:relative}
+.menu-btn{border:0;background:transparent;padding:8px 11px;border-radius:7px;font-weight:800;color:#37445A}.menu-btn:hover,.menu-btn.open{background:#E9EDF4}
+.menu-wrap{position:relative}.menu-drop{position:absolute;top:37px;left:0;min-width:190px;background:#fff;border:1px solid #CBD3DF;border-radius:9px;box-shadow:0 12px 26px #2431482b;padding:6px;z-index:20}
+.menu-drop button{display:block;width:100%;border:0;background:#fff;text-align:left;padding:9px 10px;border-radius:6px;font-weight:780;color:#344056}.menu-drop button:hover{background:var(--secondary-soft)}
+.p-toolbar{height:46px;background:#FBFCFD;border-bottom:1px solid #DBE0E8;display:flex;align-items:center;gap:8px;padding:0 10px}
+.tool{border:1px solid #C7D0DC;background:#fff;border-radius:7px;padding:7px 10px;font-weight:850;color:#47556C}
+.namebox{width:78px;border:1px solid #BFC8D5;background:#fff;border-radius:6px;padding:6px 8px;font-weight:850}
+.formula{flex:1;border:1px solid #BFC8D5;background:#fff;border-radius:6px;padding:6px 9px;color:#667389;font-size:15px}
+.p-body{display:grid;grid-template-columns:minmax(660px,1fr) 470px;min-height:470px}.sheet-pane{overflow:auto;background:#fff;cursor:crosshair;border-right:1px solid #D9DFE8}.chart-pane{background:#F7F8FB;padding:16px;display:flex;align-items:center;justify-content:center}
+.sheet{display:grid;grid-template-columns:48px 260px 130px;grid-auto-rows:38px;width:max-content;min-width:100%}
+.corner,.colhead,.rowhead{display:grid;place-items:center;background:#F0F2F6;border-right:1px solid #CBD2DD;border-bottom:1px solid #CBD2DD;font-weight:900;color:#536076;user-select:none}
+.cell{border-right:1px solid #D7DCE5;border-bottom:1px solid #D7DCE5;padding:7px 9px;background:#fff;display:flex;align-items:center;position:relative;user-select:none;min-width:0}.cell.header-cell{font-weight:900;background:#FBF5ED}.cell.selected{background:#E7ECFF;box-shadow:inset 0 0 0 2px var(--secondary);z-index:1}.cell.target{background:#FFF5E8;box-shadow:inset 0 0 0 2px var(--unit)}
+.cell input{position:absolute;inset:0;width:100%;height:100%;border:2px solid var(--secondary);padding:6px 8px;background:#fff;color:#202C43;font-weight:850}
+.source-panel{max-width:960px;margin:12px auto;border:1px solid #D3DBE7;background:#fff;border-radius:13px;padding:14px}.source-panel h3{margin:0 0 9px;color:var(--secondary-dark)}.source-row{display:grid;grid-template-columns:1fr 90px;gap:10px;padding:7px 9px;border-top:1px solid #E6EAF1}.source-row:first-of-type{border-top:0}.source-row b{text-align:right}
+.chart-card{width:100%;background:#fff;border:1px solid #CCD4DF;border-radius:12px;padding:14px;box-shadow:0 6px 16px #27364b12}.chart-card h3{margin:0 0 12px;text-align:center;color:#39455B;font-size:18px}
+.pie-wrap{display:grid;grid-template-columns:220px 1fr;gap:18px;align-items:center}.pie{width:210px;height:210px;border-radius:50%;margin:auto;border:1px solid #BFC6D3}.legend{display:grid;gap:7px}.leg{display:grid;grid-template-columns:16px 1fr auto;gap:8px;align-items:center;font-size:14px;font-weight:760}.sw{width:14px;height:14px;border-radius:3px}
+.bars{height:280px;display:flex;align-items:flex-end;gap:16px;padding:24px 8px 45px;border-left:2px solid #8E98A9;border-bottom:2px solid #8E98A9}.bar-col{flex:1;min-width:45px;height:100%;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;position:relative}.bar-v{width:65%;max-width:54px;background:var(--secondary);border-radius:6px 6px 0 0;min-height:4px;position:relative}.bar-v span{position:absolute;top:-24px;left:50%;transform:translateX(-50%);font-weight:950;color:#35415A}.bar-lab{position:absolute;top:calc(100% + 8px);font-size:12px;font-weight:780;text-align:center;width:88px;line-height:1.15}
+.chart-dialog{position:fixed;inset:0;background:#1b243454;display:grid;place-items:center;z-index:50}.dialog-card{width:min(720px,92vw);background:#fff;border-radius:15px;border:1px solid #C7D0DE;box-shadow:0 22px 55px #1f2c4244;padding:18px}.dialog-card h2{margin:0 0 12px;color:var(--secondary-dark)}
+.chart-types{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}.chart-type{border:1.5px solid #CAD2DF;background:#fff;border-radius:11px;padding:16px;text-align:center;font-weight:900}.chart-type.selected{border-color:var(--secondary);background:var(--secondary-soft)}.dialog-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:16px}
+.book-card{max-width:1050px;margin:10px auto;border:1px solid #D5DCE7;border-radius:14px;background:#fff;padding:16px}.book-card h3{margin:0 0 10px;color:var(--secondary-dark)}
+/* self assessment */
+.self-wrap{overflow:auto}.self-table{min-width:980px;display:grid;grid-template-columns:2.1fr repeat(4,1fr);border:1px solid #D0D8E4;border-radius:12px;overflow:hidden}.self-head,.self-objective,.self-cell{padding:12px;border-right:1px solid #D7DEE8;border-bottom:1px solid #D7DEE8}.self-head{background:#F7F8FB;text-align:center;font-weight:900;color:#4C5970}.self-objective{font-weight:850;background:#FFF9F1}.self-cell{border-top:0;border-left:0;background:#fff;color:#455269;font-size:15px;font-weight:750}.self-cell.selected{background:var(--secondary-soft);box-shadow:inset 0 0 0 2px var(--secondary)}.finish-actions{display:flex;justify-content:flex-end;margin-top:14px}
+.completion{text-align:center;padding:50px 20px}.completion .big{width:84px;height:84px;border-radius:50%;margin:auto;display:grid;place-items:center;background:var(--good-soft);color:var(--good);font-size:44px;font-weight:950}.completion h2{font-size:30px;color:var(--secondary-dark)}.completion p{max-width:820px;margin:0 auto 18px;line-height:1.55;font-weight:700;color:#657187}.repeat-btn{border:0;background:var(--unit);color:#fff;border-radius:11px;padding:12px 18px;font-weight:950}
+.help-modal{position:fixed;inset:0;background:#1f2a3a66;z-index:80;display:none;place-items:center}.help-modal.open{display:grid}.help-card{width:min(700px,92vw);background:#fff;border-radius:16px;border:1px solid #CCD4DF;padding:20px;box-shadow:0 20px 50px #1d293d44}.help-card h2{margin:0 0 8px;color:var(--secondary-dark)}.help-card p{line-height:1.55;font-weight:700;color:#56647A}
+@media(max-width:1050px){.p-body{grid-template-columns:1fr}.chart-pane{border-top:1px solid #D9DFE8}.sheet-pane{border-right:0}.pie-wrap{grid-template-columns:1fr}.hero{grid-template-columns:1fr}.lesson-mark{display:none}.choice-grid{grid-template-columns:1fr}}
+</style>
+<style id="nk-license-style">
+.nk-license{max-width:1100px;margin:14px auto 24px;padding:10px 16px;text-align:center;font:13px/1.45 Arial,"Noto Sans",sans-serif;color:#4e657c}
+.nk-license a{color:inherit;text-decoration:underline;text-underline-offset:2px}
+.nk-license .cc-badge{display:inline-block;margin:0 4px;padding:2px 7px;border:1px solid #8aa0b8;border-radius:6px;background:#fff;font-weight:700;white-space:nowrap}
+</style>
+</head>
+<body>
+<div class="page">
+  <header class="hero">
+    <div>
+      <div class="eyebrow">Ενότητα 3 · Δεδομένα και ανάλυση δεδομένων</div>
+      <h1>Οργάνωση και διαχείριση δεδομένων έρευνας στο υπολογιστικό φύλλο</h1>
+      <p>Οργάνωσε δεδομένα σε πίνακες, δημιούργησε διαγράμματα στο Praxis και χρησιμοποίησέ τα για να απαντήσεις σε ερωτήματα.</p>
+    </div>
+    <div class="lesson-mark"><div><span>Μάθημα</span><b>17</b></div></div>
+  </header>
+  <section class="progress">
+    <div class="progress-top"><span id="progressText"></span><span id="progressPct"></span></div>
+    <div class="bar"><div class="fill" id="fill"></div></div><div class="steps" id="steps"></div>
+  </section>
+  <section class="stage">
+    <div class="stage-head"><div><div class="stage-kicker" id="kicker"></div><h2 class="stage-title" id="stageTitle"></h2><p class="instruction" id="instruction"></p></div><button class="help-btn" id="helpBtn">? Βοήθεια</button></div>
+    <div class="workspace"><div id="activity"></div><div class="feedback" id="feedback"></div></div>
+  </section>
+</div>
+<div class="help-modal" id="helpModal"><div class="help-card"><h2>Βοήθεια</h2><p id="helpText"></p><div style="text-align:right"><button class="primary" id="closeHelp">Κλείσιμο</button></div></div></div>
+
+<script>
+const ACTIVITIES=[
+ {t:'Από το ερωτηματολόγιο στον πίνακα',i:'Αναγνώρισε πώς οργανώνονται ο τίτλος, οι επιλογές και οι απαντήσεις μίας ερώτησης στο υπολογιστικό φύλλο.'},
+ {t:'Οργάνωσε τα δεδομένα της έρευνας',i:'Καταχώρισε στο Praxis τα πλήθη απαντήσεων για το αγαπημένο άθλημα.'},
+ {t:'Δημιούργησε διάγραμμα πίτας',i:'Επίλεξε την περιοχή δεδομένων και δημιούργησε διάγραμμα με το πραγματικό μενού «Εισαγωγή → Διάγραμμα».'},
+ {t:'Απάντησε από το διάγραμμα πίτας',i:'Χρησιμοποίησε το διάγραμμα για να βρεις το περισσότερο και το λιγότερο αγαπημένο άθλημα.'},
+ {t:'Δημιούργησε διάγραμμα στηλών',i:'Χρησιμοποίησε τον δεύτερο πίνακα δεδομένων για να δημιουργήσεις διάγραμμα στηλών.'},
+ {t:'Απάντησε από το διάγραμμα στηλών',i:'Χρησιμοποίησε τα δεδομένα του χρόνου άθλησης για να απαντήσεις στα ερωτήματα της έρευνας.'},
+ {t:'Συνολική δοκιμή',i:'Οργάνωσε και ανάλυσε ένα νέο σύνολο δεδομένων ακολουθώντας ολόκληρη τη διαδικασία.'},
+ {t:'Τι έμαθα;',i:'Αξιολόγησε πόσο καλά μπορείς να οργανώνεις δεδομένα έρευνας και να αξιοποιείς διαγράμματα.'}
+];
+const HELP=[
+ 'Ο τίτλος της ερώτησης βρίσκεται στην πρώτη γραμμή. Οι πιθανές απαντήσεις βρίσκονται σε μία στήλη και τα πλήθη των απαντήσεων στη διπλανή. Σύρε το ποντίκι πάνω στα ζητούμενα κελιά.',
+ 'Κάνε κλικ στο πορτοκαλί κελί της στήλης Β, γράψε το πλήθος που αντιστοιχεί στην επιλογή και πάτησε το πραγματικό πλήκτρο Enter. Το ψηφίο πρέπει να εμφανίζεται μέσα στο κελί ενώ γράφεις.',
+ 'Σύρε από το A1 μέχρι το B7 ώστε να επιλεγεί όλη η περιοχή. Μετά άνοιξε το μενού «Εισαγωγή», επίλεξε «Διάγραμμα», διάλεξε «Πίτα» και πάτησε «Δημιουργία».',
+ 'Σύγκρινε τα πλήθη στη λεζάντα του διαγράμματος. Η μεγαλύτερη τιμή δίνει το αγαπημένο άθλημα και η μικρότερη το λιγότερο αγαπημένο.',
+ 'Επίλεξε με σύρσιμο την περιοχή A1:B6. Άνοιξε «Εισαγωγή → Διάγραμμα», διάλεξε «Στήλες» και πάτησε «Δημιουργία».',
+ 'Χρησιμοποίησε τα ύψη των στηλών και τις αριθμητικές τιμές τους. Η κατηγορία «0 ώρες» δείχνει αν υπάρχουν παιδιά που δεν αθλούνται.',
+ 'Στη συνολική δοκιμή θα χρειαστείς την ίδια σειρά ενεργειών: επιλογή περιοχής, δημιουργία κατάλληλου διαγράμματος και απάντηση από τα δεδομένα.',
+ 'Διάλεξε ένα επίπεδο για κάθε στόχο. Δεν υπάρχουν σωστές ή λάθος επιλογές στην αυτοαξιολόγηση.'
+];
+let stage=0,finished=false,renderEpoch=0,pending=[],completed=new Set();
+const q=s=>document.querySelector(s),qa=s=>[...document.querySelectorAll(s)];
+const activity=q('#activity'),feedback=q('#feedback'),kicker=q('#kicker'),stageTitle=q('#stageTitle'),instruction=q('#instruction');
+function clearTimers(){pending.forEach(clearTimeout);pending=[]}
+function later(fn,ms){const s=stage,e=renderEpoch;const id=setTimeout(()=>{if(stage===s&&renderEpoch===e)fn()},ms);pending.push(id);return id}
+function setFeedback(txt,type='info'){feedback.className='feedback show '+type;feedback.textContent=txt}
+function clearFeedback(){feedback.className='feedback';feedback.textContent=''}
+function wrong(el,msg){el.classList.remove('wrong');void el.offsetWidth;el.classList.add('wrong');setFeedback(msg,'bad');setTimeout(()=>el.classList.remove('wrong'),560)}
+function shuffleCopy(a){a=[...a];for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
+const shuffleCache={};function shuffleOnce(k,a){if(!shuffleCache[k])shuffleCache[k]=shuffleCopy(a);return shuffleCache[k]}
+function protectInput(el){['paste','copy','cut','drop','contextmenu'].forEach(ev=>el.addEventListener(ev,e=>e.preventDefault()));el.addEventListener('keydown',e=>{if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='v')e.preventDefault();if(e.shiftKey&&e.key==='Insert')e.preventDefault()})}
+function updateProgress(){const n=ACTIVITIES.length,p=finished?100:Math.round(stage/(n-1)*100);q('#progressText').textContent=finished?'Ολοκληρώθηκε':`Δραστηριότητα ${stage+1} από ${n}`;q('#progressPct').textContent=p+'%';q('#fill').style.width=p+'%';q('#steps').innerHTML=ACTIVITIES.map((_,i)=>`<span class="step-dot ${completed.has(i)?'done':''} ${i===stage&&!finished?'current':''}">${i+1}</span>`).join('')}
+function advance(delay=0){later(()=>{completed.add(stage);stage++;render()},delay)}
+function render(){clearTimers();renderEpoch++;clearFeedback();updateProgress();if(finished)return renderCompletion();const a=ACTIVITIES[stage];kicker.textContent='Δραστηριότητα '+(stage+1);stageTitle.textContent=a.t;instruction.textContent=a.i;renderers[stage]()}
+q('#helpBtn').onclick=()=>{q('#helpText').textContent=HELP[stage]||'';q('#helpModal').classList.add('open')};q('#closeHelp').onclick=()=>q('#helpModal').classList.remove('open');q('#helpModal').onclick=e=>{if(e.target===q('#helpModal'))q('#helpModal').classList.remove('open')};
+
+const sports=[['Τρέξιμο',4],['Ποδηλασία',15],['Ποδόσφαιρο',10],['Μπάσκετ',9],['Βόλεϊ',7],['Άλλο',5]];
+const hours=[['0 ώρες',12],['Μέχρι 1 ώρα',20],['Μέχρι 2 ώρες',10],['Μέχρι 3 ώρες',5],['Πάνω από 3 ώρες',3]];
+const transport=[['Με τα πόδια',8],['Ποδήλατο',5],['Μέσα μαζικής μεταφοράς',7],['Αυτοκίνητο',9],['Άλλο',1]];
+function sheetRows(data,title,{editableIndex=-1,selected=[]}={}){
+ let out=`<div class="corner"></div><div class="colhead">A</div><div class="colhead">B</div>`;
+ const rows=[[title,'Απαντήσεις'],...data];
+ rows.forEach((r,ri)=>{
+  const rr=ri+1;out+=`<div class="rowhead">${rr}</div>`;
+  r.forEach((val,ci)=>{const c=ci===0?'A':'B',key=c+rr,sel=selected.includes(key)?' selected':'',target=editableIndex===ri&&ci===1?' target':'';
+    out+=`<div class="cell ${ri===0?'header-cell':''}${sel}${target}" data-cell="${key}" data-r="${rr}" data-c="${ci+1}">${val??''}</div>`});
+ });
+ return out
+}
+function praxisShell({data,title,selected=[],chart='',editableIndex=-1,menu=false,file='Έρευνα αθλητικών συνηθειών'}){
+ return `<div class="praxis"><div class="p-titlebar"><span class="p-app">Praxis</span><span>${file}</span><span class="p-file">Υπολογιστικό φύλλο</span></div>
+ <div class="p-menubar"><button class="menu-btn">Αρχείο</button><button class="menu-btn">Επεξεργασία</button><button class="menu-btn">Προβολή</button><span class="menu-wrap"><button class="menu-btn ${menu?'open':''}" id="insertMenu">Εισαγωγή</button>${menu?'<div class="menu-drop"><button id="chartMenuItem">▥ Διάγραμμα…</button><button>Εικόνα…</button><button>Σχόλιο</button></div>':''}</span><button class="menu-btn">Δεδομένα</button><button class="menu-btn">Μορφή</button></div>
+ <div class="p-toolbar"><input class="namebox" value="${selected.length?selected[0]:''}" readonly><span class="tool">B</span><span class="tool"><i>I</i></span><span class="tool">Σ</span><div class="formula">fx</div></div>
+ <div class="p-body"><div class="sheet-pane"><div class="sheet" id="sheet">${sheetRows(data,title,{editableIndex,selected})}</div></div><div class="chart-pane">${chart||'<div style="text-align:center;color:#7B879A;font-weight:800">Το διάγραμμα θα εμφανιστεί εδώ.</div>'}</div></div></div>`
+}
+function cellRange(a,b){
+ const parse=x=>({c:x[0].charCodeAt(0)-64,r:+x.slice(1)}),p1=parse(a),p2=parse(b),arr=[];
+ for(let r=Math.min(p1.r,p2.r);r<=Math.max(p1.r,p2.r);r++)for(let c=Math.min(p1.c,p2.c);c<=Math.max(p1.c,p2.c);c++)arr.push(String.fromCharCode(64+c)+r);
+ return arr
+}
+function bindRange(expected,done){
+ const sheet=q('#sheet');if(!sheet)return;let start=null,last=null,drag=false;
+ function paint(){qa('#sheet .cell').forEach(x=>x.classList.remove('selected'));if(start&&last){const a=cellRange(start,last);qa('#sheet .cell').forEach(x=>{if(a.includes(x.dataset.cell))x.classList.add('selected')})}}
+ qa('#sheet .cell').forEach(c=>{
+  c.onmousedown=e=>{e.preventDefault();drag=true;start=c.dataset.cell;last=start;paint()};
+  c.onmouseenter=()=>{if(drag){last=c.dataset.cell;paint()}};
+ });
+ document.onmouseup=()=>{if(!drag)return;drag=false;const got=cellRange(start,last).sort().join(','),want=[...expected].sort().join(',');if(got===want)done(start,last);else setFeedback('Η περιοχή δεν είναι ακόμη σωστή. Σύρε ώστε να περιλαμβάνονται ακριβώς τα ζητούμενα κελιά.','bad')}
+}
+function pieChart(data,title){
+ const total=data.reduce((s,x)=>s+x[1],0),cols=['#545F99','#EA922C','#2F8F83','#D65C5C','#7E6AA2','#D1A62C'];let acc=0,parts=[];
+ data.forEach((x,i)=>{const s=acc/total*360;acc+=x[1];const e=acc/total*360;parts.push(`${cols[i%cols.length]} ${s}deg ${e}deg`)});
+ return `<div class="chart-card"><h3>${title}</h3><div class="pie-wrap"><div class="pie" style="background:conic-gradient(${parts.join(',')})"></div><div class="legend">${data.map((x,i)=>`<div class="leg"><span class="sw" style="background:${cols[i%cols.length]}"></span><span>${x[0]}</span><b>${x[1]}</b></div>`).join('')}</div></div></div>`
+}
+function barChart(data,title){
+ const max=Math.max(...data.map(x=>x[1]));
+ return `<div class="chart-card"><h3>${title}</h3><div class="bars">${data.map(x=>`<div class="bar-col"><div class="bar-v" style="height:${x[1]/max*100}%"><span>${x[1]}</span></div><div class="bar-lab">${x[0]}</div></div>`).join('')}</div></div>`
+}
+function openChartDialog(kind,created){
+ const overlay=document.createElement('div');overlay.className='chart-dialog';overlay.innerHTML=`<div class="dialog-card"><h2>Εισαγωγή διαγράμματος</h2><p style="font-weight:750;color:#657187">Διάλεξε τύπο διαγράμματος.</p><div class="chart-types"><button class="chart-type" data-type="pie">◉<br>Πίτα</button><button class="chart-type" data-type="bar">▥<br>Στήλες</button><button class="chart-type" data-type="line">⌁<br>Γραμμές</button></div><div class="dialog-actions"><button class="secondary-btn" id="cancelChart">Ακύρωση</button><button class="primary" id="makeChart" disabled>Δημιουργία</button></div></div>`;document.body.appendChild(overlay);let pick=null;
+ qa('.chart-type').forEach(b=>b.onclick=()=>{qa('.chart-type').forEach(x=>x.classList.remove('selected'));b.classList.add('selected');pick=b.dataset.type;q('#makeChart').disabled=false});
+ q('#cancelChart').onclick=()=>overlay.remove();q('#makeChart').onclick=()=>{if(pick!==kind){setFeedback(kind==='pie'?'Για τα δεδομένα των αθλημάτων χρησιμοποίησε διάγραμμα πίτας.':'Για τη σύγκριση των ωρών χρησιμοποίησε διάγραμμα στηλών.','bad');return}overlay.remove();created()}
+}
+
+/* Activity 1 */
+let a1step=0,a1hold=false;
+function r1(){
+ const expected=[['A1'],cellRange('A2','A7'),cellRange('B2','B7')];
+ const selected=a1hold?expected[a1step]:[];
+ const tasks=['Κάνε κλικ στο κελί που περιέχει τον <b>τίτλο της ερώτησης</b>.','Σύρε για να επιλέξεις τις <b>επιλογές της ερώτησης</b>.','Σύρε για να επιλέξεις τα <b>πλήθη των απαντήσεων</b>.'];
+ activity.innerHTML=`<div class="task-strip">${tasks[a1step]}</div>${praxisShell({data:sports,title:'Αγαπημένο άθλημα',selected:a1hold?selected:[]})}`;
+ if(a1hold){setFeedback('Σωστά ✓ Η περιοχή αναγνωρίστηκε.','good');later(()=>{a1hold=false;a1step++;if(a1step<3)r1();else advance()},1300);return}
+ if(a1step===0){qa('[data-cell]').forEach(c=>c.onclick=()=>{if(c.dataset.cell!=='A1')return setFeedback('Ο τίτλος της ερώτησης βρίσκεται στην πρώτη γραμμή του πίνακα.','bad');c.classList.add('selected');a1hold=true;r1()})}
+ else {const exp=a1step===1?cellRange('A2','A7'):cellRange('B2','B7');bindRange(exp,()=>{a1hold=true;r1()})}
+}
+
+/* Activity 2 */
+let a2index=0,a2values=sports.map(()=>null),a2hold=false;
+function r2(){
+ const currentData=sports.map((x,i)=>[x[0],a2values[i]??'']);
+ activity.innerHTML=`<div class="task-strip">Μετέφερε στο Praxis το πλήθος για <b>${sports[a2index][0]}</b>. Κάνε κλικ στο πορτοκαλί κελί, γράψε τον αριθμό και πάτησε <b>Enter</b>.</div><div class="source-panel"><h3>Αποτελέσματα ψηφιακής φόρμας</h3>${sports.map(x=>`<div class="source-row"><span>${x[0]}</span><b>${x[1]}</b></div>`).join('')}</div>${praxisShell({data:currentData,title:'Αγαπημένο άθλημα',editableIndex:a2index})}`;
+ if(a2hold){setFeedback('Η τιμή καταχωρίστηκε στο κελί ✓','good');later(()=>{a2hold=false;a2index++;if(a2index<sports.length)r2();else advance()},1100);return}
+ const cell=q(`[data-cell="B${a2index+2}"]`);cell.onclick=()=>{if(cell.querySelector('input'))return;const inp=document.createElement('input');inp.inputMode='numeric';inp.autocomplete='off';cell.textContent='';cell.appendChild(inp);protectInput(inp);inp.focus();inp.onkeydown=e=>{if(e.key!=='Enter')return;e.preventDefault();if(inp.value!==String(sports[a2index][1])){setFeedback('Έλεγξε το πλήθος στην κάρτα αποτελεσμάτων και γράψε το ίδιο ακριβώς στο κελί.','bad');return}a2values[a2index]=sports[a2index][1];a2hold=true;r2()}}
+}
+
+/* Activity 3 */
+let a3step=0,a3hold=false,a3menu=false,a3chart=false;
+function r3(){
+ const sel=(a3step>0||a3hold)?cellRange('A1','B7'):[];
+ activity.innerHTML=`<div class="task-strip">${a3step===0?'Σύρε από το <b>A1</b> μέχρι το <b>B7</b> για να επιλέξεις ολόκληρο τον πίνακα.':a3step===1?'Άνοιξε το μενού <b>Εισαγωγή</b> και επίλεξε <b>Διάγραμμα…</b>.':'Το διάγραμμα δημιουργήθηκε.'}</div>${praxisShell({data:sports,title:'Αγαπημένο άθλημα',selected:sel,menu:a3menu,chart:a3chart?pieChart(sports,'Αγαπημένο άθλημα'):''})}`;
+ if(a3hold){setFeedback(a3chart?'Το διάγραμμα πίτας δημιουργήθηκε ✓':'Η περιοχή A1:B7 επιλέχθηκε ✓','good');later(()=>{a3hold=false;if(a3chart)advance();else{a3step=1;r3()}},a3chart?2200:1200);return}
+ if(a3step===0){bindRange(cellRange('A1','B7'),()=>{a3hold=true;r3()});return}
+ q('#insertMenu').onclick=()=>{a3menu=!a3menu;r3()};if(a3menu)q('#chartMenuItem').onclick=()=>openChartDialog('pie',()=>{a3chart=true;a3step=2;a3hold=true;r3()})
+}
+
+/* Activity 4 */
+let a4step=0,a4hold=false;
+const a4cases=[
+ {q:'Ποιο είναι το αγαπημένο άθλημα των παιδιών της Ε΄ και της ΣΤ΄ τάξης;',ok:'bike',opts:[['bike','Ποδηλασία'],['football','Ποδόσφαιρο'],['basket','Μπάσκετ'],['volley','Βόλεϊ']]},
+ {q:'Ποιο είναι το λιγότερο αγαπημένο άθλημα;',ok:'run',opts:[['run','Τρέξιμο'],['other','Άλλο'],['volley','Βόλεϊ'],['basket','Μπάσκετ']]}
+];
+function r4(){const d=a4cases[a4step],opts=shuffleOnce('a4'+a4step,d.opts);activity.innerHTML=`<div class="case-count">Ερώτημα ${a4step+1} από 2</div><div class="book-card">${pieChart(sports,'Αγαπημένο άθλημα')}</div><div class="scenario"><b>${d.q}</b></div><div class="choice-grid">${opts.map(o=>`<button class="choice ${a4hold&&o[0]===d.ok?'correct':''}" data-a4="${o[0]}">${o[1]}</button>`).join('')}</div>`;if(a4hold){setFeedback('Σωστά ✓ Η απάντηση προκύπτει από το διάγραμμα και τα πλήθη.','good');later(()=>{a4hold=false;a4step++;if(a4step<2)r4();else advance()},1400);return}qa('[data-a4]').forEach(b=>b.onclick=()=>{if(b.dataset.a4!==d.ok)return wrong(b,'Σύγκρινε ξανά τις τιμές του διαγράμματος.');a4hold=true;r4()})}
+
+/* Activity 5 */
+let a5step=0,a5hold=false,a5menu=false,a5chart=false;
+function r5(){
+ const sel=(a5step>0||a5hold)?cellRange('A1','B6'):[];
+ activity.innerHTML=`<div class="task-strip">${a5step===0?'Σύρε από το <b>A1</b> μέχρι το <b>B6</b> για να επιλέξεις τον πίνακα του χρόνου άθλησης.':a5step===1?'Άνοιξε <b>Εισαγωγή → Διάγραμμα…</b> και δημιούργησε <b>διάγραμμα στηλών</b>.':'Το διάγραμμα δημιουργήθηκε.'}</div>${praxisShell({data:hours,title:'Ώρες ημερήσιας άθλησης',selected:sel,menu:a5menu,chart:a5chart?barChart(hours,'Ώρες ημερήσιας άθλησης'):''})}`;
+ if(a5hold){setFeedback(a5chart?'Το διάγραμμα στηλών δημιουργήθηκε ✓':'Η περιοχή A1:B6 επιλέχθηκε ✓','good');later(()=>{a5hold=false;if(a5chart)advance();else{a5step=1;r5()}},a5chart?2200:1200);return}
+ if(a5step===0){bindRange(cellRange('A1','B6'),()=>{a5hold=true;r5()});return}
+ q('#insertMenu').onclick=()=>{a5menu=!a5menu;r5()};if(a5menu)q('#chartMenuItem').onclick=()=>openChartDialog('bar',()=>{a5chart=true;a5step=2;a5hold=true;r5()})
+}
+
+/* Activity 6 */
+let a6step=0,a6hold=false;
+const a6cases=[
+ {q:'Αθλούνται όλα τα παιδιά της Ε΄ και της ΣΤ΄ τάξης του σχολείου;',ok:'no',opts:[['yes','Ναι, όλα αθλούνται.'],['no','Όχι, υπάρχουν 12 απαντήσεις «0 ώρες».'],['unknown','Δεν μπορούμε να το γνωρίζουμε.'],['half','Αθλείται μόνο το μισό δείγμα.']]},
+ {q:'Πόσα παιδιά αθλούνται πολλές ώρες την ημέρα, δηλαδή πάνω από 3 ώρες;',ok:'3',opts:[['3','3 παιδιά'],['5','5 παιδιά'],['10','10 παιδιά'],['20','20 παιδιά']]},
+ {q:'Πόσες ώρες αθλούνται τα περισσότερα παιδιά;',ok:'1',opts:[['0','0 ώρες'],['1','Μέχρι 1 ώρα'],['2','Μέχρι 2 ώρες'],['3','Μέχρι 3 ώρες']]}
+];
+function r6(){const d=a6cases[a6step],opts=shuffleOnce('a6'+a6step,d.opts);activity.innerHTML=`<div class="case-count">Ερώτημα ${a6step+1} από 3</div><div class="book-card">${barChart(hours,'Ώρες ημερήσιας άθλησης')}</div><div class="scenario"><b>${d.q}</b></div><div class="choice-grid">${opts.map(o=>`<button class="choice ${a6hold&&o[0]===d.ok?'correct':''}" data-a6="${o[0]}">${o[1]}</button>`).join('')}</div>`;if(a6hold){setFeedback('Σωστά ✓ Η απάντηση υποστηρίζεται από τα δεδομένα του διαγράμματος.','good');later(()=>{a6hold=false;a6step++;if(a6step<3)r6();else advance()},1400);return}qa('[data-a6]').forEach(b=>b.onclick=()=>{if(b.dataset.a6!==d.ok)return wrong(b,'Χρησιμοποίησε την αντίστοιχη στήλη και την αριθμητική τιμή της.');a6hold=true;r6()})}
+
+/* Activity 7 */
+let a7step=0,a7hold=false,a7menu=false,a7chart=false;
+function r7(){
+ if(a7step===0){activity.innerHTML=`<div class="task-strip">Νέα έρευνα: <b>«Με ποιον τρόπο έρχεσαι συνήθως στο σχολείο;»</b>. Σύρε από το A1 μέχρι το B6 για να επιλέξεις όλο τον πίνακα.</div>${praxisShell({data:transport,title:'Τρόπος μετακίνησης προς το σχολείο'})}`;bindRange(cellRange('A1','B6'),()=>{a7hold=true;a7step=1;r7()});return}
+ if(a7step===1&&a7hold){activity.innerHTML=`<div class="task-strip">Η περιοχή επιλέχθηκε σωστά.</div>${praxisShell({data:transport,title:'Τρόπος μετακίνησης προς το σχολείο',selected:cellRange('A1','B6')})}`;setFeedback('Η περιοχή A1:B6 επιλέχθηκε ✓','good');later(()=>{a7hold=false;r7()},1200);return}
+ if(a7step===1){activity.innerHTML=`<div class="task-strip">Άνοιξε <b>Εισαγωγή → Διάγραμμα…</b> και επίλεξε <b>Στήλες</b>.</div>${praxisShell({data:transport,title:'Τρόπος μετακίνησης προς το σχολείο',selected:cellRange('A1','B6'),menu:a7menu})}`;q('#insertMenu').onclick=()=>{a7menu=!a7menu;r7()};if(a7menu)q('#chartMenuItem').onclick=()=>openChartDialog('bar',()=>{a7chart=true;a7step=2;a7hold=true;r7()});return}
+ if(a7step===2&&a7hold){activity.innerHTML=`<div class="task-strip">Χρησιμοποίησε τώρα το διάγραμμα για να απαντήσεις.</div>${praxisShell({data:transport,title:'Τρόπος μετακίνησης προς το σχολείο',selected:cellRange('A1','B6'),chart:barChart(transport,'Τρόπος μετακίνησης προς το σχολείο')})}`;setFeedback('Το διάγραμμα στηλών δημιουργήθηκε ✓','good');later(()=>{a7hold=false;a7step=3;r7()},2000);return}
+ const cases=[
+  {q:'Ποιος είναι ο συνηθέστερος τρόπος μετακίνησης;',ok:'car',opts:[['car','Αυτοκίνητο'],['walk','Με τα πόδια'],['bus','Μέσα μαζικής μεταφοράς'],['bike','Ποδήλατο']]},
+  {q:'Ποια επιλογή έχει τις λιγότερες απαντήσεις;',ok:'other',opts:[['other','Άλλο'],['bike','Ποδήλατο'],['bus','Μέσα μαζικής μεταφοράς'],['walk','Με τα πόδια']]}
+ ];
+ const idx=a7step-3,d=cases[idx],opts=shuffleOnce('a7ans'+idx,d.opts);
+ activity.innerHTML=`<div class="case-count">Ερώτημα ${idx+1} από 2</div><div class="book-card">${barChart(transport,'Τρόπος μετακίνησης προς το σχολείο')}</div><div class="scenario"><b>${d.q}</b></div><div class="choice-grid">${opts.map(o=>`<button class="choice ${a7hold&&o[0]===d.ok?'correct':''}" data-a7="${o[0]}">${o[1]}</button>`).join('')}</div>`;
+ if(a7hold){setFeedback('Σωστά ✓','good');later(()=>{a7hold=false;a7step++;if(a7step<5)r7();else advance()},1500);return}
+ qa('[data-a7]').forEach(b=>b.onclick=()=>{if(b.dataset.a7!==d.ok)return wrong(b,'Σύγκρινε τα ύψη και τις τιμές των στηλών.');a7hold=true;r7()})
+}
+
+/* Activity 8 */
+const levels=['Έχω καταλάβει και μπορώ να εξηγήσω','Έχω καταλάβει αρκετά καλά','Έχω καταλάβει αλλά έχω απορίες','Χρειάζομαι βοήθεια'];
+const objectives=['Να οργανώνω και να διαχειρίζομαι δεδομένα έρευνας για την επίλυση προβλημάτων.','Να αξιοποιώ τα διαγράμματα στο υπολογιστικό φύλλο για να παρουσιάσω πληροφορίες και να απαντήσω σε ερωτήματα.'];
+let selfSel=[null,null];
+function r8(){activity.innerHTML=`<div class="self-wrap"><div class="self-table"><div class="self-head">Διαλέγω πόσο καλά έμαθα</div>${levels.map(x=>`<div class="self-head">${x}</div>`).join('')}${objectives.map((o,row)=>`<div class="self-objective">✓ ${o}</div>${levels.map((l,col)=>`<button class="self-cell ${selfSel[row]===col?'selected':''}" data-self="${row}:${col}">${l}</button>`).join('')}`).join('')}</div></div><div class="finish-actions"><button class="primary" id="finishBtn" ${selfSel.some(x=>x===null)?'disabled':''}>Ολοκλήρωση</button></div>`;qa('[data-self]').forEach(b=>b.onclick=()=>{const [r,c]=b.dataset.self.split(':').map(Number);selfSel[r]=c;r8()});q('#finishBtn').onclick=()=>{if(selfSel.some(x=>x===null))return;completed.add(stage);finished=true;render()}}
+const renderers=[r1,r2,r3,r4,r5,r6,r7,r8];
+function renderCompletion(){updateProgress();kicker.textContent='ΟΛΟΚΛΗΡΩΣΗ';stageTitle.textContent='Μάθημα 17 ολοκληρώθηκε';instruction.textContent='Ολοκλήρωσες την οργάνωση, παρουσίαση και ανάλυση δεδομένων έρευνας στο υπολογιστικό φύλλο.';activity.innerHTML=`<div class="completion"><div class="big">✓</div><h2>Ολοκλήρωσες το μάθημα!</h2><p>Μπορείς να οργανώνεις δεδομένα σε πίνακες, να δημιουργείς διαγράμματα και να χρησιμοποιείς τις πληροφορίες τους για να απαντάς σε ερωτήματα.</p><button class="repeat-btn" id="repeatBtn">↻ Επανάληψη μαθήματος</button></div>`;q('#repeatBtn').onclick=()=>location.reload()}
+render();
+</script>
+<footer class="nk-license" aria-label="Πληροφορίες δημιουργού και άδειας χρήσης">
+  <div><strong>Created by Nikos Kalakos · © 2026</strong></div>
+  <div>Original educational content and simulation design licensed under <a class="cc-badge" href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank" rel="license noopener noreferrer">CC BY-NC 4.0</a>.</div>
+  <div>Source code © 2026 Nikos Kalakos.</div>
+  <div>Third-party and textbook materials remain subject to the rights and licences of their respective copyright holders.</div>
+</footer>
+</body>
+</html>

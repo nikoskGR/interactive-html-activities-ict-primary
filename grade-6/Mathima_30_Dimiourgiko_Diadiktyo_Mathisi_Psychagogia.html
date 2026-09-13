@@ -1,0 +1,290 @@
+<!--
+ICT Educational Simulation
+Created by Nikos Kalakos
+Copyright © 2026 Nikos Kalakos
+
+Original educational content and simulation design licensed under CC BY-NC 4.0.
+Source code © 2026 Nikos Kalakos.
+Third-party and textbook materials remain subject to the rights and licences of their respective copyright holders.
+-->
+<!DOCTYPE html>
+<html lang="el">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta name="author" content="Nikos Kalakos">
+<meta name="copyright" content="© 2026 Nikos Kalakos">
+<meta name="license" content="Original educational content and simulation design: CC BY-NC 4.0; source code © 2026 Nikos Kalakos; third-party and textbook materials excluded.">
+<title>Μάθημα 30 – Το δημιουργικό διαδίκτυο ως εναλλακτικό εργαλείο μάθησης και ψυχαγωγίας</title>
+<style>
+:root{
+  --unit:#EA922C;--unit-dark:#B86610;--unit-soft:#FFF4E6;
+  --secondary:#545F99;--secondary-dark:#3D477C;--secondary-soft:#EEF0F8;
+  --ink:#273247;--muted:#667389;--line:#D8DEEA;--bg:#F4F6FA;
+  --good:#23845A;--good-soft:#E9F7F0;--bad:#B64242;--bad-soft:#FDEEEE;
+  --panel:#fff;--shadow:0 12px 32px rgba(43,54,84,.10)
+}
+*{box-sizing:border-box}html{scroll-behavior:smooth}
+body{margin:0;font-family:Inter,"Segoe UI",Arial,sans-serif;color:var(--ink);background:radial-gradient(circle at 7% 7%,rgba(234,146,44,.11),transparent 29%),radial-gradient(circle at 93% 10%,rgba(84,95,153,.12),transparent 30%),var(--bg);font-size:17px}
+button,input,select,textarea{font:inherit}button{cursor:pointer}
+button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:3px solid rgba(84,95,153,.35);outline-offset:2px}
+.page{max-width:1560px;margin:0 auto;padding:18px}
+.hero{background:#fff;border:1px solid #E1E6EF;border-top:9px solid var(--unit);border-radius:18px;padding:20px 24px;display:grid;grid-template-columns:1fr auto;gap:18px;align-items:center;box-shadow:var(--shadow)}
+.eyebrow{font-size:14px;font-weight:950;letter-spacing:.08em;text-transform:uppercase;color:var(--secondary)}
+.hero h1{margin:5px 0 0;font-size:31px;line-height:1.15;color:var(--secondary-dark)}
+.hero p{margin:8px 0 0;color:var(--muted);font-weight:700;line-height:1.45}
+.lesson-mark{width:140px;height:78px;border-radius:16px;background:linear-gradient(135deg,var(--secondary),var(--secondary-dark));color:#fff;display:grid;place-items:center;text-align:center;box-shadow:0 9px 22px rgba(84,95,153,.24)}
+.lesson-mark b{font-size:30px;line-height:1}.lesson-mark span{font-size:11px;font-weight:900;letter-spacing:.08em;text-transform:uppercase}
+.progress{margin:13px 0;background:#fff;border:1px solid #E1E5EC;border-radius:15px;padding:12px 15px;box-shadow:0 7px 20px rgba(48,58,87,.06)}
+.progress-top{display:flex;justify-content:space-between;gap:12px;align-items:center;color:#59667B;font-size:15px;font-weight:850}.bar{height:8px;background:#ECEFF4;border-radius:999px;overflow:hidden;margin:8px 0 10px}.fill{height:100%;width:0;background:linear-gradient(90deg,var(--unit),var(--secondary));transition:.3s ease}.steps{display:flex;gap:8px;flex-wrap:wrap;justify-content:center}.step-dot{width:32px;height:32px;border-radius:9px;border:1px solid #CDD3DE;background:#fff;color:#758197;display:grid;place-items:center;font-size:14px;font-weight:900}.step-dot.current{border:2px solid var(--unit);color:var(--unit-dark);background:var(--unit-soft)}.step-dot.done{border-color:var(--secondary);background:var(--secondary);color:#fff}
+.stage{background:#fff;border:1px solid #E0E5EF;border-radius:18px;box-shadow:0 10px 28px #27364b12;overflow:hidden}.stage-head{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;padding:18px 20px;border-bottom:1px solid #E8ECF3}.stage-kicker{font-size:14px;font-weight:950;color:var(--unit-dark);text-transform:uppercase;letter-spacing:.04em}.stage-title{font-size:26px;margin:4px 0}.instruction{margin:0;color:#5C687C;font-weight:650;line-height:1.5}.help-btn{border:1px solid #C9D1E0;background:#fff;border-radius:11px;padding:10px 14px;font-weight:850;color:var(--secondary-dark);white-space:nowrap}.help-btn:hover{background:var(--secondary-soft)}.workspace{padding:18px 20px 22px;min-height:620px}.task-strip{border-left:5px solid var(--unit);background:#FFF9F1;padding:13px 15px;border-radius:11px;margin-bottom:14px;font-weight:800;line-height:1.48}.feedback{min-height:0;margin-top:12px;border-radius:11px;font-weight:800;line-height:1.45}.feedback.show{padding:11px 13px;border:1px solid}.feedback.info{background:#F2F6FF;border-color:#C8D5EF;color:#46577C}.feedback.good{background:var(--good-soft);border-color:#AADBC5;color:#176943}.feedback.bad{background:var(--bad-soft);border-color:#F0BABA;color:#9B3030}
+.choice-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:11px;max-width:1120px;margin:12px auto}.choice{min-height:72px;border:1.5px solid #C9D2E2;background:#fff;border-radius:12px;padding:14px 16px;text-align:left;font-weight:850;color:#283650;transition:.15s;font-size:17px;line-height:1.4}.choice:hover{border-color:#8897B3;transform:translateY(-1px)}.choice.correct{background:var(--good-soft);border-color:#7DC7A4}.choice.selected{background:var(--secondary-soft);border-color:var(--secondary);box-shadow:inset 0 0 0 1px var(--secondary)}.choice.wrong{animation:shake .28s;background:var(--bad-soft);border-color:#E49A9A}@keyframes shake{25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
+.actions{display:flex;justify-content:center;gap:10px;margin-top:16px}.primary{border:0;background:var(--secondary);color:#fff;border-radius:11px;padding:11px 18px;font-weight:900}.primary:hover{background:var(--secondary-dark)}.primary:disabled{opacity:.48;cursor:default}.secondary-btn{border:1px solid #C8D1E0;background:#fff;color:var(--secondary-dark);border-radius:10px;padding:10px 15px;font-weight:850}.case-count{text-align:center;font-weight:900;color:var(--secondary-dark);margin-bottom:9px}.scenario{max-width:1080px;margin:0 auto 14px;border:1px solid #D8DFEA;background:#F8F9FC;border-radius:14px;padding:16px 18px;line-height:1.5;font-weight:750}.scenario b{color:var(--secondary-dark)}
+.info-card{max-width:1120px;margin:0 auto 14px;background:var(--secondary-soft);border:1px solid #C9CEE4;border-radius:14px;padding:16px 18px;line-height:1.52}.info-card h3{margin:0 0 8px;color:var(--secondary-dark)}.info-card ul{margin:8px 0 0;padding-left:24px}.info-card li{margin:6px 0}
+.multi-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;max-width:1180px;margin:12px auto}.multi{border:1.5px solid #C9D2E2;background:#fff;border-radius:12px;padding:14px 15px;text-align:left;font-weight:820;min-height:66px;color:#2E3C55;display:flex;align-items:center;gap:10px}.multi:before{content:'□';font-size:24px;color:#8390A6;line-height:1}.multi.selected{background:var(--secondary-soft);border-color:var(--secondary)}.multi.selected:before{content:'☑';color:var(--secondary)}.multi.correct{background:var(--good-soft);border-color:#7DC7A4}
+/* Matching */
+.match-area{position:relative;max-width:1260px;margin:14px auto;padding:6px 34px}.match-grid{display:grid;grid-template-columns:1fr 1fr;gap:86px}.match-col{display:flex;flex-direction:column;gap:12px}.match-card{position:relative;min-height:72px;border:1.5px solid #C9D2E2;background:#fff;border-radius:13px;padding:13px 18px;font-weight:800;line-height:1.35;display:flex;align-items:center}.match-card.matched{background:var(--good-soft);border-color:#7DC7A4}.match-dot{position:absolute;width:18px;height:18px;border-radius:50%;background:#fff;border:4px solid var(--secondary);top:50%;transform:translateY(-50%);z-index:4}.left .match-dot{right:-34px}.right .match-dot{left:-34px}.match-dot:hover{transform:translateY(-50%) scale(1.15)}.match-svg{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;overflow:visible;z-index:2}.match-svg line{stroke:var(--secondary);stroke-width:4;stroke-linecap:round}.match-svg line.temp{stroke:#8A96B2;stroke-dasharray:7 7}
+/* PEGI game classification */
+.pegi-game-wrap{max-width:1240px;margin:0 auto}.game-progress{display:flex;justify-content:space-between;align-items:center;gap:12px;margin:0 0 12px;font-weight:900;color:var(--secondary-dark)}.game-card{border:2px solid #D4DAE7;border-radius:18px;background:linear-gradient(135deg,#FFFFFF,#F7F8FC);box-shadow:0 10px 26px #27364b12;padding:20px 22px;margin-bottom:16px}.game-card h3{margin:0 0 8px;font-size:25px;color:var(--secondary-dark)}.game-story{margin:0;line-height:1.58;font-weight:730;color:#3E4B62}.rating-panel{border:1px solid #D7DDEA;border-radius:16px;background:#fff;padding:16px 18px;margin-top:14px}.rating-panel h4{margin:0 0 6px;font-size:19px;color:#303D59}.rating-note{margin:0 0 12px;color:#667389;font-weight:700;font-size:15px}.age-choice-grid{display:grid;grid-template-columns:repeat(5,minmax(110px,1fr));gap:11px}.age-choice{position:relative;border:2px solid #C9D1DE;background:#fff;border-radius:14px;padding:10px 8px;min-height:112px;text-align:center;font-weight:900;color:#2D394F;transition:.15s}.age-choice:hover{border-color:#8793AD;transform:translateY(-1px)}.age-choice.selected{border-color:var(--unit);box-shadow:inset 0 0 0 2px rgba(234,146,44,.18);background:var(--unit-soft)}.age-choice.correct{border-color:#63B58C;background:var(--good-soft)}.age-choice .pegi-badge{width:62px;height:62px;font-size:32px;border-width:4px;margin-bottom:5px}.age-choice .sel-mark{display:block;min-height:18px;font-size:13px;color:var(--unit-dark);margin-top:3px}.content-choice-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}.content-choice{position:relative;border:1.5px solid #C9D2E2;background:#fff;border-radius:12px;padding:12px 13px;min-height:64px;text-align:left;font-weight:820;color:#2E3C55;display:flex;align-items:center;gap:10px;transition:.15s}.content-choice:hover{border-color:#8793AD;transform:translateY(-1px)}.content-choice.selected{background:var(--secondary-soft);border-color:var(--secondary);box-shadow:inset 0 0 0 1px var(--secondary)}.content-choice.correct{background:var(--good-soft);border-color:#63B58C}.content-symbol{width:38px;height:38px;border-radius:9px;background:#1F2937;color:#fff;display:grid;place-items:center;font-size:20px;font-weight:900;flex:0 0 auto}.content-choice.none .content-symbol{background:#667085}.content-choice .checkmark{margin-left:auto;color:var(--secondary);font-weight:950;font-size:18px}.rating-actions{display:flex;justify-content:center;margin-top:17px}.game-result-note{margin-top:12px;text-align:center;font-size:15px;font-weight:800;color:#5F6B7E}
+@media(max-width:850px){.age-choice-grid{grid-template-columns:repeat(3,minmax(100px,1fr))}.content-choice-grid{grid-template-columns:1fr 1fr}}
+@media(max-width:580px){.age-choice-grid,.content-choice-grid{grid-template-columns:1fr 1fr}}
+/* PEGI */
+.pegi-grid{display:grid;grid-template-columns:repeat(5,minmax(110px,1fr));gap:12px;max-width:980px;margin:15px auto}.pegi-age{border:1.5px solid #C8D1DE;background:#fff;border-radius:12px;min-height:118px;padding:10px;text-align:center;font-weight:900}.pegi-badge{width:72px;height:72px;margin:0 auto 8px;border:5px solid #111;background:#fff;display:grid;place-items:center;font-size:38px;font-weight:950;color:#111;box-shadow:inset 0 0 0 3px #fff}.pegi-age small{color:#68758A}.desc-icon{width:42px;height:42px;border-radius:8px;background:#111;color:#fff;display:grid;place-items:center;font-size:24px;margin-right:10px;flex:0 0 auto}.desc-row{display:flex;align-items:center}
+/* Graphis */
+.graphis{border:1px solid #BFC8D7;border-radius:14px;overflow:hidden;background:#fff;box-shadow:0 9px 24px #27364b16;max-width:1360px;margin:0 auto}.g-title{height:42px;background:#35405F;color:#fff;display:flex;align-items:center;padding:0 14px;gap:12px;font-weight:900}.g-menu{height:39px;border-bottom:1px solid #D7DEE9;display:flex;align-items:center;gap:3px;padding:0 9px;background:#FBFCFE}.g-menu-btn{border:0;background:transparent;border-radius:6px;padding:6px 9px;font-weight:800;color:#34425B}.g-menu-btn:hover,.g-menu-btn.open{background:#E9EDF5}.g-toolbar{height:45px;border-bottom:1px solid #D7DEE9;display:flex;align-items:center;gap:7px;padding:0 10px;background:#F4F6F9}.tool{border:1px solid #CBD3DF;background:#fff;border-radius:6px;padding:6px 9px;font-weight:850}.g-body{display:grid;grid-template-columns:1fr 360px;min-height:590px;background:#E8EBF0}.paper-wrap{padding:26px;display:flex;justify-content:center;align-items:flex-start}.paper{width:760px;min-height:535px;background:#fff;box-shadow:0 5px 18px #27364b27;padding:38px 42px;position:relative}.doc-caret{width:2px;height:22px;background:#222;display:inline-block;animation:blink 1s step-end infinite}@keyframes blink{50%{opacity:0}}.doc-table{width:100%;border-collapse:collapse;table-layout:fixed}.doc-table td{border:1px solid #5E6676;height:76px;padding:8px 10px;vertical-align:middle;line-height:1.32}.doc-table tr:first-child td{height:50px}.doc-table td.active{outline:2px solid var(--secondary);outline-offset:-2px}.doc-table input,.doc-table textarea{width:100%;border:0;outline:0;background:transparent;font-weight:700;color:#26334A;font-family:inherit}.doc-table input::placeholder,.doc-table textarea::placeholder{color:#AAB2C0}.doc-table .desc-input{font-size:15px;line-height:1.35;min-height:58px;resize:none}.asset-panel{border-left:1px solid #C9D0DC;background:#F7F8FB;padding:12px}.asset-panel h4{margin:0 0 10px;color:#46536D}.asset{border:1px solid #CBD3DF;background:#fff;border-radius:10px;padding:8px;margin-bottom:9px;display:flex;align-items:center;gap:8px;font-size:14px;font-weight:850}.asset[draggable=true]{cursor:grab}.desc-panel-title{font-size:14px;line-height:1.35;color:#5B6780;margin:-2px 0 10px;font-weight:750}.desc-tiles{display:flex;flex-direction:column;gap:8px}.desc-tile{border:1.5px solid #CBD3DF;background:#fff;border-radius:11px;padding:10px 11px;font-size:14px;line-height:1.36;font-weight:780;color:#2E3A52;box-shadow:0 2px 8px #25324a0a}.desc-tile.used{opacity:.50;background:#F0F2F6}.desc-tile .tile-mark{display:inline-grid;place-items:center;width:24px;height:24px;border-radius:7px;background:var(--unit-soft);color:var(--unit-dark);font-size:12px;font-weight:950;margin-right:7px;vertical-align:middle}.desc-source{margin-top:10px;padding-top:9px;border-top:1px solid #D6DCE6;font-size:12px;line-height:1.35;color:#707B8E;font-weight:700}.mini-pegi{width:40px;height:40px;border:3px solid #111;display:grid;place-items:center;font-weight:950;font-size:21px;color:#111;background:#fff}.menu-pop{position:absolute;z-index:20;background:#fff;border:1px solid #BFC7D5;border-radius:8px;box-shadow:0 9px 26px #1e293b2e;padding:5px;min-width:205px}.menu-pop button{display:block;width:100%;border:0;background:#fff;text-align:left;padding:9px 10px;border-radius:6px;font-weight:750}.menu-pop button:hover{background:#EEF1F6}.dialog-back{position:absolute;inset:0;background:#11182755;display:flex;align-items:center;justify-content:center;z-index:25}.dialog{width:390px;background:#fff;border-radius:12px;box-shadow:0 18px 45px #11182755;overflow:hidden}.dialog h4{margin:0;padding:12px 14px;background:#4E578B;color:#fff}.dialog-body{padding:16px}.form-row{display:grid;grid-template-columns:1fr 120px;gap:12px;align-items:center;margin:10px 0}.form-row select{padding:8px;border:1px solid #BCC6D6;border-radius:7px}.dialog-actions{display:flex;justify-content:flex-end;gap:8px;padding:0 16px 16px}.dialog-actions button{border:1px solid #C7CFDC;background:#fff;border-radius:8px;padding:8px 12px;font-weight:850}.dialog-actions .ok{background:var(--secondary);color:#fff;border-color:var(--secondary)}
+/* Self assessment */
+.self-wrap{overflow:auto}.self-table{display:grid;grid-template-columns:minmax(320px,1.55fr) repeat(4,minmax(145px,1fr));min-width:920px;border:1px solid #D7DEEA;border-radius:13px;overflow:hidden}.self-head,.self-objective,.self-cell{padding:12px;border-right:1px solid #D7DEEA;border-bottom:1px solid #D7DEEA}.self-head{background:#FFF7EC;color:#6B4C20;font-size:15px;font-weight:900;text-align:center}.self-objective{font-size:15px;font-weight:850;background:#fff}.self-cell{font-size:15px;background:#fff;border-top:0;border-left:0;text-align:center;color:#42506B;font-weight:800}.self-cell.selected{background:var(--secondary-soft);box-shadow:inset 0 0 0 2px var(--secondary);color:var(--secondary-dark)}.finish-actions{display:flex;justify-content:center;margin-top:16px}.completion{text-align:center;padding:42px 20px}.badge{display:inline-block;background:var(--unit-soft);color:var(--unit-dark);border-radius:99px;padding:7px 11px;font-size:12px;font-weight:900}.completion h2{font-size:29px;margin:12px 0 8px;color:var(--secondary-dark)}.completion p{max-width:760px;margin:0 auto 20px;color:#5F6C80;font-weight:700;line-height:1.5}
+.modal-backdrop{position:fixed;inset:0;background:#11182788;display:none;align-items:center;justify-content:center;padding:18px;z-index:50}.modal-backdrop.open{display:flex}.modal{width:min(620px,100%);background:#fff;border-radius:16px;box-shadow:0 18px 60px #0004;overflow:hidden}.modal-head{padding:14px 16px;background:var(--secondary);color:#fff;font-weight:900;display:flex;justify-content:space-between;align-items:center}.modal-close{border:0;background:#ffffff1f;color:#fff;width:32px;height:32px;border-radius:8px;font-size:20px}.modal-body{padding:17px;line-height:1.55;color:#3F4D68;font-weight:700}.modal-actions{display:flex;justify-content:flex-end;gap:8px;padding:0 17px 17px}.small-btn{border:1px solid #C5CDDC;background:#fff;border-radius:9px;padding:8px 11px;font-weight:850}
+@media(max-width:1040px){.nb-main{grid-template-columns:105px 180px 1fr}.nb-stage{grid-column:1/-1;border-left:0;border-top:1px solid #D9DFE9}.stage-screen{height:280px}.g-body{grid-template-columns:1fr}.asset-panel{border-left:0;border-top:1px solid #C9D0DC;display:grid;grid-template-columns:repeat(5,1fr);gap:8px}.asset-panel h4{grid-column:1/-1}.asset{margin:0}.paper{width:min(720px,100%)}}
+@media(max-width:760px){.page{padding:9px}.hero{padding:16px}.hero h1{font-size:25px}.lesson-mark{width:100px;height:68px}.stage-head{flex-direction:column}.workspace{padding:14px 10px}.choice-grid,.multi-grid{grid-template-columns:1fr}.match-grid{grid-template-columns:1fr;gap:42px}.match-dot{display:none}.match-svg{display:none}.pegi-grid{grid-template-columns:repeat(2,1fr)}.nb-main{display:block}.nb-cats{display:flex;overflow:auto;border-right:0;border-bottom:1px solid #D9DFE9}.nb-palette{border-right:0;border-bottom:1px solid #D9DFE9}.asset-panel{grid-template-columns:repeat(2,1fr)}.paper-wrap{padding:12px}.paper{padding:28px 20px}}
+</style>
+<style id="nk-license-style">
+.nk-license{max-width:1100px;margin:14px auto 24px;padding:10px 16px;text-align:center;font:13px/1.45 Arial,"Noto Sans",sans-serif;color:#4e657c}
+.nk-license a{color:inherit;text-decoration:underline;text-underline-offset:2px}
+.nk-license .cc-badge{display:inline-block;margin:0 4px;padding:2px 7px;border:1px solid #8aa0b8;border-radius:6px;background:#fff;font-weight:700;white-space:nowrap}
+</style>
+</head>
+<body>
+<div class="page">
+  <header class="hero">
+    <div><div class="eyebrow">Ενότητα 5 · Ψηφιακές τεχνολογίες και κοινωνία</div><h1>Το δημιουργικό διαδίκτυο ως εναλλακτικό εργαλείο μάθησης και ψυχαγωγίας</h1><p>Δημιούργησε, μάθε και ψυχαγωγήσου υπεύθυνα, αναγνωρίζοντας και τις επισημάνσεις του συστήματος PEGI.</p></div>
+    <div class="lesson-mark"><div><b>30</b><br><span>Μάθημα</span></div></div>
+  </header>
+  <section class="progress"><div class="progress-top"><span id="progressText"></span><span id="progressPct"></span></div><div class="bar"><div class="fill" id="fill"></div></div><div class="steps" id="steps"></div></section>
+  <main class="stage">
+    <div class="stage-head"><div><div class="stage-kicker" id="kicker"></div><h2 class="stage-title" id="stageTitle"></h2><p class="instruction" id="instruction"></p></div><button class="help-btn" id="helpBtn">❔ Βοήθεια</button></div>
+    <div class="workspace"><div id="activity"></div><div class="feedback" id="feedback"></div></div>
+  </main>
+</div>
+<div class="modal-backdrop" id="helpModal"><div class="modal"><div class="modal-head"><span>Βοήθεια</span><button class="modal-close" id="closeHelp">×</button></div><div class="modal-body" id="helpText"></div><div class="modal-actions"><button class="small-btn" id="understoodBtn">Εντάξει</button></div></div></div>
+<script>
+const ACTIVITIES=[
+ {t:'Δημιουργικό ή παθητικό διαδίκτυο;',i:'Διάκρινε τρόπους χρήσης του διαδικτύου που σε βάζουν σε ενεργό, δημιουργικό ρόλο.'},
+ {t:'Τι είναι τα σοβαρά παιχνίδια;',i:'Εντόπισε τα χαρακτηριστικά που περιγράφει το μάθημα για τα serious games.'},
+ {t:'Πότε βοηθά μια προσομοίωση;',i:'Σύνδεσε τα σοβαρά παιχνίδια με καταστάσεις όπου κόστος, χρόνος ή ασφάλεια δυσκολεύουν την πραγματική εμπειρία.'},
+ {t:'Δώσε PEGI στα εικονικά παιχνίδια',i:'Μελέτησε την ιστορία κάθε παιχνιδιού και επίλεξε ξεχωριστά την κατάλληλη ηλικιακή ένδειξη και τις επισημάνσεις περιεχομένου.'},
+ {t:'Οι επισημάνσεις περιεχομένου PEGI',i:'Αντιστοίχισε κάθε επισήμανση με τη σημασία που δίνεται στο μάθημα.'},
+ {t:'Διάλεξε υπεύθυνα',i:'Χρησιμοποίησε τις επισημάνσεις για να καταλάβεις τι πληροφορία δίνει ένα παιχνίδι πριν το επιλέξεις.'},
+ {t:'Φτιάξε πίνακα PEGI στο Graphis',i:'Δημιούργησε τον πίνακα, τοποθέτησε κάθε ηλικιακή ένδειξη και γράψε τη σύντομη περιγραφή της.'},
+ {t:'Συνολική δοκιμή',i:'Συνδύασε δημιουργικό διαδίκτυο, serious games και υπεύθυνη χρήση των επισημάνσεων PEGI.'},
+ {t:'Τι έμαθα;',i:'Αξιολόγησε πόσο καλά αναγνωρίζεις τη σημασία των εικονιδίων του συστήματος PEGI.'}
+];
+const HELP=[
+ 'Δημιουργική χρήση σημαίνει ότι αξιοποιείς τις υπηρεσίες του διαδικτύου για μάθηση, δημιουργία, ψυχαγωγία με σκοπό ή συνεργασία. Διάβασε κάθε περίπτωση και διάλεξε τον καταλληλότερο χαρακτηρισμό.',
+ 'Σκέψου τι ξεχωρίζει ένα σοβαρό παιχνίδι: προσομοιώνει πραγματικές καταστάσεις, σε βάζει σε ενεργό ρόλο και μπορεί να σε βοηθήσει να εξασκήσεις δεξιότητες και λήψη αποφάσεων.',
+ 'Το βιβλίο τονίζει ότι τέτοιες προσομοιώσεις είναι χρήσιμες όταν μια εμπειρία είναι δύσκολη στην πραγματική ζωή λόγω κόστους, χρόνου ή ασφάλειας.',
+ 'Διάβασε προσεκτικά τον τίτλο και την ιστορία του εικονικού παιχνιδιού. Διάλεξε μία ηλικιακή ένδειξη από τα τετράγωνα πλακίδια και μία ή περισσότερες επισημάνσεις περιεχομένου από τα ορθογώνια πλακίδια. Αν δεν χρειάζεται καμία ειδική επισήμανση περιεχομένου, διάλεξε τη σχετική ουδέτερη επιλογή.',
+ 'Σύρε γραμμή από την τελεία αριστερά προς τη σωστή τελεία δεξιά. Λάθος σύνδεση δεν παραμένει. Θα δουλέψεις σε δύο γύρους.',
+ 'Οι επισημάνσεις σε ενημερώνουν για ηλικία και περιεχόμενο. Βασίσου στη συγκεκριμένη πληροφορία που δίνει κάθε εικονίδιο.',
+ 'Χρησιμοποίησε Πίνακας → Εισαγωγή πίνακα. Το παράθυρο ξεκινά από 2 × 2, οπότε άλλαξε τις γραμμές σε 6. Μετά από κάθε εικονίδιο PEGI, γράψε στο διπλανό κελί μια σύντομη περιγραφή της ηλικιακής ένδειξης και πάτησε Tab.',
+ 'Οι ερωτήσεις συνδυάζουν όσα έκανες σε όλο το μάθημα. Λάθος επιλογή δεν αποκαλύπτει τη σωστή απάντηση.',
+ 'Διάλεξε ένα επίπεδο. Δεν υπάρχει σωστή ή λάθος απάντηση στην αυτοαξιολόγηση.'
+];
+let stage=0,finished=false,renderEpoch=0,pendingTimers=[],subEpoch=0;
+const completed=new Set(),shuffleCache={};
+const q=s=>document.querySelector(s),qa=s=>[...document.querySelectorAll(s)];
+const activity=q('#activity'),feedback=q('#feedback'),kicker=q('#kicker'),stageTitle=q('#stageTitle'),instruction=q('#instruction');
+function clearTimers(){pendingTimers.forEach(clearTimeout);pendingTimers=[]}
+function later(fn,ms){const s=stage,e=renderEpoch,se=subEpoch;const id=setTimeout(()=>{if(stage===s&&renderEpoch===e&&subEpoch===se)fn()},ms);pendingTimers.push(id);return id}
+function beginSubrender(){subEpoch++;clearFeedback()}
+function setFeedback(txt,type='info'){feedback.className='feedback show '+type;feedback.innerHTML=txt}
+function clearFeedback(){feedback.className='feedback';feedback.textContent=''}
+function wrong(el,msg='Δεν είναι σωστό. Δοκίμασε ξανά.'){el.classList.remove('wrong');void el.offsetWidth;el.classList.add('wrong');setFeedback(msg,'bad');later(()=>{el.classList.remove('wrong');clearFeedback()},650)}
+function shuffleCopy(arr){const a=[...arr];for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
+function shuffleOnce(key,arr){if(!shuffleCache[key])shuffleCache[key]=shuffleCopy(arr);return shuffleCache[key]}
+function exactSet(a,b){return a.size===b.size&&[...a].every(x=>b.has(x))}
+function advance(delay=0){later(()=>{completed.add(stage);stage++;render()},delay)}
+function updateProgress(){const n=ACTIVITIES.length,pct=finished?100:Math.round(stage/(n-1)*100);q('#progressText').textContent=finished?'Ολοκληρώθηκε':`Δραστηριότητα ${stage+1} από ${n}`;q('#progressPct').textContent=pct+'%';q('#fill').style.width=pct+'%';q('#steps').innerHTML=ACTIVITIES.map((_,i)=>`<span class="step-dot ${completed.has(i)?'done':''} ${i===stage&&!finished?'current':''}">${i+1}</span>`).join('')}
+
+/* Activity 1 */
+const a1cases=[
+ {s:'Χρησιμοποιείς ένα διαδικτυακό εργαλείο οπτικού προγραμματισμού για να φτιάξεις ένα δικό σου μικρό παιχνίδι.',ok:'creative'},
+ {s:'Συνεργάζεσαι με συμμαθητές σου online για να δημιουργήσετε μια διαδραστική ιστορία.',ok:'creative'},
+ {s:'Ακολουθείς μια δραστηριότητα προγραμματισμού και δοκιμάζεις διαφορετικές λύσεις μέχρι να πετύχει.',ok:'creative'},
+ {s:'Αφήνεις βίντεο να παίζουν συνεχόμενα χωρίς συγκεκριμένο σκοπό και χωρίς να αλληλεπιδράς με το περιεχόμενο.',ok:'passive'}
+];let a1i=0,a1hold=false;
+function r1(){beginSubrender();const d=a1cases[a1i],opts=shuffleOnce('a1'+a1i,[['creative','Δημιουργική αξιοποίηση'],['passive','Πιο παθητική χρήση']]);activity.innerHTML=`<div class="case-count">Περίπτωση ${a1i+1} από ${a1cases.length}</div><div class="scenario">${d.s}</div><div class="choice-grid">${opts.map(o=>`<button class="choice ${a1hold&&o[0]===d.ok?'correct':''}" data-a1="${o[0]}">${o[1]}</button>`).join('')}</div>`;if(a1hold){setFeedback('✓ Σωστή ταξινόμηση.','good');later(()=>{a1hold=false;a1i++;a1i<a1cases.length?r1():advance()},1450);return}qa('[data-a1]').forEach(b=>b.onclick=()=>{if(b.dataset.a1!==d.ok)return wrong(b);a1hold=true;r1()})}
+
+/* Activity 2 */
+let a2sel=new Set(),a2done=false;const a2targets=new Set(['real','active','skills','decision','hard']);
+function r2(){beginSubrender();const items=shuffleOnce('a2items',[
+ ['real','Προσομοιώνουν πραγματικές καταστάσεις.'],['active','Ο παίκτης συμμετέχει ενεργά.'],['skills','Μπορούν να υποστηρίξουν την ανάπτυξη δεξιοτήτων.'],['decision','Μπορούν να εξασκήσουν την αναγνώριση προβλημάτων και τη λήψη αποφάσεων.'],['hard','Επιτρέπουν εμπειρίες που μπορεί να είναι δύσκολες στην πραγματικότητα λόγω κόστους, χρόνου ή ασφάλειας.'],['only','Σκοπός τους είναι μόνο να περνά η ώρα.'],['random','Δεν χρειάζονται κανόνες ή στόχο.']
+ ]);activity.innerHTML=`<div class="task-strip">Επίλεξε όλα τα χαρακτηριστικά που περιγράφουν τα <b>σοβαρά παιχνίδια (serious games)</b> και πάτησε <b>Έλεγχος</b>.</div><div class="multi-grid">${items.map(([id,t])=>`<button class="multi ${a2sel.has(id)?'selected':''} ${a2done&&a2targets.has(id)?'correct':''}" data-a2="${id}">${t}</button>`).join('')}</div><div class="actions"><button class="primary" id="a2check">Έλεγχος</button></div>`;qa('[data-a2]').forEach(b=>b.onclick=()=>{if(a2done)return;const id=b.dataset.a2;a2sel.has(id)?a2sel.delete(id):a2sel.add(id);r2()});q('#a2check').onclick=()=>{if(exactSet(a2sel,a2targets)){a2done=true;r2();setFeedback('✓ Εντόπισες τα βασικά χαρακτηριστικά των serious games.','good');advance(1900)}else setFeedback('Οι επιλογές δεν είναι ακόμη σωστές. Άλλαξε ό,τι χρειάζεται και ξαναδοκίμασε.','bad')}}
+
+/* Activity 3 */
+const a3cases=[
+ {s:'Μια ομάδα εξασκείται σε εικονική εκκένωση κτιρίου πριν από άσκηση ασφάλειας.',ok:'yes'},
+ {s:'Μαθαίνεις να παίρνεις αποφάσεις μέσα σε προσομοίωση όπου διαφορετικές επιλογές έχουν διαφορετικά αποτελέσματα.',ok:'yes'},
+ {s:'Πατάς τυχαία κουμπιά σε ένα παιχνίδι χωρίς στόχο ή σύνδεση με πραγματική κατάσταση.',ok:'no'},
+ {s:'Δοκιμάζεις σε προσομοίωση μια κατάσταση που θα ήταν ακριβή ή επικίνδυνη να οργανωθεί πολλές φορές στην πραγματική ζωή.',ok:'yes'}
+];let a3i=0,a3hold=false;
+function r3(){beginSubrender();const d=a3cases[a3i],opts=shuffleOnce('a3'+a3i,[['yes','Ταιριάζει με τη χρήση serious game'],['no','Δεν ταιριάζει με τη χρήση serious game']]);activity.innerHTML=`<div class="case-count">Σενάριο ${a3i+1} από ${a3cases.length}</div><div class="scenario">${d.s}</div><div class="choice-grid">${opts.map(o=>`<button class="choice ${a3hold&&o[0]===d.ok?'correct':''}" data-a3="${o[0]}">${o[1]}</button>`).join('')}</div>`;if(a3hold){setFeedback('✓ Σωστά.','good');later(()=>{a3hold=false;a3i++;a3i<a3cases.length?r3():advance()},1450);return}qa('[data-a3]').forEach(b=>b.onclick=()=>{if(b.dataset.a3!==d.ok)return wrong(b);a3hold=true;r3()})}
+
+/* Activity 4 – PEGI classification of virtual games */
+const a4AgeOptions=['3','7','12','16','18'];
+const a4ContentOptions=[
+ ['violence','Βία','⚔'],['language','Χυδαία γλώσσα','✱'],['fear','Φόβος','☠'],['sex','Σεξ','♀♂'],['drugs','Ναρκωτικά','⚗'],['discrimination','Διακρίσεις','≠'],['gambling','Τζόγος','🎲'],['online','Online','🌐'],['purchases','Αγορές εντός παιχνιδιού','🛒'],['none','Χωρίς ειδική επισήμανση περιεχομένου','—']
+];
+const a4games=[
+ {title:'Το Νησί των Παζλ',story:'Εξερευνάς ένα φωτεινό νησί, λύνεις γρίφους με σχήματα και αριθμούς και βοηθάς φιλικούς χαρακτήρες να βρουν χαμένα αντικείμενα. Δεν υπάρχουν μάχες, τρομακτικές σκηνές, online λειτουργίες ή αγορές.',age:'3',contents:['none']},
+ {title:'Το Στοιχειωμένο Ρολόι',story:'Σε ένα παλιό αρχοντικό λύνεις γρίφους για να σταματήσεις ένα μαγικό ρολόι. Εμφανίζονται σκοτεινοί διάδρομοι, φαντάσματα και απότομοι τρομακτικοί ήχοι, χωρίς μάχες.',age:'7',contents:['fear']},
+ {title:'Οι Φύλακες της Αστρόπολης',story:'Μια ομάδα ανθρωπόμορφων ηρώων αντιμετωπίζει φανταστικούς αντιπάλους σε μη ρεαλιστικές μάχες επιστημονικής φαντασίας. Μπορείς επίσης να συνεργάζεσαι online με άλλους παίκτες.',age:'12',contents:['violence','online']},
+ {title:'Δρόμοι της Νυχτερινής Πόλης',story:'Παίρνεις μέρος σε μια περιπέτεια δράσης με ρεαλιστικές συμπλοκές και έντονη χυδαία γλώσσα. Υπάρχει επίσης δυνατότητα online παιχνιδιού με άλλους παίκτες.',age:'16',contents:['violence','language','online']},
+ {title:'Το Καζίνο της Τύχης',story:'Το παιχνίδι διδάσκει και προσομοιώνει παιχνίδια καζίνο και στοιχήματα με εικονικά νομίσματα. Προσφέρει επίσης προαιρετικές αγορές ψηφιακών πακέτων με πραγματικά χρήματα.',age:'18',contents:['gambling','purchases']}
+];
+let a4i=0,a4age=null,a4contents=new Set(),a4hold=false;
+function r4(){
+ beginSubrender();
+ const d=a4games[a4i];
+ const ages=shuffleOnce('a4ages'+a4i,a4AgeOptions);
+ const contents=shuffleOnce('a4contents'+a4i,a4ContentOptions);
+ const targetContents=new Set(d.contents);
+ activity.innerHTML=`<div class="pegi-game-wrap"><div class="game-progress"><span>Εικονικό παιχνίδι ${a4i+1} από ${a4games.length}</span><span>Ηλικία + περιεχόμενο</span></div><div class="game-card"><h3>${d.title}</h3><p class="game-story">${d.story}</p></div><div class="rating-panel"><h4>1. Ηλικιακή ένδειξη PEGI</h4><p class="rating-note">Επίλεξε <b>μία</b> ηλικιακή ένδειξη.</p><div class="age-choice-grid">${ages.map(n=>`<button class="age-choice ${a4age===n?'selected':''} ${a4hold&&a4age===n?'correct':''}" data-a4age="${n}"><div class="pegi-badge">${n}</div><span>PEGI ${n}</span><span class="sel-mark">${a4age===n?'✓ Επιλεγμένο':''}</span></button>`).join('')}</div></div><div class="rating-panel"><h4>2. Επισημάνσεις περιεχομένου</h4><p class="rating-note">Επίλεξε όλες όσες ταιριάζουν στην ιστορία. Η επιλογή «Χωρίς ειδική επισήμανση…» χρησιμοποιείται μόνη της.</p><div class="content-choice-grid">${contents.map(([id,name,icon])=>`<button class="content-choice ${id==='none'?'none':''} ${a4contents.has(id)?'selected':''} ${a4hold&&a4contents.has(id)?'correct':''}" data-a4content="${id}"><span class="content-symbol">${icon}</span><span>${name}</span><span class="checkmark">${a4contents.has(id)?'✓':''}</span></button>`).join('')}</div></div><div class="rating-actions"><button class="primary" id="a4check" ${a4hold?'disabled':''}>Έλεγχος PEGI</button></div><div class="game-result-note">Χρησιμοποίησε διαφορετικές πληροφορίες για την ηλικία και για το περιεχόμενο του παιχνιδιού.</div></div>`;
+ if(a4hold){
+   setFeedback('✓ Οι ηλικιακές και οι επισημάνσεις περιεχομένου ταιριάζουν με την περιγραφή του παιχνιδιού.','good');
+   later(()=>{a4hold=false;a4i++;a4age=null;a4contents=new Set();a4i<a4games.length?r4():advance()},2400);
+   return;
+ }
+ qa('[data-a4age]').forEach(b=>b.onclick=()=>{a4age=b.dataset.a4age;r4()});
+ qa('[data-a4content]').forEach(b=>b.onclick=()=>{const id=b.dataset.a4content;if(id==='none'){a4contents=new Set(['none'])}else{a4contents.delete('none');a4contents.has(id)?a4contents.delete(id):a4contents.add(id)}r4()});
+ q('#a4check').onclick=()=>{if(!a4age){setFeedback('Επίλεξε πρώτα μία ηλικιακή ένδειξη και μετά έλεγξε το σύνολο των επισημάνσεων.','bad');return}if(a4age===d.age&&exactSet(a4contents,targetContents)){a4hold=true;r4()}else setFeedback('Οι επισημάνσεις δεν ταιριάζουν ακόμη πλήρως με την ιστορία. Ξαναδιάβασε την περιγραφή και άλλαξε τις επιλογές σου.','bad')};
+}
+
+/* Matching engine for Activity 5 */
+const pegiRounds=[
+ [
+  ['violence','Βία','⚔'],['language','Χυδαία γλώσσα','✱'],['fear','Φόβος','☠'],['sex','Σεξ','♀♂'],['drugs','Ναρκωτικά','⚗']
+ ],
+ [
+  ['discrimination','Διακρίσεις','≠'],['gambling','Τζόγος','🎲'],['online','Online','🌐'],['purchases','Αγορές εντός παιχνιδιού','🛒']
+ ]
+];
+const pegiDefs={
+ violence:'Το παιχνίδι περιέχει απεικονίσεις βίας.',language:'Το παιχνίδι εμπεριέχει χυδαία γλώσσα.',fear:'Το παιχνίδι μπορεί να είναι τρομακτικό για μικρά παιδιά.',sex:'Το παιχνίδι απεικονίζει γυμνό ή/και σεξουαλική συμπεριφορά ή σεξουαλικές αναφορές.',drugs:'Το παιχνίδι απεικονίζει χρήση ναρκωτικών ή εμπεριέχει αναφορές σε αυτήν.',discrimination:'Το παιχνίδι απεικονίζει διακρίσεις ή υλικό που μπορεί να τις ενθαρρύνει.',gambling:'Το παιχνίδι παροτρύνει στον τζόγο ή τον διδάσκει.',online:'Το παιχνίδι μπορεί να παιχτεί μέσω διαδικτύου.',purchases:'Το παιχνίδι προσφέρει επιλογή αγοράς ψηφιακών αγαθών ή υπηρεσιών με πραγματικό νόμισμα.'
+};
+let a5round=0,a5matched=new Map(),a5drag=null,a5temp=null;
+function matchMarkup(items){const rights=shuffleOnce('a5right'+a5round,items.map(x=>x[0]));return `<div class="match-area" id="matchArea"><svg class="match-svg" id="matchSvg"></svg><div class="match-grid"><div class="match-col left">${items.map(([id,name,icon])=>`<div class="match-card ${a5matched.has(id)?'matched':''}" data-left="${id}"><div class="desc-row"><span class="desc-icon">${icon}</span><span>${name}</span></div><span class="match-dot" data-start="${id}"></span></div>`).join('')}</div><div class="match-col right">${rights.map(id=>`<div class="match-card ${[...a5matched.values()].includes(id)?'matched':''}" data-right="${id}"><span class="match-dot" data-end="${id}"></span>${pegiDefs[id]}</div>`).join('')}</div></div></div>`}
+function dotCenter(el,area){const a=area.getBoundingClientRect(),r=el.getBoundingClientRect();return{x:r.left+r.width/2-a.left,y:r.top+r.height/2-a.top}}
+function drawMatches(){const area=q('#matchArea'),svg=q('#matchSvg');if(!area||!svg)return;svg.innerHTML='';a5matched.forEach((rid,lid)=>{const s=q(`[data-start="${lid}"]`),e=q(`[data-end="${rid}"]`);if(!s||!e)return;const p1=dotCenter(s,area),p2=dotCenter(e,area);svg.insertAdjacentHTML('beforeend',`<line x1="${p1.x}" y1="${p1.y}" x2="${p2.x}" y2="${p2.y}"></line>`)});if(a5temp){svg.insertAdjacentHTML('beforeend',`<line class="temp" x1="${a5temp.x1}" y1="${a5temp.y1}" x2="${a5temp.x2}" y2="${a5temp.y2}"></line>`)}}
+function bindMatching(items){const area=q('#matchArea');qa('[data-start]').forEach(d=>{d.onpointerdown=e=>{if(a5matched.has(d.dataset.start))return;e.preventDefault();d.setPointerCapture?.(e.pointerId);const p=dotCenter(d,area);a5drag={id:d.dataset.start,pointer:e.pointerId};a5temp={x1:p.x,y1:p.y,x2:p.x,y2:p.y};drawMatches()};d.onpointermove=e=>{if(!a5drag||a5drag.pointer!==e.pointerId)return;const ar=area.getBoundingClientRect();a5temp.x2=e.clientX-ar.left;a5temp.y2=e.clientY-ar.top;drawMatches()};d.onpointerup=e=>{if(!a5drag)return;const els=document.elementsFromPoint(e.clientX,e.clientY);const target=els.find(x=>x.dataset&&x.dataset.end)||els.map(x=>x.closest?.('[data-right]')).find(Boolean);const rid=target?.dataset?.end||target?.dataset?.right;const lid=a5drag.id;a5drag=null;a5temp=null;if(rid===lid){a5matched.set(lid,rid);r5()}else{drawMatches();setFeedback('Η σύνδεση δεν ταιριάζει. Δοκίμασε ξανά.','bad');later(clearFeedback,700)}}});window.addEventListener('resize',drawMatches,{once:true});later(drawMatches,30)}
+function r5(){beginSubrender();const items=pegiRounds[a5round];activity.innerHTML=`<div class="task-strip">Γύρος ${a5round+1} από 2 · Σύρε από κάθε τελεία αριστερά στη σωστή περιγραφή δεξιά.</div>${matchMarkup(items)}`;bindMatching(items);if(a5matched.size===items.length){setFeedback('✓ Όλες οι συνδέσεις του γύρου είναι σωστές.','good');later(()=>{if(a5round===0){a5round=1;a5matched=new Map();r5()}else advance()},2000)}}
+
+/* Activity 6 */
+const a7cases=[
+ {q:'Θέλεις να μάθεις αν ένα παιχνίδι περιέχει απεικονίσεις βίας. Ποια επισήμανση αναζητάς;',opts:[['violence','Βία'],['fear','Φόβος'],['online','Online']],ok:'violence'},
+ {q:'Θέλεις να ξέρεις αν ένα παιχνίδι προσφέρει αγορές ψηφιακών αγαθών με πραγματικό νόμισμα. Ποια επισήμανση σε ενημερώνει;',opts:[['buy','Αγορές εντός παιχνιδιού'],['lang','Χυδαία γλώσσα'],['gamble','Τζόγος']],ok:'buy'},
+ {q:'Ποια πληροφορία δίνει κυρίως ένας αριθμός όπως 12 ή 16 πάνω σε ένδειξη PEGI;',opts:[['age','Ηλικιακή ένδειξη'],['difficulty','Βαθμό δυσκολίας'],['speed','Ταχύτητα παιχνιδιού']],ok:'age'},
+ {q:'Ένα παιχνίδι έχει την επισήμανση «Online». Τι πληροφορία παίρνεις από αυτή;',opts:[['net','Μπορεί να παιχτεί μέσω διαδικτύου.'],['free','Είναι πάντα δωρεάν.'],['safe','Δεν έχει άλλες επισημάνσεις.']],ok:'net'}
+];let a7i=0,a7hold=false;
+function r7(){beginSubrender();const d=a7cases[a7i],opts=shuffleOnce('a7'+a7i,d.opts);activity.innerHTML=`<div class="case-count">Περίπτωση ${a7i+1} από ${a7cases.length}</div><div class="scenario"><b>${d.q}</b></div><div class="choice-grid">${opts.map(o=>`<button class="choice ${a7hold&&o[0]===d.ok?'correct':''}" data-a7="${o[0]}">${o[1]}</button>`).join('')}</div>`;if(a7hold){setFeedback('✓ Σωστά. Χρησιμοποίησες την πληροφορία της επισήμανσης.','good');later(()=>{a7hold=false;a7i++;a7i<a7cases.length?r7():advance()},1550);return}qa('[data-a7]').forEach(b=>b.onclick=()=>{if(b.dataset.a7!==d.ok)return wrong(b);a7hold=true;r7()})}
+
+/* Activity 8 – Graphis */
+let a8step=0,a8table=false,a8menu=false,a8dialog=false,a8cols=2,a8rows=2,a8active=null,a8head1='',a8head2='',a8placed=Array(5).fill(null),a8descs=Array(5).fill(''),a8drag=null,a8item=0,a8waitingDesc=false,a8finished=false;
+const a8ages=['3','7','12','16','18'];
+const a8DescTexts={
+ '3':'Κατάλληλο για όλες τις ηλικίες, χωρίς περιεχόμενο που μπορεί να τρομάξει μικρά παιδιά.',
+ '7':'Μπορεί να περιέχει σκηνές ή ήχους που τρομάζουν μικρά παιδιά και πολύ ήπια μη ρεαλιστική βία.',
+ '12':'Μπορεί να περιέχει πιο έντονη φανταστική βία, ήπια χυδαία γλώσσα ή σεξουαλικούς υπαινιγμούς.',
+ '16':'Μπορεί να περιέχει ρεαλιστική βία, έντονη χυδαία γλώσσα και χρήση καπνού, αλκοόλ ή ναρκωτικών.',
+ '18':'Μόνο για ενήλικες. Μπορεί να περιέχει ακραία βία, προσομοίωση τζόγου ή ρητή σεξουαλική δραστηριότητα.'
+};
+function escHtml(v){return String(v??'').replace(/[&<>"]/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[ch]))}
+function graphisTable(){
+ if(!a8table)return '<span class="doc-caret"></span><p style="color:#8994A6;font-weight:700">Ο κέρσορας βρίσκεται στο σημείο όπου θα εισαχθεί ο πίνακας.</p>';
+ let rows='';
+ for(let r=0;r<6;r++){
+   rows+='<tr>';
+   for(let c=0;c<2;c++){
+     const key=r+':'+c,active=a8active===key;let content='';
+     if(r===0&&c===0)content=`<input data-cell="${key}" value="${escHtml(a8head1)}" aria-label="Επικεφαλίδα πρώτης στήλης">`;
+     else if(r===0&&c===1)content=`<input data-cell="${key}" value="${escHtml(a8head2)}" aria-label="Επικεφαλίδα δεύτερης στήλης">`;
+     else if(c===0&&r>0){const age=a8placed[r-1];content=age?`<div class="mini-pegi" style="margin:auto">${age}</div>`:'<span style="color:#A5ADBA;font-size:13px">Σύρε εδώ εικονίδιο</span>'}
+     else if(c===1&&r>0){const idx=r-1,age=a8placed[idx];if(age&&a8waitingDesc&&idx===a8item)content=`<textarea class="desc-input" data-desc="${idx}" placeholder="Γράψε ακριβώς την κατάλληλη περιγραφή…" aria-label="Περιγραφή PEGI ${age}">${escHtml(a8descs[idx])}</textarea>`;else if(a8descs[idx])content=`<span style="font-weight:800;font-size:14px">${escHtml(a8descs[idx])}</span>`;else content='<span style="color:#A5ADBA;font-size:13px">Η σύντομη περιγραφή θα γραφτεί εδώ.</span>'}
+     rows+=`<td class="${active?'active':''}" data-td="${key}">${content}</td>`;
+   }
+   rows+='</tr>';
+ }
+ return `<table class="doc-table">${rows}</table>`;
+}
+function a8DescriptionPanel(){
+ const order=shuffleOnce('a8descTiles',a8ages),used=new Set(a8ages.slice(0,a8item));
+ return `<h4>Σύντομες περιγραφές PEGI</h4><div class="desc-panel-title">Βρες ποια περιγραφή ταιριάζει στην ηλικιακή ένδειξη που μόλις τοποθέτησες και γράψε την <b>ακριβώς</b> στο διπλανό κελί.</div><div class="desc-tiles">${order.map((age,i)=>`<div class="desc-tile ${used.has(age)?'used':''}"><span class="tile-mark">${String.fromCharCode(65+i)}</span>${a8DescTexts[age]}</div>`).join('')}</div><div class="desc-source">Οι σύντομες περιγραφές βασίζονται στις επίσημες επεξηγήσεις των ηλικιακών επισημάνσεων του PEGI.</div>`;
+}
+function graphisShell(){
+ const remaining=a8ages.filter((_,i)=>!a8placed[i]);
+ const side=a8waitingDesc?a8DescriptionPanel():`<h4>Αρχεία εικονιδίων</h4>${remaining.map(n=>`<div class="asset" draggable="${a8step===2&&!a8waitingDesc?'true':'false'}" data-asset="${n}"><span class="mini-pegi">${n}</span><span>pegi_${n}.png</span></div>`).join('')||'<div style="color:#6E7A8E;font-weight:800">Όλα τα εικονίδια τοποθετήθηκαν.</div>'}`;
+ return `<div class="graphis"><div class="g-title"><b>Graphis</b><span style="font-size:13px;opacity:.8">Έγγραφο PEGI</span></div><div class="g-menu"><button class="g-menu-btn" data-menu="file">Αρχείο</button><button class="g-menu-btn" data-menu="edit">Επεξεργασία</button><button class="g-menu-btn" data-menu="insert">Εισαγωγή</button><button class="g-menu-btn ${a8menu?'open':''}" id="tableMenuBtn">Πίνακας</button><button class="g-menu-btn">Μορφή</button></div><div class="g-toolbar"><button class="tool"><b>B</b></button><button class="tool"><i>I</i></button><button class="tool">↶</button><span style="color:#6A7689;font-size:14px">100%</span></div><div class="g-body"><div class="paper-wrap"><div class="paper" id="paper">${graphisTable()}${a8menu?'<div class="menu-pop" id="tablePop" style="left:183px;top:79px"><button id="insertTableCmd">Εισαγωγή πίνακα…</button><button>Διαγραφή</button><button>Επιλογή</button></div>':''}${a8dialog?`<div class="dialog-back"><div class="dialog"><h4>Εισαγωγή πίνακα</h4><div class="dialog-body"><div class="form-row"><label>Στήλες</label><select id="colSel"><option>1</option><option ${a8cols===2?'selected':''}>2</option><option>3</option></select></div><div class="form-row"><label>Γραμμές</label><select id="rowSel"><option ${a8rows===2?'selected':''}>2</option><option>3</option><option>4</option><option>5</option><option ${a8rows===6?'selected':''}>6</option><option>7</option></select></div></div><div class="dialog-actions"><button id="cancelDlg">Ακύρωση</button><button class="ok" id="insertDlg">Εισαγωγή</button></div></div></div>`:''}</div></div><aside class="asset-panel">${side}</aside></div></div>`;
+}
+function protectTypedField(inp){inp.onpaste=e=>e.preventDefault();inp.ondrop=e=>e.preventDefault();inp.oncontextmenu=e=>e.preventDefault();inp.addEventListener('keydown',e=>{if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='v')e.preventDefault();if(e.key==='Insert'&&e.shiftKey)e.preventDefault()})}
+function bindGraphis(){
+ const mb=q('#tableMenuBtn');if(mb)mb.onclick=()=>{if(a8step!==0)return;a8menu=!a8menu;r8()};
+ const cmd=q('#insertTableCmd');if(cmd)cmd.onclick=()=>{a8menu=false;a8dialog=true;a8cols=2;a8rows=2;r8()};
+ const cancel=q('#cancelDlg');if(cancel)cancel.onclick=()=>{a8dialog=false;r8()};
+ const ins=q('#insertDlg');if(ins)ins.onclick=()=>{a8cols=Number(q('#colSel').value);a8rows=Number(q('#rowSel').value);if(a8cols!==2||a8rows!==6){setFeedback('Ο πίνακας δεν έχει ακόμη τις σωστές διαστάσεις. Ρύθμισέ τες και ξαναδοκίμασε.','bad');return}a8dialog=false;a8table=true;a8step=1;a8active=null;r8()};
+ qa('[data-td]').forEach(td=>td.onclick=()=>{const key=td.dataset.td;if(a8step===1&&key==='0:0'){a8active=key;r8()}else if(a8step===1&&key!=='0:0')wrong(td,'Ξεκίνα από το πρώτο κελί της πρώτης γραμμής.')});
+ qa('[data-cell]').forEach(inp=>{protectTypedField(inp);inp.oninput=()=>{if(inp.dataset.cell==='0:0')a8head1=inp.value;else a8head2=inp.value};inp.onkeydown=e=>{if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='v'){e.preventDefault();return}if(e.key==='Insert'&&e.shiftKey){e.preventDefault();return}if(e.key==='Tab'){e.preventDefault();if(inp.dataset.cell==='0:0'){if(a8head1!=='Εικονίδιο'){setFeedback('Γράψε ακριβώς «Εικονίδιο».','bad');return}a8active='0:1';r8();setTimeout(()=>q('[data-cell="0:1"]')?.focus(),30)}else{if(a8head2!=='Σύντομη περιγραφή'){setFeedback('Γράψε ακριβώς «Σύντομη περιγραφή».','bad');return}a8step=2;a8active=null;r8()}}}});
+ qa('[data-asset]').forEach(a=>{a.ondragstart=e=>{if(a8step!==2||a8waitingDesc){e.preventDefault();return}a8drag=a.dataset.asset;e.dataTransfer.setData('text/plain',a.dataset.asset)}});
+ qa('[data-td]').forEach(td=>{td.ondragover=e=>{if(a8step!==2||a8waitingDesc)return;e.preventDefault()};td.ondrop=e=>{if(a8step!==2||a8waitingDesc)return;e.preventDefault();const [r,c]=td.dataset.td.split(':').map(Number),age=e.dataTransfer.getData('text/plain')||a8drag,expectedRow=a8item+1,expectedAge=a8ages[a8item];if(c!==0||r!==expectedRow||age!==expectedAge){setFeedback('Τοποθέτησε το επόμενο ηλικιακό εικονίδιο στην πρώτη στήλη, στη σωστή επόμενη γραμμή.','bad');return}a8placed[a8item]=age;a8waitingDesc=true;a8active=`${expectedRow}:1`;a8drag=null;r8()}});
+ qa('[data-desc]').forEach(inp=>{protectTypedField(inp);inp.oninput=()=>{a8descs[Number(inp.dataset.desc)]=inp.value};inp.onkeydown=e=>{if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='v'){e.preventDefault();return}if(e.key==='Insert'&&e.shiftKey){e.preventDefault();return}if(e.key==='Tab'){e.preventDefault();const idx=Number(inp.dataset.desc),age=a8ages[idx],expected=a8DescTexts[age];if(a8descs[idx]!==expected){setFeedback('Η περιγραφή δεν είναι ακριβώς η σωστή. Βρες την κατάλληλη κάρτα και πληκτρολόγησέ την στο κελί.','bad');return}a8waitingDesc=false;a8active=null;a8item++;if(a8item===a8ages.length){a8finished=true;r8();setFeedback('✓ Ολοκλήρωσες τον πίνακα με τις πέντε ηλικιακές ενδείξεις και τις σωστές σύντομες περιγραφές.','good');advance(2800)}else{r8();setFeedback('✓ Η περιγραφή καταχωρίστηκε σωστά. Συνέχισε με το επόμενο εικονίδιο.','good')}}}});
+}
+function r8(){
+ beginSubrender();let txt='';
+ if(a8step===0)txt='Άνοιξε <b>Πίνακας → Εισαγωγή πίνακα…</b>. Το παράθυρο ξεκινά με <b>2 στήλες × 2 γραμμές</b>. Ρύθμισε τον πίνακα ώστε να χωρά τις δύο επικεφαλίδες και τις πέντε ηλικιακές ενδείξεις.';
+ else if(a8step===1)txt='Κάνε κλικ στο πρώτο κελί και γράψε <b>Εικονίδιο</b>. Πάτησε το πραγματικό <b>Tab</b>, γράψε <b>Σύντομη περιγραφή</b> και πάτησε ξανά Tab.';
+ else if(a8finished)txt='Ο πίνακας PEGI είναι ολοκληρωμένος.';
+ else if(a8waitingDesc)txt=`Βρες στις κάρτες δεξιά τη σωστή σύντομη περιγραφή για το <b>PEGI ${a8ages[a8item]}</b>. Πληκτρολόγησέ την <b>ακριβώς</b> στο διπλανό κελί και πάτησε το πραγματικό <b>Tab</b>.`;
+ else txt=`Σύρε το αρχείο <b>pegi_${a8ages[a8item]}.png</b> στο πρώτο κελί της επόμενης κενής γραμμής.`;
+ activity.innerHTML=`<div class="task-strip">${txt}</div>${graphisShell()}`;bindGraphis();
+ if(a8step===1&&a8active)later(()=>q(`[data-cell="${a8active}"]`)?.focus(),40);
+ if(a8waitingDesc)later(()=>q(`[data-desc="${a8item}"]`)?.focus(),50);
+}
+
+/* Activity 8 */
+const a9cases=[
+ {q:'Ποια περιγραφή ταιριάζει καλύτερα στο «δημιουργικό διαδίκτυο» του μαθήματος;',opts:[['a','Αξιοποίηση υπηρεσιών του διαδικτύου για δημιουργικούς, εκπαιδευτικούς, μορφωτικούς και ψυχαγωγικούς σκοπούς.'],['b','Μόνο παθητική παρακολούθηση περιεχομένου.'],['c','Μόνο αποστολή μηνυμάτων χωρίς άλλο σκοπό.']],ok:'a'},
+ {q:'Γιατί ένα serious game μπορεί να είναι χρήσιμο;',opts:[['a','Μπορεί να προσομοιώνει πραγματικές καταστάσεις που είναι δύσκολες λόγω κόστους, χρόνου ή ασφάλειας.'],['b','Επειδή δεν χρειάζεται να παίρνεις αποφάσεις.'],['c','Επειδή δεν έχει κανόνες.']],ok:'a'},
+ {q:'Ποια δραστηριότητα του μαθήματος συνδέεται άμεσα με το να φτιάξεις δικό σου παιχνίδι μέσω διαδικτύου;',opts:[['a','Η ώρα του προγραμματισμού (Hour of Code).'],['b','Η αλλαγή κωδικού Wi-Fi.'],['c','Η εκτύπωση ενός αρχείου.']],ok:'a'},
+ {q:'Σε μια περιγραφή παιχνιδιού αναφέρονται τρομακτικές σκηνές και online παιχνίδι. Τι πρέπει να εξετάσεις στο PEGI;',opts:[['a','Την ηλικιακή ένδειξη και τις επισημάνσεις «Φόβος» και «Online».'],['b','Μόνο το χρώμα του εξωφύλλου.'],['c','Μόνο τον τίτλο του παιχνιδιού.']],ok:'a'},
+ {q:'Ποια επισήμανση δηλώνει ότι ένα παιχνίδι μπορεί να παιχτεί μέσω διαδικτύου;',opts:[['a','Online'],['b','Φόβος'],['c','Χυδαία γλώσσα']],ok:'a'},
+ {q:'Ποια επισήμανση δηλώνει ότι μπορεί να υπάρχουν αγορές ψηφιακών αγαθών ή υπηρεσιών με πραγματικό νόμισμα;',opts:[['a','Αγορές εντός παιχνιδιού'],['b','Βία'],['c','Διακρίσεις']],ok:'a'}
+];let a9i=0,a9hold=false;
+function r9(){beginSubrender();const d=a9cases[a9i],opts=shuffleOnce('a9'+a9i,d.opts);activity.innerHTML=`<div class="case-count">Ερώτηση ${a9i+1} από ${a9cases.length}</div><div class="scenario"><b>${d.q}</b></div><div class="choice-grid">${opts.map(o=>`<button class="choice ${a9hold&&o[0]===d.ok?'correct':''}" data-a9="${o[0]}">${o[1]}</button>`).join('')}</div>`;if(a9hold){setFeedback('✓ Σωστά.','good');later(()=>{a9hold=false;a9i++;a9i<a9cases.length?r9():advance()},1500);return}qa('[data-a9]').forEach(b=>b.onclick=()=>{if(b.dataset.a9!==d.ok)return wrong(b);a9hold=true;r9()})}
+
+/* Activity 9 */
+const levels=['Έχω καταλάβει και μπορώ να εξηγήσω','Έχω καταλάβει αρκετά καλά','Έχω καταλάβει αλλά έχω απορίες','Χρειάζομαι βοήθεια'];let selfSel=null;
+function r10(){beginSubrender();activity.innerHTML=`<div class="self-wrap"><div class="self-table"><div class="self-head">Αξιολογώ πόσο καλά έμαθα</div>${levels.map(x=>`<div class="self-head">${x}</div>`).join('')}<div class="self-objective">✓ Να αναγνωρίζω τη σημασία των εικονιδίων του συστήματος PEGI.</div>${levels.map((l,i)=>`<button class="self-cell ${selfSel===i?'selected':''}" data-self="${i}">${l}</button>`).join('')}</div></div><div class="finish-actions"><button class="primary" id="finishBtn" ${selfSel===null?'disabled':''}>Ολοκλήρωση</button></div>`;qa('[data-self]').forEach(b=>b.onclick=()=>{selfSel=Number(b.dataset.self);r10()});q('#finishBtn').onclick=()=>{if(selfSel===null)return;completed.add(stage);finished=true;render()}}
+
+const renderers=[r1,r2,r3,r4,r5,r7,r8,r9,r10];
+function renderCompletion(){kicker.textContent='ΟΛΟΚΛΗΡΩΣΗ';stageTitle.textContent='Μάθημα 30 ολοκληρώθηκε';instruction.textContent='Ολοκλήρωσες το μάθημα για το δημιουργικό διαδίκτυο και τις επισημάνσεις PEGI.';activity.innerHTML=`<div class="completion"><span class="badge">Ενότητα 5 · Μάθημα 30</span><h2>Δημιούργησες, αξιολόγησες και επέλεξες υπεύθυνα.</h2><p>Δούλεψες με serious games, αξιολόγησες εικονικά παιχνίδια με ηλικιακές και περιεχομενικές επισημάνσεις PEGI και οργάνωσες τις ηλικιακές ενδείξεις σε πίνακα.</p><button class="secondary-btn" id="restartComplete">↻ Επανάληψη μαθήματος</button></div>`;q('#restartComplete').onclick=()=>location.reload();clearFeedback()}
+function render(){clearTimers();renderEpoch++;subEpoch=0;clearFeedback();updateProgress();if(finished){renderCompletion();window.scrollTo({top:0,behavior:'smooth'});return}const s=ACTIVITIES[stage];kicker.textContent=`Δραστηριότητα ${stage+1}`;stageTitle.textContent=s.t;instruction.textContent=s.i;renderers[stage]();window.scrollTo({top:0,behavior:'smooth'})}
+q('#helpBtn').onclick=()=>{q('#helpText').textContent=HELP[stage]||'';q('#helpModal').classList.add('open')};q('#closeHelp').onclick=q('#understoodBtn').onclick=()=>q('#helpModal').classList.remove('open');q('#helpModal').onclick=e=>{if(e.target===q('#helpModal'))q('#helpModal').classList.remove('open')};
+render();
+</script>
+<footer class="nk-license" aria-label="Πληροφορίες δημιουργού και άδειας χρήσης">
+  <div><strong>Created by Nikos Kalakos · © 2026</strong></div>
+  <div>Original educational content and simulation design licensed under <a class="cc-badge" href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank" rel="license noopener noreferrer">CC BY-NC 4.0</a>.</div>
+  <div>Source code © 2026 Nikos Kalakos.</div>
+  <div>Third-party and textbook materials remain subject to the rights and licences of their respective copyright holders.</div>
+</footer>
+</body>
+</html>

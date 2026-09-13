@@ -1,0 +1,292 @@
+<!--
+ICT Educational Simulation
+Created by Nikos Kalakos
+Copyright © 2026 Nikos Kalakos
+
+Original educational content and simulation design licensed under CC BY-NC 4.0.
+Source code © 2026 Nikos Kalakos.
+Third-party and textbook materials remain subject to the rights and licences of their respective copyright holders.
+-->
+<!DOCTYPE html>
+<html lang="el">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta name="author" content="Nikos Kalakos">
+<meta name="copyright" content="© 2026 Nikos Kalakos">
+<meta name="license" content="Original educational content and simulation design: CC BY-NC 4.0; source code © 2026 Nikos Kalakos; third-party and textbook materials excluded.">
+<title>Μάθημα 18 – Συγκέντρωση, διαχείριση και ταξινόμηση δεδομένων στο υπολογιστικό φύλλο</title>
+<style>
+:root{
+  --unit:#EA922C;--unit-dark:#B86610;--unit-soft:#FFF4E6;
+  --secondary:#545F99;--secondary-dark:#3D477C;--secondary-soft:#EEF0F8;
+  --ink:#273247;--muted:#667389;--line:#D8DEEA;--bg:#F4F6FA;
+  --good:#23845A;--good-soft:#E9F7F0;--bad:#B64242;--bad-soft:#FDEEEE;
+  --panel:#fff;--shadow:0 12px 32px rgba(43,54,84,.10);
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:Inter,"Segoe UI",Arial,sans-serif;color:var(--ink);background:radial-gradient(circle at 7% 7%,rgba(234,146,44,.10),transparent 28%),radial-gradient(circle at 94% 12%,rgba(84,95,153,.11),transparent 30%),var(--bg);font-size:17px}
+button,input{font:inherit}button{cursor:pointer}
+button:focus-visible,input:focus-visible{outline:3px solid rgba(84,95,153,.35);outline-offset:2px}
+.page{max-width:1580px;margin:auto;padding:18px}
+.hero{background:#fff;border:1px solid #E1E6EF;border-top:9px solid var(--unit);border-radius:18px;padding:20px 24px;display:grid;grid-template-columns:1fr auto;gap:18px;align-items:center;box-shadow:var(--shadow)}
+.eyebrow{font-size:14px;font-weight:950;letter-spacing:.08em;text-transform:uppercase;color:var(--secondary)}
+.hero h1{margin:5px 0 0;font-size:31px;line-height:1.14;color:var(--secondary-dark)}
+.hero p{margin:8px 0 0;color:var(--muted);font-weight:700;line-height:1.45}
+.lesson-mark{width:140px;height:78px;border-radius:16px;background:linear-gradient(135deg,var(--secondary),var(--secondary-dark));color:#fff;display:grid;place-items:center;text-align:center;box-shadow:0 9px 22px rgba(84,95,153,.24)}
+.lesson-mark b{font-size:30px;line-height:1}.lesson-mark span{font-size:11px;font-weight:900;letter-spacing:.08em;text-transform:uppercase}
+.progress{margin:13px 0;background:#fff;border:1px solid #E1E5EC;border-radius:15px;padding:12px 15px;box-shadow:0 7px 20px rgba(48,58,87,.06)}
+.progress-top{display:flex;justify-content:space-between;gap:12px;align-items:center;color:#59667B;font-size:15px;font-weight:850}
+.bar{height:8px;background:#ECEFF4;border-radius:999px;overflow:hidden;margin:8px 0 10px}.fill{height:100%;width:0;background:linear-gradient(90deg,var(--unit),var(--secondary));transition:.3s}
+.steps{display:flex;gap:8px;flex-wrap:wrap;justify-content:center}.step-dot{width:32px;height:32px;border-radius:9px;border:1px solid #CDD3DE;background:#fff;color:#758197;display:grid;place-items:center;font-size:14px;font-weight:900}.step-dot.current{border:2px solid var(--unit);color:var(--unit-dark);background:var(--unit-soft)}.step-dot.done{border-color:var(--secondary);background:var(--secondary);color:#fff}
+.stage{background:#fff;border:1px solid #E0E5EF;border-radius:18px;box-shadow:0 10px 28px #27364b12;overflow:hidden}
+.stage-head{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;padding:18px 20px;border-bottom:1px solid #E8ECF3}
+.stage-kicker{font-size:14px;font-weight:950;color:var(--unit-dark);text-transform:uppercase;letter-spacing:.04em}.stage-title{font-size:26px;margin:4px 0}.instruction{margin:0;color:#5C687C;font-weight:650;line-height:1.5}
+.help-btn{border:1px solid #C9D1E0;background:#fff;border-radius:11px;padding:10px 14px;font-weight:850;color:var(--secondary-dark);white-space:nowrap}
+.workspace{padding:18px 20px 22px;min-height:610px}.task-strip{border-left:5px solid var(--unit);background:#FFF9F1;padding:13px 15px;border-radius:11px;margin-bottom:14px;font-weight:800;line-height:1.48}
+.feedback{min-height:0;margin-top:12px;border-radius:11px;font-weight:800;line-height:1.45}.feedback.show{padding:11px 13px;border:1px solid}.feedback.info{background:#F2F6FF;border-color:#C8D5EF;color:#46577C}.feedback.good{background:var(--good-soft);border-color:#AADBC5;color:#176943}.feedback.bad{background:var(--bad-soft);border-color:#F0BABA;color:#9B3030}
+.choice-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:11px;max-width:1160px;margin:12px auto}.choice{min-height:72px;border:1.5px solid #C9D2E2;background:#fff;border-radius:12px;padding:14px 16px;text-align:left;font-weight:850;color:#283650;transition:.15s;font-size:17px;line-height:1.4}.choice:hover{border-color:#8897B3;transform:translateY(-1px)}.choice.correct{background:var(--good-soft);border-color:#7DC7A4}.choice.wrong{animation:shake .28s;background:var(--bad-soft);border-color:#E49A9A}@keyframes shake{25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
+.primary{border:0;background:var(--secondary);color:#fff;border-radius:10px;padding:10px 16px;font-weight:900}.primary:hover{background:var(--secondary-dark)}.primary:disabled{opacity:.45;cursor:default}.secondary-btn{border:1px solid #C7D0DF;background:#fff;color:var(--secondary-dark);border-radius:9px;padding:9px 13px;font-weight:850}
+.case-count{text-align:center;font-weight:900;color:var(--secondary-dark);margin-bottom:9px}.scenario{max-width:1120px;margin:0 auto 14px;border:1px solid #D8DFEA;background:#F8F9FC;border-radius:14px;padding:16px 18px;line-height:1.5;font-weight:750}
+
+/* Mock browser */
+.browser{max-width:1450px;margin:10px auto;border:1px solid #AEB8C8;border-radius:15px;overflow:hidden;background:#fff;box-shadow:0 13px 30px #26344a1c}
+.browser-top{height:47px;background:#343C52;color:#fff;display:flex;align-items:center;gap:10px;padding:0 12px}.browser-app{font-weight:950}.address{flex:1;background:#fff;color:#56647B;border-radius:8px;padding:7px 10px;font-size:14px}.browser-page{padding:16px 18px;background:#F8FAFC}.site-head{display:flex;justify-content:space-between;align-items:center;border-bottom:2px solid var(--secondary);padding-bottom:10px;margin-bottom:12px}.site-head h3{margin:0;color:var(--secondary-dark)}
+.webtable{width:100%;border-collapse:collapse;background:#fff;font-size:14px;cursor:default;user-select:none}.webtable th,.webtable td{border:1px solid #CBD3DE;padding:7px 8px;text-align:left}.webtable th{background:#EEF0F8;font-weight:900}.webtable .web-selected{background:#DDE6FF!important;box-shadow:inset 0 0 0 1px #7184C5}.webtable .web-selecting{background:#E8EDFF!important}.copy-bar{display:flex;align-items:center;gap:10px;margin-top:12px;padding:10px 12px;border:1px solid #D7DCE7;background:#F7F8FC;border-radius:10px;font-weight:750}.copy-state{margin-left:auto;font-weight:900}.kbd{display:inline-block;min-width:30px;padding:2px 7px;border:1px solid #AEB6C4;border-bottom-width:3px;border-radius:6px;background:#fff;color:#263244;font:800 14px/1.2 system-ui,sans-serif;text-align:center;box-shadow:0 1px 0 #fff inset}
+
+/* Praxis */
+.praxis{max-width:1480px;margin:10px auto;border:1px solid #AEB8C8;border-radius:15px;overflow:hidden;box-shadow:0 13px 30px #26344a1c;background:#fff}
+.p-titlebar{height:44px;background:#343C52;color:#fff;display:flex;align-items:center;gap:12px;padding:0 14px;font-weight:850}.p-app{font-weight:950}.p-file{margin-left:auto;color:#DDE3EF;font-size:14px}
+.p-menubar{height:42px;background:#F7F8FA;border-bottom:1px solid #D6DCE6;display:flex;align-items:center;gap:3px;padding:0 10px;position:relative}.menu-btn{border:0;background:transparent;padding:8px 11px;border-radius:7px;font-weight:800;color:#37445A}.menu-btn:hover,.menu-btn.open{background:#E9EDF4}.menu-wrap{position:relative}.menu-drop{position:absolute;top:37px;left:0;min-width:225px;background:#fff;border:1px solid #CBD3DF;border-radius:9px;box-shadow:0 12px 26px #2431482b;padding:6px;z-index:30}.menu-drop button{display:block;width:100%;border:0;background:#fff;text-align:left;padding:9px 10px;border-radius:6px;font-weight:780;color:#344056}.menu-drop button:hover{background:var(--secondary-soft)}
+.p-toolbar{height:46px;background:#FBFCFD;border-bottom:1px solid #DBE0E8;display:flex;align-items:center;gap:8px;padding:0 10px}.tool{border:1px solid #C7D0DC;background:#fff;border-radius:7px;padding:7px 10px;font-weight:850;color:#47556C}.tool.active{background:var(--secondary-soft);border-color:var(--secondary)}.namebox{width:78px;border:1px solid #BFC8D5;background:#fff;border-radius:6px;padding:6px 8px;font-weight:850}.formula{flex:1;border:1px solid #BFC8D5;background:#fff;border-radius:6px;padding:6px 9px;color:#667389;font-size:15px}
+.p-body{display:grid;grid-template-columns:minmax(820px,1fr) 340px;min-height:500px}.sheet-pane{overflow:auto;background:#fff;cursor:crosshair;border-right:1px solid #D9DFE8}.sidepane{background:#F7F8FB;padding:14px}.sheet{display:grid;grid-template-columns:48px 160px 150px 120px 150px 110px 200px;grid-auto-rows:37px;width:max-content;min-width:100%}.corner,.colhead,.rowhead{display:grid;place-items:center;background:#F0F2F6;border-right:1px solid #CBD2DD;border-bottom:1px solid #CBD2DD;font-weight:900;color:#536076;user-select:none}.colhead{position:relative}.col-resize{position:absolute;right:-5px;top:0;width:10px;height:100%;cursor:col-resize;z-index:8}.col-resize:hover{background:rgba(84,95,153,.18)}.cell{border-right:1px solid #D7DCE5;border-bottom:1px solid #D7DCE5;padding:7px 8px;background:#fff;display:flex;align-items:center;position:relative;user-select:none;min-width:0;font-size:14px}.cell.header-cell{background:#FBF5ED}.cell.header-bold{font-weight:900}.cell.selected{background:#E7ECFF;box-shadow:inset 0 0 0 2px var(--secondary);z-index:1}.cell.active-cell{background:#FFF3E3;box-shadow:inset 0 0 0 3px var(--unit);z-index:2}.cell.sorted-key{background:#EEF0F8;font-weight:900}.cell.flash{animation:cellFlash 1.1s}@keyframes cellFlash{50%{background:#E9F7F0}}
+.side-card{background:#fff;border:1px solid #D4DBE6;border-radius:12px;padding:13px;margin-bottom:12px}.side-card h3{margin:0 0 8px;color:var(--secondary-dark);font-size:17px}.side-card p{margin:6px 0;font-size:15px;line-height:1.4}.badge{display:inline-flex;gap:6px;align-items:center;padding:6px 9px;border-radius:999px;background:var(--secondary-soft);color:var(--secondary-dark);font-size:13px;font-weight:900}.save-name{font-weight:900;color:var(--secondary-dark)}
+
+.dialog-back{position:fixed;inset:0;background:#1b243454;display:grid;place-items:center;z-index:60}.dialog{width:min(560px,92vw);background:#fff;border:1px solid #C9D1DF;border-radius:15px;box-shadow:0 22px 55px #1f2c4244;padding:18px}.dialog h2{margin:0 0 12px;color:var(--secondary-dark)}.dialog label{display:block;font-weight:850;margin:10px 0 7px}.dialog input{width:100%;border:1.5px solid #BFC8D7;border-radius:9px;padding:11px 12px}.dialog input::placeholder{color:#AAB2C0}.dialog-actions{display:flex;justify-content:flex-end;gap:9px;margin-top:14px}
+
+.analysis-table{max-width:1100px;margin:12px auto;border-collapse:collapse;width:100%;background:#fff}.analysis-table th,.analysis-table td{border:1px solid #CDD5E1;padding:11px 12px}.analysis-table th{background:#FFF3E3;text-align:left}.answer-token{display:inline-block;padding:6px 9px;border-radius:8px;background:var(--secondary-soft);font-weight:900;margin:3px}.sort-arrow{font-size:24px;font-weight:950;color:var(--secondary)}
+.self-wrap{overflow-x:auto}.self-table{display:grid;grid-template-columns:minmax(330px,1.8fr) repeat(4,minmax(160px,1fr));min-width:980px;border:1px solid #D7DDE7;border-radius:12px;overflow:hidden}.self-head{background:#F4F6FA;border-right:1px solid #D7DDE7;border-bottom:1px solid #D7DDE7;padding:12px;font-size:14px;font-weight:900;text-align:center;display:grid;place-items:center;line-height:1.35}.self-objective{background:#FFF7EC;border-right:1px solid #D7DDE7;border-bottom:1px solid #D7DDE7;padding:14px;font-weight:850;line-height:1.4}.self-cell{border:0;border-right:1px solid #D7DDE7;border-bottom:1px solid #D7DDE7;background:#fff;padding:12px;font-size:15px;font-weight:750;min-height:82px}.self-cell.selected{background:var(--secondary-soft);box-shadow:inset 0 0 0 3px var(--secondary)}.finish-actions{display:flex;justify-content:center;margin-top:16px}
+.completion{text-align:center;padding:55px 20px}.completion .big{width:90px;height:90px;border-radius:50%;display:grid;place-items:center;margin:auto;background:var(--good-soft);color:var(--good);font-size:52px;font-weight:950}.completion h2{font-size:31px;color:var(--secondary-dark)}.completion p{max-width:760px;margin:0 auto 20px;color:#5C687C;font-weight:700;line-height:1.5}.repeat-btn{border:0;background:var(--secondary);color:#fff;border-radius:11px;padding:12px 18px;font-weight:900}
+.modal{position:fixed;inset:0;background:#15203366;display:grid;place-items:center;z-index:80}.modal-card{width:min(650px,92vw);background:#fff;border-radius:16px;padding:19px;border:1px solid #CBD3E0;box-shadow:0 24px 60px #1b263b44}.modal-card h2{margin:0 0 10px;color:var(--secondary-dark)}.modal-card p{line-height:1.55;font-weight:650}.modal-actions{text-align:right;margin-top:12px}
+@media(max-width:1100px){.p-body{grid-template-columns:1fr}.sidepane{border-top:1px solid #D9DFE8}.sheet-pane{border-right:0}.choice-grid{grid-template-columns:1fr}.hero{grid-template-columns:1fr}.lesson-mark{justify-self:start}}
+</style>
+<style id="nk-license-style">
+.nk-license{max-width:1100px;margin:14px auto 24px;padding:10px 16px;text-align:center;font:13px/1.45 Arial,"Noto Sans",sans-serif;color:#4e657c}
+.nk-license a{color:inherit;text-decoration:underline;text-underline-offset:2px}
+.nk-license .cc-badge{display:inline-block;margin:0 4px;padding:2px 7px;border:1px solid #8aa0b8;border-radius:6px;background:#fff;font-weight:700;white-space:nowrap}
+</style>
+</head>
+<body>
+<div class="page">
+  <section class="hero">
+    <div><div class="eyebrow">Ενότητα 3 · Δεδομένα και ανάλυση δεδομένων</div><h1>Συγκέντρωση, διαχείριση και ταξινόμηση δεδομένων στο υπολογιστικό φύλλο</h1><p>Συγκέντρωσε δημοσιευμένα δεδομένα, οργάνωσέ τα στο Praxis και χρησιμοποίησε ταξινόμηση για να απαντήσεις σε ερωτήματα.</p></div>
+    <div class="lesson-mark"><b>18</b><span>Μάθημα</span></div>
+  </section>
+  <section class="progress"><div class="progress-top"><span id="progressText"></span><span id="progressPct"></span></div><div class="bar"><div class="fill" id="fill"></div></div><div class="steps" id="steps"></div></section>
+  <section class="stage"><header class="stage-head"><div><div class="stage-kicker" id="kicker"></div><h2 class="stage-title" id="stageTitle"></h2><p class="instruction" id="instruction"></p></div><button class="help-btn" id="helpBtn">? Βοήθεια</button></header><div class="workspace"><div id="activity"></div><div class="feedback" id="feedback"></div></div></section>
+</div>
+<script>
+const UNIT='#EA922C',SECONDARY='#545F99';
+const ACTIVITIES=[
+ {t:'Επίλεξε και αντέγραψε τα δημοσιευμένα δεδομένα',i:'Επίλεξε τον πίνακα στον Ploigos και αντέγραψέ τον με την κανονική συντόμευση πληκτρολογίου.'},
+ {t:'Επικόλλησε και μορφοποίησε τα δεδομένα στο Praxis',i:'Επικόλλησε τα δεδομένα και χρησιμοποίησε πραγματικές διαδικασίες επιλογής και μορφοποίησης του υπολογιστικού φύλλου.'},
+ {t:'Αποθήκευσε το αρχείο',i:'Χρησιμοποίησε το μενού Αρχείο και αποθήκευσε το υπολογιστικό φύλλο με αντιπροσωπευτικό όνομα.'},
+ {t:'Κάνε φθίνουσα ταξινόμηση στον άνεμο',i:'Επίλεξε ένα κελί της στήλης Άνεμος και χρησιμοποίησε Δεδομένα → Φθίνουσα ταξινόμηση.'},
+ {t:'Ανάλυσε τα ταξινομημένα δεδομένα',i:'Χρησιμοποίησε τη σειρά των γραμμών και τις τιμές του ανέμου για να απαντήσεις σε ερωτήματα.'},
+ {t:'Κάνε αύξουσα ταξινόμηση',i:'Ταξινόμησε τα ίδια δεδομένα από τη μικρότερη προς τη μεγαλύτερη τιμή του ανέμου.'},
+ {t:'Τι αλλάζει με την ταξινόμηση;',i:'Διάκρινε την ταξινόμηση από άλλες λειτουργίες επεξεργασίας δεδομένων.'},
+ {t:'Συνολική δοκιμή',i:'Εφάρμοσε ταξινόμηση σε νέο μικρό σύνολο δεδομένων και χρησιμοποίησέ την για να απαντήσεις σε ερώτημα.'},
+ {t:'Τι έμαθα;',i:'Αξιολόγησε πόσο καλά πέτυχες τους στόχους του μαθήματος.'}
+];
+const HELP=[
+ 'Σύρε το ποντίκι από το πρώτο κελί του πίνακα έως το τελευταίο ώστε να επιλέξεις τα δημοσιευμένα δεδομένα. Μετά χρησιμοποίησε Ctrl+C (ή Cmd+C σε Mac).',
+ 'Κάνε κλικ στο A1 και χρησιμοποίησε Ctrl+V. Μετά σύρε από A1 έως F1 για να επιλέξεις τις επικεφαλίδες, πάτησε B και κάνε διπλό κλικ στη γραμμή ανάμεσα στις κεφαλίδες A και B για αυτόματη προσαρμογή του πλάτους της στήλης A.',
+ 'Άνοιξε Αρχείο → Αποθήκευση ως… και γράψε ακριβώς το όνομα που εμφανίζεται αχνά στο πλαίσιο.',
+ 'Η στήλη Άνεμος είναι η D. Κάνε κλικ σε ένα κελί δεδομένων της, π.χ. D3, μετά άνοιξε το μενού «Δεδομένα» και επίλεξε «Φθίνουσα ταξινόμηση».',
+ 'Με φθίνουσα ταξινόμηση εμφανίζονται πρώτα οι μεγαλύτερες τιμές. Αναζήτησε τις γραμμές με 6, 1 και 5 μποφόρ.',
+ 'Επίλεξε ξανά ένα κελί δεδομένων της στήλης D και μετά άνοιξε το μενού «Δεδομένα» → «Αύξουσα ταξινόμηση». Τώρα οι μικρότερες τιμές πρέπει να βρίσκονται πρώτες.',
+ 'Η ταξινόμηση αλλάζει τη σειρά ολόκληρων γραμμών με βάση ένα κριτήριο. Δεν κάνει αριθμητικές πράξεις και δεν κρύβει γραμμές.',
+ 'Στο νέο σύνολο δεδομένων δούλεψε μέσα στο Praxis: επίλεξε κελί της στήλης Άνεμος και χρησιμοποίησε το μενού Δεδομένα για να εφαρμόσεις τη σωστή ταξινόμηση.',
+ 'Διάλεξε ένα επίπεδο για κάθε στόχο. Δεν υπάρχουν σωστές ή λάθος επιλογές στην αυτοαξιολόγηση.'
+];
+
+/* Representative subset using the structure and visible examples of the book's 35-city dataset. */
+const weather=[
+ {city:'Δουβλίνο',dt:'1/3/2024 17:30',temp:'4°C',wind:'6 Μποφόρ ΒΑ',w:6,press:'985mb',phen:'ΑΡΚΕΤΑ ΣΥΝΝΕΦΑ'},
+ {city:'Μόσχα',dt:'1/3/2024 17:30',temp:'15°C',wind:'6 Μποφόρ ΒΑ',w:6,press:'1006mb',phen:'ΚΑΘΑΡΟΣ'},
+ {city:'Άμστερνταμ',dt:'1/3/2024 17:25',temp:'9°C',wind:'5 Μποφόρ Ν',w:5,press:'999mb',phen:'ΑΡΚΕΤΑ ΣΥΝΝΕΦΑ'},
+ {city:'Βρυξέλλες',dt:'1/3/2024 17:20',temp:'9°C',wind:'5 Μποφόρ Ν',w:5,press:'999mb',phen:'ΑΡΚΕΤΑ ΣΥΝΝΕΦΑ'},
+ {city:'Βαρσοβία',dt:'1/3/2024 17:00',temp:'10°C',wind:'5 Μποφόρ Α',w:5,press:'1012mb',phen:'ΚΑΘΑΡΟΣ'},
+ {city:'Βελιγράδι',dt:'1/3/2024 17:00',temp:'16°C',wind:'5 Μποφόρ Α',w:5,press:'1008mb',phen:'ΚΑΘΑΡΟΣ'},
+ {city:'Βουκουρέστι',dt:'1/3/2024 17:00',temp:'10°C',wind:'5 Μποφόρ Α',w:5,press:'1016mb',phen:'ΚΑΘΑΡΟΣ'},
+ {city:'Μαγιόρκα',dt:'1/3/2024 17:30',temp:'15°C',wind:'5 Μποφόρ Δ',w:5,press:'1013mb',phen:'ΛΙΓΑ ΣΥΝΝΕΦΑ'},
+ {city:'Βαρκελώνη',dt:'1/3/2024 17:00',temp:'18°C',wind:'4 Μποφόρ ΒΔ',w:4,press:'1009mb',phen:'ΛΙΓΑ ΣΥΝΝΕΦΑ'},
+ {city:'Εδιμβούργο',dt:'1/3/2024 17:50',temp:'6°C',wind:'4 Μποφόρ ΒΑ',w:4,press:'992mb',phen:'ΑΡΚΕΤΑ ΣΥΝΝΕΦΑ'},
+ {city:'Σόφια',dt:'1/3/2024 18:00',temp:'10°C',wind:'4 Μποφόρ ΝΑ',w:4,press:'1012mb',phen:'ΣΥΝΝΕΦΙΑΣΜΕΝΟΣ'},
+ {city:'Παρίσι',dt:'1/3/2024 17:30',temp:'10°C',wind:'4 Μποφόρ Ν',w:4,press:'998mb',phen:'ΛΙΓΑ ΣΥΝΝΕΦΑ'},
+ {city:'Αλικείο/Κορκί',dt:'1/3/2024 17:00',temp:'15°C',wind:'3 Μποφόρ ΝΔ',w:3,press:'1004mb',phen:'ΣΥΝΝΕΦΙΑΣΜΕΝΟΣ'},
+ {city:'Βουδαπέστη',dt:'1/3/2024 17:00',temp:'12°C',wind:'3 Μποφόρ Α',w:3,press:'1009mb',phen:'ΒΡΟΧΗ'},
+ {city:'Γενεύη',dt:'1/3/2024 17:20',temp:'12°C',wind:'3 Μποφόρ Ν',w:3,press:'1007mb',phen:'ΛΙΓΑ ΣΥΝΝΕΦΑ'},
+ {city:'Κοπεγχάγη',dt:'1/3/2024 17:50',temp:'5°C',wind:'3 Μποφόρ ΝΑ',w:3,press:'1006mb',phen:'ΟΜΙΧΛΗ'},
+ {city:'Κων/πολη',dt:'1/3/2024 17:50',temp:'10°C',wind:'3 Μποφόρ Β',w:3,press:'1014mb',phen:'ΚΑΘΑΡΟΣ'},
+ {city:'Βιέννη',dt:'1/3/2024 17:20',temp:'10°C',wind:'2 Μποφόρ ΝΑ',w:2,press:'1008mb',phen:'ΑΡΚΕΤΑ ΣΥΝΝΕΦΑ'},
+ {city:'Κάιρο',dt:'1/3/2024 18:00',temp:'28°C',wind:'2 Μποφόρ Ν',w:2,press:'1011mb',phen:'ΚΑΘΑΡΟΣ'},
+ {city:'Λισαβόνα',dt:'1/3/2024 17:10',temp:'14°C',wind:'1 Μποφόρ Δ',w:1,press:'1015mb',phen:'ΛΙΓΑ ΣΥΝΝΕΦΑ'},
+ {city:'Ρώμη',dt:'1/3/2024 18:10',temp:'17°C',wind:'1 Μποφόρ ΝΔ',w:1,press:'1013mb',phen:'ΚΑΘΑΡΟΣ'}
+];
+const totalSet=[
+ {city:'Πάτρα',temp:'17°C',wind:'2 Μποφόρ',w:2},
+ {city:'Λάρισα',temp:'14°C',wind:'5 Μποφόρ',w:5},
+ {city:'Χανιά',temp:'19°C',wind:'3 Μποφόρ',w:3},
+ {city:'Ιωάννινα',temp:'10°C',wind:'1 Μποφόρ',w:1},
+ {city:'Καβάλα',temp:'12°C',wind:'4 Μποφόρ',w:4}
+];
+let stage=0,finished=false,renderEpoch=0,pendingTimers=[];const completed=new Set();const shuffleCache={};
+const q=s=>document.querySelector(s),qa=s=>[...document.querySelectorAll(s)];const activity=q('#activity'),feedback=q('#feedback'),kicker=q('#kicker'),stageTitle=q('#stageTitle'),instruction=q('#instruction');
+function clearTimers(){pendingTimers.forEach(clearTimeout);pendingTimers=[]}
+function later(fn,ms){const s=stage,e=renderEpoch;const id=setTimeout(()=>{if(stage===s&&renderEpoch===e)fn()},ms);pendingTimers.push(id);return id}
+function setFeedback(txt,type='info'){feedback.className='feedback show '+type;feedback.innerHTML=txt}
+function clearFeedback(){feedback.className='feedback';feedback.textContent=''}
+function wrong(el,msg){el.classList.remove('wrong');void el.offsetWidth;el.classList.add('wrong');setFeedback(msg,'bad');setTimeout(()=>el.classList.remove('wrong'),560)}
+function shuffleCopy(a){a=[...a];for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}function shuffleOnce(key,a){if(!shuffleCache[key])shuffleCache[key]=shuffleCopy(a);return shuffleCache[key]}
+function updateProgress(){const n=ACTIVITIES.length,pct=finished?100:Math.round(stage/(n-1)*100);q('#progressText').textContent=finished?'Ολοκληρώθηκε':`Δραστηριότητα ${stage+1} από ${n}`;q('#progressPct').textContent=pct+'%';q('#fill').style.width=pct+'%';q('#steps').innerHTML=ACTIVITIES.map((_,i)=>`<span class="step-dot ${completed.has(i)?'done':''} ${i===stage&&!finished?'current':''}">${i+1}</span>`).join('')}
+function advance(){completed.add(stage);stage++;render()}
+function protectTyping(el){['paste','copy','cut','drop','contextmenu'].forEach(ev=>el.addEventListener(ev,e=>e.preventDefault()));el.addEventListener('keydown',e=>{if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='v')e.preventDefault();if(e.shiftKey&&e.key==='Insert')e.preventDefault()})}
+function render(){clearTimers();renderEpoch++;document.onkeydown=null;clearFeedback();if(finished)return renderCompletion();updateProgress();const a=ACTIVITIES[stage];kicker.textContent=`Δραστηριότητα ${stage+1}`;stageTitle.textContent=a.t;instruction.textContent=a.i;activity.innerHTML='';renderers[stage]();}
+q('#helpBtn').onclick=()=>{const div=document.createElement('div');div.className='modal';div.innerHTML=`<div class="modal-card"><h2>Βοήθεια</h2><p>${HELP[stage]}</p><div class="modal-actions"><button class="primary" id="closeHelp">Κλείσιμο</button></div></div>`;document.body.appendChild(div);q('#closeHelp').onclick=()=>div.remove();div.onclick=e=>{if(e.target===div)div.remove()}}
+
+function webTable(selected=false){
+ const heads=['Πόλη','Ημερομηνία - Ώρα','Θερμοκρασία','Άνεμος','Πίεση','Φαινόμενα'];
+ let i=0;
+ return `<table class="webtable"><thead><tr>${heads.map(h=>`<th data-web-index="${i++}" class="${selected?'web-selected':''}">${h}</th>`).join('')}</tr></thead><tbody>${weather.slice(0,15).map(r=>`<tr>${rowData(r).map(v=>`<td data-web-index="${i++}" class="${selected?'web-selected':''}">${v}</td>`).join('')}</tr>`).join('')}</tbody></table>`
+}
+function browserShell(selected=false,copied=false){return `<div class="browser"><div class="browser-top"><b class="browser-app">Ploigos</b><div class="address">https://weather.example/europe</div></div><div class="browser-page"><div class="site-head"><h3>Ο καιρός στην Ευρώπη</h3><span class="badge">Δημοσιευμένα δεδομένα</span></div>${webTable(selected)}<div class="copy-bar"><span>${copied?'Τα δεδομένα αντιγράφηκαν στο πρόχειρο.':selected?'Τα δεδομένα είναι επιλεγμένα. Χρησιμοποίησε τη συντόμευση αντιγραφής.':'Σύρε από το επάνω αριστερό έως το κάτω δεξί κελί του πίνακα.'}</span><span class="copy-state">${copied?'✓ Αντιγράφηκε':selected?'<span class="kbd">Ctrl</span> + <span class="kbd">C</span>':'Επιλογή με σύρσιμο'}</span></div></div></div>`}
+function rowData(r){return [r.city,r.dt,r.temp,r.wind,r.press,r.phen]}
+function praxisShell({rows=[],active='',selected=[],sortKey=false,menu='',formatted=false,file='Νέο υπολογιστικό φύλλο',pasted=false,autoFitCols=[]}={}){
+ const heads=['Πόλη','Ημερομηνία - Ώρα','Θερμοκρασία','Άνεμος','Πίεση','Φαινόμενα'], letters=['A','B','C','D','E','F'];
+ const base={A:112,B:138,C:118,D:138,E:105,F:170}, fit={A:175,B:170,C:135,D:165,E:115,F:220};
+ const widths=letters.map(l=>(autoFitCols.includes(l)?fit[l]:base[l])+'px');
+ const all=[heads,...rows.map(rowData)];
+ let cells='<div class="corner"></div>'+letters.map(x=>`<div class="colhead">${x}<span class="col-resize" data-resize="${x}" title="Διπλό κλικ για αυτόματη προσαρμογή πλάτους"></span></div>`).join('');
+ all.forEach((r,ri)=>{cells+=`<div class="rowhead" data-rowhead="${ri+1}">${ri+1}</div>`;r.forEach((v,ci)=>{const ref=letters[ci]+(ri+1);cells+=`<div class="cell ${ri===0?'header-cell ':''}${ri===0&&formatted?'header-bold ':''}${selected.includes(ref)?'selected ':''}${active===ref?'active-cell ':''}${sortKey&&ci===3&&ri>0?'sorted-key ':''}" data-cell="${ref}">${pasted||rows.length?v:''}</div>`})});
+ const dataDrop=menu==='data'?`<div class="menu-drop" id="dataDrop"><button id="sortAsc">↑ Αύξουσα ταξινόμηση</button><button id="sortDesc">↓ Φθίνουσα ταξινόμηση</button></div>`:'';
+ const fileDrop=menu==='file'?`<div class="menu-drop" id="fileDrop"><button id="saveAs">Αποθήκευση ως…</button></div>`:'';
+ return `<div class="praxis"><div class="p-titlebar"><b class="p-app">Praxis</b><span>Υπολογιστικό φύλλο</span><span class="p-file">${file}</span></div><div class="p-menubar"><div class="menu-wrap"><button class="menu-btn ${menu==='file'?'open':''}" id="fileMenu">Αρχείο</button>${fileDrop}</div><button class="menu-btn">Επεξεργασία</button><button class="menu-btn">Προβολή</button><button class="menu-btn">Εισαγωγή</button><button class="menu-btn">Μορφή</button><div class="menu-wrap"><button class="menu-btn ${menu==='data'?'open':''}" id="dataMenu">Δεδομένα</button>${dataDrop}</div></div><div class="p-toolbar"><button class="tool ${formatted?'active':''}" id="boldTool"><b>B</b></button><input class="namebox" value="${active||'A1'}" readonly><div class="formula">${active?'Επιλεγμένο κελί '+active:'Γραμμή τύπων'}</div></div><div class="p-body"><div class="sheet-pane"><div class="sheet" style="grid-template-columns:48px ${widths.join(' ')}">${cells}</div></div><div class="sidepane"><div class="side-card"><h3>Κατάσταση</h3><p>${rows.length?'Γραμμές δεδομένων: <b>'+rows.length+'</b>':'Το φύλλο είναι ακόμη κενό.'}</p><p>${formatted?'✓ Οι επικεφαλίδες είναι έντονες':'Οι επικεφαλίδες δεν έχουν ακόμη μορφοποιηθεί'}</p><p>${autoFitCols.length?'✓ Αυτόματη προσαρμογή: '+autoFitCols.join(', '):'Αυτόματη προσαρμογή πλάτους: όχι ακόμη'}</p></div><div class="side-card"><h3>Χαρακτηριστικό ταξινόμησης</h3><p><b>Άνεμος</b> - στήλη D</p><p>Η ταξινόμηση μετακινεί <b>ολόκληρες γραμμές</b>.</p></div></div></div></div>`}
+function refsForRows(n){const letters=['A','B','C','D','E','F'],refs=[];for(let r=1;r<=n+1;r++)for(const l of letters)refs.push(l+r);return refs}
+
+/* Activity 1 */
+let a1selected=false,a1copied=false,a1hold=false;
+function isCopyShortcut(e){return (e.ctrlKey||e.metaKey)&&(e.key.toLowerCase()==='c'||e.code==='KeyC')}
+function isPasteShortcut(e){return (e.ctrlKey||e.metaKey)&&(e.key.toLowerCase()==='v'||e.code==='KeyV')}
+function r1(){
+ const prompt=!a1selected
+  ?'Στον Ploigos <b>σύρε</b> από το πρώτο κελί του πίνακα έως το τελευταίο για να επιλέξεις τα δημοσιευμένα δεδομένα.'
+  :!a1copied
+   ?'Τα δεδομένα επιλέχθηκαν. Τώρα πάτησε <span class="kbd">Ctrl</span> + <span class="kbd">C</span> για να τα αντιγράψεις.'
+   :'Τα επιλεγμένα δεδομένα αντιγράφηκαν στο πρόχειρο.';
+ activity.innerHTML=`<div class="task-strip">${prompt}</div>${browserShell(a1selected,a1copied)}`;
+ if(a1hold&&a1copied){setFeedback('Τα επιλεγμένα δεδομένα αντιγράφηκαν ✓','good');later(()=>advance(),1800);return}
+ const cells=qa('[data-web-index]');
+ if(!a1selected&&cells.length){
+  let dragging=false;
+  const last=cells.length-1;
+  cells[0].onmousedown=e=>{e.preventDefault();dragging=true;cells.forEach(c=>c.classList.remove('web-selecting'));cells[0].classList.add('web-selecting')};
+  cells.forEach((c,idx)=>{
+   c.onmouseenter=()=>{if(!dragging)return;cells.forEach((x,j)=>x.classList.toggle('web-selecting',j<=idx))};
+   c.onmouseup=()=>{if(!dragging)return;dragging=false;if(idx!==last){setFeedback('Σύρε μέχρι το τελευταίο κελί, κάτω δεξιά, ώστε να επιλεγεί ολόκληρος ο πίνακας.','bad');r1();return}a1selected=true;r1();setFeedback('Ολόκληρος ο πίνακας επιλέχθηκε. Τώρα χρησιμοποίησε Ctrl+C.','info')};
+  });
+ }
+ if(a1selected&&!a1copied){document.onkeydown=e=>{if(!isCopyShortcut(e))return;e.preventDefault();a1copied=true;a1hold=true;document.onkeydown=null;r1()}}
+}
+
+/* Activity 2 */
+let a2active=false,a2pasted=false,a2headerSelected=false,a2bold=false,a2autoFit=false,a2hold=false;
+function headerRefs(){return ['A1','B1','C1','D1','E1','F1']}
+function r2(){
+ let prompt='';
+ if(!a2active)prompt='Στο Praxis κάνε κλικ στο κελί <b>A1</b>, όπου θα ξεκινήσει η επικόλληση.';
+ else if(!a2pasted)prompt='Το A1 είναι ενεργό. Πάτησε <span class="kbd">Ctrl</span> + <span class="kbd">V</span> για να επικολλήσεις τα δεδομένα.';
+ else if(!a2headerSelected)prompt='Τώρα <b>σύρε από το A1 έως το F1</b> για να επιλέξεις όλα τα κελιά της γραμμής 1 με τις επικεφαλίδες.';
+ else if(!a2bold)prompt='Οι επικεφαλίδες είναι επιλεγμένες. Πάτησε το πραγματικό κουμπί <b>B</b> της γραμμής εργαλείων.';
+ else if(!a2autoFit)prompt='Μετακίνησε τον δείκτη στη διαχωριστική γραμμή <b>ανάμεσα στα γράμματα A και B</b> και κάνε <b>διπλό κλικ</b> για αυτόματη προσαρμογή του πλάτους της στήλης A.';
+ else prompt='Η γραμμή 1 είναι έντονη και η στήλη A έχει προσαρμοστεί αυτόματα.';
+ activity.innerHTML=`<div class="task-strip">${prompt}</div>${praxisShell({rows:a2pasted?weather:[],active:a2active?'A1':'',selected:a2headerSelected?headerRefs():[],formatted:a2bold,pasted:a2pasted,autoFitCols:a2autoFit?['A']:[]})}`;
+ if(a2hold&&a2autoFit){setFeedback('Η μορφοποίηση ολοκληρώθηκε με πραγματικές ενέργειες του υπολογιστικού φύλλου ✓','good');later(()=>advance(),2100);return}
+ const a1=q('[data-cell="A1"]');
+ if(a1&&!a2active){a1.onclick=()=>{a2active=true;r2();setFeedback('Το A1 είναι ενεργό. Τώρα κάνε επικόλληση με Ctrl+V.','info')};return}
+ if(a2active&&!a2pasted){document.onkeydown=e=>{if(!isPasteShortcut(e))return;e.preventDefault();if(!a1copied){setFeedback('Πρώτα πρέπει να έχεις αντιγράψει τον πίνακα από τον Ploigos.','bad');return}a2pasted=true;document.onkeydown=null;r2();setFeedback('Τα δεδομένα επικολλήθηκαν. Τώρα επίλεξε με σύρσιμο τα κελιά A1:F1.','info')};return}
+ if(a2pasted&&!a2headerSelected){
+  const headers=headerRefs().map(ref=>q(`[data-cell="${ref}"]`));let dragging=false;
+  headers[0].onmousedown=e=>{e.preventDefault();dragging=true;headers.forEach(x=>x.classList.remove('selected'));headers[0].classList.add('selected')};
+  headers.forEach((c,idx)=>{c.onmouseenter=()=>{if(!dragging)return;headers.forEach((x,j)=>x.classList.toggle('selected',j<=idx))};c.onmouseup=()=>{if(!dragging)return;dragging=false;if(idx!==headers.length-1){setFeedback('Σύρε μέχρι το F1 ώστε να επιλεγούν όλα τα κελιά της γραμμής 1.','bad');r2();return}a2headerSelected=true;r2();setFeedback('Επιλέχθηκαν τα A1:F1. Τώρα πάτησε B.','info')}});return
+ }
+ if(a2headerSelected&&!a2bold){q('#boldTool').onclick=()=>{a2bold=true;r2();setFeedback('Οι επικεφαλίδες έγιναν έντονες. Τώρα χρησιμοποίησε τη διαχωριστική γραμμή A–B.','info')};return}
+ if(a2bold&&!a2autoFit){
+  qa('[data-resize]').forEach(h=>{h.ondblclick=e=>{e.preventDefault();if(h.dataset.resize!=='A'){setFeedback('Για αυτή τη δοκιμή χρησιμοποίησε τη γραμμή ανάμεσα στα A και B, δηλαδή το δεξί όριο της στήλης A.','bad');return}a2autoFit=true;a2hold=true;r2()}});return
+ }
+}
+
+/* Activity 3 */
+let a3menu='',a3hold=false,a3saved=false;
+function r3(){activity.innerHTML=`<div class="task-strip">Άνοιξε <b>Αρχείο → Αποθήκευση ως…</b> και αποθήκευσε το αρχείο με το όνομα που εμφανίζεται στο πλαίσιο.</div>${praxisShell({rows:weather,formatted:true,menu:a3menu,file:a3saved?'Μετεωρολογικές μετρήσεις':'Νέο υπολογιστικό φύλλο',pasted:true,autoFitCols:['A']})}`;
+ if(a3hold&&a3saved){setFeedback('Το αρχείο αποθηκεύτηκε ως «Μετεωρολογικές μετρήσεις» ✓','good');later(()=>advance(),1900);return}
+ q('#fileMenu').onclick=()=>{a3menu=a3menu==='file'?'':'file';r3()};if(a3menu==='file')q('#saveAs').onclick=()=>openSaveDialog()
+}
+function openSaveDialog(){const back=document.createElement('div');back.className='dialog-back';back.innerHTML=`<div class="dialog"><h2>Αποθήκευση ως</h2><label>Όνομα αρχείου</label><input id="saveInput" placeholder="Μετεωρολογικές μετρήσεις" autocomplete="off"><div class="dialog-actions"><button class="secondary-btn" id="cancelSave">Άκυρο</button><button class="primary" id="confirmSave">Αποθήκευση</button></div></div>`;document.body.appendChild(back);const inp=q('#saveInput');protectTyping(inp);inp.focus();q('#cancelSave').onclick=()=>back.remove();function confirm(){if(inp.value!=='Μετεωρολογικές μετρήσεις'){setFeedback('Γράψε ακριβώς το όνομα που εμφανίζεται με αχνά γράμματα στο πλαίσιο.','bad');return}back.remove();a3saved=true;a3hold=true;r3()}q('#confirmSave').onclick=confirm;inp.onkeydown=e=>{if(e.key==='Enter'){e.preventDefault();confirm()}}}
+
+/* Activity 4 */
+let a4step=0,a4active='',a4menu='',a4sorted=false,a4hold=false;let descRows=[];
+function r4(){const rows=a4sorted?descRows:weather;activity.innerHTML=`<div class="task-strip">${a4step===0?'Κάνε κλικ σε ένα κελί δεδομένων της στήλης <b>D - Άνεμος</b>, π.χ. στο <b>D3</b>.':'Άνοιξε <b>Δεδομένα</b> και επίλεξε <b>Φθίνουσα ταξινόμηση</b>.'}</div>${praxisShell({rows,active:a4active,menu:a4menu,sortKey:a4sorted,formatted:true,file:'Μετεωρολογικές μετρήσεις',pasted:true,autoFitCols:['A']})}`;
+ if(a4hold){setFeedback(a4sorted?'Οι γραμμές ταξινομήθηκαν από τον ισχυρότερο προς τον ασθενέστερο άνεμο ✓':'Το κελί D3 επιλέχθηκε ✓','good');later(()=>{a4hold=false;if(a4sorted)advance();else{a4step=1;r4()}},a4sorted?2300:1100);return}
+ if(a4step===0){qa('[data-cell^="D"]').filter(c=>c.dataset.cell!=='D1').forEach(c=>c.onclick=()=>{if(c.dataset.cell!=='D3')return wrong(c,'Για να ακολουθήσεις το παράδειγμα του βιβλίου, επίλεξε το D3.');a4active='D3';a4hold=true;r4()});return}
+ q('#dataMenu').onclick=()=>{a4menu=a4menu==='data'?'':'data';r4()};if(a4menu==='data'){q('#sortAsc').onclick=()=>setFeedback('Χρειάζεται φθίνουσα ταξινόμηση ώστε οι μεγαλύτερες τιμές να εμφανιστούν πρώτες.','bad');q('#sortDesc').onclick=()=>{descRows=[...weather].sort((a,b)=>b.w-a.w||a.city.localeCompare(b.city,'el'));a4sorted=true;a4menu='';a4hold=true;r4()}}
+}
+
+/* Activity 5 */
+let a5idx=0,a5hold=false;const a5cases=[
+ {q:'Ποιες πόλεις βρίσκονται στην κορυφή με άνεμο 6 μποφόρ;',ok:'six',opts:[['six','Δουβλίνο και Μόσχα'],['five','Άμστερνταμ και Βρυξέλλες'],['one','Λισαβόνα και Ρώμη'],['four','Σόφια και Παρίσι']]},
+ {q:'Ποιες πόλεις έχουν τη μικρότερη τιμή του ανέμου στο σύνολο της δραστηριότητας, 1 μποφόρ;',ok:'one',opts:[['one','Λισαβόνα και Ρώμη'],['six','Δουβλίνο και Μόσχα'],['two','Βιέννη και Κάιρο'],['five','Βαρσοβία και Βελιγράδι']]},
+ {q:'Ποια ομάδα περιλαμβάνει μόνο πόλεις με άνεμο 5 μποφόρ;',ok:'five',opts:[['five','Άμστερνταμ, Βρυξέλλες, Βαρσοβία, Βελιγράδι, Βουκουρέστι και Μαγιόρκα'],['four','Βαρκελώνη, Εδιμβούργο, Σόφια και Παρίσι'],['three','Βουδαπέστη, Γενεύη, Κοπεγχάγη και Κων/πολη'],['mixed','Δουβλίνο, Βιέννη και Κάιρο']]}
+];
+function r5(){const d=a5cases[a5idx],opts=shuffleOnce('a5'+a5idx,d.opts);activity.innerHTML=`<div class="case-count">Ερώτημα ${a5idx+1} από 3</div>${praxisShell({rows:descRows,active:'D3',sortKey:true,formatted:true,file:'Μετεωρολογικές μετρήσεις',pasted:true,autoFitCols:['A']})}<div class="scenario" style="margin-top:14px"><b>${d.q}</b></div><div class="choice-grid">${opts.map(o=>`<button class="choice ${a5hold&&o[0]===d.ok?'correct':''}" data-a5="${o[0]}">${o[1]}</button>`).join('')}</div>`;if(a5hold){setFeedback('Σωστά ✓','good');later(()=>{a5hold=false;a5idx++;if(a5idx<3)r5();else advance()},1500);return}qa('[data-a5]').forEach(b=>b.onclick=()=>{if(b.dataset.a5!==d.ok)return wrong(b,'Χρησιμοποίησε τις πραγματικές ταξινομημένες γραμμές που εμφανίζονται στο Praxis.');a5hold=true;r5()})}
+
+/* Activity 6 */
+let a6step=0,a6active='',a6menu='',a6sorted=false,a6hold=false;let ascRows=[];
+function r6(){const rows=a6sorted?ascRows:descRows;const prompt=a6step===0?'Κάνε κλικ σε ένα κελί δεδομένων της στήλης <b>D - Άνεμος</b>, π.χ. στο <b>D3</b>.':'Τώρα άνοιξε <b>Δεδομένα</b> και επίλεξε <b>Αύξουσα ταξινόμηση</b>.';activity.innerHTML=`<div class="task-strip">${prompt}</div>${praxisShell({rows,active:a6active,menu:a6menu,sortKey:a6sorted,formatted:true,file:'Μετεωρολογικές μετρήσεις',pasted:true,autoFitCols:['A']})}`;
+ if(a6hold){setFeedback(a6sorted?'Τώρα οι μικρότερες τιμές του ανέμου εμφανίζονται πρώτες ✓':'Το D3 επιλέχθηκε. Συνέχισε από το μενού Δεδομένα.','good');later(()=>{a6hold=false;if(a6sorted)advance();else{a6step=1;r6()}},a6sorted?2200:1000);return}
+ if(a6step===0){qa('[data-cell^="D"]').filter(c=>c.dataset.cell!=='D1').forEach(c=>c.onclick=()=>{if(c.dataset.cell!=='D3')return wrong(c,'Επίλεξε το D3 για να ακολουθήσεις το παράδειγμα.');a6active='D3';a6hold=true;r6()});return}
+ q('#dataMenu').onclick=()=>{a6menu=a6menu==='data'?'':'data';r6()};if(a6menu==='data'){q('#sortDesc').onclick=()=>setFeedback('Το ζητούμενο τώρα είναι αύξουσα ταξινόμηση.','bad');q('#sortAsc').onclick=()=>{ascRows=[...weather].sort((a,b)=>a.w-b.w||a.city.localeCompare(b.city,'el'));a6sorted=true;a6menu='';a6hold=true;r6()}}
+}
+
+/* Activity 7 */
+let a7hold=false;function r7(){const opts=shuffleOnce('a7',[['calc','Να γίνουν αριθμητικές πράξεις στα δεδομένα.'],['sort','Να αλλάξει η σειρά των γραμμών των δεδομένων σύμφωνα με κριτήριο της επιλογής μας.'],['filter','Να εμφανίζονται μόνο οι γραμμές που έχουν συγκεκριμένη τιμή ή τιμές.']]);activity.innerHTML=`<div class="scenario"><b>Με τη χρήση της «Αύξουσας» ή «Φθίνουσας» ταξινόμησης επιλέγουμε:</b></div><div class="choice-grid">${opts.map(o=>`<button class="choice ${a7hold&&o[0]==='sort'?'correct':''}" data-a7="${o[0]}">${o[1]}</button>`).join('')}</div>`;if(a7hold){setFeedback('Σωστά ✓ Η ταξινόμηση αλλάζει τη σειρά ολόκληρων γραμμών σύμφωνα με το κριτήριο που επιλέγουμε.','good');later(()=>advance(),1700);return}qa('[data-a7]').forEach(b=>b.onclick=()=>{if(b.dataset.a7!=='sort')return wrong(b,'Η ταξινόμηση δεν κάνει πράξεις και δεν λειτουργεί ως φίλτρο.');a7hold=true;r7()})}
+
+/* Activity 8 */
+let a8step=0,a8active='',a8menu='',a8hold=false,a8question=0;let a8rows=[];
+const totalWeather=totalSet.map(r=>({city:r.city,dt:'-',temp:r.temp,wind:r.wind,w:r.w,press:'-',phen:'-'}));
+function r8(){
+ if(!a8rows.length)a8rows=[...totalWeather];
+ if(a8step===0){activity.innerHTML=`<div class="task-strip">Θέλεις να εμφανιστεί πρώτη η πόλη με τον <b>ισχυρότερο άνεμο</b>. Κάνε κλικ στο <b>D2</b>.</div>${praxisShell({rows:a8rows,active:a8active,menu:a8menu,formatted:true,file:'Δοκιμή ταξινόμησης',pasted:true,autoFitCols:['A']})}`;if(a8hold){setFeedback('Το D2 επιλέχθηκε. Τώρα χρησιμοποίησε το μενού Δεδομένα.','good');later(()=>{a8hold=false;a8step=1;r8()},900);return}q('[data-cell="D2"]').onclick=()=>{a8active='D2';a8hold=true;r8()};return}
+ if(a8step===1){activity.innerHTML=`<div class="task-strip">Άνοιξε <b>Δεδομένα</b> και επίλεξε την ταξινόμηση που θα φέρει τη <b>μεγαλύτερη</b> τιμή πρώτη.</div>${praxisShell({rows:a8rows,active:a8active,menu:a8menu,formatted:true,file:'Δοκιμή ταξινόμησης',pasted:true,autoFitCols:['A']})}`;q('#dataMenu').onclick=()=>{a8menu=a8menu==='data'?'':'data';r8()};if(a8menu==='data'){q('#sortAsc').onclick=()=>setFeedback('Για να εμφανιστεί πρώτη η μεγαλύτερη τιμή χρειάζεται φθίνουσα ταξινόμηση.','bad');q('#sortDesc').onclick=()=>{a8rows=[...totalWeather].sort((a,b)=>b.w-a.w);a8menu='';a8step=2;r8();setFeedback('Η φθίνουσα ταξινόμηση εφαρμόστηκε. Παρατήρησε την πρώτη γραμμή.','good')}}return}
+ if(a8step===2){const opts=shuffleOnce('a8q0',['Λάρισα','Ιωάννινα','Πάτρα','Χανιά']);activity.innerHTML=`${praxisShell({rows:a8rows,active:'D2',sortKey:true,formatted:true,file:'Δοκιμή ταξινόμησης',pasted:true,autoFitCols:['A']})}<div class="scenario" style="margin-top:14px"><b>Ποια πόλη εμφανίζεται πρώτη μετά τη φθίνουσα ταξινόμηση;</b></div><div class="choice-grid">${opts.map(o=>`<button class="choice ${a8hold&&o==='Λάρισα'?'correct':''}" data-a8ans="${o}">${o}</button>`).join('')}</div>`;if(a8hold){setFeedback('Σωστά ✓','good');later(()=>{a8hold=false;a8active='';a8step=3;r8()},1400);return}qa('[data-a8ans]').forEach(b=>b.onclick=()=>{if(b.dataset.a8ans!=='Λάρισα')return wrong(b,'Χρησιμοποίησε την πρώτη γραμμή του ταξινομημένου φύλλου.');a8hold=true;r8()});return}
+ if(a8step===3){activity.innerHTML=`<div class="task-strip">Τώρα θέλεις να εμφανιστεί πρώτη η πόλη με τον <b>ασθενέστερο άνεμο</b>. Κάνε ξανά κλικ στο <b>D2</b>.</div>${praxisShell({rows:a8rows,active:a8active,formatted:true,file:'Δοκιμή ταξινόμησης',pasted:true,autoFitCols:['A']})}`;if(a8hold){setFeedback('Το D2 επιλέχθηκε. Συνέχισε από το μενού Δεδομένα.','good');later(()=>{a8hold=false;a8step=4;r8()},900);return}q('[data-cell="D2"]').onclick=()=>{a8active='D2';a8hold=true;r8()};return}
+ if(a8step===4){activity.innerHTML=`<div class="task-strip">Άνοιξε <b>Δεδομένα</b> και επίλεξε την ταξινόμηση που θα φέρει τη <b>μικρότερη</b> τιμή πρώτη.</div>${praxisShell({rows:a8rows,active:a8active,menu:a8menu,formatted:true,file:'Δοκιμή ταξινόμησης',pasted:true,autoFitCols:['A']})}`;q('#dataMenu').onclick=()=>{a8menu=a8menu==='data'?'':'data';r8()};if(a8menu==='data'){q('#sortDesc').onclick=()=>setFeedback('Για να εμφανιστεί πρώτη η μικρότερη τιμή χρειάζεται αύξουσα ταξινόμηση.','bad');q('#sortAsc').onclick=()=>{a8rows=[...totalWeather].sort((a,b)=>a.w-b.w);a8menu='';a8step=5;r8();setFeedback('Η αύξουσα ταξινόμηση εφαρμόστηκε. Παρατήρησε την πρώτη γραμμή.','good')}}return}
+ const opts=shuffleOnce('a8q1',['Ιωάννινα','Καβάλα','Λάρισα','Πάτρα']);activity.innerHTML=`${praxisShell({rows:a8rows,active:'D2',sortKey:true,formatted:true,file:'Δοκιμή ταξινόμησης',pasted:true,autoFitCols:['A']})}<div class="scenario" style="margin-top:14px"><b>Ποια πόλη εμφανίζεται πρώτη μετά την αύξουσα ταξινόμηση;</b></div><div class="choice-grid">${opts.map(o=>`<button class="choice ${a8hold&&o==='Ιωάννινα'?'correct':''}" data-a8ans2="${o}">${o}</button>`).join('')}</div>`;if(a8hold){setFeedback('Σωστά ✓','good');later(()=>advance(),1600);return}qa('[data-a8ans2]').forEach(b=>b.onclick=()=>{if(b.dataset.a8ans2!=='Ιωάννινα')return wrong(b,'Χρησιμοποίησε την πρώτη γραμμή μετά την αύξουσα ταξινόμηση.');a8hold=true;r8()})
+}
+
+/* Activity 9 */
+const levels=['Έχω καταλάβει και μπορώ να εξηγήσω','Έχω καταλάβει αρκετά καλά','Έχω καταλάβει αλλά έχω απορίες','Χρειάζομαι βοήθεια'];
+const objectives=['Να συγκεντρώνω και να διαχειρίζομαι δημοσιευμένα δεδομένα για την επίλυση προβλημάτων.','Να ταξινομώ δεδομένα στο υπολογιστικό φύλλο.'];let selfSel=[null,null];
+function r9(){activity.innerHTML=`<div class="self-wrap"><div class="self-table"><div class="self-head">Διαλέγω πόσο καλά έμαθα</div>${levels.map(x=>`<div class="self-head">${x}</div>`).join('')}${objectives.map((o,row)=>`<div class="self-objective">✓ ${o}</div>${levels.map((l,col)=>`<button class="self-cell ${selfSel[row]===col?'selected':''}" data-self="${row}:${col}">${l}</button>`).join('')}`).join('')}</div></div><div class="finish-actions"><button class="primary" id="finishBtn" ${selfSel.some(x=>x===null)?'disabled':''}>Ολοκλήρωση</button></div>`;qa('[data-self]').forEach(b=>b.onclick=()=>{const [r,c]=b.dataset.self.split(':').map(Number);selfSel[r]=c;r9()});q('#finishBtn').onclick=()=>{if(selfSel.some(x=>x===null))return;completed.add(stage);finished=true;render()}}
+const renderers=[r1,r2,r3,r4,r5,r6,r7,r8,r9];
+function renderCompletion(){updateProgress();kicker.textContent='ΟΛΟΚΛΗΡΩΣΗ';stageTitle.textContent='Μάθημα 18 ολοκληρώθηκε';instruction.textContent='Ολοκλήρωσες τη συγκέντρωση, διαχείριση και ταξινόμηση δημοσιευμένων δεδομένων στο υπολογιστικό φύλλο.';activity.innerHTML=`<div class="completion"><div class="big">✓</div><h2>Ολοκλήρωσες το μάθημα!</h2><p>Μπορείς να μεταφέρεις δημοσιευμένα δεδομένα σε υπολογιστικό φύλλο και να χρησιμοποιείς αύξουσα ή φθίνουσα ταξινόμηση για να τα αναλύεις.</p><button class="repeat-btn" id="repeatBtn">↻ Επανάληψη μαθήματος</button></div>`;q('#repeatBtn').onclick=()=>location.reload()}
+render();
+</script>
+<footer class="nk-license" aria-label="Πληροφορίες δημιουργού και άδειας χρήσης">
+  <div><strong>Created by Nikos Kalakos · © 2026</strong></div>
+  <div>Original educational content and simulation design licensed under <a class="cc-badge" href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank" rel="license noopener noreferrer">CC BY-NC 4.0</a>.</div>
+  <div>Source code © 2026 Nikos Kalakos.</div>
+  <div>Third-party and textbook materials remain subject to the rights and licences of their respective copyright holders.</div>
+</footer>
+</body>
+</html>

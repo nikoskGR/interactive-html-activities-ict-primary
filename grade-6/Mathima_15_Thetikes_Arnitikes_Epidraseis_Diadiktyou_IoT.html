@@ -1,0 +1,244 @@
+<!--
+ICT Educational Simulation
+Created by Nikos Kalakos
+Copyright © 2026 Nikos Kalakos
+
+Original educational content and simulation design licensed under CC BY-NC 4.0.
+Source code © 2026 Nikos Kalakos.
+Third-party and textbook materials remain subject to the rights and licences of their respective copyright holders.
+-->
+<!DOCTYPE html>
+<html lang="el">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta name="author" content="Nikos Kalakos">
+<meta name="copyright" content="© 2026 Nikos Kalakos">
+<meta name="license" content="Original educational content and simulation design: CC BY-NC 4.0; source code © 2026 Nikos Kalakos; third-party and textbook materials excluded.">
+<title>Μάθημα 15 – Οι θετικές και αρνητικές επιπτώσεις από τη χρήση του διαδικτύου στην καθημερινή ζωή</title>
+<style>
+:root{
+  --unit:#EA922C; --unit-dark:#B86610; --unit-soft:#FFF4E6;
+  --secondary:#545F99; --secondary-dark:#3D477C; --secondary-soft:#EEF0F8;
+  --ink:#273247; --muted:#667389; --line:#D8DEEA; --bg:#F4F6FA;
+  --good:#23845A; --good-soft:#E9F7F0; --bad:#B64242; --bad-soft:#FDEEEE;
+  --panel:#FFFFFF; --shadow:0 12px 32px rgba(43,54,84,.10);
+}
+*{box-sizing:border-box}html{scroll-behavior:smooth}
+body{margin:0;font-family:Inter,"Segoe UI",Arial,sans-serif;color:var(--ink);background:radial-gradient(circle at 8% 8%,rgba(234,146,44,.10),transparent 30%),radial-gradient(circle at 92% 13%,rgba(84,95,153,.11),transparent 30%),var(--bg);font-size:17px}
+button,input,select{font:inherit}button{cursor:pointer}button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid rgba(84,95,153,.35);outline-offset:2px}
+.page{max-width:1540px;margin:0 auto;padding:18px}.hero{background:#fff;border:1px solid #E1E6EF;border-top:9px solid var(--unit);border-radius:18px;padding:20px 24px;display:grid;grid-template-columns:1fr auto;gap:18px;align-items:center;box-shadow:var(--shadow)}
+.eyebrow{font-size:14px;font-weight:950;letter-spacing:.08em;text-transform:uppercase;color:var(--secondary)}.hero h1{margin:5px 0 0;font-size:31px;line-height:1.14;color:var(--secondary-dark)}.hero p{margin:8px 0 0;color:var(--muted);font-weight:700;line-height:1.45}.lesson-mark{width:140px;height:78px;border-radius:16px;background:linear-gradient(135deg,var(--secondary),var(--secondary-dark));color:#fff;display:grid;place-items:center;text-align:center;box-shadow:0 9px 22px rgba(84,95,153,.24)}.lesson-mark b{font-size:30px;line-height:1}.lesson-mark span{font-size:11px;font-weight:900;letter-spacing:.08em;text-transform:uppercase}
+.progress{margin:13px 0;background:#fff;border:1px solid #E1E5EC;border-radius:15px;padding:12px 15px;box-shadow:0 7px 20px rgba(48,58,87,.06)}.progress-top{display:flex;justify-content:space-between;gap:12px;align-items:center;color:#59667B;font-size:15px;font-weight:850}.bar{height:8px;background:#ECEFF4;border-radius:999px;overflow:hidden;margin:8px 0 10px}.fill{height:100%;width:0;background:linear-gradient(90deg,var(--unit),var(--secondary));transition:.3s ease}.steps{display:flex;gap:8px;flex-wrap:wrap;justify-content:center}.step-dot{width:32px;height:32px;border-radius:9px;border:1px solid #CDD3DE;background:#fff;color:#758197;display:grid;place-items:center;font-size:14px;font-weight:900}.step-dot.current{border:2px solid var(--unit);color:var(--unit-dark);background:var(--unit-soft)}.step-dot.done{border-color:var(--secondary);background:var(--secondary);color:#fff}
+.stage{background:#fff;border:1px solid #E0E5EF;border-radius:18px;box-shadow:0 10px 28px #27364b12;overflow:hidden}.stage-head{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;padding:18px 20px;border-bottom:1px solid #E8ECF3}.stage-kicker{font-size:14px;font-weight:950;color:var(--unit-dark);text-transform:uppercase;letter-spacing:.04em}.stage-title{font-size:26px;margin:4px 0}.instruction{margin:0;color:#5C687C;font-weight:650;line-height:1.5}.help-btn{border:1px solid #C9D1E0;background:#fff;border-radius:11px;padding:10px 14px;font-weight:850;color:var(--secondary-dark);white-space:nowrap}.help-btn:hover{background:var(--secondary-soft)}.workspace{padding:18px 20px 22px;min-height:580px}.task-strip{border-left:5px solid var(--unit);background:#FFF9F1;padding:13px 15px;border-radius:11px;margin-bottom:14px;font-weight:800;line-height:1.48}.feedback{min-height:0;margin-top:12px;border-radius:11px;font-weight:800;line-height:1.45}.feedback.show{padding:11px 13px;border:1px solid}.feedback.info{background:#F2F6FF;border-color:#C8D5EF;color:#46577C}.feedback.good{background:var(--good-soft);border-color:#AADBC5;color:#176943}.feedback.bad{background:var(--bad-soft);border-color:#F0BABA;color:#9B3030}
+.choice-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:11px;max-width:1160px;margin:12px auto}.choice{min-height:74px;border:1.5px solid #C9D2E2;background:#fff;border-radius:12px;padding:14px 16px;text-align:left;font-weight:850;color:#283650;transition:.15s;font-size:17px;line-height:1.4}.choice:hover{border-color:#8897B3;transform:translateY(-1px)}.choice.correct{background:var(--good-soft);border-color:#7DC7A4}.choice.wrong{animation:shake .28s;background:var(--bad-soft);border-color:#E49A9A}@keyframes shake{25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
+.primary{border:0;background:var(--secondary);color:#fff;border-radius:11px;padding:11px 18px;font-weight:900}.primary:hover{background:var(--secondary-dark)}.primary:disabled{opacity:.48;cursor:default}.secondary-btn{border:1px solid #C8D1E0;background:#fff;color:var(--secondary-dark);border-radius:10px;padding:10px 15px;font-weight:850}
+.case-count{text-align:center;font-weight:900;color:var(--secondary-dark);margin-bottom:9px}.scenario{max-width:1080px;margin:0 auto 14px;border:1px solid #D8DFEA;background:#F8F9FC;border-radius:14px;padding:16px 18px;line-height:1.5;font-weight:750}.scenario b{color:var(--secondary-dark)}
+/* matching */
+.match-board{position:relative;max-width:1300px;margin:12px auto;display:grid;grid-template-columns:minmax(0,1fr) 220px minmax(0,1fr);gap:0;align-items:start;padding:6px 0}.match-col{display:grid;gap:12px;z-index:2}.match-col.left{grid-column:1}.match-col.right{grid-column:3}.match-card{position:relative;min-height:82px;border:1.5px solid #C8D1E0;border-radius:13px;background:#fff;padding:13px 24px;display:flex;align-items:center;font-weight:850;line-height:1.38;color:#34425C}.match-card.matched{background:var(--good-soft);border-color:#76C39C}.match-dot{position:absolute;width:18px;height:18px;border-radius:50%;border:3px solid #fff;background:var(--secondary);box-shadow:0 0 0 2px var(--secondary);top:50%;transform:translateY(-50%);padding:0;z-index:5}.match-card.left-card .match-dot{right:-10px}.match-card.right-card .match-dot{left:-10px}.match-card.matched .match-dot{background:var(--good);box-shadow:0 0 0 2px var(--good)}.match-svg{position:absolute;inset:0;width:100%;height:100%;z-index:1;overflow:visible;pointer-events:none}.match-svg line{stroke:var(--secondary);stroke-width:4;stroke-linecap:round}.match-svg line.preview{stroke:var(--unit);stroke-dasharray:8 7}.match-help{text-align:center;color:var(--muted);font-weight:750;margin:8px 0 2px}
+/* mail */
+.mail-shell{max-width:1180px;margin:10px auto;border:1px solid #AEB8C9;border-radius:16px;overflow:hidden;box-shadow:0 14px 34px rgba(44,53,83,.14);background:#fff}.mail-top{height:50px;background:#30384E;color:#fff;display:flex;align-items:center;padding:0 15px;gap:10px}.mail-brand{font-weight:950}.mail-body{display:grid;grid-template-columns:260px 1fr;min-height:430px}.mail-list{background:#F3F5F9;border-right:1px solid #D8DEEA;padding:14px}.mail-folder{font-weight:900;color:var(--secondary-dark);margin-bottom:12px}.mail-item{border:1px solid #CCD4E1;background:#fff;border-radius:10px;padding:12px;line-height:1.35}.mail-item b{display:block}.mail-message{padding:22px}.mail-message h3{margin:0 0 7px;color:var(--secondary-dark)}.mail-meta{font-size:15px;color:var(--muted);border-bottom:1px solid #E3E7EE;padding-bottom:12px;margin-bottom:16px}.mail-card{background:#FFF9F1;border:1px solid #F0D5AD;border-radius:13px;padding:18px;line-height:1.58}.mail-card .ask{margin:14px 0 0;background:#fff;border:1px dashed #D6A968;border-radius:10px;padding:12px;font-weight:900}.mail-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px}.mail-btn{border:1.5px solid #CBD3E0;border-radius:10px;background:#fff;padding:10px 14px;font-weight:850}.mail-btn.correct{background:var(--good-soft);border-color:#7DC7A4}.mail-btn.wrong{animation:shake .28s;background:var(--bad-soft);border-color:#E49A9A}
+/* IoT concept */
+.iot-concept{max-width:1120px;margin:12px auto;display:grid;grid-template-columns:1fr 220px 1fr;align-items:center;gap:18px}.iot-side{display:grid;gap:12px}.iot-box{border:1.5px solid #CBD3E0;border-radius:14px;background:#fff;padding:15px;text-align:center;font-weight:850;min-height:92px;display:grid;place-items:center}.iot-cloud{min-height:150px;border-radius:50%;background:linear-gradient(135deg,var(--secondary-soft),#fff);border:3px solid var(--secondary);display:grid;place-items:center;text-align:center;font-weight:950;color:var(--secondary-dark);font-size:22px;box-shadow:0 10px 22px rgba(84,95,153,.13)}.iot-arrows{text-align:center;color:var(--unit-dark);font-size:25px;font-weight:950}
+/* IoT network */
+.network-wrap{max-width:1240px;margin:8px auto}.network-stage{position:relative;min-height:500px;border:1px solid #D9DFEA;border-radius:18px;background:radial-gradient(circle at center,rgba(84,95,153,.09),transparent 35%),#F8F9FC;overflow:hidden}.cloud-center{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:210px;height:125px;border-radius:60px;background:#fff;border:3px solid var(--secondary);box-shadow:0 12px 30px rgba(84,95,153,.16);display:grid;place-items:center;text-align:center;font-weight:950;color:var(--secondary-dark);z-index:3}.device-grid{position:absolute;inset:18px;display:grid;grid-template-columns:repeat(4,1fr);grid-template-rows:repeat(2,1fr);gap:125px 150px;align-items:center}.device-btn{position:relative;z-index:4;border:1.5px solid #CBD3E0;background:#fff;border-radius:13px;min-height:92px;padding:12px;text-align:center;font-weight:850;box-shadow:0 5px 12px #27364b0b}.device-btn span{display:block;font-size:28px;margin-bottom:4px}.device-btn.connected{background:var(--good-soft);border-color:#72BF99}.device-btn.connected::after{content:'✓ συνδέθηκε';display:block;margin-top:5px;color:var(--good);font-size:14px;font-weight:950}.net-svg{position:absolute;inset:0;width:100%;height:100%;z-index:2;pointer-events:none}.net-svg line{stroke:var(--secondary);stroke-width:3;stroke-linecap:round;opacity:.8}
+/* category cases */
+.category-panel{max-width:1120px;margin:0 auto}.category-labels{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:8px;margin:12px 0}.category-chip{background:var(--secondary-soft);border:1px solid #C8D0E1;border-radius:10px;padding:9px;text-align:center;font-weight:850;color:var(--secondary-dark)}
+/* tf */
+.tf-card{max-width:930px;margin:16px auto;border:1.5px solid #CBD3E0;border-radius:15px;padding:20px;background:#fff}.tf-card p{font-size:19px;font-weight:850;line-height:1.5;margin:0 0 16px}.tf-actions{display:flex;gap:12px;justify-content:center}.tf-btn{min-width:160px;border:1.5px solid #C9D2E0;border-radius:11px;background:#fff;padding:12px 17px;font-weight:900}.tf-btn.correct{background:var(--good-soft);border-color:#7DC7A4}.tf-btn.wrong{animation:shake .28s;background:var(--bad-soft);border-color:#E49A9A}
+/* self */
+.self-wrap{overflow-x:auto}.self-table{min-width:1030px;display:grid;grid-template-columns:2.15fr repeat(4,1fr);border:1px solid #D7DDE8;border-radius:14px;overflow:hidden}.self-head{background:var(--unit-soft);padding:12px 10px;border-right:1px solid #E1D1BA;border-bottom:1px solid #E1D1BA;font-weight:900;text-align:center;line-height:1.3}.self-objective{padding:14px;border-right:1px solid #DDE2EB;border-bottom:1px solid #DDE2EB;font-weight:850;line-height:1.45;background:#fff}.self-cell{border:0;border-right:1px solid #DDE2EB;border-bottom:1px solid #DDE2EB;background:#F7F9FC;min-height:80px;padding:10px;font-size:15px;line-height:1.3}.self-cell:hover{background:#EEF1F7}.self-cell.selected{background:var(--secondary);color:#fff;font-weight:900}.finish-actions{text-align:center;margin-top:17px}.completion{text-align:center;max-width:820px;margin:60px auto}.completion .big{font-size:66px;color:var(--good)}.completion h2{font-size:31px;color:var(--secondary-dark)}.completion p{font-size:18px;line-height:1.55;color:var(--muted)}.repeat-btn{border:0;background:var(--unit);color:#fff;border-radius:12px;padding:12px 18px;font-weight:950}.repeat-btn:hover{background:var(--unit-dark)}
+.dialog-overlay{position:fixed;inset:0;background:#1B2233A6;display:grid;place-items:center;padding:18px;z-index:100}.dialog{width:min(620px,96vw);background:#fff;border-radius:16px;padding:20px;box-shadow:0 24px 70px #11182766}.dialog h3{margin:0 0 10px;color:var(--secondary-dark)}.dialog p{line-height:1.55}.dialog-actions{text-align:right;margin-top:15px}
+@media(max-width:900px){.hero{grid-template-columns:1fr}.lesson-mark{display:none}.choice-grid{grid-template-columns:1fr}.match-board{grid-template-columns:minmax(0,1fr) 90px minmax(0,1fr)}.mail-body{grid-template-columns:1fr}.mail-list{display:none}.iot-concept{grid-template-columns:1fr}.iot-arrows{transform:rotate(90deg)}.device-grid{gap:120px 20px}.category-labels{grid-template-columns:1fr 1fr}.workspace{padding:14px}.hero h1{font-size:26px}}
+</style>
+<style id="nk-license-style">
+.nk-license{max-width:1100px;margin:14px auto 24px;padding:10px 16px;text-align:center;font:13px/1.45 Arial,"Noto Sans",sans-serif;color:#4e657c}
+.nk-license a{color:inherit;text-decoration:underline;text-underline-offset:2px}
+.nk-license .cc-badge{display:inline-block;margin:0 4px;padding:2px 7px;border:1px solid #8aa0b8;border-radius:6px;background:#fff;font-weight:700;white-space:nowrap}
+</style>
+</head>
+<body>
+<div class="page">
+  <header class="hero">
+    <div><div class="eyebrow">Ενότητα 2 · Υπολογιστικά συστήματα – Ψηφιακές συσκευές – Δίκτυα</div><h1>Οι θετικές και αρνητικές επιπτώσεις από τη χρήση του διαδικτύου στην καθημερινή ζωή</h1><p>Κίνδυνοι και μέτρα πρόληψης · Διαδίκτυο των Πραγμάτων (IoT) και εφαρμογές του.</p></div>
+    <div class="lesson-mark"><div><b>15</b><br><span>Μάθημα</span></div></div>
+  </header>
+  <section class="progress"><div class="progress-top"><span id="progressText"></span><span id="progressPct"></span></div><div class="bar"><div class="fill" id="fill"></div></div><div class="steps" id="steps"></div></section>
+  <main class="stage">
+    <div class="stage-head"><div><div class="stage-kicker" id="kicker"></div><h2 class="stage-title" id="stageTitle"></h2><p class="instruction" id="instruction"></p></div><button class="help-btn" id="helpBtn">? Βοήθεια</button></div>
+    <div class="workspace"><div id="activity"></div><div class="feedback" id="feedback" aria-live="polite"></div></div>
+  </main>
+</div>
+<div id="modalRoot"></div>
+<script>
+const ACTIVITIES=[
+ {t:'Όφελος ή κίνδυνος;',i:'Διάκρινε θετικές εφαρμογές του διαδικτύου από αρνητικές επιπτώσεις και κινδύνους.'},
+ {t:'Αναγνώρισε τους κινδύνους',i:'Σύνδεσε κάθε κίνδυνο με τη σωστή περιγραφή του.'},
+ {t:'Απλά μέτρα πρόληψης',i:'Διάλεξε το κατάλληλο μέτρο πρόληψης σε κάθε περίπτωση.'},
+ {t:'Πρόσεξε το phishing',i:'Αντιμετώπισε με ασφάλεια ένα ύποπτο μήνυμα που ζητά προσωπικές πληροφορίες.'},
+ {t:'Τι είναι το Διαδίκτυο των Πραγμάτων;',i:'Αναγνώρισε την κεντρική ιδέα του IoT και τον τρόπο που ανταλλάσσονται δεδομένα.'},
+ {t:'Εφαρμογές του IoT',i:'Σύνδεσε κάθε περιοχή εφαρμογής του IoT με το σωστό παράδειγμα.'},
+ {t:'Σύνδεσε συσκευές στο IoT',i:'Δημιούργησε ένα δίκτυο συσκευών και αισθητήρων που συνδέονται με το IoT.'},
+ {t:'Πού θα χρησιμοποιηθεί το IoT;',i:'Επίλεξε την κατάλληλη εφαρμογή IoT για κάθε ανάγκη.'},
+ {t:'Συνολική δοκιμή',i:'Συνδύασε κινδύνους, πρόληψη και εφαρμογές του Διαδικτύου των Πραγμάτων.'},
+ {t:'Τι έμαθα;',i:'Αξιολόγησε πόσο καλά κατανόησες τους στόχους του μαθήματος.'}
+];
+const HELP=[
+ 'Το διαδίκτυο μπορεί να προσφέρει χρήσιμες εφαρμογές, αλλά μπορεί επίσης να συνοδεύεται από κινδύνους. Διάβασε τι συμβαίνει σε κάθε περίπτωση.',
+ 'Σύρε από την τελεία ενός όρου προς την τελεία της σωστής περιγραφής. Η γραμμή παραμένει μόνο όταν το ζευγάρι είναι σωστό.',
+ 'Τα μέτρα που αναφέρει το μάθημα είναι: antivirus, ισχυροί κωδικοί πρόσβασης, ενημερώσεις λογισμικού και αποφυγή απάντησης σε ανεπιθύμητα μηνύματα που ζητούν προσωπικές πληροφορίες.',
+ 'Στο phishing κάποιος προσποιείται ότι είναι νόμιμη υπηρεσία για να πάρει προσωπικές πληροφορίες. Μην απαντήσεις και μη δώσεις τέτοιες πληροφορίες.',
+ 'Στο IoT συσκευές και αντικείμενα συνδέονται στο διαδίκτυο και μπορούν να ανταλλάσσουν δεδομένα χωρίς ανθρώπινη παρέμβαση.',
+ 'Θυμήσου τα παραδείγματα του βιβλίου: έξυπνα σπίτια, έξυπνες πόλεις, ιατρικές εφαρμογές, έξυπνες μεταφορές και αγροτική παραγωγή.',
+ 'Πάτησε κάθε συσκευή ή αισθητήρα για να τη συνδέσεις με το σύννεφο IoT. Κάθε σωστή σύνδεση θα παραμείνει ορατή.',
+ 'Διάβασε ποια δεδομένα συλλέγονται ή ποια λειτουργία χρειάζεται και διάλεξε την περιοχή εφαρμογής που ταιριάζει.',
+ 'Οι ερωτήσεις συνδυάζουν όσα δούλεψες για κινδύνους, πρόληψη και IoT.',
+ 'Διάλεξε ένα επίπεδο για κάθε στόχο. Δεν υπάρχουν σωστές ή λάθος επιλογές στην αυτοαξιολόγηση.'
+];
+let stage=0,finished=false,renderEpoch=0,pendingTimers=[];const completed=new Set();
+const q=s=>document.querySelector(s),qa=s=>[...document.querySelectorAll(s)];
+const activity=q('#activity'),feedback=q('#feedback'),kicker=q('#kicker'),stageTitle=q('#stageTitle'),instruction=q('#instruction');
+const RESULT=2000;
+function clearTimers(){pendingTimers.forEach(clearTimeout);pendingTimers=[]}
+function later(fn,ms){const s=stage,e=renderEpoch;const id=setTimeout(()=>{if(stage===s&&renderEpoch===e)fn()},ms);pendingTimers.push(id);return id}
+function setFeedback(txt,type='info'){feedback.className='feedback show '+type;feedback.innerHTML=txt}
+function clearFeedback(){feedback.className='feedback';feedback.textContent=''}
+function wrong(el,msg){el.classList.remove('wrong');void el.offsetWidth;el.classList.add('wrong');setFeedback(msg,'bad');setTimeout(()=>{if(el&&el.isConnected)el.classList.remove('wrong')},560)}
+function shuffleCopy(arr){const a=[...arr];for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}const shuffleCache={};function shuffleOnce(key,arr){if(!shuffleCache[key])shuffleCache[key]=shuffleCopy(arr);return shuffleCache[key]}
+function updateProgress(){const n=ACTIVITIES.length;const pct=finished?100:Math.round(stage/(n-1)*100);q('#progressText').textContent=finished?'Ολοκληρώθηκε':`Δραστηριότητα ${stage+1} από ${n}`;q('#progressPct').textContent=pct+'%';q('#fill').style.width=pct+'%';q('#steps').innerHTML=ACTIVITIES.map((_,i)=>`<span class="step-dot ${completed.has(i)?'done':''} ${i===stage&&!finished?'current':''}">${i+1}</span>`).join('')}
+function advance(delay=0){later(()=>{completed.add(stage);stage++;render()},delay)}
+function render(){clearTimers();document.onpointermove=null;document.onpointerup=null;renderEpoch++;clearFeedback();updateProgress();if(finished||stage>=ACTIVITIES.length){finished=true;renderCompletion();return}const a=ACTIVITIES[stage];kicker.textContent=`Δραστηριότητα ${stage+1}`;stageTitle.textContent=a.t;instruction.textContent=a.i;renderers[stage]()}
+q('#helpBtn').onclick=()=>{q('#modalRoot').innerHTML=`<div class="dialog-overlay"><div class="dialog"><h3>Βοήθεια</h3><p>${HELP[Math.min(stage,HELP.length-1)]}</p><div class="dialog-actions"><button class="primary" id="closeHelp">Εντάξει</button></div></div></div>`;q('#closeHelp').onclick=()=>q('#modalRoot').innerHTML=''};
+
+/* Activity 1 */
+let a1step=0,a1hold=false;
+const a1cases=[
+ {text:'Αισθητήρες σε μια πόλη συλλέγουν δεδομένα για την κυκλοφορία και την ποιότητα του αέρα ώστε να βελτιωθεί η διαχείρισή της.',ok:'benefit',why:'Πρόκειται για θετική εφαρμογή του IoT σε μια έξυπνη πόλη.'},
+ {text:'Κάποιος προσπαθεί να εισέλθει χωρίς άδεια στο υπολογιστικό σύστημα και να κλέψει προσωπικά δεδομένα.',ok:'risk',why:'Αυτό είναι κίνδυνος από τη χρήση του διαδικτύου.'},
+ {text:'Ένας θερμοστάτης συνδέεται στο διαδίκτυο ώστε να ελέγχεται από απόσταση.',ok:'benefit',why:'Πρόκειται για θετική εφαρμογή του IoT σε ένα έξυπνο σπίτι.'},
+ {text:'Ένα μήνυμα προσποιείται ότι προέρχεται από αξιόπιστη υπηρεσία και ζητά τον κωδικό πρόσβασής σου.',ok:'risk',why:'Αυτό είναι κίνδυνος: το μήνυμα περιγράφει phishing.'}
+];
+function r1(){const d=a1cases[a1step];activity.innerHTML=`<div class="case-count">Περίπτωση ${a1step+1} από ${a1cases.length}</div><div class="scenario">${d.text}</div><div class="choice-grid"><button class="choice ${a1hold&&d.ok==='benefit'?'correct':''}" data-a1="benefit">Θετική εφαρμογή / όφελος</button><button class="choice ${a1hold&&d.ok==='risk'?'correct':''}" data-a1="risk">Κίνδυνος / αρνητική επίπτωση</button></div>`;if(a1hold){setFeedback(d.why,'good');later(()=>{a1hold=false;a1step++;if(a1step<a1cases.length)r1();else advance()},RESULT);return}qa('[data-a1]').forEach(b=>b.onclick=()=>{if(b.dataset.a1!==d.ok)return wrong(b,'Ξανασκέψου αν η περίπτωση βοηθά στην καθημερινή ζωή ή δημιουργεί κίνδυνο.');a1hold=true;r1()})}
+
+/* generic line matching */
+let activeMatchRedraw=null;
+function lineMatchMarkup(left,right,matched){return `<div class="match-help">Σύρε από τελεία σε τελεία.</div><div class="match-board" id="matchBoard"><svg class="match-svg" id="matchSvg"></svg><div class="match-col left">${left.map(x=>`<div class="match-card left-card ${matched[x.id]?'matched':''}" data-left-card="${x.id}">${x.text}<button class="match-dot left" aria-label="Έναρξη σύνδεσης" data-left-dot="${x.id}"></button></div>`).join('')}</div><div class="match-col right">${right.map(x=>`<div class="match-card right-card ${Object.values(matched).includes(x.id)?'matched':''}" data-right-card="${x.id}"><button class="match-dot right" aria-label="Τέλος σύνδεσης" data-right-dot="${x.id}"></button>${x.text}</div>`).join('')}</div></div>`}
+function setupLineMatch({left,right,matched,correctMap,onCorrectPair,onAll}){const board=q('#matchBoard'),svg=q('#matchSvg');let drag=null;
+ function point(el){const b=board.getBoundingClientRect(),r=el.getBoundingClientRect();return {x:r.left+r.width/2-b.left,y:r.top+r.height/2-b.top}}
+ function draw(preview=null){if(!board||!board.isConnected)return;const br=board.getBoundingClientRect();svg.setAttribute('viewBox',`0 0 ${br.width} ${br.height}`);let s='';Object.entries(matched).forEach(([l,r])=>{const le=q(`[data-left-dot="${l}"]`),re=q(`[data-right-dot="${r}"]`);if(le&&re){const a=point(le),z=point(re);s+=`<line x1="${a.x}" y1="${a.y}" x2="${z.x}" y2="${z.y}"></line>`}});if(preview)s+=`<line class="preview" x1="${preview.x1}" y1="${preview.y1}" x2="${preview.x2}" y2="${preview.y2}"></line>`;svg.innerHTML=s}
+ activeMatchRedraw=()=>draw();draw();
+ qa('[data-left-dot]').forEach(dot=>{dot.onpointerdown=e=>{const id=dot.dataset.leftDot;if(matched[id])return;e.preventDefault();const a=point(dot);drag={id,x1:a.x,y1:a.y};draw({x1:a.x,y1:a.y,x2:a.x,y2:a.y})}});
+ document.onpointermove=e=>{if(!drag)return;const b=board.getBoundingClientRect();draw({x1:drag.x1,y1:drag.y1,x2:e.clientX-b.left,y2:e.clientY-b.top})};
+ document.onpointerup=e=>{if(!drag)return;const target=document.elementsFromPoint(e.clientX,e.clientY).find(el=>el.dataset&&el.dataset.rightDot);const l=drag.id;drag=null;if(!target){draw();return}const r=target.dataset.rightDot;if(correctMap[l]!==r){const c=target.closest('.match-card');c.classList.add('wrong');setFeedback('Η σύνδεση δεν είναι σωστή. Δοκίμασε άλλο ζευγάρι.','bad');setTimeout(()=>{if(c&&c.isConnected)c.classList.remove('wrong')},560);draw();return}matched[l]=r;const lc=q(`[data-left-card="${l}"]`),rc=q(`[data-right-card="${r}"]`);lc?.classList.add('matched');rc?.classList.add('matched');onCorrectPair?.(l,r);draw();if(Object.keys(matched).length===left.length)onAll?.()};
+}
+window.addEventListener('resize',()=>activeMatchRedraw&&activeMatchRedraw());
+
+/* Activity 2 */
+const a2left=[{id:'hack',text:'Hacking'},{id:'phish',text:'Phishing'},{id:'mal',text:'Malware'},{id:'cyber',text:'Cyberbullying'},{id:'add',text:'Εξάρτηση από το διαδίκτυο'}];
+const a2rightBase=[
+ {id:'hackd',text:'Προσπάθεια εισβολής σε σύστημα ή δίκτυο χωρίς άδεια, με σκοπό παραβίαση της ασφάλειας ή πρόκληση ζημιάς.'},
+ {id:'phishd',text:'Απάτη στην οποία κάποιος προσποιείται νόμιμη υπηρεσία για να αποκτήσει προσωπικές πληροφορίες.'},
+ {id:'mald',text:'Κακόβουλο λογισμικό που μολύνει τη συσκευή.'},
+ {id:'cyberd',text:'Παρενόχληση χρηστών μέσω του διαδικτύου.'},
+ {id:'addd',text:'Υπερβολική χρήση του διαδικτύου που επηρεάζει αρνητικά την υγεία.'}
+];
+const a2map={hack:'hackd',phish:'phishd',mal:'mald',cyber:'cyberd',add:'addd'};let a2matched={},a2done=false;
+function r2(){const right=shuffleOnce('a2right',a2rightBase);activity.innerHTML=`<div class="task-strip">Σύνδεσε κάθε κίνδυνο με τη σωστή περιγραφή.</div>${lineMatchMarkup(a2left,right,a2matched)}`;setupLineMatch({left:a2left,right,matched:a2matched,correctMap:a2map,onCorrectPair:()=>setFeedback('Σωστή σύνδεση ✓','good'),onAll:()=>{if(a2done)return;a2done=true;setFeedback('Όλοι οι κίνδυνοι συνδέθηκαν σωστά ✓','good');later(()=>advance(),RESULT)}})}
+
+/* Activity 3 */
+let a3step=0,a3hold=false;
+const preventions=[['antivirus','Χρήση antivirus'],['password','Χρήση ισχυρών κωδικών πρόσβασης'],['updates','Ενημέρωση λογισμικού και εφαρμογών με τις τελευταίες ενημερώσεις ασφαλείας'],['ignore','Δεν απαντώ σε ανεπιθύμητα email ή μηνύματα που ζητούν προσωπικές πληροφορίες']];
+const a3cases=[
+ {text:'Θέλεις να προστατεύσεις τη συσκευή σου από κακόβουλο λογισμικό.',ok:'antivirus'},
+ {text:'Θέλεις να μειώσεις τον κίνδυνο πρόσβασης στον λογαριασμό σου από κάποιον άλλο.',ok:'password'},
+ {text:'Το λειτουργικό σύστημα και οι εφαρμογές σου έχουν διαθέσιμες νέες ενημερώσεις ασφαλείας.',ok:'updates'},
+ {text:'Λαμβάνεις ανεπιθύμητο μήνυμα που ζητά τον κωδικό πρόσβασής σου και άλλα προσωπικά στοιχεία.',ok:'ignore'}
+];
+function r3(){const d=a3cases[a3step],opts=shuffleOnce('a3'+a3step,preventions);activity.innerHTML=`<div class="case-count">Περίπτωση ${a3step+1} από ${a3cases.length}</div><div class="scenario">${d.text}</div><div class="choice-grid">${opts.map(o=>`<button class="choice ${a3hold&&o[0]===d.ok?'correct':''}" data-a3="${o[0]}">${o[1]}</button>`).join('')}</div>`;if(a3hold){setFeedback('Σωστό μέτρο πρόληψης ✓','good');later(()=>{a3hold=false;a3step++;if(a3step<a3cases.length)r3();else advance()},RESULT);return}qa('[data-a3]').forEach(b=>b.onclick=()=>{if(b.dataset.a3!==d.ok)return wrong(b,'Το μέτρο αυτό δεν ταιριάζει καλύτερα στη συγκεκριμένη περίπτωση.');a3hold=true;r3()})}
+
+/* Activity 4 */
+let a4step=0,a4hold=false;
+function mailMarkup(){return `<div class="mail-shell"><div class="mail-top"><div class="mail-brand">AthenaOS · Ηλεκτρονικό ταχυδρομείο</div></div><div class="mail-body"><aside class="mail-list"><div class="mail-folder">Εισερχόμενα</div><div class="mail-item"><b>Υπηρεσία λογαριασμού</b><span>Επείγουσα επιβεβαίωση στοιχείων</span></div></aside><section class="mail-message"><h3>Επείγουσα επιβεβαίωση στοιχείων</h3><div class="mail-meta">Αποστολέας: Υπηρεσία λογαριασμού</div><div class="mail-card">Ο λογαριασμός σας θα περιοριστεί. Απαντήστε άμεσα στο μήνυμα και στείλτε τον <b>κωδικό πρόσβασης</b> και τα <b>στοιχεία της κάρτας</b> σας για επιβεβαίωση.<div class="ask">Το μήνυμα ζητά προσωπικές πληροφορίες και προσποιείται ότι προέρχεται από νόμιμη υπηρεσία.</div></div></section></div></div>`}
+function r4(){
+ if(a4step===0){const opts=shuffleOnce('a4s0',[['reply','Απαντώ και στέλνω τα στοιχεία που ζητά.'],['safe','Δεν απαντώ και δεν δίνω προσωπικές πληροφορίες.'],['forward','Το προωθώ σε φίλους για να ρωτήσω τι να κάνω.']]);activity.innerHTML=`${mailMarkup()}<div class="task-strip">Ποια είναι η ασφαλής ενέργεια σύμφωνα με το μάθημα;</div><div class="choice-grid">${opts.map(o=>`<button class="choice ${a4hold&&o[0]==='safe'?'correct':''}" data-a4="${o[0]}">${o[1]}</button>`).join('')}</div>`;if(a4hold){setFeedback('Σωστά. Δεν απαντάς σε ανεπιθύμητα μηνύματα που ζητούν προσωπικές πληροφορίες.','good');later(()=>{a4hold=false;a4step=1;r4()},RESULT);return}qa('[data-a4]').forEach(b=>b.onclick=()=>{if(b.dataset.a4!=='safe')return wrong(b,'Το μήνυμα ζητά προσωπικές πληροφορίες. Μην τις δώσεις.');a4hold=true;r4()});return}
+ const opts=shuffleOnce('a4s1',[['phishing','Phishing'],['hacking','Hacking'],['malware','Malware'],['addiction','Εξάρτηση από το διαδίκτυο']]);activity.innerHTML=`${mailMarkup()}<div class="task-strip">Πώς ονομάζεται ο κίνδυνος που περιγράφει αυτό το μήνυμα;</div><div class="choice-grid">${opts.map(o=>`<button class="choice ${a4hold&&o[0]==='phishing'?'correct':''}" data-a4b="${o[0]}">${o[1]}</button>`).join('')}</div>`;if(a4hold){setFeedback('Phishing ✓ Το μήνυμα προσποιείται νόμιμη υπηρεσία για να αποκτήσει προσωπικές πληροφορίες.','good');later(()=>advance(),RESULT);return}qa('[data-a4b]').forEach(b=>b.onclick=()=>{if(b.dataset.a4b!=='phishing')return wrong(b,'Θυμήσου τον κίνδυνο όπου κάποιος προσποιείται μια νόμιμη υπηρεσία.');a4hold=true;r4()})
+}
+
+/* Activity 5 */
+let a5step=0,a5hold=false;
+function r5(){
+ if(a5step===0){const opts=shuffleOnce('a5def',[['ok','Συσκευές και αντικείμενα συνδέονται στο διαδίκτυο και ανταλλάσσουν δεδομένα χωρίς ανθρώπινη παρέμβαση.'],['x1','Οι υπολογιστές λειτουργούν μόνο όταν είναι συνδεδεμένοι μεταξύ τους με καλώδιο.'],['x2','Όλα τα αρχεία αποθηκεύονται αυτόματα σε έναν μόνο υπολογιστή.'],['x3','Οι συσκευές ανταλλάσσουν δεδομένα μόνο όταν ο χρήστης πληκτρολογεί κάθε εντολή.']]);activity.innerHTML=`<div class="iot-concept"><div class="iot-side"><div class="iot-box">Συσκευές<br>και αισθητήρες</div><div class="iot-box">Αντικείμενα</div></div><div><div class="iot-cloud">IoT<br>Διαδίκτυο</div><div class="iot-arrows">↔ δεδομένα ↔</div></div><div class="iot-side"><div class="iot-box">Εφαρμογές</div><div class="iot-box">Αυτόματες λειτουργίες</div></div></div><div class="task-strip">Ποια πρόταση περιγράφει σωστά την κεντρική ιδέα του Διαδικτύου των Πραγμάτων (IoT);</div><div class="choice-grid">${opts.map(o=>`<button class="choice ${a5hold&&o[0]==='ok'?'correct':''}" data-a5="${o[0]}">${o[1]}</button>`).join('')}</div>`;if(a5hold){setFeedback('Σωστά. Στο IoT οι συνδεδεμένες συσκευές και τα αντικείμενα μπορούν να ανταλλάσσουν δεδομένα χωρίς ανθρώπινη παρέμβαση.','good');later(()=>{a5hold=false;a5step=1;r5()},RESULT);return}qa('[data-a5]').forEach(b=>b.onclick=()=>{if(b.dataset.a5!=='ok')return wrong(b,'Η κεντρική ιδέα περιλαμβάνει σύνδεση στο διαδίκτυο και ανταλλαγή δεδομένων.');a5hold=true;r5()});return}
+ const opts=shuffleOnce('a5flow',[['ok','Ένας αισθητήρας υγρασίας εδάφους στέλνει δεδομένα και το σύστημα χρησιμοποιεί αυτά τα δεδομένα για αυτόματο πότισμα.'],['x1','Ένα τετράδιο μένει σε ένα συρτάρι και δεν συνδέεται σε δίκτυο.'],['x2','Ένας χρήστης γράφει έναν αριθμό σε χαρτί.'],['x3','Μία συσκευή είναι κλειστή και δεν ανταλλάσσει κανένα δεδομένο.']]);activity.innerHTML=`<div class="task-strip">Ποιο παράδειγμα δείχνει καθαρά λειτουργία IoT;</div><div class="choice-grid">${opts.map(o=>`<button class="choice ${a5hold&&o[0]==='ok'?'correct':''}" data-a5b="${o[0]}">${o[1]}</button>`).join('')}</div>`;if(a5hold){setFeedback('Σωστά. Ο αισθητήρας συλλέγει δεδομένα και το σύστημα τα χρησιμοποιεί για αυτόματη λειτουργία.','good');later(()=>advance(),RESULT);return}qa('[data-a5b]').forEach(b=>b.onclick=()=>{if(b.dataset.a5b!=='ok')return wrong(b,'Χρειάζεται σύνδεση και ανταλλαγή δεδομένων ανάμεσα σε συσκευή και σύστημα.');a5hold=true;r5()})
+}
+
+/* Activity 6 */
+const a6left=[{id:'home',text:'Έξυπνα σπίτια'},{id:'city',text:'Έξυπνες πόλεις'},{id:'medical',text:'Ιατρικές εφαρμογές'},{id:'transport',text:'Έξυπνες μεταφορές'},{id:'farm',text:'Αγροτική παραγωγή'}];
+const a6rightBase=[
+ {id:'homed',text:'Θερμοστάτες, φώτα και κλειδαριές συνδέονται για απομακρυσμένο έλεγχο και παρακολούθηση.'},
+ {id:'cityd',text:'Αισθητήρες συλλέγουν δεδομένα για κυκλοφορία, ποιότητα αέρα και άλλες παραμέτρους.'},
+ {id:'medicald',text:'Φορετοί βιοαισθητήρες παρακολουθούν παλμό και πίεση και μεταδίδουν δεδομένα σε εφαρμογές.'},
+ {id:'transportd',text:'Οχήματα χρησιμοποιούν αισθητήρες και IoT για πλοήγηση, ασφαλή οδήγηση και διαχείριση κυκλοφορίας.'},
+ {id:'farmd',text:'Αισθητήρες μετρούν υγρασία εδάφους και θερμοκρασία και μπορούν να υποστηρίξουν αυτόματο πότισμα.'}
+];
+const a6map={home:'homed',city:'cityd',medical:'medicald',transport:'transportd',farm:'farmd'};let a6matched={},a6done=false;
+function r6(){const right=shuffleOnce('a6right',a6rightBase);activity.innerHTML=`<div class="task-strip">Σύνδεσε κάθε περιοχή εφαρμογής με το σωστό παράδειγμα.</div>${lineMatchMarkup(a6left,right,a6matched)}`;setupLineMatch({left:a6left,right,matched:a6matched,correctMap:a6map,onCorrectPair:()=>setFeedback('Σωστή σύνδεση ✓','good'),onAll:()=>{if(a6done)return;a6done=true;setFeedback('Όλες οι εφαρμογές του IoT συνδέθηκαν σωστά ✓','good');later(()=>advance(),RESULT)}})}
+
+/* Activity 7 */
+const a7devices=[
+ {id:'thermo',ico:'♨',name:'Θερμοστάτης'},
+ {id:'light',ico:'✦',name:'Έξυπνο φως'},
+ {id:'lock',ico:'▣',name:'Κλειδαριά'},
+ {id:'traffic',ico:'⇄',name:'Αισθητήρας κυκλοφορίας'},
+ {id:'bio',ico:'♥',name:'Βιοαισθητήρας'},
+ {id:'car',ico:'▰',name:'Αυτοκίνητο'},
+ {id:'soil',ico:'⌁',name:'Αισθητήρας υγρασίας εδάφους'},
+ {id:'temp',ico:'°',name:'Αισθητήρας θερμοκρασίας'}
+];
+let a7connected=new Set(),a7done=false;
+function drawDeviceLines(){const stageEl=q('#networkStage'),svg=q('#netSvg'),cloud=q('#cloudCenter');if(!stageEl||!svg||!cloud)return;const sr=stageEl.getBoundingClientRect(),cr=cloud.getBoundingClientRect();const cx=cr.left+cr.width/2-sr.left,cy=cr.top+cr.height/2-sr.top;svg.setAttribute('viewBox',`0 0 ${sr.width} ${sr.height}`);let s='';a7connected.forEach(id=>{const el=q(`[data-device="${id}"]`);if(!el)return;const r=el.getBoundingClientRect(),x=r.left+r.width/2-sr.left,y=r.top+r.height/2-sr.top;s+=`<line x1="${x}" y1="${y}" x2="${cx}" y2="${cy}"></line>`});svg.innerHTML=s}
+function r7(){const devices=shuffleOnce('a7devices',a7devices);activity.innerHTML=`<div class="task-strip">Πάτησε κάθε συσκευή ή αισθητήρα για να τη συνδέσεις με το σύννεφο του IoT.</div><div class="network-wrap"><div class="network-stage" id="networkStage"><svg class="net-svg" id="netSvg"></svg><div class="cloud-center" id="cloudCenter">☁<br>Διαδίκτυο των<br>Πραγμάτων</div><div class="device-grid">${devices.map(d=>`<button class="device-btn ${a7connected.has(d.id)?'connected':''}" data-device="${d.id}" ${a7connected.has(d.id)?'disabled':''}><span>${d.ico}</span>${d.name}</button>`).join('')}</div></div></div>`;requestAnimationFrame(drawDeviceLines);if(a7done){setFeedback('Το δίκτυο IoT ολοκληρώθηκε ✓ Όλες οι συσκευές και οι αισθητήρες συνδέθηκαν με το σύννεφο.','good');later(()=>advance(),RESULT);return}qa('[data-device]').forEach(b=>b.onclick=()=>{a7connected.add(b.dataset.device);b.classList.add('connected');b.disabled=true;drawDeviceLines();setFeedback(`${b.textContent.trim()} συνδέθηκε ✓`,'good');if(a7connected.size===a7devices.length){a7done=true;later(r7,600)}})}
+window.addEventListener('resize',()=>{if(stage===6)drawDeviceLines()});
+
+/* Activity 8 */
+let a8step=0,a8hold=false;
+const categories=[['home','Έξυπνο σπίτι'],['city','Έξυπνη πόλη'],['medical','Ιατρική εφαρμογή'],['transport','Έξυπνη μεταφορά'],['farm','Αγροτική παραγωγή']];
+const a8cases=[
+ {text:'Θέλεις να ελέγχεις από απόσταση τα φώτα και τις κλειδαριές ενός σπιτιού.',ok:'home'},
+ {text:'Αισθητήρες στους δρόμους συλλέγουν δεδομένα για την κυκλοφορία και την ποιότητα του αέρα.',ok:'city'},
+ {text:'Ένας φορετός βιοαισθητήρας μεταδίδει δεδομένα για τον παλμό και την πίεση σε μια εφαρμογή.',ok:'medical'},
+ {text:'Αυτοκίνητα και λεωφορεία χρησιμοποιούν αισθητήρες για πλοήγηση και καλύτερη διαχείριση της κυκλοφορίας.',ok:'transport'},
+ {text:'Αισθητήρες μετρούν την υγρασία του εδάφους και τη θερμοκρασία για να υποστηρίξουν αυτόματο πότισμα.',ok:'farm'}
+];
+function r8(){const d=a8cases[a8step],opts=shuffleOnce('a8'+a8step,categories);activity.innerHTML=`<div class="case-count">Εφαρμογή ${a8step+1} από ${a8cases.length}</div><div class="category-panel"><div class="scenario">${d.text}</div><div class="choice-grid">${opts.map(o=>`<button class="choice ${a8hold&&o[0]===d.ok?'correct':''}" data-a8="${o[0]}">${o[1]}</button>`).join('')}</div></div>`;if(a8hold){setFeedback('Σωστή εφαρμογή IoT ✓','good');later(()=>{a8hold=false;a8step++;if(a8step<a8cases.length)r8();else advance()},RESULT);return}qa('[data-a8]').forEach(b=>b.onclick=()=>{if(b.dataset.a8!==d.ok)return wrong(b,'Η εφαρμογή αυτή δεν ταιριάζει καλύτερα στα δεδομένα ή στη λειτουργία που περιγράφεται.');a8hold=true;r8()})}
+
+/* Activity 9 */
+let a9step=0,a9hold=false;
+const a9cases=[
+ {q:'Κάποιος προσπαθεί να εισέλθει χωρίς άδεια σε ένα υπολογιστικό σύστημα.',type:'choice',ok:'hack',opts:[['hack','Hacking'],['phish','Phishing'],['mal','Malware'],['iot','IoT']]},
+ {q:'Ένα μήνυμα προσποιείται ότι είναι από τράπεζα και ζητά προσωπικές πληροφορίες.',type:'choice',ok:'phish',opts:[['phish','Phishing'],['hack','Hacking'],['cyber','Cyberbullying'],['iot','IoT']]},
+ {q:'Ποιο μέτρο αναφέρεται στο μάθημα για προστασία από κακόβουλο λογισμικό;',type:'choice',ok:'antivirus',opts:[['antivirus','Χρήση antivirus'],['reply','Απάντηση σε όλα τα μηνύματα'],['off','Απενεργοποίηση ενημερώσεων'],['simple','Χρήση απλού κωδικού']]},
+ {q:'Σε ανεπιθύμητο email που ζητά τον κωδικό πρόσβασής σου πρέπει να απαντήσεις για να επιβεβαιώσεις τα στοιχεία σου.',type:'tf',ok:'false'},
+ {q:'Στο IoT συσκευές και αντικείμενα μπορούν να συνδεθούν στο διαδίκτυο και να ανταλλάσσουν δεδομένα χωρίς ανθρώπινη παρέμβαση.',type:'tf',ok:'true'},
+ {q:'Ποια εφαρμογή IoT ταιριάζει σε αισθητήρες δρόμων που συλλέγουν δεδομένα για κυκλοφορία και ποιότητα αέρα;',type:'choice',ok:'city',opts:[['city','Έξυπνες πόλεις'],['home','Έξυπνα σπίτια'],['medical','Ιατρικές εφαρμογές'],['farm','Αγροτική παραγωγή']]},
+ {q:'Ποια εφαρμογή IoT ταιριάζει σε βιοαισθητήρες που παρακολουθούν παλμό και πίεση;',type:'choice',ok:'medical',opts:[['medical','Ιατρικές εφαρμογές'],['transport','Έξυπνες μεταφορές'],['home','Έξυπνα σπίτια'],['farm','Αγροτική παραγωγή']]},
+ {q:'Η ενημέρωση λογισμικού και εφαρμογών με τις τελευταίες ενημερώσεις ασφαλείας είναι ένα απλό μέτρο πρόληψης.',type:'tf',ok:'true'}
+];
+function r9(){const d=a9cases[a9step];activity.innerHTML=`<div class="case-count">Δοκιμή ${a9step+1} από ${a9cases.length}</div>${d.type==='tf'?`<div class="tf-card"><p>${d.q}</p><div class="tf-actions"><button class="tf-btn ${a9hold&&d.ok==='true'?'correct':''}" data-a9="true">Σωστό</button><button class="tf-btn ${a9hold&&d.ok==='false'?'correct':''}" data-a9="false">Λάθος</button></div></div>`:`<div class="task-strip">${d.q}</div><div class="choice-grid">${shuffleOnce('a9'+a9step,d.opts).map(o=>`<button class="choice ${a9hold&&o[0]===d.ok?'correct':''}" data-a9="${o[0]}">${o[1]}</button>`).join('')}</div>`}`;if(a9hold){setFeedback('Σωστά ✓','good');later(()=>{a9hold=false;a9step++;if(a9step<a9cases.length)r9();else advance()},RESULT);return}qa('[data-a9]').forEach(b=>b.onclick=()=>{if(b.dataset.a9!==d.ok)return wrong(b,'Η απάντηση δεν συμφωνεί με τις έννοιες του μαθήματος.');a9hold=true;r9()})}
+
+/* Activity 10 */
+const levels=['Έχω καταλάβει και μπορώ να εξηγήσω','Έχω καταλάβει αρκετά καλά','Έχω καταλάβει αλλά έχω απορίες','Χρειάζομαι βοήθεια'];
+const objectives=['Να αναγνωρίζω τις αρνητικές επιπτώσεις και τους κινδύνους από τη χρήση του διαδικτύου (π.χ. Hacking, Phishing κ.ά.) και να λαμβάνω απλά μέτρα πρόληψης.','Να περιγράφω την έννοια του Διαδικτύου των Πραγμάτων (IoT) και τις μελλοντικές του εφαρμογές.'];let selfSel=[null,null];
+function r10(){activity.innerHTML=`<div class="self-wrap"><div class="self-table"><div class="self-head">Διαλέγω πόσο καλά έμαθα</div>${levels.map(x=>`<div class="self-head">${x}</div>`).join('')}${objectives.map((o,row)=>`<div class="self-objective">✓ ${o}</div>${levels.map((l,col)=>`<button class="self-cell ${selfSel[row]===col?'selected':''}" data-self="${row}:${col}">${l}</button>`).join('')}`).join('')}</div></div><div class="finish-actions"><button class="primary" id="finishBtn" ${selfSel.some(x=>x===null)?'disabled':''}>Ολοκλήρωση</button></div>`;qa('[data-self]').forEach(b=>b.onclick=()=>{const [r,c]=b.dataset.self.split(':').map(Number);selfSel[r]=c;r10()});q('#finishBtn').onclick=()=>{if(selfSel.some(x=>x===null))return;completed.add(stage);finished=true;render()}}
+
+const renderers=[r1,r2,r3,r4,r5,r6,r7,r8,r9,r10];
+function renderCompletion(){updateProgress();kicker.textContent='ΟΛΟΚΛΗΡΩΣΗ';stageTitle.textContent='Μάθημα 15 ολοκληρώθηκε';instruction.textContent='Ολοκλήρωσες τις δραστηριότητες για τους κινδύνους του διαδικτύου, τα μέτρα πρόληψης και το Διαδίκτυο των Πραγμάτων.';activity.innerHTML=`<div class="completion"><div class="big">✓</div><h2>Ολοκλήρωσες το μάθημα!</h2><p>Μπορείς να αναγνωρίζεις βασικούς κινδύνους από τη χρήση του διαδικτύου, να επιλέγεις απλά μέτρα πρόληψης και να εξηγείς με παραδείγματα την έννοια του Διαδικτύου των Πραγμάτων (IoT).</p><button class="repeat-btn" id="repeatBtn">↻ Επανάληψη μαθήματος</button></div>`;q('#repeatBtn').onclick=()=>location.reload()}
+render();
+</script>
+<footer class="nk-license" aria-label="Πληροφορίες δημιουργού και άδειας χρήσης">
+  <div><strong>Created by Nikos Kalakos · © 2026</strong></div>
+  <div>Original educational content and simulation design licensed under <a class="cc-badge" href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank" rel="license noopener noreferrer">CC BY-NC 4.0</a>.</div>
+  <div>Source code © 2026 Nikos Kalakos.</div>
+  <div>Third-party and textbook materials remain subject to the rights and licences of their respective copyright holders.</div>
+</footer>
+</body>
+</html>

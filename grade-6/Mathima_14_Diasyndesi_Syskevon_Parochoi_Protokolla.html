@@ -1,0 +1,203 @@
+<!--
+ICT Educational Simulation
+Created by Nikos Kalakos
+Copyright © 2026 Nikos Kalakos
+
+Original educational content and simulation design licensed under CC BY-NC 4.0.
+Source code © 2026 Nikos Kalakos.
+Third-party and textbook materials remain subject to the rights and licences of their respective copyright holders.
+-->
+<!DOCTYPE html>
+<html lang="el">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta name="author" content="Nikos Kalakos">
+<meta name="copyright" content="© 2026 Nikos Kalakos">
+<meta name="license" content="Original educational content and simulation design: CC BY-NC 4.0; source code © 2026 Nikos Kalakos; third-party and textbook materials excluded.">
+<title>Μάθημα 14 – Διασύνδεση συσκευών στο διαδίκτυο: Πάροχοι και πρωτόκολλα</title>
+<style>
+:root{
+  --unit:#EA922C; --unit-dark:#B86610; --unit-soft:#FFF4E6;
+  --secondary:#545F99; --secondary-dark:#3D477C; --secondary-soft:#EEF0F8;
+  --ink:#273247; --muted:#667389; --line:#D8DEEA; --bg:#F4F6FA;
+  --good:#23845A; --good-soft:#E9F7F0; --bad:#B64242; --bad-soft:#FDEEEE;
+  --panel:#FFFFFF; --shadow:0 12px 32px rgba(43,54,84,.10);
+}
+*{box-sizing:border-box}html{scroll-behavior:smooth}
+body{margin:0;font-family:Inter,"Segoe UI",Arial,sans-serif;color:var(--ink);background:radial-gradient(circle at 8% 8%,rgba(234,146,44,.10),transparent 30%),radial-gradient(circle at 92% 13%,rgba(84,95,153,.11),transparent 30%),var(--bg);font-size:17px}
+button,input,select{font:inherit}button{cursor:pointer}button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid rgba(84,95,153,.35);outline-offset:2px}
+.page{max-width:1540px;margin:0 auto;padding:18px}.hero{background:#fff;border:1px solid #E1E6EF;border-top:9px solid var(--unit);border-radius:18px;padding:20px 24px;display:grid;grid-template-columns:1fr auto;gap:18px;align-items:center;box-shadow:var(--shadow)}
+.eyebrow{font-size:14px;font-weight:950;letter-spacing:.08em;text-transform:uppercase;color:var(--secondary)}.hero h1{margin:5px 0 0;font-size:31px;line-height:1.14;color:var(--secondary-dark)}.hero p{margin:8px 0 0;color:var(--muted);font-weight:700;line-height:1.45}.lesson-mark{width:140px;height:78px;border-radius:16px;background:linear-gradient(135deg,var(--secondary),var(--secondary-dark));color:#fff;display:grid;place-items:center;text-align:center;box-shadow:0 9px 22px rgba(84,95,153,.24)}.lesson-mark b{font-size:30px;line-height:1}.lesson-mark span{font-size:11px;font-weight:900;letter-spacing:.08em;text-transform:uppercase}
+.progress{margin:13px 0;background:#fff;border:1px solid #E1E5EC;border-radius:15px;padding:12px 15px;box-shadow:0 7px 20px rgba(48,58,87,.06)}.progress-top{display:flex;justify-content:space-between;gap:12px;align-items:center;color:#59667B;font-size:15px;font-weight:850}.bar{height:8px;background:#ECEFF4;border-radius:999px;overflow:hidden;margin:8px 0 10px}.fill{height:100%;width:0;background:linear-gradient(90deg,var(--unit),var(--secondary));transition:.3s ease}.steps{display:flex;gap:8px;flex-wrap:wrap;justify-content:center}.step-dot{width:32px;height:32px;border-radius:9px;border:1px solid #CDD3DE;background:#fff;color:#758197;display:grid;place-items:center;font-size:14px;font-weight:900}.step-dot.current{border:2px solid var(--unit);color:var(--unit-dark);background:var(--unit-soft)}.step-dot.done{border-color:var(--secondary);background:var(--secondary);color:#fff}
+.stage{background:#fff;border:1px solid #E0E5EF;border-radius:18px;box-shadow:0 10px 28px #27364b12;overflow:hidden}.stage-head{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;padding:18px 20px;border-bottom:1px solid #E8ECF3}.stage-kicker{font-size:14px;font-weight:950;color:var(--unit-dark);text-transform:uppercase;letter-spacing:.04em}.stage-title{font-size:26px;margin:4px 0}.instruction{margin:0;color:#5C687C;font-weight:650;line-height:1.5}.help-btn{border:1px solid #C9D1E0;background:#fff;border-radius:11px;padding:10px 14px;font-weight:850;color:var(--secondary-dark);white-space:nowrap}.help-btn:hover{background:var(--secondary-soft)}.workspace{padding:18px 20px 22px;min-height:580px}.task-strip{border-left:5px solid var(--unit);background:#FFF9F1;padding:13px 15px;border-radius:11px;margin-bottom:14px;font-weight:800;line-height:1.48}.feedback{min-height:0;margin-top:12px;border-radius:11px;font-weight:800;line-height:1.45}.feedback.show{padding:11px 13px;border:1px solid}.feedback.info{background:#F2F6FF;border-color:#C8D5EF;color:#46577C}.feedback.good{background:var(--good-soft);border-color:#AADBC5;color:#176943}.feedback.bad{background:var(--bad-soft);border-color:#F0BABA;color:#9B3030}
+.choice-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:11px;max-width:1160px;margin:12px auto}.choice{min-height:74px;border:1.5px solid #C9D2E2;background:#fff;border-radius:12px;padding:14px 16px;text-align:left;font-weight:850;color:#283650;transition:.15s;font-size:17px;line-height:1.4}.choice:hover{border-color:#8897B3;transform:translateY(-1px)}.choice.correct{background:var(--good-soft);border-color:#7DC7A4}.choice.wrong{animation:shake .28s;background:var(--bad-soft);border-color:#E49A9A}@keyframes shake{25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
+.primary{border:0;background:var(--secondary);color:#fff;border-radius:11px;padding:11px 18px;font-weight:900}.primary:hover{background:var(--secondary-dark)}.primary:disabled{opacity:.48;cursor:default}.secondary-btn{border:1px solid #C8D1E0;background:#fff;color:var(--secondary-dark);border-radius:10px;padding:10px 15px;font-weight:850}
+/* provider path */
+.net-path{max-width:1080px;margin:28px auto;display:grid;grid-template-columns:1fr 90px 1fr 90px 1fr;align-items:center;gap:8px}.path-node{min-height:150px;border:1.5px solid #C8D1E0;border-radius:16px;background:#fff;display:grid;place-items:center;text-align:center;padding:16px;font-weight:900;box-shadow:0 8px 18px #27364b0d}.path-node .ico{font-size:44px;display:block;margin-bottom:6px}.path-node.missing{border:2px dashed var(--unit);background:var(--unit-soft);color:var(--unit-dark)}.path-arrow{text-align:center;font-size:38px;font-weight:900;color:var(--secondary)}
+/* matching */
+.match-board{position:relative;max-width:1240px;margin:12px auto;display:grid;grid-template-columns:minmax(0,1fr) 180px minmax(0,1fr);gap:0;align-items:start;padding:6px 0}.match-col{display:grid;gap:12px;z-index:2}.match-col.left{grid-column:1}.match-col.right{grid-column:3}.match-card{position:relative;min-height:78px;border:1.5px solid #C8D1E0;border-radius:13px;background:#fff;padding:13px 22px;display:flex;align-items:center;font-weight:850;line-height:1.35;color:#34425C}.match-card.matched{background:var(--good-soft);border-color:#76C39C}.match-dot{position:absolute;width:18px;height:18px;border-radius:50%;border:3px solid #fff;background:var(--secondary);box-shadow:0 0 0 2px var(--secondary);top:50%;transform:translateY(-50%);padding:0;z-index:5}.match-card.left-card .match-dot{right:-10px}.match-card.right-card .match-dot{left:-10px}.match-card.matched .match-dot{background:var(--good);box-shadow:0 0 0 2px var(--good)}.match-svg{position:absolute;inset:0;width:100%;height:100%;z-index:1;overflow:visible;pointer-events:none}.match-svg line{stroke:var(--secondary);stroke-width:4;stroke-linecap:round}.match-svg line.preview{stroke:var(--unit);stroke-dasharray:8 7}.match-help{text-align:center;color:var(--muted);font-weight:750;margin:8px 0 2px}
+/* offers */
+.case-panel{max-width:1180px;margin:0 auto}.customer{border-left:6px solid var(--secondary);background:var(--secondary-soft);border-radius:13px;padding:14px 16px;margin-bottom:14px}.customer b{display:block;color:var(--secondary-dark);font-size:18px;margin-bottom:4px}.offer-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}.offer{border:1.5px solid #C9D2E1;border-radius:14px;background:#fff;padding:15px;text-align:left;min-height:190px}.offer:hover{border-color:#8B99B6}.offer.correct{background:var(--good-soft);border-color:#7FC5A4}.offer.wrong{animation:shake .28s;background:var(--bad-soft);border-color:#E39A9A}.offer h3{margin:0 0 10px;color:var(--secondary-dark);font-size:20px}.spec-list{display:grid;gap:8px}.spec{display:flex;justify-content:space-between;gap:10px;padding:8px 9px;background:#F6F8FB;border-radius:8px;font-weight:750}.spec b{color:#34425C}
+/* protocol scenarios */
+.proto-banner{max-width:1040px;margin:0 auto 14px;background:#F7F8FB;border:1px solid #D8DFEA;border-radius:14px;padding:15px 17px}.proto-banner b{color:var(--secondary-dark)}
+/* address activity */
+.address-compare{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;max-width:1000px;margin:10px auto 18px}.address-card{border:1.5px solid #C9D2E0;border-radius:15px;background:#fff;padding:17px}.address-card h3{margin:0 0 8px;color:var(--secondary-dark)}.address-code{font-family:Consolas,monospace;font-size:20px;background:#F3F5F9;border:1px solid #D7DDE7;border-radius:10px;padding:11px 12px;margin-top:10px;word-break:break-all}.tag{display:inline-block;border-radius:999px;padding:5px 9px;background:var(--unit-soft);color:var(--unit-dark);font-size:14px;font-weight:900}
+/* AthenaOS */
+.os-shell{max-width:1180px;margin:0 auto;border:1px solid #AEB8C9;border-radius:16px;overflow:hidden;box-shadow:0 14px 34px rgba(44,53,83,.15);background:#1D2233}.os-top{height:52px;background:#30384E;color:#fff;display:flex;align-items:center;padding:0 15px;gap:12px}.os-brand{font-weight:950}.owl-dot{width:30px;height:30px;border-radius:9px;background:var(--unit);display:grid;place-items:center;font-weight:950;color:#fff}.os-top .grow{flex:1}.desktop{min-height:470px;background:linear-gradient(140deg,#5966A0 0 38%,#424B79 38% 64%,#E99A38 64%);position:relative;padding:24px}.desktop-icons{display:grid;grid-template-columns:92px;gap:18px}.desktop-icon{border:0;background:transparent;color:#fff;text-shadow:0 2px 4px #0006;display:grid;justify-items:center;gap:7px;font-weight:850}.desktop-icon .iconbox{width:58px;height:58px;border-radius:14px;background:#ffffffee;color:var(--secondary-dark);display:grid;place-items:center;font-size:29px;text-shadow:none;box-shadow:0 5px 12px #0002}.app-window{position:absolute;inset:30px 55px 32px 112px;background:#fff;border:1px solid #AAB4C6;border-radius:13px;overflow:hidden;box-shadow:0 18px 38px #1920334a;color:var(--ink);text-shadow:none}.win-title{height:44px;background:#F2F4F8;border-bottom:1px solid #D4DAE5;display:flex;align-items:center;padding:0 13px;font-weight:900;color:#3F4B63}.win-body{display:grid;grid-template-columns:215px 1fr;height:calc(100% - 44px)}.sidebar{background:#F7F8FB;border-right:1px solid #DCE1EA;padding:12px}.side-btn{width:100%;border:0;background:transparent;border-radius:9px;padding:10px 11px;text-align:left;font-weight:800;color:#4E5A70;margin-bottom:3px}.side-btn:hover,.side-btn.active{background:var(--secondary-soft);color:var(--secondary-dark)}.settings-main{padding:18px 20px;overflow:auto}.settings-main h3{margin:0 0 14px;color:var(--secondary-dark)}.net-card{border:1px solid #D7DDE7;border-radius:13px;padding:14px;margin-bottom:12px}.net-row{display:grid;grid-template-columns:180px 1fr;gap:15px;padding:11px 8px;border-bottom:1px solid #EEF1F5;align-items:center}.net-row:last-child{border-bottom:0}.net-label{font-weight:900}.net-value{border:1px solid #CED6E2;background:#F8F9FC;border-radius:9px;padding:9px 11px;font-weight:850}.net-value.target{cursor:pointer}.net-value.target:hover{border-color:var(--secondary);background:var(--secondary-soft)}.net-value.correct{background:var(--good-soft);border-color:#7DC4A1;color:#176943}
+/* T/F and total */
+.tf-card{max-width:1060px;margin:10px auto;border:1.5px solid #CDD5E2;border-radius:15px;background:#fff;padding:17px}.tf-card p{font-weight:850;font-size:18px;line-height:1.45}.tf-actions{display:flex;gap:10px;justify-content:center}.tf-btn{min-width:150px;border:1.5px solid #C6CFDD;background:#fff;border-radius:11px;padding:11px 16px;font-weight:900}.tf-btn.correct{background:var(--good-soft);border-color:#77C19D;color:#176943}.tf-btn.wrong{animation:shake .28s;background:var(--bad-soft);border-color:#E49A9A}.case-count{display:inline-block;background:var(--secondary-soft);color:var(--secondary-dark);border-radius:999px;padding:7px 11px;font-weight:900;margin-bottom:10px}
+/* self assessment */
+.self-wrap{overflow:auto}.self-table{min-width:1120px;display:grid;grid-template-columns:minmax(320px,1.5fr) repeat(4,minmax(160px,1fr));border:1px solid #D7DEE8;border-radius:14px;overflow:hidden}.self-head,.self-objective,.self-cell{padding:13px 11px;border-right:1px solid #DDE3EC;border-bottom:1px solid #DDE3EC}.self-head{background:var(--unit-soft);color:var(--unit-dark);font-weight:900;text-align:center}.self-objective{font-weight:850;background:#FBFCFE}.self-cell{border-top:0;border-left:0;background:#fff;color:#435068;font-weight:800;min-height:72px}.self-cell:hover{background:var(--secondary-soft)}.self-cell.selected{background:var(--secondary);color:#fff}.finish-actions{text-align:center;margin-top:15px}
+.completion{text-align:center;max-width:800px;margin:45px auto}.completion .big{width:90px;height:90px;margin:0 auto 16px;border-radius:50%;background:var(--good-soft);color:var(--good);display:grid;place-items:center;font-size:48px;font-weight:950}.completion h2{color:var(--secondary-dark);font-size:30px}.completion p{color:var(--muted);font-weight:700;line-height:1.55}.repeat-btn{border:0;background:var(--secondary);color:#fff;border-radius:12px;padding:12px 18px;font-weight:900}
+.dialog-overlay{position:fixed;inset:0;background:#1B23344f;display:grid;place-items:center;z-index:50;padding:20px}.dialog{width:min(640px,96vw);background:#fff;border-radius:16px;box-shadow:0 20px 55px #11182755;padding:20px}.dialog h3{margin:0 0 10px;color:var(--secondary-dark)}.dialog p{line-height:1.5}.dialog-actions{display:flex;justify-content:flex-end;gap:10px;margin-top:14px}
+@media(max-width:900px){.hero{grid-template-columns:1fr}.lesson-mark{display:none}.choice-grid,.offer-grid,.address-compare{grid-template-columns:1fr}.match-board{grid-template-columns:minmax(0,1fr) 90px minmax(0,1fr)}.net-path{grid-template-columns:1fr}.path-arrow{transform:rotate(90deg)}.app-window{inset:20px}.win-body{grid-template-columns:150px 1fr}.self-table{min-width:980px}}
+</style>
+<style id="nk-license-style">
+.nk-license{max-width:1100px;margin:14px auto 24px;padding:10px 16px;text-align:center;font:13px/1.45 Arial,"Noto Sans",sans-serif;color:#4e657c}
+.nk-license a{color:inherit;text-decoration:underline;text-underline-offset:2px}
+.nk-license .cc-badge{display:inline-block;margin:0 4px;padding:2px 7px;border:1px solid #8aa0b8;border-radius:6px;background:#fff;font-weight:700;white-space:nowrap}
+</style>
+</head>
+<body>
+<div class="page">
+  <header class="hero">
+    <div><div class="eyebrow">Ενότητα 2 · Υπολογιστικά συστήματα – Ψηφιακές συσκευές – Δίκτυα</div><h1>Διασύνδεση συσκευών στο διαδίκτυο: Πάροχοι και πρωτόκολλα</h1><p>Πάροχοι, χαρακτηριστικά σύνδεσης, πρωτόκολλα επικοινωνίας και διευθύνσεις IP/MAC.</p></div>
+    <div class="lesson-mark"><div><b>14</b><br><span>Μάθημα</span></div></div>
+  </header>
+  <section class="progress"><div class="progress-top"><span id="progressText"></span><span id="progressPct"></span></div><div class="bar"><div class="fill" id="fill"></div></div><div class="steps" id="steps"></div></section>
+  <main class="stage">
+    <div class="stage-head"><div><div class="stage-kicker" id="kicker"></div><h2 class="stage-title" id="stageTitle"></h2><p class="instruction" id="instruction"></p></div><button class="help-btn" id="helpBtn">? Βοήθεια</button></div>
+    <div class="workspace"><div id="activity"></div><div class="feedback" id="feedback" aria-live="polite"></div></div>
+  </main>
+</div>
+<div id="modalRoot"></div>
+<script>
+const ACTIVITIES=[
+ {t:'Ο ρόλος του παρόχου',i:'Αναγνώρισε τι κάνει ο πάροχος και πού βρίσκεται στη διαδρομή προς το διαδίκτυο.'},
+ {t:'Χαρακτηριστικά σύνδεσης',i:'Σύνδεσε κάθε χαρακτηριστικό με τις μονάδες μέτρησής του.'},
+ {t:'Σύγκρινε υπηρεσίες σύνδεσης',i:'Επίλεξε την προσφορά που ταιριάζει καλύτερα στη συγκεκριμένη ανάγκη.'},
+ {t:'Πρωτόκολλα επικοινωνίας',i:'Σύνδεσε κάθε πρωτόκολλο με τη βασική χρήση του.'},
+ {t:'Ποιο πρωτόκολλο χρειάζεται;',i:'Εφάρμοσε τα πρωτόκολλα σε συγκεκριμένες εργασίες στο διαδίκτυο.'},
+ {t:'Διευθύνσεις IP και MAC',i:'Διάκρινε τον ρόλο και τη μορφή των διευθύνσεων IP και MAC.'},
+ {t:'Πληροφορίες δικτύου στο AthenaOS',i:'Εντόπισε πάροχο, ταχύτητα, διεύθυνση IP και διεύθυνση MAC στις πληροφορίες δικτύου.'},
+ {t:'Συνολική δοκιμή',i:'Απάντησε στις ερωτήσεις του μαθήματος και εφάρμοσε όλες τις βασικές έννοιες.'},
+ {t:'Τι έμαθα;',i:'Αξιολόγησε πόσο καλά κατανόησες τους στόχους του μαθήματος.'}
+];
+const HELP=[
+ 'Ο πάροχος προσφέρει την υποδομή και τις υπηρεσίες που επιτρέπουν στη συσκευή να συνδεθεί στο διαδίκτυο.',
+ 'Σύρε από την τελεία ενός χαρακτηριστικού προς την τελεία της σωστής μονάδας μέτρησης. Η γραμμή μένει μόνο όταν το ζευγάρι είναι σωστό.',
+ 'Διάβασε ποιο χαρακτηριστικό ενδιαφέρει περισσότερο κάθε χρήστη και σύγκρινε μόνο τις σχετικές τιμές των προσφορών.',
+ 'Σύρε από την τελεία του πρωτοκόλλου προς την τελεία της σωστής λειτουργίας. Θυμήσου: HTTP/HTTPS για ιστοσελίδες, FTP για αρχεία, SMTP για αποστολή email, POP3/IMAP για λήψη email.',
+ 'Κάθε εργασία αντιστοιχεί σε μία βασική χρήση πρωτοκόλλου. Διάλεξε το πρωτόκολλο που εκτελεί αυτή τη χρήση.',
+ 'Η IPv4 έχει τέσσερις αριθμούς από 0 έως 255 χωρισμένους με τελείες. Η MAC είναι μοναδικός κωδικός της συσκευής και στο παράδειγμα εμφανίζεται ως έξι ζεύγη χαρακτήρων χωρισμένα με άνω-κάτω τελείες.',
+ 'Άνοιξε τις Ρυθμίσεις και μετά το Δίκτυο. Πάτησε την τιμή που ζητείται κάθε φορά.',
+ 'Οι τρεις πρώτες ερωτήσεις είναι οι ερωτήσεις Σωστού/Λάθους του βιβλίου. Στη συνέχεια ακολουθούν σύντομα περιστατικά εφαρμογής.',
+ 'Διάλεξε ένα επίπεδο για κάθε στόχο. Δεν υπάρχουν σωστές ή λάθος επιλογές στην αυτοαξιολόγηση.'
+];
+let stage=0,finished=false,renderEpoch=0,pendingTimers=[];const completed=new Set();
+const q=s=>document.querySelector(s),qa=s=>[...document.querySelectorAll(s)];
+const activity=q('#activity'),feedback=q('#feedback'),kicker=q('#kicker'),stageTitle=q('#stageTitle'),instruction=q('#instruction');
+const RESULT=1900, QUICK=650;
+function clearTimers(){pendingTimers.forEach(clearTimeout);pendingTimers=[]}
+function later(fn,ms){const s=stage,e=renderEpoch;const id=setTimeout(()=>{if(stage===s&&renderEpoch===e)fn()},ms);pendingTimers.push(id);return id}
+function setFeedback(txt,type='info'){feedback.className='feedback show '+type;feedback.innerHTML=txt}
+function clearFeedback(){feedback.className='feedback';feedback.textContent=''}
+function wrong(el,msg){el.classList.remove('wrong');void el.offsetWidth;el.classList.add('wrong');setFeedback(msg,'bad');setTimeout(()=>{if(el&&el.isConnected)el.classList.remove('wrong')},560)}
+function shuffleCopy(arr){const a=[...arr];for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}const shuffleCache={};function shuffleOnce(key,arr){if(!shuffleCache[key])shuffleCache[key]=shuffleCopy(arr);return shuffleCache[key]}
+function updateProgress(){const n=ACTIVITIES.length;const pct=finished?100:Math.round(stage/(n-1)*100);q('#progressText').textContent=finished?'Ολοκληρώθηκε':`Δραστηριότητα ${stage+1} από ${n}`;q('#progressPct').textContent=pct+'%';q('#fill').style.width=pct+'%';q('#steps').innerHTML=ACTIVITIES.map((_,i)=>`<span class="step-dot ${completed.has(i)?'done':''} ${i===stage&&!finished?'current':''}">${i+1}</span>`).join('')}
+function advance(delay=0){later(()=>{completed.add(stage);stage++;render()},delay)}
+function render(){clearTimers();document.onpointermove=null;document.onpointerup=null;renderEpoch++;clearFeedback();updateProgress();if(finished||stage>=ACTIVITIES.length){finished=true;renderCompletion();return}const a=ACTIVITIES[stage];kicker.textContent=`Δραστηριότητα ${stage+1}`;stageTitle.textContent=a.t;instruction.textContent=a.i;renderers[stage]()}
+q('#helpBtn').onclick=()=>{q('#modalRoot').innerHTML=`<div class="dialog-overlay"><div class="dialog"><h3>Βοήθεια</h3><p>${HELP[Math.min(stage,HELP.length-1)]}</p><div class="dialog-actions"><button class="primary" id="closeHelp">Εντάξει</button></div></div></div>`;q('#closeHelp').onclick=()=>q('#modalRoot').innerHTML=''};
+
+/* Activity 1 */
+let a1step=0,a1hold=false;
+function r1(){
+ if(a1step===0){const opts=shuffleOnce('a1def',[['ok','Η εταιρεία που προσφέρει υπηρεσίες και υποδομή ώστε να συνδεόμαστε στο διαδίκτυο.'],['x1','Το πρόγραμμα που εμφανίζει ιστοσελίδες.'],['x2','Η συσκευή που αποθηκεύει μόνιμα τα αρχεία μας.'],['x3','Ο μοναδικός κωδικός που δίνεται σε μια συσκευή από το εργοστάσιο.']]);activity.innerHTML=`<div class="task-strip">Ποια πρόταση περιγράφει σωστά τον <b>πάροχο διαδικτύου</b>;</div><div class="choice-grid">${opts.map(o=>`<button class="choice ${a1hold&&o[0]==='ok'?'correct':''}" data-a1="${o[0]}">${o[1]}</button>`).join('')}</div>`;if(a1hold){setFeedback('Σωστά. Ο πάροχος είναι ο «δρόμος» μέσω του οποίου αποκτούμε πρόσβαση στο διαδίκτυο.','good');later(()=>{a1hold=false;a1step=1;r1()},RESULT);return}qa('[data-a1]').forEach(b=>b.onclick=()=>{if(b.dataset.a1!=='ok')return wrong(b,'Αυτή η επιλογή δεν περιγράφει τον ρόλο του παρόχου.');a1hold=true;r1()});return}
+ const opts=shuffleOnce('a1path',[['ok','Πάροχος'],['x1','Επεξεργαστής'],['x2','Κάμερα'],['x3','Δίσκος αποθήκευσης']]);activity.innerHTML=`<div class="task-strip">Συμπλήρωσε τη διαδρομή της σύνδεσης. Ποιο στοιχείο λείπει;</div><div class="net-path"><div class="path-node"><div><span class="ico">▣</span>Συσκευή</div></div><div class="path-arrow">→</div><div class="path-node missing">?</div><div class="path-arrow">→</div><div class="path-node"><div><span class="ico">☁</span>Διαδίκτυο</div></div></div><div class="choice-grid">${opts.map(o=>`<button class="choice ${a1hold&&o[0]==='ok'?'correct':''}" data-a1p="${o[0]}">${o[1]}</button>`).join('')}</div>`;if(a1hold){q('.path-node.missing').textContent='Πάροχος';q('.path-node.missing').classList.add('matched');setFeedback('Η διαδρομή ολοκληρώθηκε ✓','good');later(()=>advance(),RESULT);return}qa('[data-a1p]').forEach(b=>b.onclick=()=>{if(b.dataset.a1p!=='ok')return wrong(b,'Χρειάζεται το στοιχείο που παρέχει τη σύνδεση προς το διαδίκτυο.');a1hold=true;r1()})
+}
+
+/* generic line matching */
+let activeMatchRedraw=null;
+function lineMatchMarkup(left,right,matched){return `<div class="match-help">Σύρε από τελεία σε τελεία.</div><div class="match-board" id="matchBoard"><svg class="match-svg" id="matchSvg"></svg><div class="match-col left">${left.map(x=>`<div class="match-card left-card ${matched[x.id]?'matched':''}" data-left-card="${x.id}">${x.text}<button class="match-dot left" aria-label="Έναρξη σύνδεσης" data-left-dot="${x.id}"></button></div>`).join('')}</div><div class="match-col right">${right.map(x=>`<div class="match-card right-card ${Object.values(matched).includes(x.id)?'matched':''}" data-right-card="${x.id}"><button class="match-dot right" aria-label="Τέλος σύνδεσης" data-right-dot="${x.id}"></button>${x.text}</div>`).join('')}</div></div>`}
+function setupLineMatch({left,right,matched,correctMap,onCorrectPair,onAll}){const board=q('#matchBoard'),svg=q('#matchSvg');let drag=null;
+ function point(el){const b=board.getBoundingClientRect(),r=el.getBoundingClientRect();return {x:r.left+r.width/2-b.left,y:r.top+r.height/2-b.top}}
+ function draw(preview=null){if(!board||!board.isConnected)return;const br=board.getBoundingClientRect();svg.setAttribute('viewBox',`0 0 ${br.width} ${br.height}`);let s='';Object.entries(matched).forEach(([l,r])=>{const le=q(`[data-left-dot="${l}"]`),re=q(`[data-right-dot="${r}"]`);if(le&&re){const a=point(le),z=point(re);s+=`<line x1="${a.x}" y1="${a.y}" x2="${z.x}" y2="${z.y}"></line>`}});if(preview){s+=`<line class="preview" x1="${preview.x1}" y1="${preview.y1}" x2="${preview.x2}" y2="${preview.y2}"></line>`}svg.innerHTML=s}
+ activeMatchRedraw=()=>draw();draw();
+ qa('[data-left-dot]').forEach(dot=>{dot.onpointerdown=e=>{const id=dot.dataset.leftDot;if(matched[id])return;e.preventDefault();const a=point(dot);drag={id,x1:a.x,y1:a.y};draw({x1:a.x,y1:a.y,x2:a.x,y2:a.y})}});
+ document.onpointermove=e=>{if(!drag)return;const b=board.getBoundingClientRect();draw({x1:drag.x1,y1:drag.y1,x2:e.clientX-b.left,y2:e.clientY-b.top})};
+ document.onpointerup=e=>{if(!drag)return;const target=document.elementsFromPoint(e.clientX,e.clientY).find(el=>el.dataset&&el.dataset.rightDot);const l=drag.id;drag=null;if(!target){draw();return}const r=target.dataset.rightDot;if(correctMap[l]!==r){target.closest('.match-card').classList.add('wrong');setFeedback('Η σύνδεση δεν είναι σωστή. Δοκίμασε άλλο ζευγάρι.','bad');setTimeout(()=>{const c=target.closest('.match-card');if(c&&c.isConnected)c.classList.remove('wrong')},560);draw();return}matched[l]=r;const lc=q(`[data-left-card="${l}"]`),rc=q(`[data-right-card="${r}"]`);lc?.classList.add('matched');rc?.classList.add('matched');onCorrectPair?.(l,r);draw();if(Object.keys(matched).length===left.length)onAll?.()};
+}
+window.addEventListener('resize',()=>activeMatchRedraw&&activeMatchRedraw());
+
+/* Activity 2 */
+const a2left=[{id:'speed',text:'Ταχύτητα μεταφοράς δεδομένων'},{id:'cap',text:'Χωρητικότητα / όγκος δεδομένων'},{id:'lat',text:'Χρόνος ανταπόκρισης'}];
+const a2rightBase=[{id:'mbps',text:'Mbps ή Gbps'},{id:'gb',text:'GB ή TB'},{id:'ms',text:'milliseconds (ms)'}];const a2map={speed:'mbps',cap:'gb',lat:'ms'};let a2matched={},a2done=false;
+function r2(){const right=shuffleOnce('a2right',a2rightBase);activity.innerHTML=`<div class="task-strip">Σύνδεσε κάθε χαρακτηριστικό σύνδεσης με τις σωστές μονάδες μέτρησης.</div>${lineMatchMarkup(a2left,right,a2matched)}`;setupLineMatch({left:a2left,right,matched:a2matched,correctMap:a2map,onCorrectPair:()=>setFeedback('Σωστή σύνδεση ✓','good'),onAll:()=>{if(a2done)return;a2done=true;setFeedback('Και τα τρία χαρακτηριστικά συνδέθηκαν σωστά ✓','good');later(()=>advance(),RESULT)}})}
+
+/* Activity 3 */
+let a3step=0,a3hold=false;const a3cases=[
+ {need:'Θέλω τη μεγαλύτερη ταχύτητα μεταφοράς δεδομένων.',offers:[{id:'a',name:'Προσφορά Α',speed:'100 Mbps',cap:'500 GB/μήνα',lat:'22 ms'},{id:'b',name:'Προσφορά Β',speed:'1 Gbps',cap:'500 GB/μήνα',lat:'28 ms'},{id:'c',name:'Προσφορά Γ',speed:'300 Mbps',cap:'500 GB/μήνα',lat:'19 ms'}],ok:'b',why:'Η Προσφορά Β έχει τη μεγαλύτερη ταχύτητα: 1 Gbps.'},
+ {need:'Θέλω τον μικρότερο χρόνο ανταπόκρισης.',offers:[{id:'a',name:'Προσφορά Α',speed:'500 Mbps',cap:'1 TB/μήνα',lat:'42 ms'},{id:'b',name:'Προσφορά Β',speed:'500 Mbps',cap:'1 TB/μήνα',lat:'18 ms'},{id:'c',name:'Προσφορά Γ',speed:'500 Mbps',cap:'1 TB/μήνα',lat:'31 ms'}],ok:'b',why:'Η Προσφορά Β έχει τον μικρότερο χρόνο ανταπόκρισης: 18 ms.'},
+ {need:'Χρειάζομαι το μεγαλύτερο μηνιαίο όριο δεδομένων.',offers:[{id:'a',name:'Προσφορά Α',speed:'300 Mbps',cap:'200 GB/μήνα',lat:'25 ms'},{id:'b',name:'Προσφορά Β',speed:'300 Mbps',cap:'2 TB/μήνα',lat:'25 ms'},{id:'c',name:'Προσφορά Γ',speed:'300 Mbps',cap:'500 GB/μήνα',lat:'25 ms'}],ok:'b',why:'Η Προσφορά Β προσφέρει τη μεγαλύτερη χωρητικότητα: 2 TB τον μήνα.'},
+ {need:'Θέλω ασύρματη πρόσβαση στο διαδίκτυο από το κινητό όταν μετακινούμαι.',offers:[{id:'a',name:'DSL',kind:'Ενσύρματη σύνδεση μέσω τηλεφωνικής γραμμής'},{id:'b',name:'Οπτική ίνα',kind:'Ενσύρματη σύνδεση οπτικής ίνας'},{id:'c',name:'Πάροχος κινητής',kind:'Ασύρματη σύνδεση μέσω δικτύου κινητής'}],ok:'c',why:'Για ασύρματη σύνδεση κινητού κατά τη μετακίνηση χρησιμοποιείται πάροχος κινητής τηλεφωνίας.'}
+];
+function r3(){const d=a3cases[a3step],offers=shuffleOnce('a3offers'+a3step,d.offers);activity.innerHTML=`<div class="case-count">Περίπτωση ${a3step+1} από ${a3cases.length}</div><div class="case-panel"><div class="customer"><b>Ανάγκη χρήστη</b>${d.need}</div><div class="offer-grid">${offers.map(o=>`<button class="offer ${a3hold&&o.id===d.ok?'correct':''}" data-offer="${o.id}"><h3>${o.name}</h3>${o.kind?`<div class="spec-list"><div class="spec"><span>Τύπος</span><b>${o.kind}</b></div></div>`:`<div class="spec-list"><div class="spec"><span>Ταχύτητα</span><b>${o.speed}</b></div><div class="spec"><span>Όριο δεδομένων</span><b>${o.cap}</b></div><div class="spec"><span>Ανταπόκριση</span><b>${o.lat}</b></div></div>`}</button>`).join('')}</div></div>`;if(a3hold){setFeedback(d.why,'good');later(()=>{a3hold=false;a3step++;if(a3step<a3cases.length)r3();else advance()},RESULT);return}qa('[data-offer]').forEach(b=>b.onclick=()=>{if(b.dataset.offer!==d.ok)return wrong(b,'Η προσφορά δεν ταιριάζει καλύτερα στη συγκεκριμένη ανάγκη.');a3hold=true;r3()})}
+
+/* Activity 4 */
+const a4left=[{id:'tcp',text:'TCP/IP'},{id:'http',text:'HTTP/HTTPS'},{id:'ftp',text:'FTP'},{id:'smtp',text:'SMTP'},{id:'pop',text:'POP3/IMAP'}];
+const a4rightBase=[{id:'base',text:'Βασική επικοινωνία στο διαδίκτυο'},{id:'web',text:'Μεταφορά ιστοσελίδων και των δεδομένων τους'},{id:'files',text:'Μεταφορά αρχείων από έναν υπολογιστή σε άλλον'},{id:'send',text:'Αποστολή ηλεκτρονικού ταχυδρομείου'},{id:'receive',text:'Λήψη ηλεκτρονικού ταχυδρομείου από διακομιστή'}];const a4map={tcp:'base',http:'web',ftp:'files',smtp:'send',pop:'receive'};let a4matched={},a4done=false;
+function r4(){const right=shuffleOnce('a4right',a4rightBase);activity.innerHTML=`<div class="task-strip">Σύνδεσε κάθε πρωτόκολλο με τη βασική χρήση του.</div>${lineMatchMarkup(a4left,right,a4matched)}`;setupLineMatch({left:a4left,right,matched:a4matched,correctMap:a4map,onCorrectPair:()=>setFeedback('Σωστή αντιστοίχιση ✓','good'),onAll:()=>{if(a4done)return;a4done=true;setFeedback('Τα πρωτόκολλα αντιστοιχίστηκαν σωστά ✓','good');later(()=>advance(),RESULT)}})}
+
+/* Activity 5 */
+let a5step=0,a5hold=false;const a5cases=[
+ {task:'Μεταφέρεις τα δεδομένα μιας ιστοσελίδας με ασφαλή σύνδεση.',ok:'HTTP/HTTPS'},
+ {task:'Στέλνεις ένα μήνυμα ηλεκτρονικού ταχυδρομείου.',ok:'SMTP'},
+ {task:'Λαμβάνεις ηλεκτρονικό ταχυδρομείο από τον διακομιστή.',ok:'POP3/IMAP'},
+ {task:'Μεταφέρεις ένα αρχείο από έναν υπολογιστή σε άλλον.',ok:'FTP'},
+ {task:'Χρειάζεται το βασικό σύνολο πρωτοκόλλων επικοινωνίας στο διαδίκτυο.',ok:'TCP/IP'}
+];const protos=['TCP/IP','HTTP/HTTPS','FTP','SMTP','POP3/IMAP'];
+function r5(){const d=a5cases[a5step],opts=shuffleOnce('a5opts'+a5step,protos);activity.innerHTML=`<div class="case-count">Εργασία ${a5step+1} από ${a5cases.length}</div><div class="proto-banner"><b>Τι θέλεις να κάνεις;</b><br>${d.task}</div><div class="choice-grid">${opts.map(x=>`<button class="choice ${a5hold&&x===d.ok?'correct':''}" data-proto="${x}">${x}</button>`).join('')}</div>`;if(a5hold){setFeedback(`${d.ok} ✓`,'good');later(()=>{a5hold=false;a5step++;if(a5step<a5cases.length)r5();else advance()},RESULT);return}qa('[data-proto]').forEach(b=>b.onclick=()=>{if(b.dataset.proto!==d.ok)return wrong(b,'Το πρωτόκολλο αυτό εξυπηρετεί διαφορετική λειτουργία.');a5hold=true;r5()})}
+
+/* Activity 6 */
+let a6step=0,a6hold=false;const a6steps=[
+ {prompt:'Ποια περιγραφή αντιστοιχεί στη διεύθυνση IP;',ok:'ip',opts:[['ip','Λειτουργεί σαν τη διεύθυνση ενός σπιτιού και προσδιορίζει πού βρίσκεται η συσκευή στο δίκτυο.'],['mac','Είναι μοναδικός κωδικός που δίνεται στη συσκευή από το εργοστάσιο και δεν αλλάζει.'],['x','Μετρά την ταχύτητα σύνδεσης σε Mbps.']]},
+ {prompt:'Ποια από τις παρακάτω είναι έγκυρη μορφή IPv4;',ok:'goodip',opts:[['goodip','192.168.1.15'],['x1','192.168.300.15'],['x2','192-168-1-15'],['x3','00:1A:2B:3C:4D:5E']]},
+ {prompt:'Ποια από τις παρακάτω είναι διεύθυνση MAC;',ok:'goodmac',opts:[['goodmac','00:1A:2B:3C:4D:5E'],['x1','192.168.1.15'],['x2','500 Mbps'],['x3','HTTP/HTTPS']]},
+ {prompt:'Ποια πρόταση περιγράφει σωστά τη MAC address;',ok:'macfact',opts:[['macfact','Είναι ένας μοναδικός κωδικός που δίνεται στη συσκευή από το εργοστάσιο και δεν αλλάζει.'],['x1','Έχει πάντα τέσσερις αριθμούς από 0 έως 255 χωρισμένους με τελείες.'],['x2','Μετριέται σε milliseconds.'],['x3','Χρησιμοποιείται για τη μεταφορά ιστοσελίδων.']]}
+];
+function r6(){const d=a6steps[a6step],opts=shuffleOnce('a6'+a6step,d.opts);activity.innerHTML=`<div class="address-compare"><div class="address-card"><span class="tag">IP</span><h3>Διεύθυνση IP</h3><div class="address-code">192.168.1.15</div></div><div class="address-card"><span class="tag">MAC</span><h3>Διεύθυνση MAC</h3><div class="address-code">00:1A:2B:3C:4D:5E</div></div></div><div class="task-strip">${d.prompt}</div><div class="choice-grid">${opts.map(o=>`<button class="choice ${a6hold&&o[0]===d.ok?'correct':''}" data-a6="${o[0]}">${o[1]}</button>`).join('')}</div>`;if(a6hold){setFeedback('Σωστά ✓','good');later(()=>{a6hold=false;a6step++;if(a6step<a6steps.length)r6();else advance()},RESULT);return}qa('[data-a6]').forEach(b=>b.onclick=()=>{if(b.dataset.a6!==d.ok)return wrong(b,'Η επιλογή δεν ταιριάζει με την περιγραφή ή τη μορφή που ζητείται.');a6hold=true;r6()})}
+
+/* Activity 7 */
+let a7open=false,a7step=0,a7hold=false;const a7targets=[['provider','Πάροχος'],['speed','Ταχύτητα'],['ip','Διεύθυνση IP'],['mac','Διεύθυνση MAC']];
+function osNetwork(){return `<div class="os-shell"><div class="os-top"><div class="owl-dot">A</div><div class="os-brand">AthenaOS</div><div class="grow"></div><div>Δίκτυο</div></div><div class="desktop"><div class="desktop-icons"><button class="desktop-icon" id="settingsIcon"><span class="iconbox">⚙</span><span>Ρυθμίσεις</span></button></div>${a7open?`<div class="app-window"><div class="win-title">Ρυθμίσεις</div><div class="win-body"><div class="sidebar"><button class="side-btn">Σύστημα</button><button class="side-btn active">Δίκτυο</button><button class="side-btn">Ήχος</button><button class="side-btn">Οθόνη</button></div><div class="settings-main"><h3>Πληροφορίες σύνδεσης</h3><div class="net-card"><div class="net-row"><div class="net-label">Πάροχος</div><button class="net-value target ${a7hold&&a7targets[a7step][0]==='provider'?'correct':''}" data-net="provider">Πάροχος Α</button></div><div class="net-row"><div class="net-label">Ταχύτητα</div><button class="net-value target ${a7hold&&a7targets[a7step][0]==='speed'?'correct':''}" data-net="speed">300 Mbps</button></div><div class="net-row"><div class="net-label">Διεύθυνση IP</div><button class="net-value target ${a7hold&&a7targets[a7step][0]==='ip'?'correct':''}" data-net="ip">192.168.1.15</button></div><div class="net-row"><div class="net-label">Διεύθυνση MAC</div><button class="net-value target ${a7hold&&a7targets[a7step][0]==='mac'?'correct':''}" data-net="mac">00:1A:2B:3C:4D:5E</button></div></div></div></div></div>`:''}</div></div>`}
+function r7(){const t=a7targets[a7step];activity.innerHTML=`<div class="task-strip">${!a7open?'Άνοιξε τις Ρυθμίσεις του AthenaOS.':`Πάτησε την τιμή για: <b>${t[1]}</b>`}</div>${osNetwork()}`;if(!a7open){q('#settingsIcon').onclick=()=>{a7open=true;setFeedback('Οι Ρυθμίσεις άνοιξαν ✓','good');later(r7,900)};return}if(a7hold){setFeedback(`${t[1]} εντοπίστηκε ✓`,'good');later(()=>{a7hold=false;a7step++;if(a7step<a7targets.length)r7();else advance()},RESULT);return}qa('[data-net]').forEach(b=>b.onclick=()=>{if(b.dataset.net!==t[0])return wrong(b,'Ζητείται διαφορετική πληροφορία δικτύου.');a7hold=true;r7()})}
+
+/* Activity 8 */
+let a8step=0,a8hold=false;const a8cases=[
+ {q:'Η διεύθυνση IP απαιτείται για την ανταλλαγή δεδομένων μεταξύ συσκευών στο διαδίκτυο.',type:'tf',ok:'true'},
+ {q:'Το πρωτόκολλο HTTP χρησιμοποιείται για τη μεταφορά ιστοσελίδων.',type:'tf',ok:'true'},
+ {q:'Το πρωτόκολλο SMTP χρησιμοποιείται για τη λήψη ηλεκτρονικού ταχυδρομείου.',type:'tf',ok:'false'},
+ {q:'Ποια μονάδα ταιριάζει στον χρόνο ανταπόκρισης μιας σύνδεσης;',type:'choice',ok:'ms',opts:[['ms','milliseconds (ms)'],['mbps','Mbps'],['gb','GB'],['ghz','GHz']]},
+ {q:'Ποιο πρωτόκολλο χρησιμοποιείται για την αποστολή ηλεκτρονικού ταχυδρομείου;',type:'choice',ok:'smtp',opts:[['smtp','SMTP'],['ftp','FTP'],['pop','POP3/IMAP'],['http','HTTP/HTTPS']]},
+ {q:'Ποια πληροφορία είναι ο μοναδικός κωδικός που δίνεται στη συσκευή από το εργοστάσιο και δεν αλλάζει;',type:'choice',ok:'mac',opts:[['mac','Διεύθυνση MAC'],['ip','Διεύθυνση IP'],['speed','Ταχύτητα σύνδεσης'],['provider','Πάροχος']]},
+ {q:'Ποιος προσφέρει την υποδομή και τις υπηρεσίες που επιτρέπουν στη συσκευή να συνδεθεί στο διαδίκτυο;',type:'choice',ok:'provider',opts:[['provider','Ο πάροχος'],['http','Το HTTP'],['mac','Η MAC address'],['disk','Ο δίσκος αποθήκευσης']]}
+];
+function r8(){const d=a8cases[a8step];activity.innerHTML=`<div class="case-count">Δοκιμή ${a8step+1} από ${a8cases.length}</div>${d.type==='tf'?`<div class="tf-card"><p>${d.q}</p><div class="tf-actions"><button class="tf-btn ${a8hold&&d.ok==='true'?'correct':''}" data-a8="true">Σωστό</button><button class="tf-btn ${a8hold&&d.ok==='false'?'correct':''}" data-a8="false">Λάθος</button></div></div>`:`<div class="task-strip">${d.q}</div><div class="choice-grid">${shuffleOnce('a8opts'+a8step,d.opts).map(o=>`<button class="choice ${a8hold&&o[0]===d.ok?'correct':''}" data-a8="${o[0]}">${o[1]}</button>`).join('')}</div>`}`;if(a8hold){const msgs=['Σωστό. Η IP είναι απαραίτητη για την ανταλλαγή δεδομένων.','Σωστό. Το HTTP/HTTPS χρησιμοποιείται για ιστοσελίδες.','Σωστά: είναι Λάθος. Το SMTP χρησιμοποιείται για αποστολή, ενώ POP3/IMAP για λήψη email.','Σωστά. Ο χρόνος ανταπόκρισης μετριέται σε milliseconds.','Σωστά. Το SMTP χρησιμοποιείται για αποστολή email.','Σωστά. Η MAC address είναι ο μοναδικός εργοστασιακός κωδικός.','Σωστά. Ο πάροχος προσφέρει την υποδομή και τις υπηρεσίες σύνδεσης.'];setFeedback(msgs[a8step],'good');later(()=>{a8hold=false;a8step++;if(a8step<a8cases.length)r8();else advance()},RESULT);return}qa('[data-a8]').forEach(b=>b.onclick=()=>{if(b.dataset.a8!==d.ok)return wrong(b,'Η απάντηση δεν συμφωνεί με τις έννοιες του μαθήματος.');a8hold=true;r8()})}
+
+/* Activity 9 */
+const levels=['Έχω καταλάβει και μπορώ να εξηγήσω','Έχω καταλάβει αρκετά καλά','Έχω καταλάβει αλλά έχω απορίες','Χρειάζομαι βοήθεια'];
+const objectives=['Να αναγνωρίζω ποιος είναι ο ρόλος των διαφορετικών παρόχων.','Να περιγράφω την έννοια και τη συμβολή των πρωτοκόλλων επικοινωνίας στη δικτύωση υπολογιστικών συσκευών.','Να περιγράφω με απλό τρόπο τη φυσική διεύθυνση μίας συσκευής σε δίκτυο υπολογιστών (IP, MAC address).','Να διακρίνω τα χαρακτηριστικά σύνδεσης στο διαδίκτυο (πάροχος, ταχύτητα, μονάδες μέτρησης).'];let selfSel=[null,null,null,null];
+function r9(){activity.innerHTML=`<div class="self-wrap"><div class="self-table"><div class="self-head">Διαλέγω πόσο καλά έμαθα</div>${levels.map(x=>`<div class="self-head">${x}</div>`).join('')}${objectives.map((o,row)=>`<div class="self-objective">✓ ${o}</div>${levels.map((l,col)=>`<button class="self-cell ${selfSel[row]===col?'selected':''}" data-self="${row}:${col}">${l}</button>`).join('')}`).join('')}</div></div><div class="finish-actions"><button class="primary" id="finishBtn" ${selfSel.some(x=>x===null)?'disabled':''}>Ολοκλήρωση</button></div>`;qa('[data-self]').forEach(b=>b.onclick=()=>{const [r,c]=b.dataset.self.split(':').map(Number);selfSel[r]=c;r9()});q('#finishBtn').onclick=()=>{if(selfSel.some(x=>x===null))return;completed.add(stage);finished=true;render()}}
+const renderers=[r1,r2,r3,r4,r5,r6,r7,r8,r9];
+function renderCompletion(){updateProgress();kicker.textContent='ΟΛΟΚΛΗΡΩΣΗ';stageTitle.textContent='Μάθημα 14 ολοκληρώθηκε';instruction.textContent='Ολοκλήρωσες τις δραστηριότητες για παρόχους, χαρακτηριστικά σύνδεσης, πρωτόκολλα και διευθύνσεις δικτύου.';activity.innerHTML=`<div class="completion"><div class="big">✓</div><h2>Ολοκλήρωσες το μάθημα!</h2><p>Μπορείς να αναγνωρίζεις τον ρόλο του παρόχου, να διακρίνεις βασικά χαρακτηριστικά σύνδεσης, να αντιστοιχίζεις πρωτόκολλα στις λειτουργίες τους και να ξεχωρίζεις διευθύνσεις IP και MAC.</p><button class="repeat-btn" id="repeatBtn">↻ Επανάληψη μαθήματος</button></div>`;q('#repeatBtn').onclick=()=>location.reload()}
+render();
+</script>
+<footer class="nk-license" aria-label="Πληροφορίες δημιουργού και άδειας χρήσης">
+  <div><strong>Created by Nikos Kalakos · © 2026</strong></div>
+  <div>Original educational content and simulation design licensed under <a class="cc-badge" href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank" rel="license noopener noreferrer">CC BY-NC 4.0</a>.</div>
+  <div>Source code © 2026 Nikos Kalakos.</div>
+  <div>Third-party and textbook materials remain subject to the rights and licences of their respective copyright holders.</div>
+</footer>
+</body>
+</html>

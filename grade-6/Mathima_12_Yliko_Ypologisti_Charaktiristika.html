@@ -1,0 +1,390 @@
+<!--
+ICT Educational Simulation
+Created by Nikos Kalakos
+Copyright © 2026 Nikos Kalakos
+
+Original educational content and simulation design licensed under CC BY-NC 4.0.
+Source code © 2026 Nikos Kalakos.
+Third-party and textbook materials remain subject to the rights and licences of their respective copyright holders.
+-->
+<!DOCTYPE html>
+<html lang="el">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta name="author" content="Nikos Kalakos">
+<meta name="copyright" content="© 2026 Nikos Kalakos">
+<meta name="license" content="Original educational content and simulation design: CC BY-NC 4.0; source code © 2026 Nikos Kalakos; third-party and textbook materials excluded.">
+<title>Μάθημα 12 – Το υλικό του υπολογιστή και τα χαρακτηριστικά του</title>
+<style>
+:root{
+  --unit:#EA922C; --unit-dark:#B86610; --unit-soft:#FFF4E6;
+  --secondary:#545F99; --secondary-dark:#3D477C; --secondary-soft:#EEF0F8;
+  --ink:#273247; --muted:#69758A; --line:#D8DEEA; --bg:#F4F6FA;
+  --good:#23845A; --good-soft:#E9F7F0; --bad:#B64242; --bad-soft:#FDEEEE;
+  --panel:#FFFFFF; --shadow:0 12px 32px rgba(43,54,84,.10);
+}
+*{box-sizing:border-box}html{scroll-behavior:smooth}
+body{margin:0;font-family:Inter,"Segoe UI",Arial,sans-serif;color:var(--ink);background:radial-gradient(circle at 9% 7%,rgba(234,146,44,.10),transparent 29%),radial-gradient(circle at 92% 14%,rgba(84,95,153,.11),transparent 30%),var(--bg);font-size:17px}
+button,input,select{font:inherit}button{cursor:pointer}button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid rgba(84,95,153,.34);outline-offset:2px}
+.page{max-width:1540px;margin:0 auto;padding:18px}.hero{background:#fff;border:1px solid #E1E6EF;border-top:9px solid var(--unit);border-radius:18px;padding:20px 24px;display:grid;grid-template-columns:1fr auto;gap:18px;align-items:center;box-shadow:var(--shadow)}
+.eyebrow{font-size:14px;font-weight:950;letter-spacing:.08em;text-transform:uppercase;color:var(--secondary)}.hero h1{margin:5px 0 0;font-size:32px;line-height:1.12;color:var(--secondary-dark)}.hero p{margin:8px 0 0;color:var(--muted);font-weight:700}.lesson-mark{width:140px;height:78px;border-radius:16px;background:linear-gradient(135deg,var(--secondary),var(--secondary-dark));color:#fff;display:grid;place-items:center;text-align:center;box-shadow:0 9px 22px rgba(84,95,153,.24)}.lesson-mark b{font-size:30px;line-height:1}.lesson-mark span{font-size:11px;font-weight:900;letter-spacing:.08em;text-transform:uppercase}
+.progress{margin:13px 0;background:#fff;border:1px solid #E1E5EC;border-radius:15px;padding:12px 15px;box-shadow:0 7px 20px rgba(48,58,87,.06)}.progress-top{display:flex;justify-content:space-between;gap:12px;align-items:center;color:#59667B;font-size:14px;font-weight:850}.bar{height:8px;background:#ECEFF4;border-radius:999px;overflow:hidden;margin:8px 0 10px}.fill{height:100%;width:0;background:linear-gradient(90deg,var(--unit),var(--secondary));transition:.3s ease}.steps{display:flex;gap:8px;flex-wrap:wrap;justify-content:center}.step-dot{width:31px;height:31px;border-radius:9px;border:1px solid #CDD3DE;background:#fff;color:#758197;display:grid;place-items:center;font-size:13px;font-weight:900}.step-dot.current{border:2px solid var(--unit);color:var(--unit-dark);background:var(--unit-soft)}.step-dot.done{border-color:var(--secondary);background:var(--secondary);color:#fff}
+.stage{background:#fff;border:1px solid #E0E5EF;border-radius:18px;box-shadow:0 10px 28px #27364b12;overflow:hidden}.stage-head{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;padding:18px 20px;border-bottom:1px solid #E8ECF3}.stage-kicker{font-size:13px;font-weight:950;color:var(--unit-dark);text-transform:uppercase;letter-spacing:.04em}.stage-title{font-size:25px;margin:4px 0}.instruction{margin:0;color:#5C687C;font-weight:650;line-height:1.5}.help-btn{border:1px solid #C9D1E0;background:#fff;border-radius:11px;padding:9px 13px;font-weight:850;color:var(--secondary-dark);white-space:nowrap}.help-btn:hover{background:var(--secondary-soft)}.workspace{padding:18px 20px 22px;min-height:560px}.task-strip{border-left:5px solid var(--unit);background:#FFF9F1;padding:12px 14px;border-radius:11px;margin-bottom:14px;font-weight:800;line-height:1.45}.feedback{min-height:0;margin-top:12px;border-radius:11px;font-weight:800;line-height:1.45}.feedback.show{padding:11px 13px;border:1px solid}.feedback.info{background:#F2F6FF;border-color:#C8D5EF;color:#46577C}.feedback.good{background:var(--good-soft);border-color:#AADBC5;color:#176943}.feedback.bad{background:var(--bad-soft);border-color:#F0BABA;color:#9B3030}
+.choice-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;max-width:1120px;margin:12px auto}.choice{min-height:70px;border:1.5px solid #C9D2E2;background:#fff;border-radius:12px;padding:13px 15px;text-align:left;font-weight:850;color:#283650;transition:.15s;font-size:17px}.choice:hover{border-color:#8897B3;transform:translateY(-1px)}.choice.correct{background:var(--good-soft);border-color:#7DC7A4}.choice.wrong{animation:shake .28s;background:var(--bad-soft);border-color:#E49A9A}@keyframes shake{25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
+.primary-action{border:0;background:var(--secondary);color:#fff;border-radius:11px;padding:11px 17px;font-weight:900}.primary-action:hover{background:var(--secondary-dark)}.primary-action:disabled{opacity:.48;cursor:default}.check-strip{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin-top:12px}.check-chip{border:1px solid #CFD7E3;background:#fff;border-radius:99px;padding:7px 11px;font-size:15px;font-weight:850;color:#69778D}.check-chip.done{background:var(--good-soft);border-color:#8FCBAD;color:#1E6A4D}.state-note{max-width:960px;margin:12px auto;background:#F7F9FD;border:1px solid #D6DDE8;border-radius:12px;padding:12px 14px;font-weight:750;line-height:1.45;color:#4D5A71}
+/* Activity 1 */
+.hardware-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;max-width:1160px;margin:10px auto}.hw-card{border:1.5px solid #CCD4E1;background:#fff;border-radius:15px;padding:16px;min-height:130px;text-align:center;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;font-weight:900;color:#34415A;transition:.15s}.hw-card:hover{transform:translateY(-2px);border-color:#8E9AB1}.hw-card .ico{width:52px;height:52px;border-radius:14px;background:var(--secondary-soft);color:var(--secondary);display:grid;place-items:center;font-size:27px;font-weight:950}.hw-card.selected{background:var(--good-soft);border-color:#7DC7A4;color:#176943}.hw-card.wrong{animation:shake .28s;background:var(--bad-soft);border-color:#E49A9A}
+/* Matching */
+.match-board{position:relative;max-width:1120px;margin:8px auto;display:grid;grid-template-columns:1fr 1fr;gap:120px;padding:12px 18px;overflow:visible}.match-col{display:grid;gap:12px;align-content:start}.match-item{position:relative;z-index:2;background:#fff;border:1.5px solid #CBD4E2;border-radius:12px;min-height:72px;padding:14px 22px;display:flex;align-items:center;font-weight:850;color:#33415A;user-select:none}.match-item.left{cursor:crosshair;padding-right:28px}.match-item.right{padding-left:28px}.match-item.matched{background:var(--good-soft);border-color:#7DC7A4;color:#176943}.match-svg{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:1;overflow:visible}.match-line{stroke:var(--secondary);stroke-width:4;stroke-linecap:round}.match-line.temp{stroke:var(--unit);stroke-dasharray:7 7}.match-dot{position:absolute;top:50%;right:-8px;transform:translateY(-50%);width:16px;height:16px;border-radius:50%;background:var(--unit);border:3px solid #fff;box-shadow:0 0 0 1.5px var(--unit);z-index:4}.right .match-dot{left:-8px;right:auto;background:var(--secondary);box-shadow:0 0 0 1.5px var(--secondary)}
+/* Scenario */
+.scenario-card{max-width:1080px;margin:8px auto;background:linear-gradient(135deg,#fff,#F8F9FC);border:1px solid #D4DBE7;border-radius:16px;padding:18px;box-shadow:0 8px 20px rgba(55,66,96,.06)}.scenario-head{display:flex;gap:12px;align-items:center;margin-bottom:10px}.scenario-icon{width:48px;height:48px;border-radius:14px;background:var(--unit-soft);color:var(--unit-dark);display:grid;place-items:center;font-size:25px;font-weight:950}.scenario-card h3{margin:0;color:var(--secondary-dark)}.summary-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;max-width:1120px;margin:12px auto}.summary-card{border:1px solid #D0D8E4;background:#fff;border-radius:14px;padding:15px;line-height:1.45}.summary-card b{display:block;color:var(--secondary-dark);margin-bottom:5px}
+/* Properties */
+.property-panel{max-width:1100px;margin:0 auto;display:grid;grid-template-columns:310px 1fr;gap:18px;align-items:stretch}.device-card{border:1px solid #D2D9E5;border-radius:16px;padding:18px;background:linear-gradient(145deg,#fff,#F7F8FB);display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center}.device-visual{width:130px;height:95px;border:8px solid #3A4357;border-radius:8px;background:linear-gradient(135deg,#DDE5F5,#B8C7E8);position:relative}.device-visual.screen:after{content:"";position:absolute;width:55px;height:8px;background:#3A4357;left:50%;bottom:-25px;transform:translateX(-50%);border-radius:5px}.device-visual.camera{width:100px;height:68px;border-radius:16px;border-width:6px}.device-visual.camera:before{content:"";position:absolute;width:32px;height:32px;border:7px solid var(--secondary);border-radius:50%;left:50%;top:50%;transform:translate(-50%,-50%)}.device-visual.keyboard{width:150px;height:70px;border-radius:8px;background:repeating-linear-gradient(90deg,#F1F3F7 0 13px,#B6BFCE 13px 14px),repeating-linear-gradient(0deg,transparent 0 13px,#B6BFCE 13px 14px);border:6px solid #465169}.device-visual.battery{width:120px;height:60px;border:6px solid #465169;border-radius:8px;background:linear-gradient(90deg,var(--good) 0 72%,#E5E8EE 72%)}.device-visual.battery:after{content:"";position:absolute;right:-15px;top:14px;width:9px;height:22px;background:#465169;border-radius:0 4px 4px 0}.device-visual.ports{width:150px;height:68px;border-radius:10px;background:#444D61;border:6px solid #303746}.device-visual.ports:before,.device-visual.ports:after{content:"";position:absolute;top:20px;width:35px;height:16px;background:#111827;border:3px solid #AAB2C0;border-radius:3px}.device-visual.ports:before{left:15px}.device-visual.ports:after{right:15px}
+/* Book questions */
+.question-card{max-width:1100px;margin:0 auto;border:1px solid #D2DAE6;border-radius:15px;background:#fff;padding:17px}.question-no{display:inline-grid;place-items:center;width:34px;height:34px;border-radius:10px;background:var(--unit);color:#fff;font-weight:950;margin-right:8px}.question-card h3{display:inline;font-size:20px;line-height:1.45}.mini-summary{max-width:900px;margin:12px auto;border:1px solid #CDE1D6;background:var(--good-soft);border-radius:14px;padding:15px;font-weight:800;line-height:1.5;color:#23664C}
+/* AthenaOS */
+.os-wrap{max-width:1180px;margin:8px auto;border:1px solid #BEC7D6;border-radius:16px;overflow:hidden;box-shadow:0 12px 28px rgba(34,45,72,.14);background:#E9EDF5}.os-top{height:48px;background:linear-gradient(90deg,var(--secondary-dark),var(--secondary));color:#fff;display:flex;align-items:center;padding:0 14px;gap:12px}.os-logo{font-weight:950;letter-spacing:.02em}.os-spacer{flex:1}.os-power{width:36px;height:36px;border:1px solid rgba(255,255,255,.35);border-radius:9px;background:rgba(255,255,255,.11);color:#fff;font-size:20px;font-weight:950}.os-desktop{position:relative;min-height:470px;background:radial-gradient(circle at 70% 28%,rgba(255,255,255,.22),transparent 25%),linear-gradient(135deg,#6D78B3,#4C578F);padding:24px}.os-shortcuts{display:grid;gap:15px;width:max-content}.os-shortcut{width:88px;text-align:center;color:#fff;font-size:14px;font-weight:800;text-shadow:0 1px 2px #1d2449}.os-shortcut .os-icon{width:52px;height:52px;margin:0 auto 5px;border-radius:13px;background:rgba(255,255,255,.92);color:var(--secondary-dark);display:grid;place-items:center;font-size:25px;text-shadow:none}.system-menu{position:absolute;top:6px;right:18px;width:265px;background:#fff;border:1px solid #C8D1DF;border-radius:12px;box-shadow:0 12px 30px rgba(26,35,60,.22);padding:7px;z-index:4}.system-menu button{width:100%;border:0;background:#fff;border-radius:8px;padding:11px 12px;text-align:left;font-weight:820;color:#34415A}.system-menu button:hover{background:var(--secondary-soft)}.about-window{position:absolute;left:50%;top:52%;transform:translate(-50%,-50%);width:min(720px,92%);background:#fff;border:1px solid #CBD3E0;border-radius:15px;box-shadow:0 18px 45px rgba(18,28,58,.30);overflow:hidden;z-index:3}.about-title{height:45px;background:#F3F5F9;border-bottom:1px solid #D6DCE6;display:flex;align-items:center;padding:0 14px;font-weight:950;color:#3D4963}.about-body{padding:18px;display:grid;grid-template-columns:150px 1fr;gap:16px}.about-emblem{width:112px;height:112px;border-radius:28px;background:linear-gradient(145deg,var(--secondary),var(--secondary-dark));color:#fff;display:grid;place-items:center;font-size:44px;font-weight:950;margin:auto}.spec-list{display:grid;gap:8px}.spec-row{border:1px solid #D8DEE8;border-radius:10px;padding:10px 12px;background:#FBFCFE;display:grid;grid-template-columns:180px 1fr;gap:12px;align-items:center;font-size:16px}.spec-row button{border:0;background:transparent;text-align:left;padding:0;font:inherit;color:inherit;display:contents}.spec-label{font-weight:900;color:#536078}.spec-value{font-weight:850;color:#273247}.spec-row.found{background:var(--good-soft);border-color:#8BC8A8}.spec-row.found .spec-value:after{content:"  ✓";color:var(--good);font-weight:950}
+/* Recording */
+.record-wrap{max-width:1120px;margin:0 auto;display:grid;grid-template-columns:1fr 1.15fr;gap:18px}.source-panel,.record-panel{border:1px solid #D0D8E4;border-radius:15px;background:#fff;padding:16px}.source-panel h3,.record-panel h3{margin:0 0 12px;color:var(--secondary-dark)}.value-cards{display:grid;gap:9px}.value-card{border:1.5px solid #CBD4E1;border-radius:10px;padding:11px 12px;background:#fff;font-weight:850;cursor:grab;user-select:none}.value-card.selected{outline:3px solid rgba(84,95,153,.25);border-color:var(--secondary)}.value-card.used{opacity:.45;cursor:default}.record-table{display:grid;gap:8px}.record-row{display:grid;grid-template-columns:190px 1fr;gap:10px;align-items:center}.record-label{font-weight:900;color:#4B5870}.drop-cell{min-height:48px;border:2px dashed #B9C3D3;border-radius:10px;display:flex;align-items:center;padding:8px 11px;font-weight:850;color:#718096;background:#FAFBFD}.drop-cell.filled{border-style:solid;border-color:#8AC8A6;background:var(--good-soft);color:#176943}.drop-cell.hover{border-color:var(--unit);background:var(--unit-soft)}
+/* Final test */
+.computer-options{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;max-width:1140px;margin:10px auto}.pc-card{border:1.5px solid #CAD3E1;border-radius:15px;background:#fff;padding:16px;text-align:left}.pc-card h4{margin:0 0 10px;color:var(--secondary-dark);font-size:18px}.pc-card ul{margin:0;padding-left:20px;line-height:1.55;color:#536078;font-weight:750}.pc-card.correct{background:var(--good-soft);border-color:#7DC7A4}.pc-card.wrong{animation:shake .28s;background:var(--bad-soft);border-color:#E49A9A}
+/* Self assessment */
+.self-wrap{overflow-x:auto}.self-table{min-width:900px;display:grid;grid-template-columns:minmax(330px,1.55fr) repeat(4,minmax(155px,1fr));border:1px solid #D1D8E4;border-radius:14px;overflow:hidden}.self-head{background:var(--secondary);color:#fff;padding:13px 10px;font-weight:900;text-align:center;border-right:1px solid rgba(255,255,255,.25);font-size:16px;line-height:1.25}.self-objective{padding:14px 12px;background:#FAFBFD;border-top:1px solid #D9DFE8;font-weight:850;line-height:1.4}.self-cell{border:0;border-left:1px solid #D9DFE8;border-top:1px solid #D9DFE8;background:#fff;min-height:80px;font-weight:850;font-size:16px;color:#46546D;padding:10px}.self-cell:hover{background:var(--secondary-soft)}.self-cell.selected{background:var(--unit-soft);box-shadow:inset 0 0 0 2px var(--unit);color:var(--unit-dark)}.finish-btn{display:block;margin:16px auto 0;border:0;border-radius:11px;background:var(--secondary);color:#fff;font-weight:900;padding:11px 18px}.complete{max-width:780px;margin:20px auto;text-align:center;border:1px solid #C9D3E2;border-radius:17px;padding:28px;background:linear-gradient(135deg,#fff,#FAFBFE)}.complete .icon{font-size:42px}.complete h2{color:var(--secondary-dark)}.repeat-btn{border:1px solid #C9D1DF;background:#fff;border-radius:10px;padding:10px 15px;font-weight:900;color:var(--secondary-dark)}
+/* Modal */
+.modal{position:fixed;inset:0;background:rgba(28,35,54,.46);display:none;align-items:center;justify-content:center;padding:18px;z-index:100}.modal.open{display:flex}.modal-card{width:min(650px,96vw);background:#fff;border:1px solid #CFD6E2;border-radius:16px;box-shadow:0 22px 60px rgba(15,23,42,.30);overflow:hidden}.modal-head{display:flex;align-items:center;justify-content:space-between;padding:14px 16px;border-bottom:1px solid #E1E5EC;background:#F8F9FC}.modal-head h3{margin:0;color:var(--secondary-dark)}.modal-close{border:0;background:transparent;font-size:24px;color:#68758A}.modal-body{padding:16px 18px;line-height:1.6;color:#4C5971;font-weight:720}.modal-actions{display:flex;justify-content:flex-end;gap:8px;padding:0 18px 16px}.speak-btn{border:1px solid #CBD3E0;background:#fff;border-radius:9px;padding:8px 11px;font-weight:850;color:var(--secondary-dark)}
+@media(max-width:980px){.hardware-grid{grid-template-columns:repeat(2,1fr)}.match-board{gap:36px}.summary-grid,.computer-options{grid-template-columns:1fr}.property-panel,.record-wrap{grid-template-columns:1fr}.os-desktop{min-height:520px}.about-body{grid-template-columns:1fr}.about-emblem{display:none}}
+@media(max-width:680px){.page{padding:10px}.hero{grid-template-columns:1fr}.lesson-mark{width:100%;height:60px}.hero h1{font-size:25px}.choice-grid{grid-template-columns:1fr}.hardware-grid{grid-template-columns:1fr}.match-board{grid-template-columns:1fr;gap:28px}.match-svg{display:none}.spec-row{grid-template-columns:1fr}.record-row{grid-template-columns:1fr}}
+</style>
+<style id="nk-license-style">
+.nk-license{max-width:1100px;margin:14px auto 24px;padding:10px 16px;text-align:center;font:13px/1.45 Arial,"Noto Sans",sans-serif;color:#4e657c}
+.nk-license a{color:inherit;text-decoration:underline;text-underline-offset:2px}
+.nk-license .cc-badge{display:inline-block;margin:0 4px;padding:2px 7px;border:1px solid #8aa0b8;border-radius:6px;background:#fff;font-weight:700;white-space:nowrap}
+</style>
+</head>
+<body>
+<div class="page">
+  <header class="hero">
+    <div>
+      <div class="eyebrow">Ενότητα 2 · Υπολογιστικά συστήματα – Ψηφιακές συσκευές – Δίκτυα</div>
+      <h1>Το υλικό του υπολογιστή και τα χαρακτηριστικά του</h1>
+      <p>Αναγνώρισε τα βασικά στοιχεία του υλικού και σύνδεσε κάθε χαρακτηριστικό με τον ρόλο του.</p>
+    </div>
+    <div class="lesson-mark"><div><b>12</b><br><span>Μάθημα</span></div></div>
+  </header>
+  <section class="progress">
+    <div class="progress-top"><span id="progressText">Δραστηριότητα 1 από 9</span><span id="progressPct">0%</span></div>
+    <div class="bar"><div class="fill" id="fill"></div></div>
+    <div class="steps" id="steps"></div>
+  </section>
+  <section class="stage">
+    <div class="stage-head">
+      <div><div class="stage-kicker" id="kicker"></div><h2 class="stage-title" id="stageTitle"></h2><p class="instruction" id="instruction"></p></div>
+      <button class="help-btn" id="helpBtn">? Βοήθεια</button>
+    </div>
+    <div class="workspace"><div id="activity"></div><div class="feedback" id="feedback"></div></div>
+  </section>
+</div>
+<div class="modal" id="helpModal" role="dialog" aria-modal="true" aria-labelledby="helpTitle">
+  <div class="modal-card"><div class="modal-head"><h3 id="helpTitle">Βοήθεια</h3><button class="modal-close" id="closeHelp" aria-label="Κλείσιμο">×</button></div><div class="modal-body" id="helpText"></div><div class="modal-actions"><button class="speak-btn" id="speakHelp">🔊 Ακρόαση</button></div></div>
+</div>
+<script>
+const RESULT=1350, SHORT=700, WRONG_RESET=560;
+const ACTIVITIES=[
+ {t:'Τι ανήκει στο υλικό;',i:'Ξεχώρισε τα βασικά στοιχεία του υλικού από το λογισμικό.'},
+ {t:'Σύνδεσε εξάρτημα και χαρακτηριστικό',i:'Σύρε γραμμή από κάθε βασικό εξάρτημα προς το χαρακτηριστικό που το περιγράφει.'},
+ {t:'Συμβούλεψε τη θεία Ιουλία',i:'Διάλεξε ποια χαρακτηριστικά έχουν μεγαλύτερη σημασία για κάθε χρήση.'},
+ {t:'Χαρακτηριστικά περιφερειακών και φορητών συσκευών',i:'Σύνδεσε κάθε συσκευή με το τεχνικό χαρακτηριστικό που έχει σημασία.'},
+ {t:'Έλεγχος γνώσεων',i:'Απάντησε στις πέντε ερωτήσεις του μαθήματος για μονάδες μέτρησης και τεχνολογίες.'},
+ {t:'Βρες τα τεχνικά χαρακτηριστικά στο AthenaOS',i:'Χρησιμοποίησε το λειτουργικό σύστημα για να εντοπίσεις πληροφορίες του υπολογιστή.'},
+ {t:'Κατάγραψε τα χαρακτηριστικά',i:'Μετέφερε τις σωστές τιμές στον πίνακα του υπολογιστικού συστήματος.'},
+ {t:'Συνολική δοκιμή',i:'Συνδύασε όσα έμαθες και επίλεξε κατάλληλες διαμορφώσεις για διαφορετικές ανάγκες χρηστών.'},
+ {t:'Τι έμαθα;',i:'Αξιολόγησε πόσο καλά έχεις κατανοήσει τον στόχο του μαθήματος.'}
+];
+const HELP=[
+ 'Υλικό είναι τα φυσικά εξαρτήματα και οι συσκευές του υπολογιστή. Λογισμικό είναι τα προγράμματα και οι εφαρμογές.',
+ 'Ξεκίνα από ένα στοιχείο αριστερά, κράτησε πατημένο και σύρε προς τη σωστή περιγραφή δεξιά. Η σωστή γραμμή μένει, η λανθασμένη εξαφανίζεται.',
+ 'Σκέψου τη χρήση: γενική απόδοση, τρισδιάστατα γραφικά ή συχνές μετακινήσεις. Κάθε χρήση δίνει έμφαση σε διαφορετικά χαρακτηριστικά.',
+ 'Διάβασε προσεκτικά τη συσκευή και διάλεξε το χαρακτηριστικό που αναφέρει το βιβλίο: ανάλυση, τρόπος σύνδεσης, ποιότητα ήχου, αυτονομία ή θύρες.',
+ 'Θυμήσου: μνήμη και αποθήκευση μετρώνται σε Byte και πολλαπλάσια, ταχύτητα επεξεργαστή σε Hertz/GHz, ανάλυση κάμερας σε pixel/Mp.',
+ 'Πάτησε το σύμβολο τερματισμού επάνω δεξιά και επίλεξε «Σχετικά με τον υπολογιστή». Έπειτα εντόπισε τα τέσσερα ζητούμενα χαρακτηριστικά.',
+ 'Οι τιμές βρίσκονται ήδη στις κάρτες. Σύρε κάθε κάρτα στη σωστή γραμμή. Μπορείς επίσης να επιλέξεις μια κάρτα και μετά να πατήσεις τη σωστή θέση.',
+ 'Ξεκίνα με τον σύντομο έλεγχο γνώσεων. Έπειτα, σε καθεμία από τις πέντε περιπτώσεις πελατών, διάβασε πρώτα την ανάγκη και μετά σύγκρινε όλες τις προδιαγραφές πριν επιλέξεις διαμόρφωση.',
+ 'Διάλεξε το επίπεδο που περιγράφει καλύτερα τη δική σου κατανόηση. Δεν υπάρχει σωστή ή λάθος επιλογή.'
+];
+let stage=0,finished=false,renderEpoch=0,pendingTimers=[];const completed=new Set();const shuffleCache={};
+const q=s=>document.querySelector(s), qa=s=>[...document.querySelectorAll(s)];
+const activity=q('#activity'),feedback=q('#feedback'),kicker=q('#kicker'),stageTitle=q('#stageTitle'),instruction=q('#instruction');
+function clearTimers(){pendingTimers.forEach(clearTimeout);pendingTimers=[]}
+function later(fn,ms){const s=stage,e=renderEpoch;const id=setTimeout(()=>{if(stage===s&&renderEpoch===e)fn()},ms);pendingTimers.push(id);return id}
+function setFeedback(txt,type='info'){feedback.className='feedback show '+type;feedback.innerHTML=txt}
+function clearFeedback(){feedback.className='feedback';feedback.textContent=''}
+function shuffleCopy(arr){const a=[...arr];for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
+function shuffleOnce(key,arr){if(!shuffleCache[key])shuffleCache[key]=shuffleCopy(arr);return shuffleCache[key]}
+function wrong(el,msg){el.classList.remove('wrong');void el.offsetWidth;el.classList.add('wrong');setFeedback(msg,'bad');later(()=>{el.classList.remove('wrong');clearFeedback()},WRONG_RESET)}
+function updateProgress(){const n=ACTIVITIES.length;const pct=finished?100:Math.round(stage/(n-1)*100);q('#progressText').textContent=finished?'Ολοκληρώθηκε':`Δραστηριότητα ${stage+1} από ${n}`;q('#progressPct').textContent=pct+'%';q('#fill').style.width=pct+'%';q('#steps').innerHTML=ACTIVITIES.map((_,i)=>`<span class="step-dot ${completed.has(i)?'done':''} ${i===stage&&!finished?'current':''}">${i+1}</span>`).join('')}
+function advance(delay=0){later(()=>{completed.add(stage);stage++;render()},delay)}
+function visibleThenNext(message,renderer,nextFn=()=>advance(),ms=RESULT){renderer();setFeedback(message,'good');later(nextFn,ms)}
+
+/* Activity 1 */
+const hardwareKeys=new Set(['cpu','ram','disk','keyboard','screen']);let a1selected=new Set();
+function hardwareCards(){const cards=shuffleOnce('a1cards',[
+ ['cpu','Επεξεργαστής','▣'],['ram','Μνήμη','▤'],['disk','Δίσκος αποθήκευσης','◫'],['keyboard','Πληκτρολόγιο','⌨'],['screen','Οθόνη','▭'],['browser','Πρόγραμμα περιήγησης','◎'],['os','Λειτουργικό σύστημα','◇'],['editor','Επεξεργαστής κειμένου','≡']]);
+ return `<div class="hardware-grid">${cards.map(([k,l,ic])=>`<button class="hw-card ${a1selected.has(k)?'selected':''}" data-a1="${k}"><span class="ico">${ic}</span><span>${l}</span></button>`).join('')}</div>`}
+function r1(){
+ activity.innerHTML=`<div class="task-strip">Επίλεξε μόνο όσα αποτελούν <b>υλικό</b> του υπολογιστή.</div>${hardwareCards()}`;
+ qa('[data-a1]').forEach(b=>b.onclick=()=>{
+  const k=b.dataset.a1;
+  if(!hardwareKeys.has(k))return wrong(b,'Αυτό είναι λογισμικό, όχι φυσικό εξάρτημα ή συσκευή.');
+  a1selected.add(k);b.classList.add('selected');
+  if(a1selected.size===hardwareKeys.size){
+   qa('[data-a1]').forEach(x=>x.disabled=true);
+   setFeedback('Σωστά. Ξεχώρισες το υλικό από το λογισμικό ✓','good');
+   later(()=>advance(),RESULT);
+  }
+ })
+}
+
+/* Activity 2 – draw-line matching */
+const matchPairs={cpu:'GHz',ram:'GB',disk:'SSD / HDD · GB / TB',screen:'ίντσες · pixel · Hz'};let matched=new Set(),dragKey=null,tempLine=null;
+function r2(){const rights=shuffleOnce('a2right',Object.entries(matchPairs).map(([k,v])=>[k,v]));activity.innerHTML=`<div class="task-strip">Σύρε γραμμή από κάθε εξάρτημα προς το χαρακτηριστικό ή τη μονάδα που του ταιριάζει.</div><div class="match-board" id="matchBoard"><svg class="match-svg" id="matchSvg"></svg><div class="match-col">${[['cpu','Επεξεργαστής'],['ram','Μνήμη'],['disk','Δίσκος αποθήκευσης'],['screen','Οθόνη']].map(([k,l])=>`<div class="match-item left ${matched.has(k)?'matched':''}" data-left="${k}">${l}<span class="match-dot"></span></div>`).join('')}</div><div class="match-col">${rights.map(([k,v])=>`<div class="match-item right ${matched.has(k)?'matched':''}" data-right="${k}"><span class="match-dot"></span>${v}</div>`).join('')}</div></div>`;requestAnimationFrame(drawPermanentLines);qa('[data-left]').forEach(el=>el.addEventListener('pointerdown',startMatch));window.onresize=drawPermanentLines}
+function centerFor(el,board){const er=el.getBoundingClientRect(),br=board.getBoundingClientRect();return {x:er.left-br.left+er.width/2,y:er.top-br.top+er.height/2}}
+function dotCenterFor(item,board){const dot=item?.querySelector('.match-dot');return dot?centerFor(dot,board):centerFor(item,board)}
+function lineEl(x1,y1,x2,y2,cls='match-line'){const ns='http://www.w3.org/2000/svg',l=document.createElementNS(ns,'line');l.setAttribute('x1',x1);l.setAttribute('y1',y1);l.setAttribute('x2',x2);l.setAttribute('y2',y2);l.setAttribute('class',cls);return l}
+function drawPermanentLines(){const board=q('#matchBoard'),svg=q('#matchSvg');if(!board||!svg)return;svg.innerHTML='';matched.forEach(k=>{const l=q(`[data-left="${k}"]`),r=q(`[data-right="${k}"]`);if(l&&r){const a=dotCenterFor(l,board),b=dotCenterFor(r,board);svg.appendChild(lineEl(a.x,a.y,b.x,b.y))}})}
+function startMatch(e){const el=e.currentTarget,key=el.dataset.left;if(matched.has(key))return;e.preventDefault();dragKey=key;el.setPointerCapture?.(e.pointerId);const board=q('#matchBoard'),svg=q('#matchSvg'),a=dotCenterFor(el,board),br=board.getBoundingClientRect();tempLine=lineEl(a.x,a.y,e.clientX-br.left,e.clientY-br.top,'match-line temp');svg.appendChild(tempLine);const move=ev=>{if(!tempLine)return;tempLine.setAttribute('x2',ev.clientX-br.left);tempLine.setAttribute('y2',ev.clientY-br.top)};const up=ev=>{el.removeEventListener('pointermove',move);el.removeEventListener('pointerup',up);tempLine?.remove();tempLine=null;const target=document.elementFromPoint(ev.clientX,ev.clientY)?.closest('[data-right]');if(target&&target.dataset.right===key){matched.add(key);el.classList.add('matched');target.classList.add('matched');drawPermanentLines();setFeedback('Σωστή σύνδεση ✓','good');if(matched.size===4){setFeedback('Ο χάρτης χαρακτηριστικών ολοκληρώθηκε ✓','good');later(()=>advance(),RESULT)}}else{setFeedback('Η σύνδεση δεν είναι σωστή. Η γραμμή αφαιρέθηκε.','bad');later(clearFeedback,WRONG_RESET)}dragKey=null};el.addEventListener('pointermove',move);el.addEventListener('pointerup',up)}
+
+/* Activity 3 */
+let a3step=0,a3hold=false;const a3data=[
+ {icon:'⚙',title:'Γενική απόδοση',text:'Ποια ομάδα χαρακτηριστικών επηρεάζει περισσότερο τη συνολική απόδοση;',opts:[['ok','Ταχύτητα επεξεργαστή · μέγεθος μνήμης · είδος/μέγεθος δίσκου'],['x1','Μόνο το μέγεθος της οθόνης'],['x2','Μόνο η ανάλυση της κάμερας'],['x3','Μόνο ο αριθμός των θυρών']]},
+ {icon:'▧',title:'Βίντεο και εφαρμογές 3D',text:'Ποια χαρακτηριστικά είναι ιδιαίτερα σημαντικά;',opts:[['ok','Καλή κάρτα γραφικών και καλή ανάλυση/μέγεθος οθόνης'],['x1','Μόνο η χωρητικότητα της μπαταρίας'],['x2','Μόνο το πληκτρολόγιο'],['x3','Μόνο η κάμερα']]},
+ {icon:'⇄',title:'Συχνές μετακινήσεις',text:'Για έναν φορητό υπολογιστή που μεταφέρεται συχνά, τι έχει ιδιαίτερη σημασία;',opts:[['ok','Βάρος και διάρκεια μπαταρίας'],['x1','Μόνο ο ρυθμός ανανέωσης'],['x2','Μόνο η ανάλυση κάμερας'],['x3','Μόνο ο αριθμός των ηχείων']]}
+];
+function scenarioMarkup(d,showCorrect=false){const opts=shuffleOnce('a3'+a3step,d.opts);return `<div class="scenario-card"><div class="scenario-head"><div class="scenario-icon">${d.icon}</div><div><h3>${d.title}</h3><div>${d.text}</div></div></div><div class="choice-grid">${opts.map(o=>`<button class="choice ${showCorrect&&o[0]==='ok'?'correct':''}" data-a3="${o[0]}">${o[1]}</button>`).join('')}</div></div>`}
+function r3(){
+ if(a3hold){
+  const d=a3data[a3step];
+  activity.innerHTML=`<div class="task-strip">Η επιλογή σου είναι σωστή.</div>${scenarioMarkup(d,true)}`;
+  setFeedback('Σωστή επιλογή ✓','good');
+  later(()=>{a3hold=false;a3step++;if(a3step<a3data.length)r3();else advance()},RESULT);
+  return;
+ }
+ const d=a3data[a3step];
+ activity.innerHTML=`<div class="task-strip">Περίπτωση ${a3step+1}</div>${scenarioMarkup(d,false)}`;
+ qa('[data-a3]').forEach(b=>b.onclick=()=>{
+  if(b.dataset.a3!=='ok')return wrong(b,'Διάλεξε τα χαρακτηριστικά που συνδέονται άμεσα με τη συγκεκριμένη χρήση.');
+  a3hold=true;r3();
+ })
+}
+
+/* Activity 4 */
+let a4step=0,a4hold=false;const a4data=[
+ {type:'screen',name:'Οθόνη',q:'Ποια ομάδα περιγράφει βασικά χαρακτηριστικά της οθόνης;',a:'Μέγεθος σε ίντσες · ανάλυση σε pixel · ρυθμός ανανέωσης σε Hz',wrong:['Χωρητικότητα σε GB · τεχνολογία SSD','Ανάλυση σε Mp · ταχύτητα φόρτισης','Στερεοφωνικός ήχος · θύρα USB']},
+ {type:'camera',name:'Κάμερα',q:'Ποιο χαρακτηριστικό επηρεάζει την ποιότητα φωτογραφιών και βίντεο;',a:'Η ανάλυση της κάμερας, που μετριέται σε pixel π.χ. Mp',wrong:['Η χωρητικότητα της μνήμης σε GB','Η ταχύτητα επεξεργαστή σε GHz','Η αυτονομία της μπαταρίας']},
+ {type:'keyboard',name:'Πληκτρολόγιο και ποντίκι',q:'Πώς μπορούν να συνδέονται ή να εμφανίζονται;',a:'Με καλώδιο ή ασύρματα· μπορεί να είναι ενσωματωμένα ή εικονικά',wrong:['Μόνο με καλώδιο','Μόνο ως εξωτερικές συσκευές','Μόνο σε υπολογιστή γραφείου']},
+ {type:'battery',name:'Μπαταρία',q:'Ποια χαρακτηριστικά είναι σημαντικά σε φορητές συσκευές;',a:'Η αυτονομία και η ταχύτητα φόρτισης',wrong:['Η ανάλυση σε Mp και ο ρυθμός ανανέωσης','Το πλήθος των pixel της κάμερας μόνο','Η τεχνολογία SSD/HDD μόνο']},
+ {type:'ports',name:'Θύρες σύνδεσης',q:'Τι πρέπει να εξασφαλίζουν;',a:'Να υπάρχουν οι κατάλληλες θύρες για τις συσκευές που θέλουμε να συνδέσουμε',wrong:['Να αυξάνουν τη χωρητικότητα της μνήμης','Να μετρούν την ταχύτητα του επεξεργαστή','Να αντικαθιστούν την κάρτα γραφικών']}
+];
+function deviceVisual(type){return `<div class="device-visual ${type}"></div>`}
+function r4(){
+ const d=a4data[a4step];
+ if(a4hold){
+  activity.innerHTML=`<div class="task-strip">Το χαρακτηριστικό ταιριάζει σωστά στη συσκευή.</div><div class="property-panel"><div class="device-card">${deviceVisual(d.type)}<h3>${d.name}</h3></div><div class="question-card"><h3>${d.q}</h3><div class="choice-grid"><button class="choice correct">${d.a}</button></div></div></div>`;
+  setFeedback('Σωστά ✓','good');
+  later(()=>{a4hold=false;a4step++;if(a4step<a4data.length)r4();else advance()},RESULT);
+  return;
+ }
+ const opts=shuffleOnce('a4'+a4step,[['ok',d.a],...d.wrong.map((x,i)=>['x'+i,x])]);
+ activity.innerHTML=`<div class="task-strip">Χαρακτηριστικό ${a4step+1} από ${a4data.length}</div><div class="property-panel"><div class="device-card">${deviceVisual(d.type)}<h3>${d.name}</h3></div><div class="question-card"><h3>${d.q}</h3><div class="choice-grid">${opts.map(o=>`<button class="choice" data-a4="${o[0]}">${o[1]}</button>`).join('')}</div></div></div>`;
+ qa('[data-a4]').forEach(b=>b.onclick=()=>{
+  if(b.dataset.a4!=='ok')return wrong(b,'Δοκίμασε ξανά με βάση το τεχνικό χαρακτηριστικό της συσκευής.');
+  a4hold=true;r4();
+ })
+}
+
+/* Activity 5 – book questions */
+let a5step=0,a5hold=false;const a5qs=[
+ {q:'Το μέγεθος της μνήμης και του δίσκου αποθήκευσης μετριέται σε:',a:'Byte και πολλαπλάσια (π.χ. GB)',w:['Pixel και πολλαπλάσια (π.χ. Mp)','Hertz και πολλαπλάσια (π.χ. GHz)','ίντσες (\")']},
+ {q:'Η ταχύτητα του επεξεργαστή μετριέται σε:',a:'Hertz και πολλαπλάσια (π.χ. GHz)',w:['Byte και πολλαπλάσια (π.χ. GB)','Pixel και πολλαπλάσια (π.χ. Mp)','ίντσες (\")']},
+ {q:'Η ανάλυση της κάμερας μετριέται σε:',a:'Pixel και πολλαπλάσια (π.χ. Mp)',w:['Byte και πολλαπλάσια (π.χ. GB)','Hertz και πολλαπλάσια (π.χ. GHz)','ίντσες (\")']},
+ {q:'Ποια τεχνολογία δίσκου αποθήκευσης είναι πιο γρήγορη;',a:'SSD',w:['HDD','DVD','RAM']},
+ {q:'Η ποιότητα της οθόνης επηρεάζεται από την κάρτα:',a:'γραφικών',w:['δικτύου','ήχου','μνήμης']}
+];
+function q5Markup(d,correctOnly=false){const opts=correctOnly?[['ok',d.a]]:shuffleOnce('a5'+a5step,[['ok',d.a],...d.w.map((x,i)=>['x'+i,x])]);return `<div class="question-card"><div><span class="question-no">${a5step+1}</span><h3>${d.q}</h3></div><div class="choice-grid">${opts.map(o=>`<button class="choice ${correctOnly?'correct':''}" data-a5="${o[0]}">${o[1]}</button>`).join('')}</div></div>`}
+function r5(){
+ const d=a5qs[a5step];
+ if(a5hold){
+  activity.innerHTML=`<div class="task-strip">Η απάντηση είναι σωστή.</div>${q5Markup(d,true)}`;
+  setFeedback(`Ερώτηση ${a5step+1}: σωστά ✓`,'good');
+  later(()=>{a5hold=false;a5step++;if(a5step<a5qs.length)r5();else advance()},RESULT);
+  return;
+ }
+ activity.innerHTML=`<div class="task-strip">Ερώτηση ${a5step+1} από ${a5qs.length}</div>${q5Markup(d,false)}`;
+ qa('[data-a5]').forEach(b=>b.onclick=()=>{
+  if(b.dataset.a5!=='ok')return wrong(b,'Η επιλογή δεν ταιριάζει με το χαρακτηριστικό ή τη μονάδα μέτρησης.');
+  a5hold=true;r5();
+ })
+}
+
+/* Activity 6 – AthenaOS */
+let a6menu=false,a6about=false,a6found=new Set();const specKeys=['processor','memory','storage','resolution'];
+function aboutWindow(){return `<div class="about-window"><div class="about-title">Σχετικά με τον υπολογιστή</div><div class="about-body"><div class="about-emblem">Α</div><div class="spec-list"><div class="spec-row ${a6found.has('processor')?'found':''}" data-spec="processor"><span class="spec-label">Επεξεργαστής</span><span class="spec-value">8 πυρήνες · 3.2 GHz</span></div><div class="spec-row ${a6found.has('memory')?'found':''}" data-spec="memory"><span class="spec-label">Μνήμη</span><span class="spec-value">16 GB</span></div><div class="spec-row ${a6found.has('storage')?'found':''}" data-spec="storage"><span class="spec-label">Δίσκος αποθήκευσης</span><span class="spec-value">512 GB SSD</span></div><div class="spec-row ${a6found.has('resolution')?'found':''}" data-spec="resolution"><span class="spec-label">Ανάλυση οθόνης</span><span class="spec-value">1920 × 1080</span></div><div class="spec-row"><span class="spec-label">Ρυθμός ανανέωσης</span><span class="spec-value">60 Hz</span></div></div></div></div>`}
+function osMarkup(){return `<div class="os-wrap"><div class="os-top"><div class="os-logo">AthenaOS</div><div>Επιφάνεια εργασίας</div><div class="os-spacer"></div><button class="os-power" id="osPower" aria-label="Μενού συστήματος">⏻</button></div><div class="os-desktop"><div class="os-shortcuts"><div class="os-shortcut"><div class="os-icon">▣</div>Αρχεία</div><div class="os-shortcut"><div class="os-icon">⚙</div>Ρυθμίσεις</div></div>${a6menu&&!a6about?`<div class="system-menu"><button id="aboutBtn">ⓘ Σχετικά με τον υπολογιστή</button><button>⚙ Ρυθμίσεις</button><button>⏻ Τερματισμός</button></div>`:''}${a6about?aboutWindow():''}</div></div>`}
+function r6(){
+ activity.innerHTML=`<div class="task-strip">${!a6about?'Άνοιξε το μενού συστήματος και επίλεξε «Σχετικά με τον υπολογιστή».':'Πάτησε τις τέσσερις γραμμές που χρειάζεσαι για την καταγραφή του εργαστηρίου.'}</div>${osMarkup()}${a6about?`<div class="check-strip">${specKeys.map(k=>`<span class="check-chip ${a6found.has(k)?'done':''}">${a6found.has(k)?'✓ ':''}${({processor:'Επεξεργαστής',memory:'Μνήμη',storage:'Αποθήκευση',resolution:'Ανάλυση'})[k]}</span>`).join('')}</div>`:''}`;
+ const p=q('#osPower');if(p)p.onclick=()=>{if(a6about)return;a6menu=!a6menu;r6()};
+ const ab=q('#aboutBtn');if(ab)ab.onclick=()=>{a6about=true;a6menu=false;r6();setFeedback('Άνοιξαν οι πληροφορίες του υπολογιστή.','info')};
+ qa('[data-spec]').forEach(row=>row.onclick=()=>{
+  if(!specKeys.includes(row.dataset.spec)||a6found.has(row.dataset.spec))return;
+  a6found.add(row.dataset.spec);r6();setFeedback('Το χαρακτηριστικό σημειώθηκε ✓','good');
+  if(a6found.size===4){qa('[data-spec]').forEach(x=>x.style.pointerEvents='none');later(()=>advance(),RESULT)}
+ })
+}
+
+/* Activity 7 */
+let a7placed={},a7selected=null;const a7answers={processor:'8 πυρήνες · 3.2 GHz',memory:'16 GB',storage:'512 GB SSD',resolution:'1920 × 1080'};
+const a7cards=[['processor','8 πυρήνες · 3.2 GHz'],['memory','16 GB'],['storage','512 GB SSD'],['resolution','1920 × 1080'],['d1','24\"'],['d2','12 Mp'],['d3','60 Hz']];
+function recordMarkup(){return `<div class="record-wrap"><div class="source-panel"><h3>Τιμές από το AthenaOS</h3><div class="value-cards">${shuffleOnce('a7cards',a7cards).map(([k,v])=>`<div class="value-card ${a7selected===k?'selected':''} ${Object.values(a7placed).includes(k)?'used':''}" draggable="${!Object.values(a7placed).includes(k)}" data-card="${k}">${v}</div>`).join('')}</div></div><div class="record-panel"><h3>Χαρακτηριστικά υπολογιστικού συστήματος</h3><div class="record-table">${[['processor','Επεξεργαστής'],['memory','Μνήμη'],['storage','Δίσκος αποθήκευσης'],['resolution','Ανάλυση οθόνης']].map(([k,l])=>`<div class="record-row"><div class="record-label">${l}</div><div class="drop-cell ${a7placed[k]?'filled':''}" data-drop="${k}">${a7placed[k]?a7answers[k]:'Σύρε εδώ τη σωστή τιμή'}</div></div>`).join('')}</div></div></div>`}
+function tryPlace(cardKey,dropKey){
+ if(a7placed[dropKey])return;
+ if(cardKey!==dropKey){
+  const cell=q(`[data-drop="${dropKey}"]`);if(cell){cell.classList.add('hover');later(()=>cell.classList.remove('hover'),300)}
+  setFeedback('Η τιμή δεν αντιστοιχεί σε αυτό το χαρακτηριστικό.','bad');later(clearFeedback,WRONG_RESET);return;
+ }
+ a7placed[dropKey]=cardKey;a7selected=null;r7();setFeedback('Η τιμή καταγράφηκε στη σωστή γραμμή ✓','good');
+ if(Object.keys(a7placed).length===4){qa('[data-card], [data-drop]').forEach(x=>x.style.pointerEvents='none');later(()=>advance(),RESULT)}
+}
+function r7(){
+ activity.innerHTML=`<div class="task-strip">Σύρε κάθε σωστή τιμή στη γραμμή που της αντιστοιχεί.</div>${recordMarkup()}`;
+ qa('[data-card]').forEach(c=>{
+  c.onclick=()=>{if(c.classList.contains('used'))return;a7selected=a7selected===c.dataset.card?null:c.dataset.card;r7()};
+  c.ondragstart=e=>e.dataTransfer.setData('text/plain',c.dataset.card)
+ });
+ qa('[data-drop]').forEach(cell=>{
+  cell.ondragover=e=>{e.preventDefault();cell.classList.add('hover')};
+  cell.ondragleave=()=>cell.classList.remove('hover');
+  cell.ondrop=e=>{e.preventDefault();cell.classList.remove('hover');tryPlace(e.dataTransfer.getData('text/plain'),cell.dataset.drop)};
+  cell.onclick=()=>{if(a7selected)tryPlace(a7selected,cell.dataset.drop)}
+ })
+}
+
+/* Activity 8 */
+let a8phase='quiz',a8quizStep=0,a8quizHold=false,a8caseStep=0,a8caseHold=false;
+const A8_CASE_RESULT=1900;
+const a8qs=[
+ {q:'Ποια μονάδα συνδέεται με την ταχύτητα του επεξεργαστή;',a:'GHz',w:['GB','Mp','ίντσες']},
+ {q:'Ποιος δίσκος είναι ταχύτερος σύμφωνα με το μάθημα;',a:'SSD',w:['HDD','Ο ίδιος σε όλες τις περιπτώσεις','Δεν σχετίζεται με την απόδοση']},
+ {q:'Για βίντεο και εφαρμογές 3D, ποιος συνδυασμός έχει ιδιαίτερη σημασία;',a:'Κάρτα γραφικών και καλή ανάλυση οθόνης',w:['Μόνο κάμερα και μικρόφωνο','Μόνο πληκτρολόγιο και ποντίκι','Μόνο αριθμός θυρών']},
+ {q:'Για συχνές μετακινήσεις με φορητό υπολογιστή, ποιο ζευγάρι χαρακτηριστικών είναι σημαντικό;',a:'Βάρος και αυτονομία μπαταρίας',w:['Ανάλυση κάμερας και αριθμός ηχείων','Μόνο SSD και αριθμός θυρών','Ρυθμός ανανέωσης και Mp']}
+];
+const a8cases=[
+ {
+  need:'Η θεία Ιουλία θέλει υπολογιστή για εφαρμογές 3D, βίντεο και συχνές μετακινήσεις.',
+  why:'Χρειάζεται συνδυασμό καλής απόδοσης, ισχυρής κάρτας γραφικών, καλής οθόνης και ικανοποιητικής φορητότητας.',
+  ok:'c',
+  options:[
+   {id:'a',name:'Υπολογιστής Α',specs:['3.4 GHz','16 GB RAM','512 GB SSD','1920 × 1080','Βασική κάρτα γραφικών','8 ώρες μπαταρία','2,2 kg']},
+   {id:'b',name:'Υπολογιστής Β',specs:['2.0 GHz','8 GB RAM','1 TB HDD','1366 × 768','Βασική κάρτα γραφικών','12 ώρες μπαταρία','1,5 kg']},
+   {id:'c',name:'Υπολογιστής Γ',specs:['3.2 GHz','16 GB RAM','512 GB SSD','2560 × 1440','Ισχυρή κάρτα γραφικών','10 ώρες μπαταρία','1,7 kg']}
+  ]
+ },
+ {
+  need:'Ένας πελάτης θέλει κυρίως όσο γίνεται καλύτερη συνολική απόδοση και ο υπολογιστής θα μένει συνήθως στο γραφείο.',
+  why:'Για τη συνολική απόδοση έχουν ιδιαίτερη σημασία η ταχύτητα του επεξεργαστή, το μέγεθος της μνήμης και το είδος/μέγεθος του δίσκου.',
+  ok:'b',
+  options:[
+   {id:'a',name:'Υπολογιστής Α',specs:['2.4 GHz','8 GB RAM','1 TB HDD','1920 × 1080','10 ώρες μπαταρία']},
+   {id:'b',name:'Υπολογιστής Β',specs:['3.8 GHz','32 GB RAM','1 TB SSD','1920 × 1080','7 ώρες μπαταρία']},
+   {id:'c',name:'Υπολογιστής Γ',specs:['3.0 GHz','16 GB RAM','512 GB HDD','1920 × 1080','9 ώρες μπαταρία']}
+  ]
+ },
+ {
+  need:'Μια πελάτισσα μεταφέρει καθημερινά τον φορητό υπολογιστή και τον χρησιμοποιεί πολλές ώρες μακριά από πρίζα.',
+  why:'Στις συχνές μετακινήσεις έχουν ιδιαίτερη σημασία το μικρό βάρος και η μεγάλη διάρκεια της μπαταρίας.',
+  ok:'a',
+  options:[
+   {id:'a',name:'Υπολογιστής Α',specs:['1,2 kg','14 ώρες μπαταρία','2.8 GHz','16 GB RAM','512 GB SSD']},
+   {id:'b',name:'Υπολογιστής Β',specs:['2,4 kg','7 ώρες μπαταρία','3.6 GHz','32 GB RAM','1 TB SSD']},
+   {id:'c',name:'Υπολογιστής Γ',specs:['1,9 kg','9 ώρες μπαταρία','3.0 GHz','16 GB RAM','512 GB SSD']}
+  ]
+ },
+ {
+  need:'Ένας πελάτης θέλει να αποθηκεύει πολλά αρχεία και παράλληλα θέλει γρήγορο δίσκο αποθήκευσης.',
+  why:'Χρειάζεται αρκετή χωρητικότητα και τεχνολογία SSD, η οποία είναι ταχύτερη από HDD.',
+  ok:'c',
+  options:[
+   {id:'a',name:'Υπολογιστής Α',specs:['512 GB SSD','16 GB RAM','3.0 GHz','1920 × 1080']},
+   {id:'b',name:'Υπολογιστής Β',specs:['2 TB HDD','16 GB RAM','3.0 GHz','1920 × 1080']},
+   {id:'c',name:'Υπολογιστής Γ',specs:['1 TB SSD','16 GB RAM','3.0 GHz','1920 × 1080']}
+  ]
+ },
+ {
+  need:'Μια πελάτισσα δίνει προτεραιότητα στην ποιότητα των φωτογραφιών και των βίντεο από την ενσωματωμένη κάμερα.',
+  why:'Η ανάλυση της κάμερας επηρεάζει την ποιότητα φωτογραφιών και βίντεο και μετριέται σε pixel, π.χ. Mp.',
+  ok:'b',
+  options:[
+   {id:'a',name:'Υπολογιστής Α',specs:['Κάμερα 2 Mp','16 GB RAM','512 GB SSD','1920 × 1080']},
+   {id:'b',name:'Υπολογιστής Β',specs:['Κάμερα 8 Mp','16 GB RAM','512 GB SSD','1920 × 1080']},
+   {id:'c',name:'Υπολογιστής Γ',specs:['Κάμερα 5 Mp','16 GB RAM','512 GB SSD','1920 × 1080']}
+  ]
+ }
+];
+function finalQuestionMarkup(d,correct=false){const opts=correct?[['ok',d.a]]:shuffleOnce('a8q'+a8quizStep,[['ok',d.a],...d.w.map((x,i)=>['x'+i,x])]);return `<div class="question-card"><h3>${d.q}</h3><div class="choice-grid">${opts.map(o=>`<button class="choice ${correct?'correct':''}" data-a8q="${o[0]}">${o[1]}</button>`).join('')}</div></div>`}
+function configCaseMarkup(d,showCorrect=false){const opts=shuffleOnce('a8case'+a8caseStep,d.options);return `<div class="scenario-card"><div class="scenario-head"><div class="scenario-icon">▣</div><div><h3>Ανάγκες πελάτη</h3><div>${d.need}</div></div></div></div><div class="computer-options">${opts.map(o=>`<button class="pc-card ${showCorrect&&o.id===d.ok?'correct':''}" data-a8pc="${o.id}" ${showCorrect?'disabled':''}><h4>${o.name}${showCorrect&&o.id===d.ok?' ✓':''}</h4><ul>${o.specs.map(x=>`<li>${x}</li>`).join('')}</ul></button>`).join('')}</div>`}
+function r8(){
+ if(a8phase==='quiz'){
+  const d=a8qs[a8quizStep];
+  if(a8quizHold){
+   activity.innerHTML=`<div class="task-strip">Γρήγορος έλεγχος ${a8quizStep+1} από ${a8qs.length}: σωστή απάντηση.</div>${finalQuestionMarkup(d,true)}`;
+   setFeedback('Σωστά ✓','good');
+   later(()=>{
+    a8quizHold=false;a8quizStep++;
+    if(a8quizStep<a8qs.length)r8();
+    else{a8phase='cases';a8caseStep=0;r8()}
+   },RESULT);
+   return;
+  }
+  activity.innerHTML=`<div class="task-strip">Γρήγορος έλεγχος ${a8quizStep+1} από ${a8qs.length}</div>${finalQuestionMarkup(d,false)}`;
+  qa('[data-a8q]').forEach(b=>b.onclick=()=>{
+   if(b.dataset.a8q!=='ok')return wrong(b,'Έλεγξε ξανά ποιο χαρακτηριστικό συνδέεται με τη συγκεκριμένη ανάγκη.');
+   a8quizHold=true;r8();
+  });
+  return;
+ }
+ if(a8phase==='cases'){
+  const d=a8cases[a8caseStep];
+  if(a8caseHold){
+   activity.innerHTML=`<div class="task-strip">Περίπτωση πελάτη ${a8caseStep+1} από ${a8cases.length}: σωστή επιλογή.</div>${configCaseMarkup(d,true)}<div class="mini-summary">${d.why}</div>`;
+   setFeedback('Η διαμόρφωση ταιριάζει στις συγκεκριμένες ανάγκες ✓','good');
+   later(()=>{
+    a8caseHold=false;a8caseStep++;
+    if(a8caseStep<a8cases.length)r8();else advance();
+   },A8_CASE_RESULT);
+   return;
+  }
+  activity.innerHTML=`<div class="task-strip">Περίπτωση πελάτη ${a8caseStep+1} από ${a8cases.length}: διάλεξε την καταλληλότερη διαμόρφωση.</div>${configCaseMarkup(d,false)}`;
+  qa('[data-a8pc]').forEach(b=>b.onclick=()=>{
+   if(b.dataset.a8pc!==d.ok)return wrong(b,'Σύγκρινε ξανά τις ανάγκες του πελάτη με τα χαρακτηριστικά των τριών διαμορφώσεων.');
+   a8caseHold=true;r8();
+  });
+ }
+}
+
+/* Activity 9 */
+const levels=['Έχω καταλάβει και μπορώ να εξηγήσω','Έχω καταλάβει αρκετά καλά','Έχω καταλάβει αλλά έχω απορίες','Χρειάζομαι βοήθεια'];const objectives=['Ποια είναι τα βασικά στοιχεία του υλικού του υπολογιστή και τα χαρακτηριστικά τους.'];let selfSel=[null];
+function r9(){activity.innerHTML=`<div class="self-wrap"><div class="self-table"><div class="self-head">Αξιολογώ πόσο καλά έμαθα</div>${levels.map(x=>`<div class="self-head">${x}</div>`).join('')}${objectives.map((o,row)=>`<div class="self-objective">✓ ${o}</div>${levels.map((l,col)=>`<button class="self-cell ${selfSel[row]===col?'selected':''}" data-self="${row}:${col}">${l}</button>`).join('')}`).join('')}</div></div><button class="finish-btn" id="finishBtn" ${selfSel.some(x=>x===null)?'disabled':''}>Ολοκλήρωση</button>`;qa('[data-self]').forEach(b=>b.onclick=()=>{const [r,c]=b.dataset.self.split(':').map(Number);selfSel[r]=selfSel[r]===c?null:c;r9()});q('#finishBtn').onclick=()=>{if(selfSel.some(x=>x===null))return;completed.add(stage);setFeedback('Η αυτοαξιολόγηση ολοκληρώθηκε.','good');later(()=>{finished=true;render()},900)}}
+
+const renderers=[r1,r2,r3,r4,r5,r6,r7,r8,r9];
+function renderCompletion(){kicker.textContent='ΟΛΟΚΛΗΡΩΣΗ';stageTitle.textContent='Μάθημα 12 ολοκληρώθηκε';instruction.textContent='Ολοκλήρωσες την αναγνώριση και την αξιολόγηση βασικών χαρακτηριστικών του υλικού.';activity.innerHTML=`<div class="complete"><div class="icon">✓</div><h2>Έτοιμος/η να διαβάσεις τα χαρακτηριστικά ενός υπολογιστή</h2><p>Σύνδεσες εξαρτήματα, μονάδες μέτρησης και ανάγκες χρήσης και εντόπισες τεχνικά χαρακτηριστικά μέσα από το AthenaOS.</p><button class="repeat-btn" id="restartComplete">↻ Επανάληψη μαθήματος</button></div>`;q('#restartComplete').onclick=()=>location.reload();clearFeedback()}
+function render(){clearTimers();renderEpoch++;clearFeedback();updateProgress();if(finished){renderCompletion();window.scrollTo({top:0,behavior:'smooth'});return}const s=ACTIVITIES[stage];kicker.textContent=`Δραστηριότητα ${stage+1}`;stageTitle.textContent=s.t;instruction.textContent=s.i;renderers[stage]();window.scrollTo({top:0,behavior:'smooth'})}
+q('#helpBtn').onclick=()=>{q('#helpText').textContent=HELP[stage]||'';q('#helpModal').classList.add('open')};q('#closeHelp').onclick=()=>q('#helpModal').classList.remove('open');q('#helpModal').onclick=e=>{if(e.target===q('#helpModal'))q('#helpModal').classList.remove('open')};q('#speakHelp').onclick=()=>{if(!('speechSynthesis'in window))return;window.speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(HELP[stage]||'');u.lang='el-GR';window.speechSynthesis.speak(u)};
+render();
+</script>
+<footer class="nk-license" aria-label="Πληροφορίες δημιουργού και άδειας χρήσης">
+  <div><strong>Created by Nikos Kalakos · © 2026</strong></div>
+  <div>Original educational content and simulation design licensed under <a class="cc-badge" href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank" rel="license noopener noreferrer">CC BY-NC 4.0</a>.</div>
+  <div>Source code © 2026 Nikos Kalakos.</div>
+  <div>Third-party and textbook materials remain subject to the rights and licences of their respective copyright holders.</div>
+</footer>
+</body>
+</html>
