@@ -1,0 +1,163 @@
+<!doctype html>
+<html lang="el">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="author" content="Nikos Kalakos">
+  <meta name="copyright" content="© 2026 Nikos Kalakos">
+  <meta name="description" content="Διαδραστικές δραστηριότητες και προσομοιώσεις HTML για το μάθημα της Πληροφορικής στο Δημοτικό, Α΄ έως ΣΤ΄. Interactive HTML activities for Primary ICT, Grades 1–6.">
+  <title>Διαδραστικές Δραστηριότητες Πληροφορικής Δημοτικού · Grades 1–6</title>
+  <style>
+    :root{
+      --ink:#24324a;
+      --muted:#68758a;
+      --primary:#545F99;
+      --primary-dark:#3d477c;
+      --primary-soft:#eef0f8;
+      --accent:#EA922C;
+      --accent-dark:#b86610;
+      --accent-soft:#fff3e4;
+      --surface:#ffffff;
+      --line:#dfe4ee;
+      --bg:#f6f8fc;
+      --shadow:0 12px 34px rgba(36,50,74,.11);
+    }
+    *{box-sizing:border-box}
+    html{scroll-behavior:smooth}
+    body{
+      margin:0;
+      font-family:Arial,"Noto Sans",sans-serif;
+      color:var(--ink);
+      background:
+        radial-gradient(circle at 10% 0%,rgba(234,146,44,.12),transparent 30rem),
+        radial-gradient(circle at 100% 8%,rgba(84,95,153,.11),transparent 32rem),
+        var(--bg);
+    }
+    a{color:inherit}
+    .shell{width:min(1180px,calc(100% - 32px));margin:0 auto;padding:30px 0 46px}
+    .topbar{display:flex;align-items:center;justify-content:space-between;gap:18px;margin-bottom:18px}
+    .brand{display:flex;align-items:center;gap:12px;font-weight:800;color:var(--primary-dark)}
+    .brand-mark{width:42px;height:42px;border-radius:13px;display:grid;place-items:center;background:var(--primary);color:#fff;font-size:18px;box-shadow:0 6px 18px rgba(84,95,153,.22)}
+    .creator-mini{font-size:13px;color:var(--muted);text-align:right}
+    .hero{background:var(--surface);border:1px solid var(--line);border-top:7px solid var(--accent);border-radius:22px;padding:34px;box-shadow:var(--shadow)}
+    .eyebrow{font-size:13px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--accent-dark);margin-bottom:9px}
+    h1{margin:0;font-size:clamp(34px,5.3vw,56px);line-height:1.06;color:var(--primary-dark)}
+    .en-title{margin:9px 0 0;font-size:clamp(21px,3vw,31px);font-weight:700;color:var(--ink)}
+    .intro{max-width:900px;margin:18px 0 0;color:var(--muted);line-height:1.68;font-size:16px}
+    .stats{display:flex;flex-wrap:wrap;gap:10px;margin-top:22px}
+    .stat{display:inline-flex;align-items:center;gap:8px;border:1px solid var(--line);background:#fff;border-radius:999px;padding:9px 13px;font-size:13px;font-weight:700;color:var(--primary-dark)}
+    .stat strong{font-size:15px;color:var(--accent-dark)}
+    .section-head{display:flex;align-items:end;justify-content:space-between;gap:16px;margin:32px 2px 14px}
+    h2{margin:0;font-size:25px;color:var(--primary-dark)}
+    .hint{font-size:13px;color:var(--muted)}
+    .grade-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
+    .grade-card{position:relative;display:flex;flex-direction:column;min-height:220px;padding:22px;text-decoration:none;background:var(--surface);border:1px solid var(--line);border-radius:18px;box-shadow:0 6px 18px rgba(36,50,74,.07);transition:transform .16s ease,border-color .16s ease,box-shadow .16s ease}
+    .grade-card:hover,.grade-card:focus-visible{transform:translateY(-3px);border-color:rgba(84,95,153,.56);box-shadow:0 12px 28px rgba(36,50,74,.12);outline:none}
+    .grade-top{display:flex;align-items:center;justify-content:space-between;gap:14px;margin-bottom:18px}
+    .grade-num{width:56px;height:56px;border-radius:16px;background:var(--primary-soft);border:1px solid #d8dcef;color:var(--primary-dark);display:grid;place-items:center;font-size:23px;font-weight:900}
+    .grade-card:nth-child(2n) .grade-num{background:var(--accent-soft);border-color:#f5d3a9;color:var(--accent-dark)}
+    .count{font-size:12px;font-weight:800;color:var(--muted);background:#f8f9fc;border:1px solid var(--line);border-radius:999px;padding:6px 9px;white-space:nowrap}
+    .grade-card h3{margin:0;font-size:23px;color:var(--primary-dark)}
+    .grade-en{margin-top:5px;font-size:16px;font-weight:700;color:var(--ink)}
+    .grade-desc{margin:12px 0 30px;color:var(--muted);font-size:14px;line-height:1.52}
+    .enter{position:absolute;left:22px;right:22px;bottom:18px;display:flex;align-items:center;justify-content:space-between;font-size:13px;font-weight:800;color:var(--primary)}
+    .doc-card{display:grid;grid-template-columns:1fr auto;align-items:center;gap:22px;background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:23px;box-shadow:0 6px 18px rgba(36,50,74,.06)}
+    .doc-card h3{margin:0 0 7px;font-size:20px;color:var(--primary-dark)}
+    .doc-card p{margin:0;color:var(--muted);line-height:1.55;font-size:14px}
+    .doc-link{display:inline-flex;align-items:center;justify-content:center;min-width:170px;text-decoration:none;font-weight:800;color:#fff;background:var(--primary);border-radius:12px;padding:12px 15px;box-shadow:0 6px 16px rgba(84,95,153,.2)}
+    .doc-link:hover,.doc-link:focus-visible{background:var(--primary-dark);outline:none}
+    .footer{margin-top:32px;background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:21px;text-align:center;color:var(--muted);font-size:13px;line-height:1.6}
+    .footer strong{color:var(--ink)}
+    .footer a{color:var(--primary-dark);text-underline-offset:2px}
+    @media(max-width:900px){.grade-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.doc-card{grid-template-columns:1fr}.doc-link{justify-self:start}}
+    @media(max-width:620px){.shell{width:min(100% - 20px,1180px);padding-top:16px}.topbar{align-items:flex-start;flex-direction:column}.creator-mini{text-align:left}.hero{padding:24px 19px}.grade-grid{grid-template-columns:1fr}.section-head{align-items:flex-start;flex-direction:column}.doc-link{width:100%}.grade-card{min-height:205px}}
+  </style>
+</head>
+<body>
+  <main class="shell">
+    <div class="topbar">
+      <div class="brand"><span class="brand-mark">ICT</span><span>Σχολικά simulations</span></div>
+      <div class="creator-mini">Created by <strong>Nikos Kalakos</strong> · © 2026</div>
+    </div>
+
+    <section class="hero">
+      <div class="eyebrow">Α΄–ΣΤ΄ Δημοτικού · Grades 1–6</div>
+      <h1>Διαδραστικές Δραστηριότητες Πληροφορικής Δημοτικού</h1>
+      <div class="en-title">Interactive HTML Activities for Primary ICT</div>
+      <p class="intro">
+        Συλλογή διαδραστικών δραστηριοτήτων και προσομοιώσεων HTML για το μάθημα της Πληροφορικής στο Δημοτικό Σχολείο. Επιλέξτε τάξη και, στη συνέχεια, το μάθημα που θέλετε να ανοίξετε.<br>
+        <strong>A collection of interactive HTML activities and simulations for Primary ICT.</strong> Select a grade and then choose the lesson you want to open.
+      </p>
+      <div class="stats" aria-label="Στοιχεία συλλογής / Collection statistics">
+        <span class="stat"><strong>6</strong> τάξεις / grades</span>
+        <span class="stat"><strong>180</strong> δραστηριότητες / activities</span>
+        <span class="stat">HTML · CSS · JavaScript</span>
+      </div>
+    </section>
+
+    <div class="section-head">
+      <h2>Επιλέξτε τάξη / Select a grade</h2>
+      <div class="hint">30 δραστηριότητες ανά τάξη · 30 activities per grade</div>
+    </div>
+
+    <section class="grade-grid" aria-label="Τάξεις Δημοτικού / Primary school grades">
+      <a class="grade-card" href="grade-1/">
+        <div class="grade-top"><span class="grade-num">Α΄</span><span class="count">30 activities</span></div>
+        <h3>Α΄ Δημοτικού</h3><div class="grade-en">Grade 1</div>
+        <p class="grade-desc">Βασικές έννοιες, ακολουθίες, προγραμματιστική σκέψη, υπολογιστές και πρώτες ψηφιακές δεξιότητες.</p>
+        <span class="enter">Άνοιγμα τάξης / Open grade <span>→</span></span>
+      </a>
+      <a class="grade-card" href="grade-2/">
+        <div class="grade-top"><span class="grade-num">Β΄</span><span class="count">30 activities</span></div>
+        <h3>Β΄ Δημοτικού</h3><div class="grade-en">Grade 2</div>
+        <p class="grade-desc">Επαναλήψεις, προγραμματισμός, ψηφιακές συσκευές, αρχεία, εννοιολογικοί χάρτες και διαδικτυακές υπηρεσίες.</p>
+        <span class="enter">Άνοιγμα τάξης / Open grade <span>→</span></span>
+      </a>
+      <a class="grade-card" href="grade-3/">
+        <div class="grade-top"><span class="grade-num">Γ΄</span><span class="count">30 activities</span></div>
+        <h3>Γ΄ Δημοτικού</h3><div class="grade-en">Grade 3</div>
+        <p class="grade-desc">Λογική, προγραμματισμός, ρομποτική, εφαρμογές, δίκτυα, ασφάλεια και εκπαιδευτικές πλατφόρμες.</p>
+        <span class="enter">Άνοιγμα τάξης / Open grade <span>→</span></span>
+      </a>
+      <a class="grade-card" href="grade-4/">
+        <div class="grade-top"><span class="grade-num">Δ΄</span><span class="count">30 activities</span></div>
+        <h3>Δ΄ Δημοτικού</h3><div class="grade-en">Grade 4</div>
+        <p class="grade-desc">Αλγόριθμοι, δεδομένα, αρχεία, διαδίκτυο, ηλεκτρονικό ταχυδρομείο, παρουσιάσεις και ψηφιακή συμπεριφορά.</p>
+        <span class="enter">Άνοιγμα τάξης / Open grade <span>→</span></span>
+      </a>
+      <a class="grade-card" href="grade-5/">
+        <div class="grade-top"><span class="grade-num">Ε΄</span><span class="count">30 activities</span></div>
+        <h3>Ε΄ Δημοτικού</h3><div class="grade-en">Grade 5</div>
+        <p class="grade-desc">Σύνθετη λογική, δεδομένα, υπολογιστικά φύλλα, τεχνητή νοημοσύνη, παρουσιάσεις και ψηφιακές υπηρεσίες.</p>
+        <span class="enter">Άνοιγμα τάξης / Open grade <span>→</span></span>
+      </a>
+      <a class="grade-card" href="grade-6/">
+        <div class="grade-top"><span class="grade-num">ΣΤ΄</span><span class="count">30 activities</span></div>
+        <h3>ΣΤ΄ Δημοτικού</h3><div class="grade-en">Grade 6</div>
+        <p class="grade-desc">Προχωρημένος προγραμματισμός, ανάλυση δεδομένων, δίκτυα, ιστολόγια, τηλεκπαίδευση και ψηφιακή πολιτειότητα.</p>
+        <span class="enter">Άνοιγμα τάξης / Open grade <span>→</span></span>
+      </a>
+    </section>
+
+    <div class="section-head">
+      <h2>Τεκμηρίωση / Documentation</h2>
+      <div class="hint">Master specifications · Grades 1–6</div>
+    </div>
+
+    <section class="doc-card">
+      <div>
+        <h3>ICT HTML Simulations · Master Specifications</h3>
+        <p>Οι συγκεντρωτικές προδιαγραφές σχεδιασμού, παιδαγωγικής, αλληλεπίδρασης, προσβασιμότητας και τεχνικής υλοποίησης της συλλογής.<br>The consolidated design, pedagogy, interaction, accessibility and technical implementation specifications for the collection.</p>
+      </div>
+      <a class="doc-link" href="documentation/ICT_HTML_Simulations_Master_Specifications_Grades_1-6_Nikos_Kalakos.pdf" target="_blank" rel="noopener">Άνοιγμα PDF / Open PDF ↗</a>
+    </section>
+
+    <footer class="footer">
+      <div><strong>Created by Nikos Kalakos · © 2026</strong></div>
+      <div>Original educational content and simulation design licensed under <a href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank" rel="license noopener noreferrer">CC BY-NC 4.0</a>.</div>
+      <div>Source code © 2026 Nikos Kalakos.</div>
+      <div>Third-party and textbook materials remain subject to the rights and licences of their respective copyright holders.</div>
+    </footer>
+  </main>
+</body>
+</html>
