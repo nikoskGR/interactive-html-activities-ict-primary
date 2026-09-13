@@ -1,0 +1,171 @@
+<!--
+ICT Educational Simulation
+Created by Nikos Kalakos
+Copyright © 2026 Nikos Kalakos
+
+Original educational content and simulation design licensed under CC BY-NC 4.0.
+Source code © 2026 Nikos Kalakos.
+Third-party and textbook materials remain subject to the rights and licences of their respective copyright holders.
+-->
+<!doctype html>
+<html lang="el">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="author" content="Nikos Kalakos">
+<meta name="copyright" content="© 2026 Nikos Kalakos">
+<meta name="license" content="Original educational content and simulation design: CC BY-NC 4.0; source code © 2026 Nikos Kalakos; third-party and textbook materials excluded.">
+<title>Μάθημα 1 — Μικρά και απλά βήματα</title>
+<style>
+:root{--bg:#f4fbff;--ink:#17324d;--card:#fff;--primary:#3268d5;--primary2:#234fa8;--ok:#15845b;--warn:#b76b00;--soft:#e8f1ff;--line:#bfd2eb;--shadow:0 10px 28px rgba(23,50,77,.13)}
+*{box-sizing:border-box}body{margin:0;font-family:Arial,"Noto Sans",sans-serif;background:linear-gradient(180deg,#e8f7ff,#fff7e8);color:var(--ink);min-height:100vh}button{font:inherit}.app{max-width:1100px;margin:auto;padding:16px}.top{display:grid;grid-template-columns:1fr auto;gap:12px;align-items:center;background:#fff;border:3px solid #d8e8f7;border-radius:24px;padding:14px 18px;box-shadow:var(--shadow)}h1{font-size:clamp(24px,4vw,42px);margin:0}.subtitle{margin:5px 0 0;font-size:clamp(15px,2vw,20px)}.mascot{font-size:58px;filter:drop-shadow(0 4px 3px #ccd)}.path{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin:16px 0}.dot{width:44px;height:44px;border-radius:50%;border:3px solid #9ab6d8;background:#fff;color:#5f7791;font-weight:800;font-size:20px}.dot.current{background:var(--primary);color:#fff;transform:scale(1.12)}.dot.done{background:var(--ok);color:#fff}.panel{background:rgba(255,255,255,.96);border:3px solid #d8e8f7;border-radius:28px;padding:clamp(15px,3vw,28px);box-shadow:var(--shadow);min-height:590px}.step-head{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap}.step-head h2{font-size:clamp(25px,4vw,38px);margin:0}.help{background:#fff7d6;color:#624700;border:3px solid #e0bd45;border-radius:16px;padding:11px 18px;font-weight:800;cursor:pointer}.instruction{font-size:clamp(18px,2.6vw,25px);font-weight:700;text-align:center;margin:18px auto;max-width:820px}.scene{border:3px dashed var(--line);border-radius:24px;background:#f9fcff;padding:18px;margin:16px 0}.big-emoji{font-size:70px;text-align:center}.speech{max-width:640px;margin:10px auto;background:#fff;border:3px solid var(--line);border-radius:20px;padding:15px;text-align:center;font-size:21px;font-weight:700}.choices{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:14px}.card{position:relative;min-height:142px;border:3px solid var(--line);border-radius:20px;background:#fff;padding:12px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;cursor:pointer;box-shadow:0 5px 12px rgba(23,50,77,.08);transition:.15s}.card:hover{transform:translateY(-2px)}.card.selected{border-color:var(--primary);background:var(--soft);box-shadow:0 0 0 4px rgba(50,104,213,.14)}.card.correct{border-color:var(--ok);background:#e8fff5}.card .emoji{font-size:52px}.card .label{font-size:18px;font-weight:800;text-align:center}.badge{position:absolute;top:7px;right:7px;width:30px;height:30px;border-radius:50%;background:var(--primary);color:#fff;display:grid;place-items:center;font-weight:900}.actions{display:flex;justify-content:center;gap:12px;flex-wrap:wrap;margin-top:20px}.btn{border:0;border-radius:16px;padding:14px 24px;font-weight:900;font-size:19px;cursor:pointer}.primary{background:var(--primary);color:#fff}.primary:hover{background:var(--primary2)}.secondary{background:#eef3f8;color:var(--ink);border:2px solid #b9cbe0}.feedback{min-height:58px;margin:16px auto 0;max-width:760px;border-radius:18px;padding:13px 18px;text-align:center;font-weight:800;font-size:20px;display:none}.feedback.show{display:block}.feedback.ok{background:#dcf8ec;color:#07583c;border:2px solid #75d6ae}.feedback.try{background:#fff2d8;color:#754500;border:2px solid #e2b85f}.sequence{display:flex;gap:12px;flex-wrap:wrap;justify-content:center;min-height:170px;padding:15px;border:3px dashed #9eb9d8;border-radius:22px;background:#f6faff}.sequence .card{width:180px}.mini-note{text-align:center;font-size:17px;color:#4e657c}.two-zone{display:grid;grid-template-columns:1fr 1fr;gap:16px}.zone{min-height:230px;border:3px dashed var(--line);border-radius:22px;padding:14px;background:#fbfdff}.zone h3{text-align:center;font-size:22px;margin:0 0 12px}.task-list{display:grid;gap:10px}.task-row{display:grid;grid-template-columns:58px 1fr auto;align-items:center;gap:10px;background:#fff;border:3px solid var(--line);border-radius:18px;padding:10px}.task-row .emoji{font-size:42px}.task-row button{border:2px solid #acc3dc;background:#eef5ff;border-radius:12px;padding:9px 12px;font-weight:800;cursor:pointer}.task-row.chosen{border-color:var(--primary);background:var(--soft)}.final-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:14px}.stars{font-size:58px;text-align:center;letter-spacing:10px}.meter{height:18px;background:#e8eef5;border-radius:20px;overflow:hidden;margin-top:10px}.meter span{display:block;height:100%;background:var(--ok);width:0;transition:.4s}.modal{position:fixed;inset:0;background:rgba(15,35,55,.55);display:none;align-items:center;justify-content:center;padding:18px;z-index:50}.modal.open{display:flex}.modal-box{max-width:620px;background:#fff;border:4px solid #f1cb52;border-radius:26px;padding:24px;box-shadow:var(--shadow);text-align:center}.modal-box h3{font-size:30px;margin:0 0 10px}.modal-box p{font-size:22px;line-height:1.45}.hidden{display:none!important}@media(max-width:700px){.two-zone{grid-template-columns:1fr}.panel{min-height:0}.card{min-height:125px}.top{grid-template-columns:1fr}.mascot{display:none}}
+</style>
+
+<style id="nk-license-style">
+.nk-license{max-width:1100px;margin:14px auto 24px;padding:10px 16px;text-align:center;font:13px/1.45 Arial,"Noto Sans",sans-serif;color:#4e657c}
+.nk-license a{color:inherit;text-decoration:underline;text-underline-offset:2px}
+.nk-license .cc-badge{display:inline-block;margin:0 4px;padding:2px 7px;border:1px solid #8aa0b8;border-radius:6px;background:#fff;font-weight:700;white-space:nowrap}
+</style>
+</head>
+<body>
+<main class="app">
+<header class="top"><div><h1>Μικρά και απλά βήματα</h1><p class="subtitle">Μάθημα 1 — Πώς λύνω ένα πρόβλημα</p></div><div class="mascot" aria-hidden="true">🧭</div></header>
+<nav class="path" aria-label="Πρόοδος" id="path"></nav>
+<section class="panel" id="panel"></section>
+</main>
+<div class="modal" id="helpModal" role="dialog" aria-modal="true" aria-labelledby="helpTitle"><div class="modal-box"><h3 id="helpTitle">Βοήθεια</h3><p id="helpText"></p><div class="actions"><button class="btn secondary" id="speakHelp" type="button">🔊 Άκουσε</button><button class="btn primary" id="closeHelp" type="button">Το κατάλαβα</button></div></div></div>
+<script>
+(() => {
+'use strict';
+const panel=document.getElementById('panel');
+const path=document.getElementById('path');
+const modal=document.getElementById('helpModal');
+const helpText=document.getElementById('helpText');
+let step=0;
+let completed=new Set();
+let selected=[];
+const steps=[
+{
+ title:'1. Έχουμε ένα πρόβλημα!',
+ help:'Η Υπατία ξεχνά πράγματα έξω από την τσάντα της. Πάτησε την εικόνα που δείχνει ποιο πρόβλημα θέλουμε να λύσουμε.',
+ render:()=>`<div class="step-head"><h2>1. Έχουμε ένα πρόβλημα!</h2>${helpButton()}</div><div class="scene"><div class="big-emoji">👧 🎒</div><div class="speech">Η Υπατία αφήνει πράγματα έξω από την τσάντα. Τι θέλει να καταφέρει;</div></div><p class="instruction">Πάτησε τη σωστή εικόνα.</p><div class="choices" id="choices">${cards([{id:'bag',e:'🎒',t:'Να ετοιμάσει την τσάντα'},{id:'ball',e:'⚽',t:'Να παίξει μπάλα'},{id:'plant',e:'🪴',t:'Να ποτίσει το φυτό'}])}</div>${checkArea()}`,
+ check:()=>selected[0]==='bag'
+},
+{
+ title:'2. Από το μεγάλο στο μικρό',
+ help:'Ένα μεγάλο βήμα μπορεί να γίνει πιο μικρό και πιο απλό. Πάτησε όλα τα μικρά βήματα που μας βοηθούν να ετοιμάσουμε την τσάντα.',
+ render:()=>`<div class="step-head"><h2>2. Από το μεγάλο στο μικρό</h2>${helpButton()}</div><div class="scene"><div class="big-emoji">🎒 ➜ 🧩 🧩 🧩</div><div class="speech">Το μεγάλο βήμα «Ετοιμάζω την τσάντα» γίνεται μικρότερα βήματα.</div></div><p class="instruction">Διάλεξε όλα τα μικρά και χρήσιμα βήματα.</p><div class="choices" id="choices">${cards([{id:'program',e:'📅',t:'Βλέπω το πρόγραμμα'},{id:'materials',e:'📚✏️',t:'Ετοιμάζω βιβλία, τετράδια και κασετίνα'},{id:'pack',e:'🎒',t:'Τα βάζω στην τσάντα'},{id:'close',e:'🔒',t:'Κλείνω την τσάντα'},{id:'toy',e:'🧸',t:'Παίρνω ένα παιχνίδι'}])}</div>${checkArea()}`,
+ check:()=>sameSet(selected,['program','materials','pack','close'])
+},
+{
+ title:'3. Τι μπορεί να ξεχάσουμε;',
+ help:'Δες τις δύο λίστες. Η μία έχει ένα μεγάλο και ασαφές βήμα. Η άλλη έχει μικρά και απλά βήματα. Διάλεξε ποια μας βοηθά περισσότερο να μην ξεχάσουμε κάτι.',
+ render:()=>`<div class="step-head"><h2>3. Τι μπορεί να ξεχάσουμε;</h2>${helpButton()}</div><p class="instruction">Ποια λίστα σε βοηθά περισσότερο;</p><div class="two-zone"><button class="card" data-id="big" type="button"><span class="emoji">🎒</span><span class="label">Ετοιμάζω την τσάντα.</span></button><button class="card" data-id="small" type="button"><span class="emoji">🧩</span><span class="label">Βλέπω το πρόγραμμα.<br>Διαλέγω τα πράγματα.<br>Τα βάζω μέσα.<br>Κλείνω την τσάντα.</span></button></div>${checkArea()}`,
+ check:()=>selected[0]==='small'
+},
+{
+ title:'4. Βρίσκω καθημερινές δουλειές',
+ help:'Το βιβλίο δείχνει και άλλες καθημερινές δραστηριότητες. Πάτησε όλες τις εικόνες που δείχνουν μια δουλειά που μπορούμε να περιγράψουμε με μικρά και απλά βήματα.',
+ render:()=>`<div class="step-head"><h2>4. Βρίσκω καθημερινές δουλειές</h2>${helpButton()}</div><p class="instruction">Διάλεξε τις καθημερινές δραστηριότητες.</p><div class="choices" id="choices">${cards([{id:'teeth',e:'🪥',t:'Πλένω τα δόντια μου'},{id:'food',e:'🥪',t:'Ετοιμάζω το φαγητό για το σχολείο'},{id:'dog',e:'🐕',t:'Βγάζω βόλτα τον σκύλο'},{id:'bed',e:'🛏️',t:'Στρώνω το κρεβάτι'},{id:'moon',e:'🌙',t:'Το φεγγάρι λάμπει'}])}</div>${checkArea()}`,
+ check:()=>sameSet(selected,['teeth','food','dog','bed'])
+},
+{
+ title:'5. Μικρή πρόκληση',
+ help:'Διάλεξε μια καθημερινή δραστηριότητα. Έπειτα πάτησε τα μικρά βήματα με τη σωστή σειρά. Τα βήματα θα εμφανίζονται με αριθμούς, ανάλογα με τη σειρά που τα πατάς.',
+ render:()=>`<div class="step-head"><h2>5. Μικρή πρόκληση</h2>${helpButton()}</div><div id="challengePick"><p class="instruction">Διάλεξε μια αποστολή.</p><div class="final-grid">${cards([{id:'teethTask',e:'🪥',t:'Πλένω τα δόντια μου'},{id:'washTask',e:'🧼',t:'Πλένω τα χέρια μου'}])}</div></div><div id="challengeSteps" class="hidden"></div><div class="feedback" id="feedback" aria-live="polite"></div>`,
+ check:()=>false
+},
+{
+ title:'6. Τα κατάφερες!',
+ help:'Σκέψου πόσο καλά έμαθες να περιγράφεις ένα πρόβλημα με μικρά και απλά βήματα. Διάλεξε το πρόσωπο που ταιριάζει καλύτερα σε εσένα.',
+ render:()=>`<div class="step-head"><h2>6. Τα κατάφερες!</h2>${helpButton()}</div><div class="stars">⭐ ⭐ ⭐</div><div class="speech">Μπορώ να περιγράφω ένα πρόβλημα με μικρά και απλά βήματα.</div><p class="instruction">Πώς νιώθεις;</p><div class="choices" id="choices">${cards([{id:'again',e:'🙂',t:'Θέλω λίγη εξάσκηση'},{id:'good',e:'😊',t:'Τα κατάφερα'},{id:'great',e:'🤩',t:'Τα κατάφερα πολύ καλά'}])}</div><div class="meter"><span id="meterFill"></span></div><div class="actions"><button class="btn primary" type="button" id="finish">Ολοκλήρωση</button><button class="btn secondary" type="button" id="restart">Από την αρχή</button></div><div class="feedback" id="feedback" aria-live="polite"></div>`,
+ check:()=>selected.length===1
+}
+];
+function helpButton(){return '<button class="help" type="button" id="help">❔ Βοήθεια</button>'}
+function cards(items){return items.map(x=>`<button class="card" type="button" data-id="${x.id}"><span class="emoji">${x.e}</span><span class="label">${x.t}</span></button>`).join('')}
+function shuffled(items){const copy=[...items];for(let i=copy.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[copy[i],copy[j]]=[copy[j],copy[i]]}return copy}
+function checkArea(){return '<div class="actions"><button class="btn primary" type="button" id="check">Έτοιμο</button></div><div class="feedback" id="feedback" aria-live="polite"></div>'}
+function sameSet(a,b){return a.length===b.length&&a.every(x=>b.includes(x))}
+function speak(text){if(!('speechSynthesis' in window))return;window.speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(text);u.lang='el-GR';u.rate=.88;window.speechSynthesis.speak(u)}
+function updatePath(){path.innerHTML=steps.map((_,i)=>`<button class="dot ${i===step?'current':''} ${completed.has(i)?'done':''}" type="button" aria-label="Βήμα ${i+1}">${i+1}</button>`).join('')}
+function showFeedback(ok,msg){const f=document.getElementById('feedback');if(!f)return;f.className='feedback show '+(ok?'ok':'try');f.textContent=msg;speak(msg)}
+function next(){completed.add(step);setTimeout(()=>{step=Math.min(step+1,steps.length-1);render()},650)}
+function render(){selected=[];updatePath();panel.innerHTML=steps[step].render();bindCommon();if(step===4)bindChallenge();if(step===5)bindFinish()}
+function bindCommon(){const help=document.getElementById('help');if(help)help.addEventListener('click',()=>{helpText.textContent=steps[step].help;modal.classList.add('open')});panel.querySelectorAll('.card[data-id]').forEach(card=>{card.addEventListener('click',()=>{const id=card.dataset.id;const multi=[1,3].includes(step);if(multi){if(selected.includes(id)){selected=selected.filter(x=>x!==id);card.classList.remove('selected')}else{selected.push(id);card.classList.add('selected')}}else{panel.querySelectorAll('.card').forEach(c=>c.classList.remove('selected'));if(selected[0]===id){selected=[]}else{selected=[id];card.classList.add('selected')}}})});const check=document.getElementById('check');if(check)check.addEventListener('click',()=>{if(steps[step].check()){showFeedback(true,'Μπράβο! Προχωράμε.');next()}else{showFeedback(false,'Δοκίμασε ξανά. Σκέψου ποια μικρά βήματα χρειάζονται.')}})}
+function bindChallenge(){panel.querySelectorAll('#challengePick .card').forEach(card=>card.addEventListener('click',()=>buildChallenge(card.dataset.id)))}
+function buildChallenge(type){
+ const pick=document.getElementById('challengePick');
+ const area=document.getElementById('challengeSteps');
+ pick.classList.add('hidden');
+ area.classList.remove('hidden');
+ selected=[];
+ const teeth=[['brush','🪥','Παίρνω την οδοντόβουρτσα'],['paste','🧴','Βάζω οδοντόκρεμα'],['clean','😁','Βουρτσίζω τα δόντια'],['rinse','💧','Ξεπλένω']];
+ const wash=[['water','🚰','Ανοίγω τη βρύση'],['soap','🧼','Βάζω σαπούνι'],['rub','👐','Τρίβω τα χέρια μου'],['rinse','💧','Ξεπλένω τα χέρια μου']];
+ const data=type==='teethTask'?teeth:wash;
+ const expected=data.map(x=>x[0]);
+ const itemMap=Object.fromEntries(data.map(x=>[x[0],[x[1],x[2]]]));
+ const mixed=shuffled(data);
+ area.innerHTML=`<p class="instruction">Πάτησε τα μικρά βήματα με τη σωστή σειρά.</p>
+ <div class="sequence" id="challengeSequence"></div>
+ <p class="mini-note">Οι αριθμοί δείχνουν τη σειρά που επέλεξες.</p>
+ <div class="choices" id="challengeCards">${cards(mixed.map(x=>({id:x[0],e:x[1],t:x[2]})))}</div>
+ <div class="actions"><button class="btn secondary" type="button" id="challengeClear">🧹 Καθάρισμα</button><button class="btn secondary" type="button" id="changeTask">Άλλη αποστολή</button><button class="btn primary" type="button" id="challengeCheck">Έτοιμο</button></div>`;
+ const drawChallengeSequence=()=>{
+  const box=document.getElementById('challengeSequence');
+  box.innerHTML=selected.map((id,i)=>`<div class="card selected"><span class="badge">${i+1}</span><span class="emoji">${itemMap[id][0]}</span><span class="label">${itemMap[id][1]}</span></div>`).join('');
+ };
+ area.querySelectorAll('.card[data-id]').forEach(c=>c.addEventListener('click',()=>{
+  const id=c.dataset.id;
+  if(selected.includes(id)){
+   selected=selected.filter(x=>x!==id);
+   c.classList.remove('selected');
+  }else{
+   selected.push(id);
+   c.classList.add('selected');
+  }
+  drawChallengeSequence();
+ }));
+ document.getElementById('challengeClear').addEventListener('click',()=>{
+  selected=[];
+  area.querySelectorAll('.card[data-id]').forEach(c=>c.classList.remove('selected'));
+  drawChallengeSequence();
+  const f=document.getElementById('feedback');
+  f.className='feedback';
+  f.textContent='';
+ });
+ document.getElementById('changeTask').addEventListener('click',()=>{
+  area.classList.add('hidden');
+  pick.classList.remove('hidden');
+  selected=[];
+  const f=document.getElementById('feedback');
+  f.className='feedback';
+  f.textContent='';
+ });
+ document.getElementById('challengeCheck').addEventListener('click',()=>{
+  if(JSON.stringify(selected)===JSON.stringify(expected)){
+   showFeedback(true,'Μπράβο! Έβαλες τα μικρά βήματα στη σωστή σειρά.');
+   next();
+  }else if(selected.length!==expected.length){
+   showFeedback(false,'Διάλεξε όλα τα μικρά βήματα και βάλε τα στη σειρά.');
+  }else{
+   showFeedback(false,'Τα βήματα είναι σωστά, αλλά χρειάζεται άλλη σειρά. Δοκίμασε ξανά.');
+  }
+ });
+}
+function bindFinish(){document.getElementById('finish').addEventListener('click',()=>{if(selected.length!==1){showFeedback(false,'Διάλεξε ένα πρόσωπο.');return}document.getElementById('meterFill').style.width=selected[0]==='again'?'45%':selected[0]==='good'?'75%':'100%';showFeedback(true,'Μπράβο! Ολοκλήρωσες την αποστολή!');completed.add(step);updatePath()});document.getElementById('restart').addEventListener('click',()=>{step=0;completed.clear();render()})}
+document.getElementById('closeHelp').addEventListener('click',()=>modal.classList.remove('open'));
+document.getElementById('speakHelp').addEventListener('click',()=>speak(helpText.textContent));
+modal.addEventListener('click',e=>{if(e.target===modal)modal.classList.remove('open')});
+render();
+})();
+</script>
+
+<footer class="nk-license" aria-label="Πληροφορίες δημιουργού και άδειας χρήσης">
+  <div><strong>Created by Nikos Kalakos · © 2026</strong></div>
+  <div>Original educational content and simulation design licensed under <a class="cc-badge" href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank" rel="license noopener noreferrer">CC BY-NC 4.0</a>.</div>
+  <div>Source code © 2026 Nikos Kalakos.</div>
+  <div>Third-party and textbook materials remain subject to the rights and licences of their respective copyright holders.</div>
+</footer>
+</body>
+</html>

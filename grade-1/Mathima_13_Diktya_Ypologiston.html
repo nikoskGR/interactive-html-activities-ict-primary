@@ -1,0 +1,1256 @@
+<!--
+ICT Educational Simulation
+Created by Nikos Kalakos
+Copyright © 2026 Nikos Kalakos
+
+Original educational content and simulation design licensed under CC BY-NC 4.0.
+Source code © 2026 Nikos Kalakos.
+Third-party and textbook materials remain subject to the rights and licences of their respective copyright holders.
+-->
+<!doctype html>
+<html lang="el">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="author" content="Nikos Kalakos">
+<meta name="copyright" content="© 2026 Nikos Kalakos">
+<meta name="license" content="Original educational content and simulation design: CC BY-NC 4.0; source code © 2026 Nikos Kalakos; third-party and textbook materials excluded.">
+<title>Μάθημα 13 — Δίκτυα υπολογιστών</title>
+<style>
+:root{
+  --ink:#17324d;
+  --blue:#3268d5;
+  --unit:#bcc61f;
+  --unit-dark:#8d9811;
+  --ok:#15845b;
+  --bad:#c95f6f;
+  --line:#cad8e7;
+  --soft:#f7faef;
+  --shadow:0 10px 28px rgba(23,50,77,.12);
+}
+*{box-sizing:border-box}
+body{
+  margin:0;
+  font-family:Arial,"Noto Sans",sans-serif;
+  background:#f7fafc;
+  color:var(--ink);
+}
+button,input{font:inherit}
+.app{max-width:1160px;margin:auto;padding:16px}
+.top{
+  display:grid;grid-template-columns:1fr auto;gap:12px;align-items:center;
+  background:#fff;border:3px solid #dfe8d0;border-radius:24px;
+  padding:14px 18px;box-shadow:var(--shadow)
+}
+h1{margin:0;font-size:clamp(26px,4vw,42px)}
+.subtitle{margin:5px 0 0;font-size:clamp(15px,2vw,20px)}
+.mascot{font-size:56px}
+.path{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin:16px 0}
+.dot{
+  width:44px;height:44px;border-radius:50%;border:3px solid #a9b9ca;
+  background:#fff;color:#5f7791;font-weight:900;font-size:20px;
+  display:grid;place-items:center;padding:0
+}
+.dot.current{background:var(--blue);border-color:var(--blue);color:#fff;transform:scale(1.12)}
+.dot.done{background:var(--unit);border-color:var(--unit-dark);color:#fff}
+.panel{
+  background:#fff;border:3px solid #dfe8d0;border-radius:28px;
+  padding:clamp(15px,3vw,28px);box-shadow:var(--shadow);min-height:640px
+}
+.step-head{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap}
+.step-head h2{margin:0;font-size:clamp(25px,4vw,38px)}
+.help{
+  background:#fff7d6;color:#624700;border:3px solid #e0bd45;
+  border-radius:16px;padding:11px 18px;font-weight:900;cursor:pointer
+}
+.instruction{
+  max-width:920px;margin:16px auto;text-align:center;
+  font-size:clamp(19px,2.5vw,25px);font-weight:800;line-height:1.4
+}
+.actions{display:flex;justify-content:center;gap:12px;flex-wrap:wrap;margin-top:18px}
+.btn{border:0;border-radius:16px;padding:14px 24px;font-weight:900;font-size:19px;cursor:pointer}
+.checkbtn{background:var(--unit);color:#243000;border:3px solid var(--unit-dark)}
+.primary{background:var(--blue);color:#fff}
+.secondary{background:#eef3f8;color:var(--ink);border:2px solid #b9cbe0}
+.feedback{
+  display:none;max-width:820px;min-height:56px;margin:16px auto 0;
+  border-radius:18px;padding:13px 18px;text-align:center;font-weight:900;font-size:20px
+}
+.feedback.show{display:block}
+.feedback.ok{background:#dcf8ec;color:#07583c;border:2px solid #75d6ae}
+.feedback.try{background:#fff2d8;color:#754500;border:2px solid #e2b85f}
+
+/* ---------- common network devices ---------- */
+.switch-box{
+  width:150px;height:72px;border:5px solid #2e3945;border-radius:14px;
+  background:#4d5b69;position:relative;box-shadow:0 7px 12px rgba(0,0,0,.15)
+}
+.switch-box::before{
+  content:'';position:absolute;left:0;right:0;top:9px;
+  text-align:center;color:#fff;font-size:13px;font-weight:900;letter-spacing:1px
+}
+.switch-box::after{
+  content:'';position:absolute;left:15px;right:15px;bottom:12px;height:12px;
+  background:repeating-linear-gradient(90deg,#8bf58a 0 11px,#27323d 11px 17px)
+}
+.net-svg{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:2}
+.net-svg line,.net-svg path{stroke:#3972bb;stroke-width:7;stroke-linecap:round;fill:none}
+.net-svg .preview{stroke:#8194a8;stroke-width:5;stroke-dasharray:10 8}
+
+/* ---------- stage 1 ---------- */
+.map{
+  position:relative;max-width:940px;height:470px;margin:14px auto;
+  border:4px solid #afca83;border-radius:28px;overflow:hidden;
+  background:linear-gradient(180deg,#dff4ff 0 32%,#b8df88 32% 100%)
+}
+.map:before{
+  content:'';position:absolute;left:-10%;right:-10%;bottom:-90px;height:250px;
+  background:
+    radial-gradient(ellipse at 18% 100%,#72b45d 0 30%,transparent 31%),
+    radial-gradient(ellipse at 52% 100%,#89c86f 0 35%,transparent 36%),
+    radial-gradient(ellipse at 86% 100%,#6bad58 0 31%,transparent 32%);
+  z-index:1
+}
+.sun{position:absolute;right:35px;top:22px;font-size:58px;z-index:2}
+.cloud{position:absolute;font-size:52px;z-index:2}
+.cloud.a{left:55px;top:24px}.cloud.b{left:360px;top:48px;font-size:40px}
+.roadsvg{position:absolute;inset:0;width:100%;height:100%;z-index:3}
+.guide{fill:none;stroke:#d6dde2;stroke-width:46;stroke-linecap:round;stroke-linejoin:round}
+.guideInner{fill:none;stroke:#f4f6f7;stroke-width:37;stroke-linecap:round;stroke-linejoin:round}
+.road{fill:none;stroke:#677785;stroke-width:30;stroke-linecap:round;stroke-linejoin:round;opacity:0}
+.road.on{opacity:1}
+.roadDash{fill:none;stroke:#fff;stroke-width:3;stroke-dasharray:12 10;opacity:0}
+.roadDash.on{opacity:1}
+.slotHit{fill:none;stroke:transparent;stroke-width:56;pointer-events:stroke;cursor:pointer}
+.landmark{
+  position:absolute;width:112px;height:104px;border-radius:22px;
+  background:#fff;border:3px solid #d8e6c1;display:grid;place-items:center;
+  box-shadow:0 7px 14px rgba(0,0,0,.12);z-index:6
+}
+.landmark .ico{font-size:56px}
+.landmark .txt{position:absolute;bottom:7px;font-weight:900;font-size:15px}
+.home{left:35px;top:285px}.park{left:415px;top:110px}.school{right:35px;top:285px}
+.roadPieces{
+  position:absolute;left:50%;bottom:18px;transform:translateX(-50%);
+  display:flex;gap:10px;z-index:8
+}
+.roadPiece{
+  width:106px;height:56px;border-radius:14px;border:3px solid #a8bacd;
+  background:#fff;display:grid;place-items:center;cursor:pointer
+}
+.roadPiece.selected{border-color:var(--blue);background:#edf4ff}
+.roadPiece.used{border-color:var(--unit-dark);background:#f5f9db}
+.roadPiece.dragging{opacity:.55;transform:scale(.96)}
+.roadPiece[draggable="true"]{cursor:grab}
+.roadPiece[draggable="true"]:active{cursor:grabbing}
+.slotHit.dragover{stroke:rgba(50,104,213,.28);stroke-width:62}
+.roadPiece svg{width:88px;height:40px}
+.car{
+  position:absolute;left:145px;top:333px;font-size:43px;z-index:9;
+  transform:translate(-50%,-50%) scaleX(-1)
+}
+.mapHint{
+  position:absolute;left:50%;top:18px;transform:translateX(-50%);
+  background:rgba(255,255,255,.95);border:2px solid #bdd18f;
+  padding:8px 14px;border-radius:14px;font-weight:900;font-size:14px;z-index:9
+}
+
+/* ---------- stage 2: connect workstations directly ---------- */
+.connect-lab{
+  position:relative;
+  max-width:940px;
+  height:520px;
+  margin:14px auto;
+  border:4px solid #bed1e2;
+  border-radius:28px;
+  overflow:hidden;
+  background:linear-gradient(180deg,#eef7ff 0 62%,#d7c09a 62% 100%);
+}
+.connect-lab .board{
+  position:absolute;
+  left:40px;right:40px;top:26px;height:92px;
+  border:5px solid #8d979f;border-radius:10px;background:#f0f2f3;
+}
+.connect-lab .board::after{
+  content:'Εργαστήριο Πληροφορικής';
+  position:absolute;left:26px;top:20px;
+  font-size:28px;font-weight:900;color:#5a7843;
+}
+.direct-ws{
+  position:absolute;
+  width:130px;height:118px;
+  border:3px solid #d1dde8;border-radius:17px;
+  background:#fff;
+  box-shadow:0 5px 10px rgba(0,0,0,.08);
+  z-index:5;
+}
+.direct-ws.done{border-color:var(--ok);background:#effff8}
+.direct-ws .screen{
+  position:absolute;left:22px;top:15px;width:86px;height:57px;
+  border:6px solid #303c49;border-radius:7px;
+  background:linear-gradient(135deg,#2e72b6,#8addff);
+}
+.direct-ws .kb{
+  position:absolute;left:25px;top:85px;width:80px;height:17px;
+  border-radius:5px;background:#424c56;
+}
+.direct-ws .tag{
+  position:absolute;left:50%;top:-19px;transform:translateX(-50%);
+  width:38px;height:38px;border-radius:50%;
+  display:grid;place-items:center;
+  background:var(--unit-dark);color:#fff;font-weight:900;
+}
+.direct-port{
+  position:absolute;width:23px;height:23px;border-radius:50%;
+  background:#fff;border:4px solid var(--blue);
+  z-index:8;cursor:crosshair;
+}
+.direct-port.done{background:var(--unit);border-color:var(--unit-dark)}
+/* star-like spacing around a non-centered switch */
+.dw1{left:40px;top:170px}.dw1 .direct-port{right:-14px;top:46px}
+.dw2{left:240px;top:125px}.dw2 .direct-port{right:-14px;top:66px}
+.dw3{right:70px;top:340px}.dw3 .direct-port{left:-14px;top:38px}
+.dw4{right:35px;top:135px}.dw4 .direct-port{left:-14px;top:66px}
+
+.direct-switch{
+  position:absolute;
+  left:58%;
+  top:58%;
+  transform:translate(-50%,-50%);
+  z-index:5;
+}
+.direct-switch-port{
+  position:absolute;width:23px;height:23px;border-radius:50%;
+  background:#fff;border:4px solid var(--blue);
+  z-index:8;
+}
+.direct-switch-port.done{background:var(--unit);border-color:var(--unit-dark)}
+.port-letter{
+  position:absolute;
+  width:28px;height:28px;border-radius:50%;
+  background:#fff;color:var(--ink);
+  border:2px solid var(--unit-dark);
+  display:grid;place-items:center;
+  font-size:14px;font-weight:900;
+  z-index:9;
+}
+.pl1{left:-49px;top:3px}
+.pl2{left:-49px;bottom:3px}
+.pl3{right:-49px;top:3px}
+.pl4{right:-49px;bottom:3px}
+
+.dsp1{left:-15px;top:6px}
+.dsp2{left:-15px;bottom:6px}
+.dsp3{right:-15px;top:6px}
+.dsp4{right:-15px;bottom:6px}
+.direct-svg{
+  position:absolute;inset:0;width:100%;height:100%;
+  pointer-events:none;z-index:3;
+}
+.direct-svg line{
+  stroke:#3972bb;stroke-width:8;stroke-linecap:round;
+}
+.direct-svg line.preview{
+  stroke:#7f93a8;stroke-width:5;stroke-dasharray:10 8;
+}
+/* ---------- stage 3: sender, receiver, one-word message ---------- */
+.message-net{
+  position:relative;max-width:940px;height:500px;margin:15px auto;
+  border:4px solid #c7d7e4;border-radius:28px;background:linear-gradient(180deg,#eef8ff,#f9fceb)
+}
+.msg-switch{position:absolute;left:50%;top:53%;transform:translate(-50%,-50%);z-index:5}
+.msg-node{
+  position:absolute;width:145px;height:118px;border:3px solid #c5d4e1;
+  border-radius:20px;background:#fff;display:grid;place-items:center;
+  cursor:pointer;z-index:6
+}
+.msg-node .icon{font-size:55px}
+.msg-node .name{position:absolute;bottom:7px;font-size:14px;font-weight:900}
+.node-number{
+  position:absolute;left:50%;top:-22px;transform:translateX(-50%);
+  width:40px;height:40px;border-radius:50%;background:var(--unit-dark);color:#fff;
+  display:grid;place-items:center;font-size:20px;font-weight:900;border:3px solid #fff
+}
+.msg-node.sender{border-color:#4f86d8;background:#edf4ff}
+.msg-node.receiver{border-color:#c06fb9;background:#fbf0fa}
+.mn1{left:45px;top:65px}.mn2{right:45px;top:65px}
+.mn3{left:65px;bottom:55px}.mn4{right:65px;bottom:55px}
+.mn5{left:50%;top:22px;transform:translateX(-50%)}
+.msg-controls{
+  max-width:900px;margin:12px auto;display:grid;
+  grid-template-columns:1fr 1fr 1fr auto;gap:10px;align-items:end
+}
+.msg-controls label{display:grid;gap:5px;font-weight:900}
+.msg-controls input{
+  border:3px solid #b9cbe0;border-radius:13px;padding:11px 12px;
+  font-size:18px;font-weight:800;min-width:0
+}
+.packet{
+  position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);
+  z-index:10;display:none;
+  min-width:100px;padding:8px 12px;border-radius:14px;
+  background:#fff;border:3px solid var(--unit-dark);
+  text-align:center;font-size:16px;font-weight:900;
+  box-shadow:0 4px 10px rgba(0,0,0,.16)
+}
+.route-chip{
+  max-width:850px;margin:10px auto;padding:9px 14px;border-radius:14px;
+  background:#f4f7fb;border:2px solid #c9d8e7;text-align:center;font-weight:900
+}
+/* ---------- stage 4: invisible routes with Acropolis at the center ---------- */
+.routes-world{
+  position:relative;
+  max-width:940px;
+  height:500px;
+  margin:16px auto;
+  border:4px solid #c7d7e4;
+  border-radius:28px;
+  overflow:hidden;
+  background:
+    radial-gradient(circle at 20% 20%,rgba(255,255,255,.8) 0 7%,transparent 7.5%),
+    linear-gradient(180deg,#dff3ff,#f8fbff);
+}
+.routes-world::before{
+  content:'';
+  position:absolute;left:0;right:0;bottom:0;height:155px;
+  background:linear-gradient(180deg,#c9ddb8,#b3cf9b);
+}
+.acropolis{
+  position:absolute;
+  left:50%;top:50%;
+  transform:translate(-50%,-50%);
+  width:180px;height:130px;
+  border-radius:24px;
+  background:#fff8e8;
+  border:4px solid #d5b876;
+  display:grid;place-items:center;
+  text-align:center;
+  z-index:7;
+  box-shadow:0 7px 14px rgba(0,0,0,.12);
+}
+.acropolis .icon{font-size:62px;line-height:1}
+.acropolis .name{font-weight:900;font-size:16px}
+.landmark-eu{
+  position:absolute;
+  width:130px;height:110px;
+  border-radius:20px;background:#fff;
+  border:3px solid #c9d8e7;
+  display:grid;place-items:center;
+  text-align:center;z-index:7;
+  cursor:pointer;
+}
+.landmark-eu.connected{border-color:var(--ok);background:#e8fff5}
+.landmark-eu .icon{font-size:52px;line-height:1}
+.landmark-eu .name{font-size:14px;font-weight:900}
+.eiffel{left:40px;top:60px}
+.bigben{right:40px;top:60px}
+.colosseum{left:50px;bottom:55px}
+.sagrada{right:50px;bottom:55px}
+.invisible-svg{
+  position:absolute;inset:0;width:100%;height:100%;z-index:3;pointer-events:none;
+}
+.invisible-svg line{
+  stroke:#7891a8;stroke-width:5;stroke-dasharray:12 10;stroke-linecap:round;
+}
+.airplane-dot{
+  position:absolute;font-size:27px;z-index:8;display:none;
+}
+.routes-note{
+  position:absolute;left:50%;top:16px;transform:translateX(-50%);
+  padding:8px 14px;border-radius:14px;
+  background:rgba(255,255,255,.95);border:2px solid #c9d8e7;
+  font-weight:900;z-index:9;
+}
+/* ---------- stage 5: mixed wired/wireless message route ---------- */
+.mixed-message-net{
+  position:relative;
+  max-width:940px;
+  height:510px;
+  margin:15px auto;
+  border:4px solid #c7d7e4;
+  border-radius:28px;
+  background:linear-gradient(180deg,#eef8ff,#f9fceb);
+}
+.hybrid-center{
+  position:absolute;
+  left:50%;top:53%;
+  transform:translate(-50%,-50%);
+  width:160px;height:105px;
+  border-radius:18px;
+  background:#4d5b69;
+  border:5px solid #2e3945;
+  z-index:5;
+  color:#fff;
+  text-align:center;
+  font-weight:900;
+  padding-top:9px;
+}
+.hybrid-center .wifi{
+  position:absolute;
+  right:-16px;top:-20px;
+  width:50px;height:50px;border-radius:50%;
+  background:#fff;border:3px solid var(--unit-dark);
+  display:grid;place-items:center;
+  box-shadow:0 3px 7px rgba(0,0,0,.14)
+}
+.hybrid-center .ports{
+  position:absolute;left:20px;right:20px;bottom:10px;height:10px;
+  background:repeating-linear-gradient(90deg,#8bf58a 0 12px,#27323d 12px 18px)
+}
+.mixed-node{
+  position:absolute;
+  width:145px;height:118px;
+  border:3px solid #c5d4e1;
+  border-radius:20px;
+  background:#fff;
+  display:grid;
+  place-items:center;
+  cursor:pointer;
+  z-index:6;
+}
+.mixed-node .num{
+  position:absolute;left:50%;top:-22px;transform:translateX(-50%);
+  width:40px;height:40px;border-radius:50%;
+  display:grid;place-items:center;
+  background:var(--unit-dark);color:#fff;
+  font-size:20px;font-weight:900;border:3px solid #fff;
+}
+.mixed-node .icon{font-size:55px}
+.mixed-node .name{position:absolute;bottom:7px;font-size:14px;font-weight:900}
+
+.wifi-mark{
+  width:34px;
+  height:28px;
+  position:relative;
+  display:inline-block;
+}
+.wifi-mark::before,
+.wifi-mark::after{
+  content:'';
+  position:absolute;
+  left:50%;
+  transform:translateX(-50%);
+  border:4px solid var(--unit-dark);
+  border-color:var(--unit-dark) transparent transparent transparent;
+  border-radius:50%;
+}
+.wifi-mark::before{
+  width:32px;
+  height:32px;
+  top:0;
+}
+.wifi-mark::after{
+  width:19px;
+  height:19px;
+  top:8px;
+}
+.wifi-dot{
+  position:absolute;
+  left:50%;
+  bottom:0;
+  transform:translateX(-50%);
+  width:7px;
+  height:7px;
+  border-radius:50%;
+  background:var(--unit-dark);
+}
+.node-wifi{
+  position:absolute;
+  right:-12px;top:-15px;
+  width:46px;height:46px;border-radius:50%;
+  background:#fff;border:3px solid var(--unit-dark);
+  display:grid;place-items:center;
+  box-shadow:0 3px 7px rgba(0,0,0,.12)
+}
+.node-wifi .wifi-mark{
+  transform:scale(.8);
+}
+.mixed-node.sender{border-color:#4f86d8;background:#edf4ff}
+.mixed-node.receiver{border-color:#c06fb9;background:#fbf0fa}
+.mm1{left:45px;top:65px}
+.mm2{right:45px;top:65px}
+.mm3{left:65px;bottom:55px}
+.mm4{right:65px;bottom:55px}
+.mixed-controls{
+  max-width:900px;margin:12px auto;
+  display:grid;grid-template-columns:1fr 1fr 1fr auto;
+  gap:10px;align-items:end
+}
+.mixed-controls label{display:grid;gap:5px;font-weight:900}
+.mixed-controls input{
+  border:3px solid #b9cbe0;border-radius:13px;
+  padding:11px 12px;font-size:18px;font-weight:800;min-width:0
+}
+.mixed-packet{
+  position:absolute;
+  left:50%;top:50%;
+  transform:translate(-50%,-50%);
+  z-index:10;
+  display:none;
+  min-width:110px;
+  padding:8px 12px;
+  border-radius:14px;
+  background:#fff;
+  border:3px solid var(--unit-dark);
+  text-align:center;
+  font-size:16px;
+  font-weight:900;
+  box-shadow:0 4px 10px rgba(0,0,0,.16)
+}
+.mixed-route-chip{
+  max-width:850px;margin:10px auto;
+  padding:9px 14px;border-radius:14px;
+  background:#f4f7fb;border:2px solid #c9d8e7;
+  text-align:center;font-weight:900
+}
+
+/* ---------- stage 6: simpler definition ---------- */
+.defGrid{display:grid;grid-template-columns:1fr 1fr;gap:18px;max-width:900px;margin:18px auto}
+.def{
+  min-height:200px;border:3px solid var(--line);border-radius:24px;background:#fff;
+  padding:18px;display:grid;place-items:center;text-align:center;font-size:21px;
+  font-weight:800;line-height:1.3;cursor:pointer
+}
+.def.selected{border-color:var(--blue);background:#edf4ff}
+.def.correct{border-color:var(--ok);background:#e8fff5}
+.def.wrong{border-color:var(--bad);background:#fff0f3}
+.defIcon{font-size:54px;margin-bottom:10px}
+
+.definition-device{
+  display:inline-block;
+  position:relative;
+  width:76px;
+  height:48px;
+  margin:0 12px;
+  vertical-align:middle;
+  background:#4d5b69;
+  border:4px solid #2e3945;
+  border-radius:10px;
+}
+.definition-ports{
+  position:absolute;
+  left:10px;
+  right:10px;
+  bottom:8px;
+  height:8px;
+  background:repeating-linear-gradient(90deg,#8bf58a 0 8px,#27323d 8px 12px);
+}
+.definition-wifi{
+  position:absolute;
+  right:-16px;
+  top:-19px;
+  width:38px;
+  height:38px;
+  border-radius:50%;
+  background:#fff;
+  border:3px solid var(--unit-dark);
+  display:grid;
+  place-items:center;
+}
+.definition-wifi .wifi-mark{
+  transform:scale(.65);
+}
+
+.definition-network{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:0;
+  min-height:92px;
+  margin-bottom:8px;
+}
+.definition-desktop{
+  font-size:54px;
+  line-height:1;
+}
+.definition-solid-line{
+  width:54px;
+  height:5px;
+  background:#3972bb;
+  border-radius:6px;
+  margin:0 5px;
+}
+.definition-dashed-line{
+  width:54px;
+  height:0;
+  border-top:5px dashed #3972bb;
+  margin:0 5px;
+}
+.definition-phone-wrap{
+  position:relative;
+  display:inline-grid;
+  place-items:center;
+  min-width:60px;
+  min-height:72px;
+}
+.definition-phone{
+  font-size:52px;
+  line-height:1;
+}
+.definition-phone-wifi{
+  position:absolute;
+  right:-10px;
+  top:-11px;
+  width:36px;
+  height:36px;
+  border-radius:50%;
+  background:#fff;
+  border:3px solid var(--unit-dark);
+  display:grid;
+  place-items:center;
+  box-shadow:0 3px 7px rgba(0,0,0,.12);
+}
+.definition-phone-wifi .wifi-mark{
+  transform:scale(.6);
+}
+.central-icon{
+  display:inline-grid;place-items:center;width:70px;height:46px;border-radius:10px;
+  background:#4d5b69;color:#fff;font-size:22px;vertical-align:middle
+}
+/* ---------- final ---------- */
+.stars{font-size:58px;text-align:center;letter-spacing:10px}
+.summary{
+  max-width:820px;margin:15px auto 22px;padding:20px;border:4px solid var(--unit);
+  border-radius:24px;background:#fbfdec;text-align:center;font-size:22px;font-weight:800;line-height:1.4
+}
+.self{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;max-width:760px;margin:auto}
+.self button{
+  min-height:135px;border:3px solid var(--line);border-radius:22px;background:#fff;font-size:64px;cursor:pointer
+}
+.self button.selected{border-color:var(--blue);background:#edf4ff}
+.meter{height:18px;background:#e8eef5;border-radius:20px;overflow:hidden;margin-top:12px}
+.meter span{display:block;height:100%;background:var(--unit);width:0;transition:.4s}
+
+/* help */
+.modal{
+  position:fixed;inset:0;background:rgba(15,35,55,.55);display:none;
+  align-items:center;justify-content:center;padding:18px;z-index:50
+}
+.modal.open{display:flex}
+.modalBox{
+  max-width:680px;background:#fff;border:4px solid #f1cb52;border-radius:26px;
+  padding:24px;box-shadow:var(--shadow);text-align:center
+}
+.modalBox h3{font-size:30px;margin:0 0 10px}.modalBox p{font-size:22px;line-height:1.45}
+
+@media(max-width:800px){
+  .cable-stage,.wifi-choice,.defGrid,.connection-labels,.self{grid-template-columns:1fr}
+  .msg-controls{grid-template-columns:1fr}
+  .top{grid-template-columns:1fr}.mascot{display:none}
+}
+</style>
+
+<style id="nk-license-style">
+.nk-license{max-width:1100px;margin:14px auto 24px;padding:10px 16px;text-align:center;font:13px/1.45 Arial,"Noto Sans",sans-serif;color:#4e657c}
+.nk-license a{color:inherit;text-decoration:underline;text-underline-offset:2px}
+.nk-license .cc-badge{display:inline-block;margin:0 4px;padding:2px 7px;border:1px solid #8aa0b8;border-radius:6px;background:#fff;font-weight:700;white-space:nowrap}
+</style>
+</head>
+<body>
+
+<main class="app">
+<header class="top">
+  <div>
+    <h1>Δίκτυα υπολογιστών</h1>
+    <p class="subtitle">Μάθημα 13</p>
+  </div>
+  <div class="mascot" aria-hidden="true">🖧</div>
+</header>
+
+<nav class="path" id="path" aria-label="Πρόοδος"></nav>
+<section class="panel" id="panel"></section>
+</main>
+
+<div class="modal" id="helpModal" role="dialog" aria-modal="true">
+  <div class="modalBox">
+    <h3>Βοήθεια</h3>
+    <p id="helpText"></p>
+    <div class="actions">
+      <button class="btn secondary" id="speakHelp" type="button">🔊 Άκουσε</button>
+      <button class="btn primary" id="closeHelp" type="button">Το κατάλαβα</button>
+    </div>
+  </div>
+</div>
+
+<script>
+(()=>{'use strict';
+
+const panel=document.getElementById('panel');
+const path=document.getElementById('path');
+const modal=document.getElementById('helpModal');
+const helpText=document.getElementById('helpText');
+
+let step=0;
+let completed=new Set();
+let selected=null;
+let selfChoice=null;
+
+const helps=[
+  'Σύρε κάθε κομμάτι δρόμου και άφησέ το στο σωστό κενό. Τα κομμάτια δεν δίνονται με τη σειρά.',
+  'Σύρε ένα καλώδιο από κάθε σταθμό εργασίας προς τη θύρα με το ίδιο γράμμα: Α με Α, Β με Β, Γ με Γ και Δ με Δ.',
+  'Διάλεξε αποστολέα και παραλήπτη, γράψε ένα μήνυμα μίας λέξης και παρακολούθησε αργά τη διαδρομή του.',
+  'Η Ακρόπολη βρίσκεται στο κέντρο. Πάτησε τα τέσσερα ευρωπαϊκά μνημεία για να εμφανιστούν οι αόρατες αεροπορικές διαδρομές.',
+  'Στο ίδιο δίκτυο υπάρχουν ενσύρματες και ασύρματες συσκευές. Το σύμβολο Wi‑Fi δείχνει ποιες χρησιμοποιούν ασύρματη σύνδεση.',
+  'Διάλεξε την απλή εικόνα που δείχνει συνδεδεμένες συσκευές.',
+  'Διάλεξε το πρόσωπο που δείχνει πώς νιώθεις για όσα έμαθες.'
+];
+
+function head(t){
+  return `<div class="step-head"><h2>${t}</h2><button class="help" id="help" type="button">❔ Βοήθεια</button></div>`;
+}
+function feedback(){return '<div class="feedback" id="feedback" aria-live="polite"></div>'}
+function speak(t){
+  if(!('speechSynthesis' in window))return;
+  speechSynthesis.cancel();
+  const u=new SpeechSynthesisUtterance(t);
+  u.lang='el-GR';u.rate=.84;speechSynthesis.speak(u);
+}
+function showFeedback(ok,t){
+  const f=document.getElementById('feedback');
+  if(!f)return;
+  f.className='feedback show '+(ok?'ok':'try');
+  f.textContent=t;speak(t);
+}
+function updatePath(){
+  path.innerHTML=Array.from({length:7},(_,i)=>`<button class="dot ${i===step?'current':''} ${completed.has(i)?'done':''}" disabled>${completed.has(i)?'✓':i+1}</button>`).join('');
+}
+function next(delay=850){
+  completed.add(step);
+  setTimeout(()=>{step++;selected=null;render()},delay);
+}
+function bindHelp(){
+  document.getElementById('help').onclick=()=>{
+    helpText.textContent=helps[step];
+    modal.classList.add('open');
+  };
+}
+function center(el,root){
+  const r=el.getBoundingClientRect(),rr=root.getBoundingClientRect();
+  return{x:r.left+r.width/2-rr.left,y:r.top+r.height/2-rr.top};
+}
+function addSvgLine(svg,a,b,cls=''){
+  const root=svg.parentElement;
+  const p1=center(a,root),p2=center(b,root);
+  const line=document.createElementNS('http://www.w3.org/2000/svg','line');
+  line.setAttribute('x1',p1.x);line.setAttribute('y1',p1.y);
+  line.setAttribute('x2',p2.x);line.setAttribute('y2',p2.y);
+  if(cls)line.setAttribute('class',cls);
+  svg.appendChild(line);
+  return line;
+}
+
+/* ---------- stage 1 ---------- */
+function roadPieceSvg(d){
+  return `<svg viewBox="0 0 88 40"><path d="${d}" stroke="#657582" stroke-width="12" fill="none" stroke-linecap="round"/><path d="${d}" stroke="#fff" stroke-width="2" fill="none" stroke-dasharray="8 6" stroke-linecap="round"/></svg>`;
+}
+function renderRoad(){
+  return `${head('1. Οι δρόμοι φτιάχνουν ένα δίκτυο')}
+  <p class="instruction">Σύρε κάθε κομμάτι δρόμου και άφησέ το στο σωστό κενό. Όταν ο δρόμος γίνει συνεχόμενος, το αυτοκίνητο θα ταξιδέψει από το σπίτι, στο πάρκο και στο σχολείο.</p>
+  <div class="map">
+    <div class="sun">☀️</div><div class="cloud a">☁️</div><div class="cloud b">☁️</div>
+    <div class="mapHint">Σύρε το κομμάτι → άφησέ το στο σωστό κενό</div>
+    <svg class="roadsvg" viewBox="0 0 940 470">
+      <path class="guide" d="M145 333 L320 300 L470 240 L620 300 L795 333"/>
+      <path class="guideInner" d="M145 333 L320 300 L470 240 L620 300 L795 333"/>
+      <path id="r1" class="road" d="M145 333 L320 300"/><path id="d1" class="roadDash" d="M145 333 L320 300"/><path class="slotHit" data-slot="1" d="M145 333 L320 300"/>
+      <path id="r2" class="road" d="M320 300 L470 240"/><path id="d2" class="roadDash" d="M320 300 L470 240"/><path class="slotHit" data-slot="2" d="M320 300 L470 240"/>
+      <path id="r3" class="road" d="M470 240 L620 300"/><path id="d3" class="roadDash" d="M470 240 L620 300"/><path class="slotHit" data-slot="3" d="M470 240 L620 300"/>
+      <path id="r4" class="road" d="M620 300 L795 333"/><path id="d4" class="roadDash" d="M620 300 L795 333"/><path class="slotHit" data-slot="4" d="M620 300 L795 333"/>
+      <path id="route" d="M145 333 L320 300 L470 240 L620 300 L795 333" fill="none" stroke="none"/>
+    </svg>
+    <div class="landmark home"><div class="ico">🏠</div><div class="txt">Σπίτι</div></div>
+    <div class="landmark park"><div class="ico">🌳</div><div class="txt">Πάρκο</div></div>
+    <div class="landmark school"><div class="ico">🏫</div><div class="txt">Σχολείο</div></div>
+    <div class="car" id="car">🚗</div>
+    <div class="roadPieces">
+      <button class="roadPiece" data-piece="3" draggable="true" type="button">${roadPieceSvg('M8 8 L80 30')}</button>
+      <button class="roadPiece" data-piece="1" draggable="true" type="button">${roadPieceSvg('M8 28 L80 18')}</button>
+      <button class="roadPiece" data-piece="4" draggable="true" type="button">${roadPieceSvg('M8 18 L80 28')}</button>
+      <button class="roadPiece" data-piece="2" draggable="true" type="button">${roadPieceSvg('M8 30 L80 8')}</button>
+    </div>
+  </div>${feedback()}`;
+}
+function bindRoad(){
+  const placed=new Set();
+  let draggedId=null;
+
+  document.querySelectorAll('.roadPiece').forEach(piece=>{
+    piece.addEventListener('dragstart',e=>{
+      if(piece.classList.contains('used')){
+        e.preventDefault();
+        return;
+      }
+      draggedId=piece.dataset.piece;
+      piece.classList.add('dragging');
+      e.dataTransfer.effectAllowed='move';
+      e.dataTransfer.setData('text/plain',draggedId);
+    });
+
+    piece.addEventListener('dragend',()=>{
+      piece.classList.remove('dragging');
+      document.querySelectorAll('.slotHit').forEach(s=>s.classList.remove('dragover'));
+      draggedId=null;
+    });
+  });
+
+  document.querySelectorAll('.slotHit').forEach(slot=>{
+    slot.addEventListener('dragover',e=>{
+      e.preventDefault();
+      slot.classList.add('dragover');
+      e.dataTransfer.dropEffect='move';
+    });
+
+    slot.addEventListener('dragleave',()=>slot.classList.remove('dragover'));
+
+    slot.addEventListener('drop',e=>{
+      e.preventDefault();
+      slot.classList.remove('dragover');
+
+      const pieceId=e.dataTransfer.getData('text/plain')||draggedId;
+      const slotId=slot.dataset.slot;
+
+      if(!pieceId)return;
+
+      if(pieceId!==slotId){
+        showFeedback(false,'Αυτό το κομμάτι δεν ταιριάζει εδώ.');
+        return;
+      }
+
+      if(placed.has(slotId))return;
+
+      placed.add(slotId);
+      document.getElementById('r'+slotId).classList.add('on');
+      document.getElementById('d'+slotId).classList.add('on');
+
+      const piece=document.querySelector(`.roadPiece[data-piece="${pieceId}"]`);
+      piece.classList.add('used');
+      piece.setAttribute('draggable','false');
+      piece.disabled=true;
+
+      if(placed.size===4){
+        showFeedback(true,'Μπράβο! Ο δρόμος έγινε συνεχόμενος.');
+        const route=document.getElementById('route');
+        const car=document.getElementById('car');
+        const total=route.getTotalLength();
+        let start=null;
+
+        function animate(ts){
+          if(!start)start=ts;
+          const p=Math.min((ts-start)/3000,1);
+          const pt=route.getPointAtLength(total*p);
+          car.style.left=pt.x+'px';
+          car.style.top=pt.y+'px';
+          if(p<1)requestAnimationFrame(animate);
+          else setTimeout(()=>next(0),500);
+        }
+        requestAnimationFrame(animate);
+      }
+    });
+  });
+}
+
+/* ---------- stage 2 ---------- */
+function directWs(n,label,cls){
+  return `<div class="direct-ws ${cls}" data-ws="${n}">
+    <span class="tag">${label}</span>
+    <span class="screen"></span><span class="kb"></span>
+    <button class="direct-port" data-side="ws" data-id="${n}" type="button"></button>
+  </div>`;
+}
+function renderCableStage(){
+  return `${head('2. Σύνδεσε τους σταθμούς εργασίας')}
+  <p class="instruction">Οι σταθμοί εργασίας βρίσκονται σε διαφορετικές αποστάσεις από την κεντρική συσκευή. Σύρε ένα καλώδιο από κάθε υπολογιστή προς τη θύρα με το ίδιο γράμμα.</p>
+  <div class="connect-lab" id="connectLab">
+    <div class="board"></div>
+    <svg class="direct-svg" id="directSvg"></svg>
+
+    ${directWs(1,'Α','dw1')}
+    ${directWs(2,'Β','dw2')}
+    ${directWs(3,'Γ','dw3')}
+    ${directWs(4,'Δ','dw4')}
+
+    <div class="direct-switch switch-box">
+      <span class="port-letter pl1">Α</span>
+      <span class="port-letter pl2">Β</span>
+      <span class="port-letter pl3">Γ</span>
+      <span class="port-letter pl4">Δ</span>
+      <button class="direct-switch-port dsp1" data-side="switch" data-id="1" type="button" aria-label="Θύρα Α"></button>
+      <button class="direct-switch-port dsp2" data-side="switch" data-id="2" type="button" aria-label="Θύρα Β"></button>
+      <button class="direct-switch-port dsp3" data-side="switch" data-id="3" type="button" aria-label="Θύρα Γ"></button>
+      <button class="direct-switch-port dsp4" data-side="switch" data-id="4" type="button" aria-label="Θύρα Δ"></button>
+    </div>
+  </div>${feedback()}`;
+}
+function bindCableStage(){
+  const lab=document.getElementById('connectLab');
+  const svg=document.getElementById('directSvg');
+  const done=new Set();
+  let drag=null;
+
+  document.querySelectorAll('[data-side="ws"]').forEach(src=>src.addEventListener('pointerdown',e=>{
+    if(src.classList.contains('done'))return;
+    e.preventDefault();
+    const root=svg.parentElement;
+    const p=center(src,root);
+    const line=document.createElementNS('http://www.w3.org/2000/svg','line');
+    line.setAttribute('x1',p.x);line.setAttribute('y1',p.y);
+    line.setAttribute('x2',p.x);line.setAttribute('y2',p.y);
+    line.setAttribute('class','preview');
+    svg.appendChild(line);
+    drag={src,line};
+    src.setPointerCapture?.(e.pointerId);
+  }));
+
+  window.addEventListener('pointermove',e=>{
+    if(!drag)return;
+    const r=svg.getBoundingClientRect();
+    drag.line.setAttribute('x2',e.clientX-r.left);
+    drag.line.setAttribute('y2',e.clientY-r.top);
+  });
+
+  window.addEventListener('pointerup',e=>{
+    if(!drag)return;
+    const {src,line}=drag;drag=null;
+    const el=document.elementFromPoint(e.clientX,e.clientY);
+    const target=el&&el.closest?el.closest('[data-side="switch"]'):null;
+    line.remove();
+
+    if(!target)return;
+    if(src.dataset.id!==target.dataset.id){
+      showFeedback(false,'Αυτή δεν είναι η σωστή θύρα. Δοκίμασε ξανά.');
+      return;
+    }
+    if(done.has(src.dataset.id))return;
+
+    const finalLine=addSvgLine(svg,src,target);
+    finalLine.setAttribute('data-connection',src.dataset.id);
+    src.classList.add('done');target.classList.add('done');
+    src.closest('.direct-ws').classList.add('done');
+    done.add(src.dataset.id);
+
+    if(done.size===4){
+      showFeedback(true,'Μπράβο! Έφτιαξες μία τοπολογία αστέρα γύρω από την κεντρική συσκευή.');
+      next();
+    }
+  });
+}
+/* ---------- stage 3 ---------- */
+function msgNode(n,icon,name,cls){
+  return `<button class="msg-node ${cls}" data-node="${n}" type="button">
+    <span class="node-number">${n}</span><span class="icon">${icon}</span><span class="name">${name}</span>
+  </button>`;
+}
+function renderMessageStage(){
+  return `${head('3. Στείλε το δικό σου μήνυμα')}
+  <p class="instruction">Διάλεξε πρώτα τον αποστολέα, μετά τον παραλήπτη και γράψε ένα μήνυμα μίας λέξης. Στον φάκελο θα εμφανιστούν οι δύο αριθμοί και το μήνυμα.</p>
+  <div class="message-net" id="messageNet">
+    <svg class="net-svg" id="messageSvg"></svg>
+    <div class="msg-switch switch-box"></div>
+    ${msgNode(1,'🖥️','Υπολογιστής','mn1')}
+    ${msgNode(2,'💻','Φορητός','mn2')}
+    ${msgNode(3,'🖥️','Υπολογιστής','mn3')}
+    ${msgNode(4,'💻','Φορητός','mn4')}
+    ${msgNode(5,'🖥️','Υπολογιστής','mn5')}
+    <div class="packet" id="packet"></div>
+  </div>
+  <div class="msg-controls">
+    <label>Αποστολέας<input id="sender" readonly placeholder="—"></label>
+    <label>Παραλήπτης<input id="receiver" readonly placeholder="—"></label>
+    <label>Μήνυμα<input id="word" maxlength="15" placeholder="μία λέξη"></label>
+    <button class="btn checkbtn" id="sendBtn">Στείλε ✉️</button>
+  </div>
+  <div class="route-chip" id="routeChip">Διαδρομή: —</div>${feedback()}`;
+}
+function drawMessageNetwork(){
+  const svg=document.getElementById('messageSvg'),sw=document.querySelector('.msg-switch');
+  svg.innerHTML='';
+  document.querySelectorAll('.msg-node').forEach(n=>addSvgLine(svg,n,sw));
+}
+function bindMessageStage(){
+  drawMessageNetwork();
+  let sender=null,receiver=null;
+  document.querySelectorAll('.msg-node').forEach(n=>n.onclick=()=>{
+    if(!sender){
+      sender=n.dataset.node;n.classList.add('sender');document.getElementById('sender').value=sender;
+    }else if(!receiver && n.dataset.node!==sender){
+      receiver=n.dataset.node;n.classList.add('receiver');document.getElementById('receiver').value=receiver;
+    }
+  });
+
+  document.getElementById('sendBtn').onclick=()=>{
+    const word=document.getElementById('word').value.trim();
+    if(!sender||!receiver){showFeedback(false,'Διάλεξε αποστολέα και παραλήπτη.');return}
+    if(!word||/\s/.test(word)){showFeedback(false,'Γράψε ένα μήνυμα μόνο μίας λέξης.');return}
+
+    const scene=document.getElementById('messageNet');
+    const s=document.querySelector(`.msg-node[data-node="${sender}"]`);
+    const r=document.querySelector(`.msg-node[data-node="${receiver}"]`);
+    const sw=document.querySelector('.msg-switch');
+    const p=document.getElementById('packet');
+    const ps=center(s,scene),pm=center(sw,scene),pr=center(r,scene);
+
+    p.textContent=`${sender} → ${receiver} | ${word}`;
+    p.style.display='block';p.style.left=ps.x+'px';p.style.top=ps.y+'px';
+    p.style.transition='left 2.4s linear, top 2.4s linear';
+    document.getElementById('routeChip').textContent=`Διαδρομή: ${sender} → ◉ → ${receiver}`;
+
+    setTimeout(()=>{p.style.left=pm.x+'px';p.style.top=pm.y+'px'},120);
+    setTimeout(()=>{p.style.left=pr.x+'px';p.style.top=pr.y+'px'},2900);
+    setTimeout(()=>{
+      showFeedback(true,`Το μήνυμα «${word}» έφτασε από τη συσκευή ${sender} στη συσκευή ${receiver}.`);
+      next();
+    },5550);
+  };
+}
+
+/* ---------- stage 4 ---------- */
+function renderWirelessAnalogy(){
+  return `${head('4. Αόρατες διαδρομές στον αέρα')}
+  <p class="instruction">Οι δρόμοι στη Γη είναι ορατοί. Οι διαδρομές των αεροπλάνων στον ουρανό δεν φαίνονται, αλλά υπάρχουν. Πάτησε τα τέσσερα ευρωπαϊκά μνημεία για να δημιουργήσεις «αόρατες» διαδρομές με κέντρο την Ακρόπολη.</p>
+  <div class="routes-world" id="routesWorld">
+    <div class="routes-note">Αθήνα στο κέντρο — αόρατες διαδρομές προς την Ευρώπη</div>
+    <svg class="invisible-svg" id="routesSvg"></svg>
+
+    <div class="acropolis" id="acropolis">
+      <div class="icon">🏛️</div>
+      <div class="name">Ακρόπολη — Αθήνα</div>
+    </div>
+
+    <button class="landmark-eu eiffel" data-landmark="1" type="button">
+      <span class="icon">🗼</span><span class="name">Πύργος του Άιφελ — Παρίσι</span>
+    </button>
+    <button class="landmark-eu bigben" data-landmark="2" type="button">
+      <span class="icon">🕰️</span><span class="name">Big Ben — Λονδίνο</span>
+    </button>
+    <button class="landmark-eu colosseum" data-landmark="3" type="button">
+      <span class="icon">🏟️</span><span class="name">Κολοσσαίο — Ρώμη</span>
+    </button>
+    <button class="landmark-eu sagrada" data-landmark="4" type="button">
+      <span class="icon">⛪</span><span class="name">Sagrada Família — Βαρκελώνη</span>
+    </button>
+  </div>${feedback()}`;
+}
+function bindWirelessAnalogy(){
+  const done=new Set();
+  const svg=document.getElementById('routesSvg');
+  const centerNode=document.getElementById('acropolis');
+
+  document.querySelectorAll('.landmark-eu').forEach(l=>l.onclick=()=>{
+    if(done.has(l.dataset.landmark))return;
+    done.add(l.dataset.landmark);
+    l.classList.add('connected');
+
+    const line=addSvgLine(svg,centerNode,l);
+    line.setAttribute('stroke-dasharray','12 10');
+
+    if(done.size===4){
+      showFeedback(true,'Οι διαδρομές δεν είναι ζωγραφισμένες στον ουρανό, αλλά υπάρχουν. Αυτή η ιδέα μάς βοηθά να καταλάβουμε τις ασύρματες συνδέσεις.');
+      next(1500);
+    }
+  });
+}
+/* ---------- stage 5 ---------- */
+function mixedNode(n,icon,name,cls,wireless=false){
+  return `<button class="mixed-node ${cls}" data-node="${n}" type="button">
+    <span class="num">${n}</span>
+    ${wireless?'<span class="node-wifi"><span class="wifi-mark"><span class="wifi-dot"></span></span></span>':''}
+    <span class="icon">${icon}</span>
+    <span class="name">${name}</span>
+  </button>`;
+}
+function renderMixedMessage(){
+  return `${head('5. Στείλε μήνυμα σε μικτό δίκτυο')}
+  <p class="instruction">Τώρα στο ίδιο δίκτυο υπάρχουν ενσύρματες και ασύρματες συσκευές. Οι συμπαγείς γραμμές δείχνουν καλώδια και οι διακεκομμένες ασύρματες συνδέσεις. Διάλεξε αποστολέα, παραλήπτη και γράψε μία λέξη.</p>
+  <div class="mixed-message-net" id="mixedMessageNet">
+    <svg class="net-svg" id="mixedMessageSvg"></svg>
+    <div class="hybrid-center" id="hybridCenter"><span class="wifi"><span class="wifi-mark"><span class="wifi-dot"></span></span></span><span class="ports"></span></div>
+
+    ${mixedNode(1,'🖥️','Ενσύρματο','mm1',false)}
+    ${mixedNode(2,'💻','Ενσύρματο','mm2',false)}
+    ${mixedNode(3,'📱','Ασύρματο','mm3',true)}
+    ${mixedNode(4,'💻','Ασύρματο','mm4',true)}
+
+    <div class="mixed-packet" id="mixedPacket"></div>
+  </div>
+  <div class="mixed-controls">
+    <label>Αποστολέας<input id="mixedSender" readonly placeholder="—"></label>
+    <label>Παραλήπτης<input id="mixedReceiver" readonly placeholder="—"></label>
+    <label>Μήνυμα<input id="mixedWord" maxlength="15" placeholder="μία λέξη"></label>
+    <button class="btn checkbtn" id="mixedSendBtn">Στείλε ✉️</button>
+  </div>
+  <div class="mixed-route-chip" id="mixedRouteChip">Διαδρομή: —</div>${feedback()}`;
+}
+function drawMixedMessageNetwork(){
+  const svg=document.getElementById('mixedMessageSvg');
+  const hub=document.getElementById('hybridCenter');
+  svg.innerHTML='';
+  document.querySelectorAll('.mixed-node').forEach(n=>{
+    const line=addSvgLine(svg,n,hub);
+    if(n.dataset.node==='3' || n.dataset.node==='4'){
+      line.setAttribute('stroke-dasharray','10 8');
+    }
+  });
+}
+function bindMixedMessage(){
+  drawMixedMessageNetwork();
+  let sender=null,receiver=null;
+
+  document.querySelectorAll('.mixed-node').forEach(n=>n.onclick=()=>{
+    if(!sender){
+      sender=n.dataset.node;n.classList.add('sender');
+      document.getElementById('mixedSender').value=sender;
+    }else if(!receiver && n.dataset.node!==sender){
+      receiver=n.dataset.node;n.classList.add('receiver');
+      document.getElementById('mixedReceiver').value=receiver;
+    }
+  });
+
+  document.getElementById('mixedSendBtn').onclick=()=>{
+    const word=document.getElementById('mixedWord').value.trim();
+    if(!sender||!receiver){showFeedback(false,'Διάλεξε αποστολέα και παραλήπτη.');return}
+    if(!word||/\s/.test(word)){showFeedback(false,'Γράψε ένα μήνυμα μόνο μίας λέξης.');return}
+
+    const scene=document.getElementById('mixedMessageNet');
+    const s=document.querySelector(`.mixed-node[data-node="${sender}"]`);
+    const r=document.querySelector(`.mixed-node[data-node="${receiver}"]`);
+    const hub=document.getElementById('hybridCenter');
+    const p=document.getElementById('mixedPacket');
+
+    const ps=center(s,scene),ph=center(hub,scene),pr=center(r,scene);
+
+    p.textContent=`${sender} → ${receiver} | ${word}`;
+    p.style.display='block';p.style.left=ps.x+'px';p.style.top=ps.y+'px';
+    p.style.transition='left 2.4s linear, top 2.4s linear';
+    document.getElementById('mixedRouteChip').textContent=`Διαδρομή: ${sender} → 📶/🔌 → ${receiver}`;
+
+    setTimeout(()=>{p.style.left=ph.x+'px';p.style.top=ph.y+'px'},120);
+    setTimeout(()=>{p.style.left=pr.x+'px';p.style.top=pr.y+'px'},2900);
+    setTimeout(()=>{
+      showFeedback(true,`Το μήνυμα «${word}» έφτασε από τη συσκευή ${sender} στη συσκευή ${receiver}.`);
+      next();
+    },5550);
+  };
+}
+/* ---------- stage 6 ---------- */
+function renderDefinition(){
+  return `${head('6. Τι είναι δίκτυο;')}
+  <p class="instruction">Διάλεξε τη σωστή εικόνα και πρόταση.</p>
+  <div class="defGrid">
+    <button class="def" data-id="right">
+      <div>
+        <div class="definition-network">
+          <span class="definition-desktop">🖥️</span>
+
+          <span class="definition-solid-line"></span>
+
+          <span class="definition-device">
+            <span class="definition-ports"></span>
+            <span class="definition-wifi">
+              <span class="wifi-mark"><span class="wifi-dot"></span></span>
+            </span>
+          </span>
+
+          <span class="definition-dashed-line"></span>
+
+          <span class="definition-phone-wrap">
+            <span class="definition-phone">📱</span>
+            <span class="definition-phone-wifi">
+              <span class="wifi-mark"><span class="wifi-dot"></span></span>
+            </span>
+          </span>
+        </div>
+        Συνδεδεμένες συσκευές.
+      </div>
+    </button>
+    <button class="def" data-id="wrong">
+      <div><div class="defIcon">🖥️　　　💻</div>Απλώς κοντά η μία στην άλλη.</div>
+    </button>
+  </div>
+  <div class="actions"><button class="btn checkbtn" id="checkDef">✓ Έλεγχος</button></div>${feedback()}`;
+}
+function bindDefinition(){
+  document.querySelectorAll('.def').forEach(c=>c.onclick=()=>{
+    document.querySelectorAll('.def').forEach(x=>x.classList.remove('selected','wrong'));
+    selected=c.dataset.id;c.classList.add('selected');
+  });
+  document.getElementById('checkDef').onclick=()=>{
+    if(!selected){showFeedback(false,'Διάλεξε μία απάντηση.');return}
+    const c=document.querySelector(`.def[data-id="${selected}"]`);
+    if(selected==='right'){
+      c.classList.add('correct');showFeedback(true,'Μπράβο! Αυτό είναι δίκτυο.');next();
+    }else{
+      c.classList.add('wrong');showFeedback(false,'Χρειάζεται σύνδεση μεταξύ των συσκευών.');
+    }
+  };
+}
+/* ---------- stage 7 ---------- */
+function renderFinish(){
+  return `${head('7. Τα κατάφερες!')}
+  <div class="stars">⭐ ⭐ ⭐</div>
+  <div class="summary">Έμαθες ότι ένα δίκτυο συνδέει διαφορετικές συσκευές. Οι συνδέσεις μπορεί να είναι με καλώδια ή ασύρματες και επιτρέπουν στις συσκευές να επικοινωνούν.</div>
+  <p class="instruction">Πώς νιώθεις για όσα έμαθες;</p>
+  <div class="self">
+    <button data-id="again">🙂</button><button data-id="good">😊</button><button data-id="great">🤩</button>
+  </div>
+  <div class="meter"><span id="meterFill"></span></div>
+  <div class="actions"><button class="btn primary" id="finish">Ολοκλήρωση</button><button class="btn secondary" id="restart">Από την αρχή</button></div>${feedback()}`;
+}
+function bindFinish(){
+  document.querySelectorAll('.self button').forEach(c=>c.onclick=()=>{
+    document.querySelectorAll('.self button').forEach(x=>x.classList.remove('selected'));
+    selfChoice=c.dataset.id;c.classList.add('selected');
+  });
+  document.getElementById('finish').onclick=()=>{
+    if(!selfChoice){showFeedback(false,'Διάλεξε ένα πρόσωπο.');return}
+    document.getElementById('meterFill').style.width=selfChoice==='again'?'45%':selfChoice==='good'?'75%':'100%';
+    showFeedback(true,'Μπράβο! Ολοκλήρωσες το Μάθημα 13.');
+    completed.add(step);updatePath();
+  };
+  document.getElementById('restart').onclick=()=>{
+    step=0;completed.clear();selected=null;selfChoice=null;render();
+  };
+}
+
+function render(){
+  selected=null;
+  updatePath();
+  const views=[
+    renderRoad,
+    renderCableStage,
+    renderMessageStage,
+    renderWirelessAnalogy,
+    renderMixedMessage,
+    renderDefinition,
+    renderFinish
+  ];
+  panel.innerHTML=views[step]();
+  bindHelp();
+
+  if(step===0)bindRoad();
+  if(step===1)bindCableStage();
+  if(step===2){bindMessageStage();requestAnimationFrame(drawMessageNetwork)}
+  if(step===3)bindWirelessAnalogy();
+  if(step===4){bindMixedMessage();requestAnimationFrame(drawMixedMessageNetwork)}
+  if(step===5)bindDefinition();
+  if(step===6)bindFinish();
+}
+
+document.getElementById('closeHelp').onclick=()=>{
+  modal.classList.remove('open');
+  if('speechSynthesis' in window)speechSynthesis.cancel();
+};
+document.getElementById('speakHelp').onclick=()=>speak(helpText.textContent);
+modal.onclick=e=>{if(e.target===modal)modal.classList.remove('open')};
+
+render();
+})();
+</script>
+
+<footer class="nk-license" aria-label="Πληροφορίες δημιουργού και άδειας χρήσης">
+  <div><strong>Created by Nikos Kalakos · © 2026</strong></div>
+  <div>Original educational content and simulation design licensed under <a class="cc-badge" href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank" rel="license noopener noreferrer">CC BY-NC 4.0</a>.</div>
+  <div>Source code © 2026 Nikos Kalakos.</div>
+  <div>Third-party and textbook materials remain subject to the rights and licences of their respective copyright holders.</div>
+</footer>
+</body>
+</html>

@@ -1,0 +1,272 @@
+<!--
+ICT Educational Simulation
+Created by Nikos Kalakos
+Copyright © 2026 Nikos Kalakos
+
+Original educational content and simulation design licensed under CC BY-NC 4.0.
+Source code © 2026 Nikos Kalakos.
+Third-party and textbook materials remain subject to the rights and licences of their respective copyright holders.
+-->
+<!doctype html>
+<html lang="el">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="author" content="Nikos Kalakos">
+<meta name="copyright" content="© 2026 Nikos Kalakos">
+<meta name="license" content="Original educational content and simulation design: CC BY-NC 4.0; source code © 2026 Nikos Kalakos; third-party and textbook materials excluded.">
+<title>Μάθημα 11 — Οι συσκευές του υπολογιστή</title>
+<style>
+:root{
+  --ink:#17324d;
+  --primary:#3268d5;
+  --primary2:#234fa8;
+  --unit:#bcc61f;
+  --unit-dark:#8d9811;
+  --soft:#f6f9df;
+  --line:#cbd9e8;
+  --ok:#15845b;
+  --bad:#d56575;
+  --shadow:0 10px 28px rgba(23,50,77,.13)
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:Arial,"Noto Sans",sans-serif;background:linear-gradient(180deg,#f7fbea,#fff8ea);color:var(--ink);min-height:100vh}
+button{font:inherit}
+.app{max-width:1100px;margin:auto;padding:16px}
+.top{display:grid;grid-template-columns:1fr auto;gap:12px;align-items:center;background:#fff;border:3px solid #dfe8d0;border-radius:24px;padding:14px 18px;box-shadow:var(--shadow)}
+h1{font-size:clamp(24px,4vw,42px);margin:0}
+.subtitle{margin:5px 0 0;font-size:clamp(15px,2vw,20px)}
+.mascot{font-size:58px}
+.path{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin:16px 0}
+.dot{width:44px;height:44px;border-radius:50%;border:3px solid #a9b9ca;background:#fff;color:#5f7791;font-weight:800;font-size:20px;display:grid;place-items:center;padding:0}
+.dot.current{background:var(--primary);border-color:var(--primary);color:#fff;transform:scale(1.12)}
+.dot.done{background:var(--unit);border-color:var(--unit-dark);color:#fff}
+.panel{background:rgba(255,255,255,.97);border:3px solid #dfe8d0;border-radius:28px;padding:clamp(15px,3vw,28px);box-shadow:var(--shadow);min-height:590px}
+.step-head{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap}
+.step-head h2{font-size:clamp(25px,4vw,38px);margin:0}
+.help{background:#fff7d6;color:#624700;border:3px solid #e0bd45;border-radius:16px;padding:11px 18px;font-weight:800;cursor:pointer}
+.instruction{font-size:clamp(22px,3vw,30px);font-weight:900;text-align:center;margin:16px auto;max-width:820px}
+.visual-prompt{display:flex;align-items:center;justify-content:center;gap:18px;font-size:66px;margin:10px 0 18px;min-height:80px}
+.choices{display:grid;grid-template-columns:repeat(auto-fit,minmax(145px,1fr));gap:16px}
+.card{position:relative;min-height:150px;border:3px solid var(--line);border-radius:22px;background:#fff;padding:12px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;cursor:pointer;box-shadow:0 5px 12px rgba(23,50,77,.08);transition:.15s}
+.card:hover{transform:translateY(-2px)}
+.card.selected{border-color:var(--primary);background:#edf4ff;box-shadow:0 0 0 4px rgba(50,104,213,.13)}
+.card.correct{border-color:var(--ok);background:#e8fff5}
+.card.wrong{border-color:var(--bad);background:#fff0f3}
+.pic{font-size:68px;line-height:1}
+.label{font-size:16px;font-weight:800;text-align:center}
+.no-label .label{display:none}
+.actions{display:flex;justify-content:center;gap:12px;flex-wrap:wrap;margin-top:20px}
+.btn{border:0;border-radius:16px;padding:14px 24px;font-weight:900;font-size:19px;cursor:pointer}
+.checkbtn{background:var(--unit);color:#243000;border:3px solid var(--unit-dark)}
+.primary{background:var(--primary);color:#fff}
+.secondary{background:#eef3f8;color:var(--ink);border:2px solid #b9cbe0}
+.feedback{min-height:58px;margin:16px auto 0;max-width:760px;border-radius:18px;padding:13px 18px;text-align:center;font-weight:800;font-size:20px;display:none}
+.feedback.show{display:block}
+.feedback.ok{background:#dcf8ec;color:#07583c;border:2px solid #75d6ae}
+.feedback.try{background:#fff2d8;color:#754500;border:2px solid #e2b85f}
+.device-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;max-width:820px;margin:auto}
+.match-grid{display:grid;grid-template-columns:1fr 1fr;gap:22px;max-width:850px;margin:auto;position:relative}
+.match-col{display:grid;gap:14px;position:relative;z-index:1}
+.match-card{min-height:112px;border:3px solid var(--line);border-radius:20px;background:#fff;display:flex;align-items:center;justify-content:center;font-size:58px;cursor:crosshair;box-shadow:0 4px 10px rgba(23,50,77,.07)}
+.match-card.done{border-color:var(--ok);background:#e8fff5}
+.match-card.wrong{animation:shake .28s}
+.match-lines{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;overflow:visible;z-index:2}
+.match-lines line{stroke:var(--primary);stroke-width:5;stroke-linecap:round}
+.match-lines line.preview{stroke:#7695b6;stroke-width:4;stroke-dasharray:9 7;opacity:.85}
+.demo-box{max-width:820px;margin:14px auto;border:3px solid #dce6bd;border-radius:24px;background:#fbfdeb;padding:18px;display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:16px;text-align:center}
+.demo-box .big{font-size:72px}
+.demo-box .arrow{font-size:46px;font-weight:900;color:var(--unit-dark)}
+.tap-demo{max-width:760px;margin:auto;display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.demo-card{border:3px solid var(--line);border-radius:22px;background:#fff;padding:18px;min-height:190px;display:grid;place-items:center;cursor:pointer}
+.demo-card.selected{border-color:var(--primary);background:#edf4ff}
+.device-scene{font-size:82px}
+.monitor-only{width:118px;height:84px;position:relative;display:grid;place-items:center}
+.monitor-only .screen{width:104px;height:66px;border:6px solid #475569;border-radius:8px;background:#cceaff}
+.monitor-only .stand{width:34px;height:6px;background:#475569;border-radius:4px;margin-top:4px}
+.monitor-only .base{width:62px;height:6px;background:#475569;border-radius:4px;margin-top:3px}
+.laptop-demo{width:180px;margin:auto}
+.laptop-screen{width:160px;height:92px;border:7px solid #475569;border-radius:10px 10px 5px 5px;background:#d9efff;display:grid;place-items:center;font-size:38px}
+.laptop-base{width:180px;height:26px;border:5px solid #475569;border-top:0;border-radius:0 0 12px 12px;background:#eef2f7;display:flex;justify-content:center;align-items:center}
+.touchpad{width:62px;height:16px;border:3px solid #7b8794;border-radius:5px;background:#fff}
+.tablet-demo{width:135px;height:180px;border:7px solid #475569;border-radius:18px;background:#d9efff;margin:auto;display:grid;grid-template-rows:1fr 64px;overflow:hidden}
+.tablet-top{display:grid;place-items:center;font-size:48px}
+.virtual-keyboard{display:grid;grid-template-columns:repeat(6,1fr);gap:3px;padding:7px;background:#f6f8fb;border-top:3px solid #aab7c4}
+.virtual-keyboard span{height:14px;border:1px solid #8795a5;border-radius:3px;background:#fff}
+.finger-mark{font-size:52px;text-align:center;margin-top:8px}
+.mouse-only{font-size:74px;text-align:center}
+.stars{font-size:58px;text-align:center;letter-spacing:10px}
+.self{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;max-width:760px;margin:auto}
+.meter{height:18px;background:#e8eef5;border-radius:20px;overflow:hidden;margin-top:12px}
+.meter span{display:block;height:100%;background:var(--unit);width:0;transition:.4s}
+.modal{position:fixed;inset:0;background:rgba(15,35,55,.55);display:none;align-items:center;justify-content:center;padding:18px;z-index:50}
+.modal.open{display:flex}
+.modal-box{max-width:650px;background:#fff;border:4px solid #f1cb52;border-radius:26px;padding:24px;box-shadow:var(--shadow);text-align:center}
+.modal-box h3{font-size:30px;margin:0 0 10px}
+.modal-box p{font-size:22px;line-height:1.45}
+@keyframes shake{0%,100%{transform:translateX(0)}35%{transform:translateX(-7px)}70%{transform:translateX(7px)}}
+@media(max-width:700px){
+  .panel{min-height:0}
+  .top{grid-template-columns:1fr}
+  .mascot{display:none}
+  .device-grid,.match-grid,.tap-demo,.self{grid-template-columns:1fr}
+  .demo-box{grid-template-columns:1fr}
+  .match-lines{display:none}
+}
+</style>
+
+<style id="nk-license-style">
+.nk-license{max-width:1100px;margin:14px auto 24px;padding:10px 16px;text-align:center;font:13px/1.45 Arial,"Noto Sans",sans-serif;color:#4e657c}
+.nk-license a{color:inherit;text-decoration:underline;text-underline-offset:2px}
+.nk-license .cc-badge{display:inline-block;margin:0 4px;padding:2px 7px;border:1px solid #8aa0b8;border-radius:6px;background:#fff;font-weight:700;white-space:nowrap}
+</style>
+</head>
+<body>
+<main class="app">
+<header class="top">
+  <div><h1>Οι συσκευές του υπολογιστή</h1><p class="subtitle">Μάθημα 11</p></div>
+  <div class="mascot" aria-hidden="true">🖥️</div>
+</header>
+<nav class="path" id="path" aria-label="Πρόοδος"></nav>
+<section class="panel" id="panel"></section>
+</main>
+
+<div class="modal" id="helpModal" role="dialog" aria-modal="true">
+  <div class="modal-box">
+    <h3>Βοήθεια</h3>
+    <p id="helpText"></p>
+    <div class="actions">
+      <button class="btn secondary" id="speakHelp" type="button">🔊 Άκουσε</button>
+      <button class="btn primary" id="closeHelp" type="button">Το κατάλαβα</button>
+    </div>
+  </div>
+</div>
+
+<script>
+(()=>{'use strict';
+const panel=document.getElementById('panel'),path=document.getElementById('path'),modal=document.getElementById('helpModal'),helpText=document.getElementById('helpText');
+let step=0,completed=new Set(),selected=[],locked=false,matched=new Set();
+
+const helps=[
+'Βρες την οθόνη, το πληκτρολόγιο και το ποντίκι. Πάτησε μόνο αυτές τις τρεις συσκευές.',
+'Σύρε μια γραμμή από κάθε συσκευή στο σωστό σύμβολο: γράφω, επιλέγω ή βλέπω.',
+'Μπορούμε να προσθέσουμε κάμερα, μικρόφωνο, ηχεία και ακουστικά. Πάτησε μόνο αυτές τις συσκευές.',
+'Με το μικρόφωνο μπορούμε να μιλάμε και να δίνουμε ήχο στον υπολογιστή. Πάτησε το μικρόφωνο.',
+'Στην ταμπλέτα το πληκτρολόγιο εμφανίζεται πάνω στην οθόνη και πατάμε με το δάχτυλο. Πάτησε τη σωστή εικόνα.',
+'Με τα ηχεία και τα ακουστικά ακούμε ήχους από τον υπολογιστή. Πάτησε και τις δύο σωστές συσκευές.',
+'Σκέψου πόσο καλά ξεχωρίζεις τις συσκευές του υπολογιστή. Διάλεξε το πρόσωπο που ταιριάζει σε εσένα.'
+];
+
+function head(t){return `<div class="step-head"><h2>${t}</h2><button class="help" id="help" type="button">❔ Βοήθεια</button></div>`}
+function feedback(){return '<div class="feedback" id="feedback" aria-live="polite"></div>'}
+function checkArea(){return `<div class="actions"><button class="btn checkbtn" id="check" type="button">✓ Έλεγχος</button></div>${feedback()}`}
+function updatePath(){path.innerHTML=Array.from({length:7},(_,i)=>`<button class="dot ${i===step?'current':''} ${completed.has(i)?'done':''}" disabled>${completed.has(i)?'✓':i+1}</button>`).join('')}
+function speak(t){if(!('speechSynthesis'in window))return;speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(t);u.lang='el-GR';u.rate=.82;speechSynthesis.speak(u)}
+function showFeedback(ok,t){const f=document.getElementById('feedback');f.className='feedback show '+(ok?'ok':'try');f.textContent=t;speak(t)}
+function next(){completed.add(step);setTimeout(()=>{step++;selected=[];locked=false;render()},800)}
+function bindHelp(){document.getElementById('help').onclick=()=>{helpText.textContent=helps[step];modal.classList.add('open')}}
+
+function card(id,pic,ok=0){return `<button class="card no-label" type="button" data-id="${id}" data-ok="${ok}"><span class="pic">${pic}</span><span class="label"></span></button>`}
+
+function renderDesktop(){
+ return `${head('1. Οι βασικές συσκευές')}<div class="device-grid">
+  <button class="card no-label" type="button" data-id="screen" data-ok="1"><div class="monitor-only"><div class="screen"></div><div class="stand"></div><div class="base"></div></div></button>
+  ${card('camera','📷',0)}
+  ${card('keyboard','⌨️',1)}
+  ${card('headphones','🎧',0)}
+  ${card('mouse','🖱️',1)}
+  ${card('mic','🎤',0)}
+ </div>${checkArea()}`;
+}
+function renderMatch(){
+ return `${head('2. Τι κάνει;')}<p class="instruction">↔</p><div class="match-grid" id="matchArea"><svg class="match-lines" id="matchLines" aria-hidden="true"></svg><div class="match-col">
+  <button class="match-card" data-side="L" data-id="keyboard" type="button">⌨️</button>
+  <button class="match-card" data-side="L" data-id="mouse" type="button">🖱️</button>
+  <button class="match-card" data-side="L" data-id="screen" type="button"><div class="monitor-only"><div class="screen"></div><div class="stand"></div><div class="base"></div></div></button>
+ </div><div class="match-col">
+  <button class="match-card" data-side="R" data-id="write" type="button">ΑΒΓ</button>
+  <button class="match-card" data-side="R" data-id="choose" type="button">☝️</button>
+  <button class="match-card" data-side="R" data-id="see" type="button">👁️</button>
+ </div></div>${feedback()}`;
+}
+function renderExtras(){
+ return `${head('3. Τι προσθέτω;')}<div class="visual-prompt">🖥️ + ?</div><div class="device-grid">${[
+  card('camera','📷',1),card('mic','🎤',1),card('speakers','🔊',1),card('headphones','🎧',1),
+  card('lamp','💡',0),card('clock','⏰',0)
+ ].join('')}</div>${checkArea()}`;
+}
+function renderLaptop(){
+ return `${head('4. Μιλάω')}<div class="visual-prompt">🗣️ ➜ ?</div><div class="device-grid">
+   ${card('mic','🎤',1)}
+   ${card('camera','📷',0)}
+   ${card('keyboard','⌨️',0)}
+   ${card('headphones','🎧',0)}
+ </div>${checkArea()}`;
+}
+function renderTablet(){
+ const keys='<span></span>'.repeat(18);
+ return `${head('5. Γράφω στην οθόνη')}<div class="tap-demo">
+   <button class="demo-card" data-id="finger" type="button"><div><div class="tablet-demo"><div class="tablet-top">ΑΒΓ</div><div class="virtual-keyboard">${keys}</div></div><div class="finger-mark">☝️</div></div></button>
+   <button class="demo-card" data-id="mouse" type="button"><div><div class="tablet-demo"><div class="tablet-top">ΑΒΓ</div><div></div></div><div class="mouse-only">🖱️</div></div></button>
+ </div>${checkArea()}`;
+}
+function renderListen(){
+ return `${head('6. Ακούω')}<div class="visual-prompt">🎵 ➜ ?</div><div class="device-grid">${[
+  card('speakers','🔊',1),card('headphones','🎧',1),card('keyboard','⌨️',0),card('camera','📷',0)
+ ].join('')}</div>${checkArea()}`;
+}
+function renderFinish(){
+ return `${head('7. Τα κατάφερες!')}<div class="stars">⭐ ⭐ ⭐</div><div class="visual-prompt">🖥️ ⌨️ 🖱️ 📷 🎤 🔊 🎧</div><div class="self" id="self">
+  <button class="card" data-id="again" type="button"><span class="pic">🙂</span></button>
+  <button class="card" data-id="good" type="button"><span class="pic">😊</span></button>
+  <button class="card" data-id="great" type="button"><span class="pic">🤩</span></button>
+ </div><div class="meter"><span id="meterFill"></span></div><div class="actions"><button class="btn primary" id="finish">Ολοκλήρωση</button><button class="btn secondary" id="restart">Από την αρχή</button></div>${feedback()}`;
+}
+
+function bindMulti(){
+ panel.querySelectorAll('.card[data-id]').forEach(c=>c.onclick=()=>{if(locked)return;const id=c.dataset.id;if(selected.includes(id)){selected=selected.filter(x=>x!==id);c.classList.remove('selected')}else{selected.push(id);c.classList.add('selected')}});
+ document.getElementById('check').onclick=()=>{if(locked)return;const cards=[...panel.querySelectorAll('.card[data-id]')],correct=cards.filter(c=>c.dataset.ok==='1'),wrongChosen=cards.filter(c=>selected.includes(c.dataset.id)&&c.dataset.ok!=='1'),rightChosen=correct.filter(c=>selected.includes(c.dataset.id));if(rightChosen.length===correct.length&&wrongChosen.length===0&&selected.length===correct.length){locked=true;rightChosen.forEach(c=>c.classList.add('correct'));showFeedback(true,'Μπράβο!');next()}else{wrongChosen.forEach(c=>c.classList.add('wrong'));showFeedback(false,'Δοκίμασε ξανά.');setTimeout(()=>wrongChosen.forEach(c=>c.classList.remove('wrong')),600)}}
+}
+function bindSingle(answer){
+ panel.querySelectorAll('.demo-card').forEach(c=>c.onclick=()=>{panel.querySelectorAll('.demo-card').forEach(x=>x.classList.remove('selected'));selected=[c.dataset.id];c.classList.add('selected')});
+ document.getElementById('check').onclick=()=>{if(!selected.length){showFeedback(false,'Διάλεξε μία εικόνα.');return}if(selected[0]===answer){showFeedback(true,'Μπράβο!');next()}else{showFeedback(false,'Δοκίμασε ξανά.')}}
+}
+function svgPoint(svg,el){const sr=svg.getBoundingClientRect(),r=el.getBoundingClientRect();return{x:r.left+r.width/2-sr.left,y:r.top+r.height/2-sr.top}}
+function addLine(svg,a,b,cls=''){const p1=svgPoint(svg,a),p2=svgPoint(svg,b),line=document.createElementNS('http://www.w3.org/2000/svg','line');line.setAttribute('x1',p1.x);line.setAttribute('y1',p1.y);line.setAttribute('x2',p2.x);line.setAttribute('y2',p2.y);if(cls)line.setAttribute('class',cls);svg.appendChild(line);return line}
+function preview(svg,line,x,y){const r=svg.getBoundingClientRect();line.setAttribute('x2',x-r.left);line.setAttribute('y2',y-r.top)}
+function bindMatch(){
+ const pairs={keyboard:'write',mouse:'choose',screen:'see'},svg=document.getElementById('matchLines'),left=[...document.querySelectorAll('[data-side="L"]')],right=[...document.querySelectorAll('[data-side="R"]')];let drag=null;
+ left.forEach(src=>src.addEventListener('pointerdown',e=>{if(src.classList.contains('done'))return;e.preventDefault();const p=svgPoint(svg,src),line=document.createElementNS('http://www.w3.org/2000/svg','line');line.setAttribute('x1',p.x);line.setAttribute('y1',p.y);line.setAttribute('x2',p.x);line.setAttribute('y2',p.y);line.setAttribute('class','preview');svg.appendChild(line);drag={src,line};src.setPointerCapture?.(e.pointerId)}));
+ window.addEventListener('pointermove',e=>{if(drag)preview(svg,drag.line,e.clientX,e.clientY)});
+ window.addEventListener('pointerup',e=>{if(!drag)return;const {src,line}=drag;drag=null;const el=document.elementFromPoint(e.clientX,e.clientY),target=el&&el.closest?el.closest('[data-side="R"]'):null;line.remove();if(!target||target.classList.contains('done'))return;if(pairs[src.dataset.id]!==target.dataset.id){src.classList.add('wrong');target.classList.add('wrong');showFeedback(false,'Δοκίμασε άλλο ζευγάρι.');setTimeout(()=>{src.classList.remove('wrong');target.classList.remove('wrong')},500);return}matched.add(src.dataset.id);src.classList.add('done');target.classList.add('done');addLine(svg,src,target);speak('Μπράβο!');if(matched.size===3){showFeedback(true,'Μπράβο!');setTimeout(next,900)}})
+}
+function bindFinish(){
+ panel.querySelectorAll('#self .card').forEach(c=>c.onclick=()=>{panel.querySelectorAll('#self .card').forEach(x=>x.classList.remove('selected'));selected=[c.dataset.id];c.classList.add('selected')});
+ document.getElementById('finish').onclick=()=>{if(!selected.length){showFeedback(false,'Διάλεξε ένα πρόσωπο.');return}document.getElementById('meterFill').style.width=selected[0]==='again'?'45%':selected[0]==='good'?'75%':'100%';showFeedback(true,'Μπράβο!');completed.add(step);updatePath()};
+ document.getElementById('restart').onclick=()=>{step=0;selected=[];matched.clear();completed.clear();render()}
+}
+function render(){
+ selected=[];locked=false;updatePath();
+ const r=[renderDesktop,renderMatch,renderExtras,renderLaptop,renderTablet,renderListen,renderFinish];
+ panel.innerHTML=r[step]();bindHelp();
+ if(step===0||step===2||step===5)bindMulti();
+ if(step===1)bindMatch();
+ if(step===3)bindMulti();
+ if(step===4)bindSingle('finger');
+ if(step===6)bindFinish();
+}
+document.getElementById('closeHelp').onclick=()=>modal.classList.remove('open');
+document.getElementById('speakHelp').onclick=()=>speak(helpText.textContent);
+modal.onclick=e=>{if(e.target===modal)modal.classList.remove('open')};
+render();
+})();
+</script>
+
+<footer class="nk-license" aria-label="Πληροφορίες δημιουργού και άδειας χρήσης">
+  <div><strong>Created by Nikos Kalakos · © 2026</strong></div>
+  <div>Original educational content and simulation design licensed under <a class="cc-badge" href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank" rel="license noopener noreferrer">CC BY-NC 4.0</a>.</div>
+  <div>Source code © 2026 Nikos Kalakos.</div>
+  <div>Third-party and textbook materials remain subject to the rights and licences of their respective copyright holders.</div>
+</footer>
+</body>
+</html>

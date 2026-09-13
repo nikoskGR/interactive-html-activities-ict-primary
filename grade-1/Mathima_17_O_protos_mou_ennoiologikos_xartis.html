@@ -1,0 +1,811 @@
+<!--
+ICT Educational Simulation
+Created by Nikos Kalakos
+Copyright © 2026 Nikos Kalakos
+
+Original educational content and simulation design licensed under CC BY-NC 4.0.
+Source code © 2026 Nikos Kalakos.
+Third-party and textbook materials remain subject to the rights and licences of their respective copyright holders.
+-->
+<!doctype html>
+<html lang="el">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="author" content="Nikos Kalakos">
+<meta name="copyright" content="© 2026 Nikos Kalakos">
+<meta name="license" content="Original educational content and simulation design: CC BY-NC 4.0; source code © 2026 Nikos Kalakos; third-party and textbook materials excluded.">
+<title>Μάθημα 17 - Ο πρώτος μου εννοιολογικός χάρτης | AthenaOS</title>
+<style>
+:root{
+  --ink:#17324d;--blue:#3268d5;--unit:#D19E11;--unit-dark:#9B7300;
+  --line:#c9d8e7;--ok:#15845b;--bad:#cf5f70;--cream:#FFF7D9;
+  --shadow:0 10px 28px rgba(23,50,77,.12);
+  --athena:#4b4f92;--athena-2:#6e72bf;--athena-dark:#30345f;
+  --athena-window:#fbfcff;--athena-bar:#292d51;--athena-dock:rgba(35,39,70,.90);
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:Arial,"Noto Sans",sans-serif;background:#f7fafc;color:var(--ink)}
+button{font:inherit;cursor:pointer}
+.app{max-width:1160px;margin:auto;padding:16px}
+.top{
+  display:grid;grid-template-columns:1fr auto;gap:12px;align-items:center;
+  background:#fff;border:3px solid #eadfbf;border-radius:24px;padding:14px 18px;
+  box-shadow:var(--shadow)
+}
+.top h1{margin:0;font-size:clamp(26px,4vw,42px)}
+.subtitle{margin:5px 0 0;font-size:clamp(15px,2vw,20px)}
+.athena-brand-mini{display:flex;align-items:center;gap:10px;font-weight:900;color:var(--athena-dark)}
+.owl-logo{width:74px;height:66px;display:grid;place-items:center}
+.owl-logo svg{width:74px;height:66px;display:block;filter:drop-shadow(0 3px 4px rgba(30,34,75,.18))}
+.path{display:flex;gap:10px;justify-content:center;align-items:center;flex-wrap:wrap;margin:16px 0}
+.dot{
+  width:44px;height:44px;border-radius:50%;border:3px solid #a9b9ca;background:#fff;color:#5f7791;
+  display:grid;place-items:center;font-weight:900;font-size:20px
+}
+.dot.active{background:var(--blue);border-color:var(--blue);color:#fff;transform:scale(1.12)}
+.dot.done{background:var(--unit);border-color:var(--unit-dark);color:#fff}
+.panel{
+  background:#fff;border:3px solid #eadfbf;border-radius:28px;
+  padding:clamp(15px,3vw,28px);box-shadow:var(--shadow);min-height:690px
+}
+.step-head{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap}
+.step-head h2{margin:0;font-size:clamp(25px,4vw,38px)}
+.help{
+  background:#fff7d6;color:#624700;border:3px solid #e0bd45;
+  border-radius:16px;padding:11px 18px;font-weight:900
+}
+.instruction{
+  max-width:940px;margin:16px auto;text-align:center;font-size:clamp(19px,2.5vw,25px);
+  font-weight:800;line-height:1.4
+}
+.feedback{display:none;max-width:820px;min-height:56px;margin:16px auto 0;border-radius:18px;padding:13px 18px;text-align:center;font-weight:900;font-size:20px}
+.feedback.good{display:block;background:#dcf8ec;color:#07583c;border:2px solid #75d6ae}
+.feedback.bad{display:block;background:#fff2d8;color:#754500;border:2px solid #e2b85f}
+.actions{display:flex;justify-content:center;gap:12px;flex-wrap:wrap;margin-top:18px}
+.btn{border:0;border-radius:16px;padding:14px 24px;font-weight:900;font-size:19px}
+.primary{background:var(--blue);color:#fff}
+.secondary{background:#eef3f8;color:var(--ink);border:2px solid #b9cbe0}
+
+/* AthenaOS */
+.os{
+  max-width:1000px;height:540px;margin:15px auto;border:6px solid #22283d;border-radius:26px;
+  overflow:hidden;position:relative;background:linear-gradient(135deg,#dce5ff,#f5e7ff 62%,#e7f7ff);
+  box-shadow:0 12px 24px rgba(0,0,0,.16)
+}
+.os-topbar{
+  height:38px;background:var(--athena-bar);color:#fff;display:flex;align-items:center;
+  justify-content:space-between;padding:0 14px;font-size:14px;font-weight:800;position:relative;z-index:30
+}
+.os-brand{display:flex;align-items:center;gap:8px}
+.os-owl{width:31px;height:29px;display:grid;place-items:center}
+.os-owl svg{width:31px;height:29px;display:block}
+.os-status{display:flex;gap:10px;align-items:center}
+.desktop{position:absolute;left:0;right:0;top:38px;bottom:66px;padding:22px}
+.desktop-icons{display:grid;grid-template-columns:repeat(2,110px);gap:18px;width:max-content}
+.desktop-icon{
+  border:0;background:transparent;color:var(--ink);min-height:98px;border-radius:14px;
+  display:grid;place-items:center;text-align:center;font-weight:900;padding:7px
+}
+.desktop-icon:hover{background:rgba(255,255,255,.55)}
+.app-symbol{font-size:49px;line-height:1}.app-label{font-size:14px;margin-top:4px}
+.dock{
+  position:absolute;bottom:10px;left:50%;transform:translateX(-50%);
+  height:52px;padding:6px 12px;border-radius:18px;background:var(--athena-dock);
+  display:flex;gap:9px;align-items:center;z-index:25;box-shadow:0 4px 12px rgba(0,0,0,.18)
+}
+.dock button{width:40px;height:40px;border:0;border-radius:11px;background:rgba(255,255,255,.12);display:grid;place-items:center;font-size:24px}
+.window{
+  position:absolute;left:70px;right:70px;top:65px;bottom:76px;border:3px solid #9aa6c4;
+  border-radius:15px;background:var(--athena-window);box-shadow:0 12px 25px rgba(0,0,0,.22);
+  overflow:hidden;z-index:20
+}
+.window.hidden{display:none}
+.win-titlebar{
+  height:42px;background:#eef1f8;border-bottom:2px solid #cbd3e5;display:flex;align-items:center;
+  justify-content:space-between;padding:0 11px 0 14px;font-weight:900;color:#2e395c
+}
+.win-controls{display:flex;gap:7px}
+.win-btn{width:27px;height:27px;border-radius:50%;border:0;background:#dde3ef;color:#34405d;display:grid;place-items:center;font-weight:900}
+.win-btn.close{background:#f4d5d5;color:#8c2929}
+.win-body{height:calc(100% - 42px);position:relative;background:#fff}
+.map-toolbar{
+  height:48px;border-bottom:2px solid #e0e6ee;background:#f8fafc;
+  display:flex;align-items:center;gap:8px;padding:6px 10px
+}
+.tool{height:34px;min-width:42px;padding:0 10px;border:2px solid #c7d2e0;border-radius:9px;background:#fff;font-weight:800}
+.tool.active{border-color:var(--athena-2);background:#eeefff}
+.map-canvas{
+  position:absolute;left:0;right:0;top:48px;bottom:0;background:
+  linear-gradient(#f8fbff,#fff);overflow:hidden
+}
+.map-node{
+  position:absolute;min-width:130px;min-height:60px;padding:10px 16px;
+  border:3px solid #56a8dc;border-radius:18px;background:#eef8ff;
+  display:grid;place-items:center;text-align:center;font-weight:900;font-size:20px;z-index:6
+}
+.map-node.central{background:#fff9df;border-color:#e4b62f}
+.map-port{
+  position:absolute;width:20px;height:20px;border-radius:50%;background:#fff;border:4px solid var(--blue);z-index:9
+}
+.map-port.out{bottom:-12px;left:50%;transform:translateX(-50%)}
+.map-port.in{top:-12px;left:50%;transform:translateX(-50%)}
+.map-port.left{left:-12px;top:50%;transform:translateY(-50%)}
+.map-port.right{right:-12px;top:50%;transform:translateY(-50%)}
+.map-svg{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:3}
+.map-svg line{stroke:#31465a;stroke-width:4;stroke-linecap:round;marker-end:url(#arrowHead)}
+.map-svg line.preview{stroke:#8295a8;stroke-dasharray:9 7;marker-end:none}
+.map-line-label{
+  position:absolute;z-index:5;background:#fff;padding:3px 8px;border-radius:9px;
+  font-weight:800;font-size:15px;border:1px solid #d9e0e8
+}
+
+/* stage 1 */
+.demo-board{
+  max-width:900px;margin:20px auto;padding:20px;border:3px solid var(--line);
+  border-radius:24px;background:#fbfdff
+}
+.sentence{font-size:25px;font-weight:900;text-align:center;margin-bottom:18px}
+.simple-map{position:relative;height:230px}
+.simple-node{
+  position:absolute;min-width:160px;padding:15px 20px;border:3px solid #56a8dc;border-radius:18px;background:#eef8ff;
+  font-size:22px;font-weight:900;text-align:center
+}
+.s1a{left:80px;top:85px}.s1b{right:80px;top:85px}
+.simple-line{position:absolute;left:315px;right:315px;top:111px;height:0;border-top:4px solid #31465a}.simple-line:after{content:'';position:absolute;right:-2px;top:-8px;border-top:6px solid transparent;border-bottom:6px solid transparent;border-left:12px solid #31465a}
+.simple-label{position:absolute;left:50%;top:78px;transform:translateX(-50%);padding:3px 10px;background:#fff;font-weight:900}
+.reveal{display:none}.reveal.show{display:block}
+
+/* drag words */
+.word-pool{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin:18px auto}
+.word-tile{border:3px solid var(--line);border-radius:16px;background:#fff;padding:12px 18px;font-size:20px;font-weight:900;cursor:grab}
+.drop-node{outline:4px dashed rgba(50,104,213,.25)}
+.drop-node.filled{outline:0}
+
+
+/* relation words */
+.relation-pool{
+  display:flex;justify-content:center;gap:12px;flex-wrap:wrap;
+  margin:14px auto 0;max-width:900px
+}
+.relation-tile{
+  border:3px solid var(--unit-dark);border-radius:14px;background:#fff9df;
+  padding:10px 18px;font-size:19px;font-weight:900;cursor:grab;
+  box-shadow:0 4px 8px rgba(0,0,0,.06)
+}
+.relation-tile.used{opacity:.3;pointer-events:none}
+.relation-slot{
+  position:absolute;z-index:7;min-width:88px;min-height:34px;padding:5px 9px;
+  border:3px dashed #b9c7d5;border-radius:11px;background:#fff;
+  display:grid;place-items:center;text-align:center;font-size:15px;font-weight:900
+}
+.relation-slot.filled{border-style:solid;border-color:var(--unit-dark);background:#fff9df}
+.rs2{left:50%;top:102px;transform:translateX(-50%)}
+.rs3-school{left:30%;top:155px;transform:translateX(-50%)}
+.rs3-age{left:70%;top:155px;transform:translateX(-50%)}
+.rs4-school{left:25%;top:145px;transform:translateX(-50%)}
+.rs4-ballet{left:50%;top:145px;transform:translateX(-50%)}
+.rs4-age{left:75%;top:145px;transform:translateX(-50%)}
+.relation-hint{
+  max-width:860px;margin:12px auto;padding:10px 14px;
+  border-radius:14px;background:#f7f9fc;border:2px solid #dbe4ec;
+  text-align:center;font-weight:800
+}
+
+
+/* Stage 4 branching concept map */
+.branch-point{
+  position:absolute;
+  width:14px;height:14px;border-radius:50%;
+  background:#31465a;z-index:5
+}
+.bp-go{left:35%;top:146px;transform:translate(-50%,-50%)}
+.bp-is{left:68%;top:146px;transform:translate(-50%,-50%)}
+.branch-label{
+  position:absolute;z-index:7;padding:4px 9px;border-radius:10px;
+  background:#fff;font-size:16px;font-weight:900
+}
+.bl-go{left:35%;top:116px;transform:translateX(-50%)}
+.bl-is{left:68%;top:116px;transform:translateX(-50%)}
+
+/* Stages 4-5: upside-down tree concept maps */
+.tree-map{position:relative;width:100%;height:100%}
+.tree-node{
+  position:absolute;min-width:150px;min-height:66px;padding:10px 16px;
+  border:3px solid #56a8dc;border-radius:18px;background:#eef8ff;
+  display:grid;place-items:center;text-align:center;font-weight:900;font-size:19px;z-index:6
+}
+.tree-node.drop-node{border-style:dashed;background:#fff}
+.tree-node.filled{border-style:solid;background:#eef8ff}
+.tree-root{left:50%;top:24px;transform:translateX(-50%)}
+.tree-child-left{left:5%;bottom:14px}
+.tree-child-mid{left:50%;bottom:14px;transform:translateX(-50%)}
+.tree-child-right{right:5%;bottom:14px}
+.tree-rel-slot{
+  position:absolute;z-index:8;min-width:110px;min-height:36px;padding:6px 10px;
+  border:3px dashed #d89c16;border-radius:12px;background:#fffdf4;
+  display:grid;place-items:center;text-align:center;font-size:16px;font-weight:900
+}
+.tree-rel-slot.filled{border-style:solid;background:#fff4cd;border-color:var(--unit-dark)}
+.t4-rel-go{left:26%;top:112px;transform:translateX(-50%)}
+.t4-rel-is{left:76%;top:112px;transform:translateX(-50%)}
+.t5-rel{left:50%;top:108px;transform:translateX(-50%)}
+.tree-pool{max-width:940px;margin:14px auto 0;display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
+.tree-word,.tree-relation{
+  border:3px solid var(--line);border-radius:14px;background:#fff;padding:10px 16px;
+  font-size:18px;font-weight:900;cursor:grab
+}
+.tree-relation{border-color:var(--unit-dark);background:#fff9df}
+/* Stage 5 animal mind map */
+.animal-map-pool{
+  max-width:960px;margin:12px auto 0;display:flex;gap:10px;justify-content:center;flex-wrap:wrap
+}
+.animal-tile{
+  border:3px solid var(--line);border-radius:14px;background:#fff;padding:9px 14px;
+  font-size:17px;font-weight:900;cursor:grab
+}
+.animal-tile.used{opacity:.28;pointer-events:none}
+.animal-node{
+  position:absolute;min-width:135px;min-height:64px;padding:9px 13px;border:3px dashed #53677b;
+  border-radius:18px;background:#fff;display:grid;place-items:center;text-align:center;font-weight:900;font-size:18px;z-index:6
+}
+.animal-node.filled{border-style:solid;border-color:#56a8dc;background:#eef8ff}
+.animal-emoji{font-size:31px;line-height:1.1;margin-top:2px}
+.a-root{left:50%;top:22px;transform:translateX(-50%)}
+.a-pets{right:65px;top:22px}
+.a-farm{left:80px;bottom:48px}
+.a-forest{right:160px;bottom:48px}
+.a-rel-pets{left:69%;top:49px;transform:translateX(-50%)}
+.a-rel-farm{left:37%;top:142px;transform:translateX(-50%)}
+.a-rel-forest{left:59%;top:142px;transform:translateX(-50%)}
+
+/* Stage 5 rebuilt: page-69 animal categories + animal connections */
+.p69-map{
+  position:relative;
+  width:100%;
+  height:100%;
+}
+.p69-node{
+  position:absolute;
+  min-width:145px;
+  min-height:66px;
+  padding:10px 15px;
+  border:3px dashed #56a8dc;
+  border-radius:18px;
+  background:#fff;
+  display:grid;
+  place-items:center;
+  text-align:center;
+  font-weight:900;
+  font-size:18px;
+  z-index:6;
+}
+.p69-node.filled{
+  border-style:solid;
+  background:#eef8ff;
+}
+.p69-root{left:50%;top:6px;transform:translateX(-50%)}
+.p69-left{left:1.5%;top:132px}
+.p69-mid{left:50%;top:132px;transform:translateX(-50%)}
+.p69-right{right:1.5%;top:132px}
+.p69-animal{
+  position:absolute;
+  width:66px;
+  height:66px;
+  border:3px solid #d6e0e8;
+  border-radius:50%;
+  background:#fff;
+  display:grid;
+  place-items:center;
+  font-size:38px;
+  z-index:7;
+  cursor:crosshair;
+  user-select:none;
+  touch-action:none;
+}
+.p69-a1{left:6%;top:228px}
+.p69-a2{left:20%;top:228px}
+.p69-a3{left:39%;top:228px}
+.p69-a4{left:54%;top:228px}
+.p69-a5{right:19%;top:228px}
+.p69-a6{right:5%;top:228px}
+.p69-animal.done{
+  border-color:var(--ok);
+  background:#e9fff6;
+}
+.p69-pool{
+  max-width:940px;
+  margin:14px auto 0;
+  display:flex;
+  justify-content:center;
+  gap:12px;
+  flex-wrap:wrap;
+}
+.p69-tile{
+  border:3px solid var(--line);
+  border-radius:14px;
+  background:#fff;
+  padding:10px 16px;
+  font-size:18px;
+  font-weight:900;
+  cursor:grab;
+}
+/* final */
+.stars{font-size:58px;text-align:center;letter-spacing:10px;margin:20px}
+.final-summary{
+  max-width:820px;margin:15px auto 22px;padding:20px;border:4px solid var(--unit);
+  border-radius:24px;background:#fff9e8;text-align:center;font-size:23px;font-weight:800;line-height:1.4
+}
+.self{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;max-width:760px;margin:auto}
+.self button{min-height:135px;border:3px solid var(--line);border-radius:22px;background:#fff;font-size:64px}
+.self button.selected{border-color:var(--blue);background:#edf4ff}
+.meter{height:18px;background:#e8eef5;border-radius:20px;overflow:hidden;margin:12px auto 0;max-width:1060px}
+.meter span{display:block;height:100%;background:var(--unit);width:0;transition:.4s}
+
+/* help */
+.modal{position:fixed;inset:0;background:rgba(15,35,55,.55);display:none;align-items:center;justify-content:center;padding:18px;z-index:100}
+.modal.open{display:flex}
+.modal-box{max-width:680px;background:#fff;border:4px solid #f1cb52;border-radius:26px;padding:24px;box-shadow:var(--shadow);text-align:center}
+.modal-box h3{font-size:30px;margin:0 0 10px}.modal-box p{font-size:22px;line-height:1.45}
+@media(max-width:800px){
+  .os{height:600px}.window{left:18px;right:18px}.self{grid-template-columns:1fr}.top{grid-template-columns:1fr}.athena-brand-mini{display:none}
+}
+</style>
+
+<style id="nk-license-style">
+.nk-license{max-width:1100px;margin:14px auto 24px;padding:10px 16px;text-align:center;font:13px/1.45 Arial,"Noto Sans",sans-serif;color:#4e657c}
+.nk-license a{color:inherit;text-decoration:underline;text-underline-offset:2px}
+.nk-license .cc-badge{display:inline-block;margin:0 4px;padding:2px 7px;border:1px solid #8aa0b8;border-radius:6px;background:#fff;font-weight:700;white-space:nowrap}
+</style>
+</head>
+<body>
+<main class="app">
+<header class="top">
+  <div><h1>Ο πρώτος μου εννοιολογικός χάρτης</h1><p class="subtitle">Μάθημα 17</p></div>
+  <div class="athena-brand-mini">
+    <div class="owl-logo" aria-label="Λογότυπο AthenaOS"><svg viewBox="0 0 100 90">
+      <path d="M14 28 7 6 31 18Q50 6 69 18L93 6 86 28Q94 39 91 55Q87 75 69 83Q50 91 31 83Q13 75 9 55Q6 39 14 28Z" fill="#342C7A" stroke="#28245E" stroke-width="4"/>
+      <path d="M10 10Q26 17 39 30L24 27Q14 24 10 10ZM90 10Q74 17 61 30L76 27Q86 24 90 10Z" fill="#5B43D4"/>
+      <path d="M17 32Q28 20 44 29Q50 33 50 43Q50 33 56 29Q72 20 83 32Q88 42 81 56Q73 69 58 65Q52 63 50 57Q48 63 42 65Q27 69 19 56Q12 42 17 32Z" fill="#A59AF6"/>
+      <circle cx="33" cy="43" r="14" fill="#fff"/><circle cx="67" cy="43" r="14" fill="#fff"/>
+      <circle cx="33" cy="43" r="7" fill="#FFC642"/><circle cx="67" cy="43" r="7" fill="#FFC642"/>
+      <circle cx="33" cy="43" r="4.5" fill="#1E1E2E"/><circle cx="67" cy="43" r="4.5" fill="#1E1E2E"/>
+      <path d="M43 55 50 68 57 55Z" fill="#FFC642"/>
+      <path d="M40 20 50 8 60 20M42 20H58" fill="none" stroke="#fff" stroke-width="5" stroke-linecap="round"/>
+    </svg></div><span>AthenaOS</span>
+  </div>
+</header>
+<nav class="path" id="path"></nav>
+<section class="panel" id="panel"></section>
+</main>
+
+<div class="modal" id="helpModal"><div class="modal-box"><h3>Βοήθεια</h3><p id="helpText"></p><div class="actions"><button class="btn secondary" id="speakHelp">🔊 Άκουσε</button><button class="btn primary" id="closeHelp">Το κατάλαβα</button></div></div></div>
+
+<script>
+(()=>{'use strict';
+const panel=document.getElementById('panel'),path=document.getElementById('path'),modal=document.getElementById('helpModal'),helpText=document.getElementById('helpText');
+let step=0,completed=new Set(),selfChoice=null;
+const total=6;
+const helps=[
+'Πάτησε «Δείξε τον χάρτη» για να δεις πώς μία πρόταση μπορεί να γίνει δύο σχήματα που συνδέονται με ένα βέλος.',
+'Άνοιξε την εφαρμογή «Εννοιοχάρτες» του AthenaOS με διπλό κλικ. Σύνδεσε τη Μαρία με το σχολείο και τοποθέτησε τη λέξη «πηγαίνει» πάνω στο βέλος.',
+'Σύρε τις λέξεις στα σωστά σχήματα. Μετά βάλε «πηγαίνει» στο βέλος προς το σχολείο και «είναι» στο βέλος προς την ηλικία.',
+'Μεγάλωσε τον χάρτη και τοποθέτησε τις σωστές λέξεις σχέσης πάνω στα βέλη: «πηγαίνει» ή «είναι».',
+'Φτιάξε τον χάρτη των ζώων όπως στο παράδειγμα της σελίδας 69: ΖΩΑ, ΚΑΤΟΙΚΙΔΙΑ, ΖΩΑ ΤΗΣ ΦΑΡΜΑΣ και ΖΩΑ ΤΟΥ ΔΑΣΟΥΣ. Τοποθέτησε και τις σωστές σχέσεις πάνω στα βέλη.',
+'Διάλεξε το πρόσωπο που δείχνει πόσο καλά έμαθες τι είναι και πώς φτιάχνουμε έναν εννοιολογικό χάρτη.'
+];
+function speak(t){if(!('speechSynthesis'in window))return;speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(t);u.lang='el-GR';u.rate=.86;speechSynthesis.speak(u)}
+function head(t){return `<div class="step-head"><h2>${t}</h2><button class="help" id="help">❔ Βοήθεια</button></div>`}
+function feedback(){return '<div class="feedback" id="feedback"></div>'}
+function fb(ok,t){const f=document.getElementById('feedback');if(!f)return;f.className='feedback '+(ok?'good':'bad');f.textContent=t;speak(t)}
+function complete(delay=900){completed.add(step);updatePath();setTimeout(()=>{if(step<total-1){step++;render()}},delay)}
+function updatePath(){path.innerHTML='';for(let i=0;i<total;i++){const d=document.createElement('div');d.className='dot'+(i===step?' active':'')+(completed.has(i)?' done':'');d.textContent=completed.has(i)?'✓':i+1;path.appendChild(d)}}
+function bindHelp(){const b=document.getElementById('help');if(b)b.onclick=()=>{helpText.textContent=helps[step];modal.classList.add('open')}}
+document.getElementById('closeHelp').onclick=()=>modal.classList.remove('open');
+document.getElementById('speakHelp').onclick=()=>speak(helpText.textContent);
+modal.onclick=e=>{if(e.target===modal)modal.classList.remove('open')};
+
+function smallOwl(){return `<span class="os-owl"><svg viewBox="0 0 100 90"><path d="M14 28 7 6 31 18Q50 6 69 18L93 6 86 28Q94 39 91 55Q87 75 69 83Q50 91 31 83Q13 75 9 55Q6 39 14 28Z" fill="#5B43D4" stroke="#D8DBFF" stroke-width="5"/><circle cx="33" cy="43" r="14" fill="#fff"/><circle cx="67" cy="43" r="14" fill="#fff"/><circle cx="33" cy="43" r="5" fill="#1E1E2E"/><circle cx="67" cy="43" r="5" fill="#1E1E2E"/><path d="M44 55 50 66 56 55Z" fill="#FFC642"/></svg></span>`}
+function osTop(){return `<div class="os-topbar"><div class="os-brand">${smallOwl()}<span>AthenaOS</span></div><div class="os-status"><span>⌁</span><span>🔊</span><span>10:30</span></div></div>`}
+function dock(){return `<div class="dock"><button>📁</button><button>🎨</button><button>📝</button><button>🧩</button></div>`}
+function desktopIcons(){return `<div class="desktop-icons"><button class="desktop-icon" data-app="maps"><span class="app-symbol">🧩</span><span class="app-label">Εννοιοχάρτες</span></button><button class="desktop-icon"><span class="app-symbol">📁</span><span class="app-label">Αρχεία</span></button><button class="desktop-icon"><span class="app-symbol">🎨</span><span class="app-label">Ζωγραφική</span></button><button class="desktop-icon"><span class="app-symbol">📝</span><span class="app-label">Κείμενο</span></button></div>`}
+function shell(inner=''){return `<div class="os">${osTop()}<div class="desktop">${desktopIcons()}</div>${dock()}${inner}</div>`}
+function win(body,cls=''){return `<div class="window ${cls}"><div class="win-titlebar"><div>🧩 Εννοιοχάρτες</div><div class="win-controls"><button class="win-btn">—</button><button class="win-btn">□</button><button class="win-btn close">×</button></div></div><div class="win-body">${body}</div></div>`}
+function arrowDefs(){
+ return `<defs>
+   <marker id="arrowHead" markerWidth="10" markerHeight="10" refX="8.5" refY="3.5" orient="auto" markerUnits="strokeWidth">
+     <path d="M0,0 L0,7 L9,3.5 z" fill="#31465a"></path>
+   </marker>
+ </defs>`;
+}
+function mapApp(content){return win(`<div class="map-toolbar"><button class="tool">▭ Σχήμα</button><button class="tool">╱ Γραμμή</button><button class="tool">↶</button></div><div class="map-canvas" id="mapCanvas">${content}</div>`)}
+
+function center(el,root){const r=el.getBoundingClientRect(),rr=root.getBoundingClientRect();return{x:r.left+r.width/2-rr.left,y:r.top+r.height/2-rr.top}}
+function addLine(svg,a,b,cls=''){const root=svg.parentElement,p1=center(a,root),p2=center(b,root);const l=document.createElementNS('http://www.w3.org/2000/svg','line');l.setAttribute('x1',p1.x);l.setAttribute('y1',p1.y);l.setAttribute('x2',p2.x);l.setAttribute('y2',p2.y);if(cls)l.setAttribute('class',cls);svg.appendChild(l);return l}
+
+/* 1 */
+function r1(){return `${head('1. Από την πρόταση στον χάρτη')}<p class="instruction">Ένας απλός εννοιολογικός χάρτης έχει <b>σχήματα</b> και <b>γραμμές</b> που τα συνδέουν.</p><div class="demo-board"><div class="sentence">Η Μαρία πηγαίνει σχολείο</div><div class="simple-map"><div class="simple-node s1a">Η Μαρία</div><div class="simple-node s1b">σχολείο</div><div class="reveal" id="reveal"><div class="simple-line"></div><div class="simple-label">πηγαίνει</div></div></div><div class="actions"><button class="btn primary" id="showMap">Δείξε τον χάρτη</button></div></div>${feedback()}`}
+function bind1(){document.getElementById('showMap').onclick=()=>{document.getElementById('reveal').classList.add('show');fb(true,'Τώρα η πρόταση έγινε δύο σχήματα που συνδέονται με ένα βέλος. Η λέξη «πηγαίνει» πάνω στο βέλος δείχνει τη σχέση τους.');complete(1400)}}
+
+/* 2 */
+function r2(){
+ const content=`<svg class="map-svg" id="svg2">${arrowDefs()}</svg>
+ <div class="map-node" id="maria" style="left:120px;top:110px">Η Μαρία<span class="map-port right" data-id="maria"></span></div>
+ <div class="map-node" id="school" style="right:120px;top:110px">σχολείο<span class="map-port left" data-id="school"></span></div>
+ <div class="relation-slot rs2" id="rel2" data-rel="πηγαίνει">λέξη σχέσης</div>`;
+ return `${head('2. Φτιάξε έναν απλό χάρτη')}
+ <p class="instruction">Κάνε <b>διπλό κλικ</b> στους «Εννοιοχάρτες». Σύνδεσε τη Μαρία με το σχολείο και μετά σύρε τη λέξη που δείχνει <b>τη σχέση τους</b> πάνω στο βέλος.</p>
+ ${shell(mapApp(content).replace('class="window ','class="window hidden '))}
+ <div class="relation-pool"><div class="relation-tile" draggable="true" data-rel="πηγαίνει">πηγαίνει</div><div class="relation-tile" draggable="true" data-rel="είναι">είναι</div></div>
+ ${feedback()}`;
+}
+function connectOne(boardId,svgId,fromSel,toSel,onDone){
+ const board=document.getElementById(boardId),svg=document.getElementById(svgId);let drag=null;
+ const src=document.querySelector(fromSel);
+ src.addEventListener('pointerdown',e=>{e.preventDefault();const p=center(src,board);const l=document.createElementNS('http://www.w3.org/2000/svg','line');l.setAttribute('x1',p.x);l.setAttribute('y1',p.y);l.setAttribute('x2',p.x);l.setAttribute('y2',p.y);l.setAttribute('class','preview');svg.appendChild(l);drag={l}});
+ board.addEventListener('pointermove',e=>{if(!drag)return;const r=board.getBoundingClientRect();drag.l.setAttribute('x2',e.clientX-r.left);drag.l.setAttribute('y2',e.clientY-r.top)});
+ board.addEventListener('pointerup',e=>{if(!drag)return;const l=drag.l;drag=null;const t=document.elementsFromPoint(e.clientX,e.clientY).find(x=>x.matches?.(toSel));l.remove();if(!t)return;addLine(svg,src,t);onDone()});
+}
+function bind2(){
+ const icon=document.querySelector('[data-app="maps"]'),w=document.querySelector('.window');let n=0,t,connected=false;
+ icon.onclick=()=>{n++;clearTimeout(t);t=setTimeout(()=>n=0,380);if(n===2){
+   w.classList.remove('hidden');n=0;
+   setTimeout(()=>connectOne('mapCanvas','svg2','#maria .map-port','#school .map-port',()=>{
+     connected=true;fb(true,'Το βέλος είναι σωστό. Τώρα βάλε τη λέξη που δείχνει τη σχέση.');
+   }),150)
+ }};
+ let drag=null;
+ document.querySelectorAll('.relation-tile').forEach(x=>x.addEventListener('dragstart',()=>drag=x));
+ const slot=document.getElementById('rel2');
+ slot.addEventListener('dragover',e=>e.preventDefault());
+ slot.addEventListener('drop',()=>{
+   if(!connected){fb(false,'Σύνδεσε πρώτα τα δύο σχήματα.');return}
+   if(!drag)return;
+   if(drag.dataset.rel!==slot.dataset.rel){fb(false,'Αυτή η λέξη δεν περιγράφει σωστά τη σχέση.');return}
+   slot.textContent=drag.textContent;slot.classList.add('filled');drag.classList.add('used');
+   fb(true,'Μπράβο! «Η Μαρία πηγαίνει σχολείο». Η λέξη «πηγαίνει» δείχνει τη σχέση ανάμεσα στις δύο έννοιες.');
+   complete(1300);
+ });
+}
+/* 3 */
+function r3(){
+ const content=`<svg class="map-svg" id="svg3">${arrowDefs()}</svg>
+ <div class="map-node central drop-node" data-word="maria" style="left:50%;top:45px;transform:translateX(-50%)"><span class="slot">;</span><span class="map-port out" data-from="maria"></span></div>
+ <div class="map-node drop-node" data-word="school" style="left:120px;bottom:60px"><span class="slot">;</span><span class="map-port in" data-to="school"></span></div>
+ <div class="map-node drop-node" data-word="age" style="right:120px;bottom:60px"><span class="slot">;</span><span class="map-port in" data-to="age"></span></div>
+ <div class="relation-slot rs3-school" data-rel="πηγαίνει">σχέση</div>
+ <div class="relation-slot rs3-age" data-rel="είναι">σχέση</div>`;
+ return `${head('3. Πρόσθεσε άλλη μία πληροφορία')}
+ <p class="instruction">Η Μαρία πηγαίνει σχολείο και είναι 6 χρονών. Πρώτα σύρε τις έννοιες στα σωστά σχήματα. Μετά βάλε τις σωστές <b>λέξεις σχέσης</b> πάνω στα βέλη.</p>
+ ${shell(mapApp(content))}
+ <div class="word-pool"><div class="word-tile" draggable="true" data-word="age">6 χρονών</div><div class="word-tile" draggable="true" data-word="maria">Η Μαρία</div><div class="word-tile" draggable="true" data-word="school">σχολείο</div></div>
+ <div class="relation-pool"><div class="relation-tile" draggable="true" data-rel="είναι">είναι</div><div class="relation-tile" draggable="true" data-rel="πηγαίνει">πηγαίνει</div></div>
+ ${feedback()}`;
+}
+function bind3(){
+ let drag=null,placed=0,relDrag=null,rels=0,linesReady=false;
+ document.querySelectorAll('.word-tile').forEach(w=>w.addEventListener('dragstart',()=>drag=w));
+ document.querySelectorAll('.drop-node').forEach(n=>{
+   n.addEventListener('dragover',e=>e.preventDefault());
+   n.addEventListener('drop',()=>{
+     if(!drag)return;
+     if(drag.dataset.word!==n.dataset.word){fb(false,'Αυτή η λέξη ταιριάζει σε άλλο σχήμα.');return}
+     n.querySelector('.slot').textContent=drag.textContent;n.classList.add('filled');drag.remove();drag=null;placed++;
+     if(placed===3){
+       const svg=document.getElementById('svg3'),root=document.querySelector('[data-word="maria"] .map-port');
+       addLine(svg,root,document.querySelector('[data-word="school"] .map-port'));
+       addLine(svg,root,document.querySelector('[data-word="age"] .map-port'));
+       linesReady=true;fb(true,'Τα σχήματα και τα βέλη είναι έτοιμα. Τώρα βάλε τις λέξεις σχέσης.');
+     }
+   });
+ });
+ document.querySelectorAll('.relation-tile').forEach(x=>x.addEventListener('dragstart',()=>relDrag=x));
+ document.querySelectorAll('.relation-slot').forEach(slot=>{
+   slot.addEventListener('dragover',e=>e.preventDefault());
+   slot.addEventListener('drop',()=>{
+     if(!linesReady){fb(false,'Ολοκλήρωσε πρώτα τα σχήματα.');return}
+     if(!relDrag)return;
+     if(relDrag.dataset.rel!==slot.dataset.rel){fb(false,'Αυτή η σχέση δεν ταιριάζει σε αυτή τη γραμμή.');return}
+     slot.textContent=relDrag.textContent;slot.classList.add('filled');relDrag.classList.add('used');relDrag=null;rels++;
+     if(rels===2){fb(true,'Σωστά! Η Μαρία «πηγαίνει» σχολείο και «είναι» 6 χρονών.');complete(1300)}
+   });
+ });
+}
+/* 4 */
+function r4(){
+ const content=`<div class="tree-map" id="tree4">
+   <svg class="map-svg" id="svg4">${arrowDefs()}</svg>
+
+   <div class="tree-node tree-root drop-node" data-word="maria">
+     <span class="slot">;</span><span class="map-port out" data-port="maria"></span>
+   </div>
+
+   <div class="tree-node tree-child-left drop-node" data-word="school">
+     <span class="slot">;</span><span class="map-port in" data-port="school"></span>
+   </div>
+
+   <div class="tree-node tree-child-mid drop-node" data-word="ballet">
+     <span class="slot">;</span><span class="map-port in" data-port="ballet"></span>
+   </div>
+
+   <div class="tree-node tree-child-right drop-node" data-word="age">
+     <span class="slot">;</span><span class="map-port in" data-port="age"></span>
+   </div>
+
+   <div class="tree-rel-slot t4-rel-go" data-rel="πηγαίνει">λέξη σχέσης</div>
+   <div class="tree-rel-slot" style="left:50%;top:136px;transform:translateX(-50%)" data-rel="πηγαίνει">λέξη σχέσης</div>
+   <div class="tree-rel-slot t4-rel-is" data-rel="είναι">λέξη σχέσης</div>
+ </div>`;
+
+ return `${head('4. Μεγάλωσε τον χάρτη')}
+ <p class="instruction">Σύρε τις έννοιες στα σωστά σχήματα. Μετά σχεδίασε τρία βέλη από τη «Μαρία» προς τις τρεις έννοιες. Τέλος, τοποθέτησε τις λέξεις σχέσης πάνω στα κατάλληλα βέλη.</p>
+ ${shell(mapApp(content))}
+ <div class="tree-pool">
+   <div class="tree-word" draggable="true" data-word="ballet">μπαλέτο</div>
+   <div class="tree-word" draggable="true" data-word="maria">Η Μαρία</div>
+   <div class="tree-word" draggable="true" data-word="age">6 χρονών</div>
+   <div class="tree-word" draggable="true" data-word="school">σχολείο</div>
+ </div>
+ <div class="tree-pool">
+   <div class="tree-relation" draggable="true" data-rel="είναι">είναι</div>
+   <div class="tree-relation" draggable="true" data-rel="πηγαίνει">πηγαίνει</div>
+   <div class="tree-relation" draggable="true" data-rel="πηγαίνει">πηγαίνει</div>
+ </div>
+ ${feedback()}`;
+}
+
+function bind4(){
+ const board=document.getElementById('tree4');
+ const svg=document.getElementById('svg4');
+ let conceptDrag=null,relationDrag=null,placed=0,relationsPlaced=0,arrowDrag=null;
+ const arrowsDone=new Set();
+
+ document.querySelectorAll('.tree-word').forEach(tile=>tile.addEventListener('dragstart',()=>conceptDrag=tile));
+ document.querySelectorAll('#tree4 .drop-node').forEach(node=>{
+   node.addEventListener('dragover',e=>e.preventDefault());
+   node.addEventListener('drop',()=>{
+     if(!conceptDrag)return;
+     if(conceptDrag.dataset.word!==node.dataset.word){fb(false,'Αυτή η έννοια ταιριάζει σε άλλο σχήμα.');return}
+     node.querySelector('.slot').textContent=conceptDrag.textContent;
+     node.classList.add('filled');
+     const used=conceptDrag; conceptDrag=null; used.remove(); placed++;
+     if(placed===4)fb(true,'Οι έννοιες μπήκαν σωστά. Τώρα σχεδίασε τα τρία βέλη.');
+   });
+ });
+
+ const root=document.querySelector('#tree4 [data-port="maria"]');
+ const targets={
+   school:document.querySelector('#tree4 [data-port="school"]'),
+   ballet:document.querySelector('#tree4 [data-port="ballet"]'),
+   age:document.querySelector('#tree4 [data-port="age"]')
+ };
+
+ root.addEventListener('pointerdown',e=>{
+   if(placed<4){fb(false,'Τοποθέτησε πρώτα όλες τις έννοιες.');return}
+   e.preventDefault();
+   const p=center(root,board);
+   const line=document.createElementNS('http://www.w3.org/2000/svg','line');
+   line.setAttribute('x1',p.x);line.setAttribute('y1',p.y);
+   line.setAttribute('x2',p.x);line.setAttribute('y2',p.y);
+   line.setAttribute('class','preview');svg.appendChild(line);
+   arrowDrag={line};
+ });
+
+ window.addEventListener('pointermove',e=>{
+   if(!arrowDrag)return;
+   const r=board.getBoundingClientRect();
+   arrowDrag.line.setAttribute('x2',e.clientX-r.left);
+   arrowDrag.line.setAttribute('y2',e.clientY-r.top);
+ });
+
+ window.addEventListener('pointerup',e=>{
+   if(!arrowDrag)return;
+   const line=arrowDrag.line;arrowDrag=null;
+   const els=document.elementsFromPoint(e.clientX,e.clientY);
+   const key=Object.keys(targets).find(k=>els.includes(targets[k]));
+   line.remove();
+   if(!key||arrowsDone.has(key))return;
+   addLine(svg,root,targets[key]);arrowsDone.add(key);
+   if(arrowsDone.size===3)fb(true,'Τα βέλη είναι σωστά. Τώρα βάλε τις λέξεις σχέσης πάνω στα βέλη.');
+ });
+
+ document.querySelectorAll('.tree-relation').forEach(tile=>tile.addEventListener('dragstart',()=>relationDrag=tile));
+ document.querySelectorAll('#tree4 .tree-rel-slot').forEach(slot=>{
+   slot.addEventListener('dragover',e=>e.preventDefault());
+   slot.addEventListener('drop',()=>{
+     if(arrowsDone.size<3){fb(false,'Σχεδίασε πρώτα και τα τρία βέλη.');return}
+     if(!relationDrag)return;
+     if(relationDrag.dataset.rel!==slot.dataset.rel){fb(false,'Αυτή η λέξη σχέσης ταιριάζει αλλού.');return}
+     slot.textContent=relationDrag.textContent;slot.classList.add('filled');
+     const used=relationDrag;relationDrag=null;used.remove();relationsPlaced++;
+     if(relationsPlaced===3){fb(true,'Μπράβο! Κάθε βέλος έχει τη δική του λέξη σχέσης: «πηγαίνει» προς το σχολείο, «πηγαίνει» προς το μπαλέτο και «είναι» προς το «6 χρονών».');complete(1400)}
+   });
+ });
+}
+
+/* 5 */
+function r5(){
+ const content=`<div class="p69-map" id="p69map">
+   <svg class="map-svg" id="svg5">${arrowDefs()}</svg>
+
+   <div class="p69-node p69-root" data-word="animals">
+     <span class="slot">;</span>
+     <span class="map-port out" data-port="animals"></span>
+   </div>
+
+   <div class="p69-node p69-left" data-word="farm">
+     <span class="slot">;</span>
+     <span class="map-port in" data-port="farm"></span>
+   </div>
+
+   <div class="p69-node p69-mid" data-word="forest">
+     <span class="slot">;</span>
+     <span class="map-port in" data-port="forest"></span>
+   </div>
+
+   <div class="p69-node p69-right" data-word="pets">
+     <span class="slot">;</span>
+     <span class="map-port in" data-port="pets"></span>
+   </div>
+
+   <div class="p69-animal p69-a1" data-cat="farm" title="Άλογο">🐎</div>
+   <div class="p69-animal p69-a2" data-cat="farm" title="Αγελάδα">🐄</div>
+   <div class="p69-animal p69-a3" data-cat="forest" title="Αλεπού">🦊</div>
+   <div class="p69-animal p69-a4" data-cat="forest" title="Ελάφι">🦌</div>
+   <div class="p69-animal p69-a5" data-cat="pets" title="Γάτα">🐈</div>
+   <div class="p69-animal p69-a6" data-cat="pets" title="Σκύλος">🐕</div>
+ </div>`;
+
+ return `${head('5. Φτιάξε τον χάρτη των ζώων')}
+ <p class="instruction">Τοποθέτησε πρώτα τα τέσσερα κείμενα στα σωστά πλαίσια, όπως στον χάρτη της σελίδας 69. Μετά, με το ποντίκι, σχεδίασε βέλη από κάθε κατηγορία προς τα ζώα που ανήκουν σε αυτή.</p>
+
+ ${shell(mapApp(content))}
+
+ <div class="p69-pool">
+   <div class="p69-tile" draggable="true" data-word="forest">ΖΩΑ ΤΟΥ ΔΑΣΟΥΣ</div>
+   <div class="p69-tile" draggable="true" data-word="animals">ΖΩΑ</div>
+   <div class="p69-tile" draggable="true" data-word="pets">ΚΑΤΟΙΚΙΔΙΑ</div>
+   <div class="p69-tile" draggable="true" data-word="farm">ΖΩΑ ΤΗΣ ΦΑΡΜΑΣ</div>
+ </div>
+
+ ${feedback()}`;
+}
+
+function bind5(){
+ const board=document.getElementById('p69map');
+ const svg=document.getElementById('svg5');
+
+ let textDrag=null;
+ let placed=0;
+ const textNeeded=4;
+ let arrowDrag=null;
+ const connectedAnimals=new Set();
+
+ // 1. Place the four meaning texts.
+ document.querySelectorAll('.p69-tile').forEach(tile=>{
+   tile.addEventListener('dragstart',()=>{ textDrag=tile; });
+ });
+
+ document.querySelectorAll('.p69-node').forEach(node=>{
+   node.addEventListener('dragover',e=>e.preventDefault());
+   node.addEventListener('drop',()=>{
+     if(!textDrag)return;
+
+     if(textDrag.dataset.word!==node.dataset.word){
+       fb(false,'Αυτό το κείμενο ταιριάζει σε άλλο πλαίσιο.');
+       return;
+     }
+
+     node.querySelector('.slot').textContent=textDrag.textContent;
+     node.classList.add('filled');
+
+     const used=textDrag;
+     textDrag=null;
+     used.remove();
+     placed++;
+
+     if(placed===textNeeded){
+       // Category structure: ΖΩΑ -> three categories.
+       const root=document.querySelector('[data-port="animals"]');
+       addLine(svg,root,document.querySelector('[data-port="farm"]'));
+       addLine(svg,root,document.querySelector('[data-port="forest"]'));
+       addLine(svg,root,document.querySelector('[data-port="pets"]'));
+       fb(true,'Τα τέσσερα πλαίσια είναι σωστά. Τώρα σχεδίασε βέλη από κάθε κατηγορία προς τα ζώα της.');
+     }
+   });
+ });
+
+ const categoryPorts={
+   farm:document.querySelector('[data-port="farm"]'),
+   forest:document.querySelector('[data-port="forest"]'),
+   pets:document.querySelector('[data-port="pets"]')
+ };
+
+ // 2. Arrows START at a category meaning.
+ Object.entries(categoryPorts).forEach(([category,port])=>{
+   port.style.touchAction='none';
+   port.addEventListener('pointerdown',e=>{
+     if(placed<textNeeded){
+       fb(false,'Τοποθέτησε πρώτα και τα τέσσερα κείμενα.');
+       return;
+     }
+
+     e.preventDefault();
+     e.stopPropagation();
+
+     const p=center(port,board);
+     const line=document.createElementNS('http://www.w3.org/2000/svg','line');
+     line.setAttribute('x1',p.x);
+     line.setAttribute('y1',p.y);
+     line.setAttribute('x2',p.x);
+     line.setAttribute('y2',p.y);
+     line.setAttribute('class','preview');
+     svg.appendChild(line);
+
+     arrowDrag={port,line,category};
+   });
+ });
+
+ window.addEventListener('pointermove',e=>{
+   if(!arrowDrag)return;
+   const r=board.getBoundingClientRect();
+   arrowDrag.line.setAttribute('x2',e.clientX-r.left);
+   arrowDrag.line.setAttribute('y2',e.clientY-r.top);
+ });
+
+ window.addEventListener('pointerup',e=>{
+   if(!arrowDrag)return;
+
+   const {port,line,category}=arrowDrag;
+   arrowDrag=null;
+
+   const elements=document.elementsFromPoint(e.clientX,e.clientY);
+   const animal=elements.find(el=>el.classList?.contains('p69-animal'));
+
+   line.remove();
+
+   if(!animal || connectedAnimals.has(animal)) return;
+
+   if(animal.dataset.cat!==category){
+     fb(false,'Αυτό το ζώο ανήκει σε άλλη κατηγορία.');
+     return;
+   }
+
+   // Permanent arrow: meaning -> animal.
+   addLine(svg,port,animal);
+   animal.classList.add('done');
+   connectedAnimals.add(animal);
+
+   if(connectedAnimals.size===6){
+     fb(true,'Μπράβο! Τα βέλη ξεκινούν από τις κατηγορίες και οδηγούν στα σωστά ζώα.');
+     complete(1400);
+   }
+ });
+
+ window.addEventListener('pointercancel',()=>{
+   if(!arrowDrag)return;
+   arrowDrag.line.remove();
+   arrowDrag=null;
+ });
+}
+
+/* 6 */
+function r6(){return `${head('6. Τα κατάφερες!')}<div class="stars">⭐ ⭐ ⭐</div><div class="final-summary">Έμαθες ότι ένας εννοιολογικός χάρτης αποτελείται από σχήματα, βέλη και λέξεις πάνω στα βέλη που δείχνουν τη σχέση ανάμεσα στις έννοιες. Έμαθες επίσης να ξεκινάς έναν απλό χάρτη και να προσθέτεις περισσότερες πληροφορίες.</div><p class="instruction">Πώς νιώθεις για όσα έμαθες;</p><div class="self"><button data-self="again">🙂</button><button data-self="good">😊</button><button data-self="great">🤩</button></div><div class="meter"><span id="meterFill"></span></div><div class="actions"><button class="btn primary" id="finish">Ολοκλήρωση</button><button class="btn secondary" id="restart">Από την αρχή</button></div>${feedback()}`}
+function bind6(){
+ document.querySelectorAll('.self button').forEach(b=>b.onclick=()=>{document.querySelectorAll('.self button').forEach(x=>x.classList.remove('selected'));b.classList.add('selected');selfChoice=b.dataset.self});
+ document.getElementById('restart').onclick=()=>{step=0;completed.clear();selfChoice=null;render()};
+ document.getElementById('finish').onclick=()=>{if(!selfChoice){fb(false,'Διάλεξε ένα πρόσωπο.');return}document.getElementById('meterFill').style.width=selfChoice==='again'?'45%':selfChoice==='good'?'75%':'100%';completed.add(step);updatePath();fb(true,'Μπράβο! Ολοκλήρωσες το Μάθημα 17.')}
+}
+function render(){updatePath();const views=[r1,r2,r3,r4,r5,r6];panel.innerHTML=views[step]();bindHelp();if(step===0)bind1();if(step===1)bind2();if(step===2)bind3();if(step===3)bind4();if(step===4)bind5();if(step===5)bind6()}
+render();
+})();
+</script>
+
+<footer class="nk-license" aria-label="Πληροφορίες δημιουργού και άδειας χρήσης">
+  <div><strong>Created by Nikos Kalakos · © 2026</strong></div>
+  <div>Original educational content and simulation design licensed under <a class="cc-badge" href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank" rel="license noopener noreferrer">CC BY-NC 4.0</a>.</div>
+  <div>Source code © 2026 Nikos Kalakos.</div>
+  <div>Third-party and textbook materials remain subject to the rights and licences of their respective copyright holders.</div>
+</footer>
+</body>
+</html>

@@ -1,0 +1,401 @@
+<!--
+ICT Educational Simulation
+Created by Nikos Kalakos
+Copyright © 2026 Nikos Kalakos
+
+Original educational content and simulation design licensed under CC BY-NC 4.0.
+Source code © 2026 Nikos Kalakos.
+Third-party and textbook materials remain subject to the rights and licences of their respective copyright holders.
+-->
+<!doctype html>
+<html lang="el">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="author" content="Nikos Kalakos">
+<meta name="copyright" content="© 2026 Nikos Kalakos">
+<meta name="license" content="Original educational content and simulation design: CC BY-NC 4.0; source code © 2026 Nikos Kalakos; third-party and textbook materials excluded.">
+<title>Μάθημα 14 - Τα ψηφιακά δίκτυα στη ζωή μας</title>
+<style>
+:root{--ink:#17324d;--blue:#3268d5;--unit:#bcc61f;--unit-dark:#8d9811;--line:#c9d8e7;--ok:#15845b;--bad:#cf5f70;--cream:#fbfdec;--shadow:0 10px 28px rgba(23,50,77,.12)}
+*{box-sizing:border-box}body{margin:0;font-family:Arial,"Noto Sans",sans-serif;background:#f7fafc;color:var(--ink)}
+button,input{font:inherit}.app{max-width:1160px;margin:auto;padding:16px;background:transparent;border:0;border-radius:0;overflow:visible;box-shadow:none}
+.top{display:grid;grid-template-columns:1fr auto;gap:12px;align-items:center;padding:14px 18px;background:#fff;border:3px solid #dfe8d0;border-radius:24px;box-shadow:var(--shadow)}
+.top h1{margin:0;font-size:clamp(26px,4vw,42px)}.subtitle{margin:5px 0 0;color:var(--ink);font-weight:400;font-size:clamp(15px,2vw,20px)}.mascot{font-size:56px;width:auto;height:auto;border:0;background:transparent;border-radius:0}
+.path{display:flex;gap:10px;justify-content:center;align-items:center;flex-wrap:wrap;margin:16px 0;padding:0}.dot{width:44px;height:44px;border-radius:50%;border:3px solid #a9b9ca;display:grid;place-items:center;font-weight:900;font-size:20px;background:#fff;color:#5f7791}
+.dot.active{background:var(--blue);border-color:var(--blue);color:#fff;transform:scale(1.12)}.dot.done{background:var(--unit);border-color:var(--unit-dark);color:#fff}.panel{background:#fff;border:3px solid #dfe8d0;border-radius:28px;padding:clamp(15px,3vw,28px);box-shadow:var(--shadow);min-height:620px}.step-head{display:grid;grid-template-columns:1fr auto;gap:16px;align-items:center;margin-bottom:10px}
+.step-head h2{font-size:clamp(25px,4vw,38px);margin:0}.helpBtn,.btn{border:0;border-radius:16px;padding:12px 18px;font-weight:900;cursor:pointer}.helpBtn{background:#fff7d6;color:#624700;border:3px solid #e0bd45;border-radius:16px;padding:11px 18px;font-weight:900;cursor:pointer}.btn.primary{background:var(--blue);color:#fff}.btn.secondary{background:#eef3f8;color:var(--ink);border:2px solid #b9cbe0}
+.instruction{font-size:clamp(19px,2.5vw,25px);line-height:1.4;text-align:center;font-weight:800;max-width:920px;margin:16px auto}.note{max-width:850px;margin:14px auto;padding:13px 18px;border-radius:16px;background:var(--cream);border:2px solid #efe0a8;text-align:center;font-size:19px;font-weight:700}
+.feedback{display:none;max-width:820px;min-height:56px;margin:16px auto 0;border-radius:18px;padding:13px 18px;text-align:center;font-weight:900;font-size:20px}.feedback:empty{display:none}.feedback.good{display:block;background:#dcf8ec;color:#07583c;border:2px solid #75d6ae}.feedback.bad{display:block;background:#fff2d8;color:#754500;border:2px solid #e2b85f}
+.compare{display:grid;grid-template-columns:1fr 1fr;gap:22px;max-width:980px;margin:auto}.routeCard{border:3px solid var(--line);border-radius:24px;padding:18px;background:#fbfdff;box-shadow:0 6px 16px rgba(28,62,90,.08)}.routeCard h3{text-align:center;margin:0 0 10px;font-size:23px}
+.routeVisual{display:flex;align-items:center;justify-content:space-between;gap:6px;min-height:150px;padding:14px;border-radius:18px;background:#f5f9fc}.node{display:grid;place-items:center;text-align:center;min-width:70px}.node .icon{font-size:46px}.node small{font-weight:800;margin-top:4px}.arrow{font-size:28px;color:var(--unit-dark);font-weight:900}
+.choiceRow{display:flex;justify-content:center;gap:14px;flex-wrap:wrap;margin-top:20px}.choice{border:3px solid var(--line);border-radius:18px;background:#fff;padding:14px 20px;font-weight:900;font-size:20px;cursor:pointer;min-width:210px}.choice.selected{border-color:var(--unit);box-shadow:0 0 0 4px #edf3bd}
+.sequenceWrap{max-width:1020px;margin:auto}.dropRow,.cardsRow{display:grid;grid-template-columns:repeat(5,1fr);gap:10px}.dropRow{margin-bottom:18px}.dropSlot{min-height:118px;border:3px dashed #abc0d2;border-radius:18px;background:#f8fbfd;display:flex;align-items:center;justify-content:center;padding:8px;text-align:center}.dropSlot.filled{border-style:solid;border-color:var(--unit);background:#f8fbe7}
+.dragCard{user-select:none;cursor:grab;border:3px solid var(--line);border-radius:18px;background:#fff;min-height:112px;padding:10px;display:grid;place-items:center;text-align:center;font-weight:900;box-shadow:0 4px 10px rgba(0,0,0,.06)}.dragCard .big{font-size:40px}.dragCard.used{opacity:.3;pointer-events:none}
+.race{max-width:930px;margin:auto;border:3px solid #d4e0e9;border-radius:24px;padding:18px;background:#fbfdff}.track{position:relative;height:104px;margin:18px 0;background:#f4f8fb;border-radius:18px;overflow:hidden;border:2px solid #d5e1ea}.trackLabel{position:absolute;left:12px;top:8px;font-weight:900;z-index:3}.runner{position:absolute;left:18px;top:42px;font-size:40px;transition:left 1.7s ease}.runner.email{transition:left .55s ease}.finish{position:absolute;right:18px;top:35px;font-size:42px}.stepsBand{position:absolute;left:18%;right:18%;top:50px;display:flex;justify-content:space-around;color:#7a8e9f;font-size:26px}.race.running .runner{left:calc(100% - 82px)}
+.mailApp{max-width:900px;margin:auto;border:3px solid #c6d8e7;border-radius:24px;overflow:hidden;background:#fff;box-shadow:var(--shadow)}.mailTop{padding:12px 16px;background:#edf5fb;font-weight:900;display:flex;justify-content:space-between}.composeGrid{display:grid;grid-template-columns:170px 1fr;gap:12px;padding:18px;align-items:center}.composeGrid label{font-weight:900;font-size:19px}.people{display:flex;gap:10px;flex-wrap:wrap}
+.personBtn{border:3px solid #c7d6e3;background:#fff;border-radius:16px;padding:8px 12px;cursor:pointer;font-weight:900}.personBtn.selected{border-color:var(--unit);background:#f7fbe1}.wordInput{width:100%;padding:12px 14px;border:3px solid var(--line);border-radius:14px;font-size:20px}
+.networkScene{height:210px;position:relative;background:linear-gradient(#eef8ff,#fbfdff);border-top:2px solid #dbe6ee;overflow:hidden}.dev{position:absolute;text-align:center;font-weight:900}.dev .i{font-size:48px}.dev.a{left:40px;top:72px}.dev.b{right:40px;top:72px}.cloud{position:absolute;left:50%;top:60px;transform:translateX(-50%);font-size:70px}.flyMail{position:absolute;left:100px;top:82px;font-size:40px;opacity:0}.flyMail.go{animation:sendMail 3.2s ease-in-out forwards}
+@keyframes sendMail{0%{left:100px;opacity:1}45%{left:calc(50% - 20px);top:70px;opacity:1}90%{left:calc(100% - 145px);top:82px;opacity:1}100%{left:calc(100% - 145px);top:82px;opacity:0}}
+.bins{display:grid;grid-template-columns:1fr 1fr;gap:22px;max-width:950px;margin:auto}.bin{min-height:250px;border:3px dashed #afc3d3;border-radius:22px;padding:14px;background:#fbfdff}.bin h3{text-align:center;margin:0 0 12px}.binItems{display:flex;gap:10px;flex-wrap:wrap;justify-content:center}.sortPool{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin:18px auto;max-width:980px}.sortItem{width:130px;min-height:92px;border:3px solid var(--line);border-radius:16px;background:white;display:grid;place-items:center;text-align:center;font-weight:900;cursor:grab;padding:8px}.sortItem .ico{font-size:36px}
+
+.internetStage{
+  max-width:940px;
+  margin:16px auto;
+  border:4px solid #c8d9e6;
+  border-radius:26px;
+  background:linear-gradient(180deg,#eef8ff,#fbfdec);
+  padding:18px;
+}
+.internetScene{
+  position:relative;
+  height:390px;
+  border-radius:22px;
+  background:#f8fbfd;
+  overflow:hidden;
+  border:2px solid #d9e5ee;
+}
+.internetCloud{
+  position:absolute;
+  left:50%;
+  top:50%;
+  transform:translate(-50%,-50%);
+  width:190px;
+  height:120px;
+  border-radius:60px;
+  background:#fff;
+  border:4px solid var(--unit);
+  display:grid;
+  place-items:center;
+  text-align:center;
+  font-weight:900;
+  font-size:22px;
+  z-index:5;
+  box-shadow:0 6px 14px rgba(0,0,0,.08);
+}
+.internetCloud .big{font-size:48px;line-height:1}
+
+.deviceNetwork{
+  position:absolute;
+  right:28px;
+  bottom:24px;
+  width:275px;
+  height:165px;
+  border:4px solid var(--unit);
+  border-radius:50%;
+  background:#fff;
+  z-index:6;
+  cursor:pointer;
+  padding:0;
+  box-shadow:0 5px 12px rgba(23,50,77,.08);
+}
+.deviceNetwork.done{
+  border-color:#7bb33b;
+  background:#eff9e7;
+}
+.deviceNetwork .network-label{
+  position:absolute;
+  left:50%;
+  bottom:8px;
+  transform:translateX(-50%);
+  width:100%;
+  font-size:15px;
+  font-weight:900;
+  color:var(--ink);
+}
+.deviceNetwork .dn-device{
+  position:absolute;
+  display:grid;
+  place-items:center;
+  line-height:1;
+}
+.deviceNetwork .dn-phone{left:24px;top:52px;font-size:31px}
+.deviceNetwork .dn-tablet{left:64px;top:27px;font-size:34px}
+.deviceNetwork .dn-laptop{right:57px;top:27px;font-size:34px}
+.deviceNetwork .dn-desktop{right:20px;top:57px;font-size:33px}
+.deviceNetwork .dn-router{
+  position:absolute;
+  left:50%;
+  top:53%;
+  transform:translate(-50%,-50%);
+  width:92px;
+  height:55px;
+  border:4px solid #2e3945;
+  border-radius:12px;
+  background:#4d5b69;
+  box-shadow:0 5px 9px rgba(0,0,0,.14);
+}
+.deviceNetwork .dn-router::after{
+  content:'';
+  position:absolute;
+  left:12px;
+  right:12px;
+  bottom:9px;
+  height:9px;
+  background:repeating-linear-gradient(90deg,#8bf58a 0 9px,#27323d 9px 14px);
+}
+.deviceNetwork .dn-wifi{
+  position:absolute;
+  left:50%;
+  top:-28px;
+  transform:translateX(-50%);
+  width:48px;
+  height:42px;
+}
+.deviceNetwork .dn-wifi span{
+  position:absolute;
+  left:50%;
+  transform:translateX(-50%);
+  border-style:solid;
+  border-color:var(--unit-dark) transparent transparent transparent;
+  border-radius:50%;
+}
+.deviceNetwork .dn-wifi .w1{top:2px;width:42px;height:42px;border-width:4px 0 0 0}
+.deviceNetwork .dn-wifi .w2{top:12px;width:28px;height:28px;border-width:4px 0 0 0}
+.deviceNetwork .dn-wifi .w3{top:22px;width:14px;height:14px;border-width:4px 0 0 0}
+.deviceNetwork .dn-wifi .wdot{
+  top:31px;width:7px;height:7px;background:var(--unit-dark);
+  border:0;border-radius:50%;
+}
+.internetDevice{
+  position:absolute;
+  width:125px;
+  height:95px;
+  border:3px solid var(--line);
+  border-radius:18px;
+  background:#fff;
+  display:grid;
+  place-items:center;
+  font-size:48px;
+  cursor:pointer;
+  z-index:6;
+}
+.internetDevice small{
+  position:absolute;
+  bottom:5px;
+  font-size:13px;
+  font-weight:900;
+}
+.internetDevice.done{
+  border-color:#7bb33b;
+  background:#eff9e7;
+}
+.id1{left:35px;top:45px}
+.id2{right:35px;top:45px}
+.id3{left:45px;bottom:50px}
+
+.internetSvg{
+  position:absolute;
+  inset:0;
+  width:100%;
+  height:100%;
+  pointer-events:none;
+  z-index:3;
+}
+.internetSvg line{
+  stroke:#4f86c7;
+  stroke-width:6;
+  stroke-linecap:round;
+}
+.internetInfo{
+  display:none;
+  margin-top:16px;
+  border:3px solid var(--unit);
+  border-radius:18px;
+  background:#fbfdec;
+  padding:15px 18px;
+  font-size:20px;
+  font-weight:800;
+  text-align:center;
+  line-height:1.4;
+}
+.quizGrid{display:grid;grid-template-columns:1fr 1fr;gap:14px;max-width:900px;margin:auto}.quiz{padding:18px;border:3px solid var(--line);background:#fff;border-radius:18px;font-size:19px;font-weight:900;cursor:pointer}.quiz.selected{border-color:var(--unit);background:#f8fbe8}.self{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;max-width:820px;margin:auto}.self button{border:3px solid var(--line);border-radius:20px;background:#fff;padding:18px;font-weight:900;font-size:18px;cursor:pointer}.self button .face{font-size:64px;display:block;margin:0}.self button.selected{border-color:var(--blue);background:#edf4ff}
+.final-summary{
+  max-width:820px;
+  margin:15px auto 22px;
+  padding:20px;
+  border:4px solid var(--unit);
+  border-radius:24px;
+  background:#fbfdec;
+  text-align:center;
+  font-size:23px;
+  font-weight:800;
+  line-height:1.4;
+}
+.final-meter{
+  height:18px;
+  background:#e8eef5;
+  border-radius:20px;
+  overflow:hidden;
+  margin:12px auto 0;
+  max-width:1060px;
+}
+.final-meter span{
+  display:block;
+  height:100%;
+  background:var(--unit);
+  width:0;
+  transition:.4s;
+}
+.stars{font-size:58px;text-align:center;letter-spacing:10px;margin:20px}.actions{display:flex;justify-content:center;gap:12px;flex-wrap:wrap;margin-top:18px}
+.modal{position:fixed;inset:0;background:rgba(20,41,58,.55);display:none;align-items:center;justify-content:center;padding:18px;z-index:100}.modal.open{display:flex}.modalBox{max-width:680px;background:#fff;border:4px solid #f1cb52;border-radius:26px;padding:24px;box-shadow:var(--shadow);text-align:center}.modalBox h3{font-size:30px;margin:0 0 10px}.modalBox p{font-size:21px;line-height:1.45}
+@media(max-width:850px){.compare,.bins,.quizGrid,.self{grid-template-columns:1fr}.dropRow,.cardsRow{grid-template-columns:1fr 1fr}.composeGrid{grid-template-columns:1fr}.top{grid-template-columns:1fr}.mascot{display:none}}
+</style>
+<style id="nk-license-style">
+.nk-license{max-width:1100px;margin:14px auto 24px;padding:10px 16px;text-align:center;font:13px/1.45 Arial,"Noto Sans",sans-serif;color:#4e657c}
+.nk-license a{color:inherit;text-decoration:underline;text-underline-offset:2px}
+.nk-license .cc-badge{display:inline-block;margin:0 4px;padding:2px 7px;border:1px solid #8aa0b8;border-radius:6px;background:#fff;font-weight:700;white-space:nowrap}
+</style>
+</head><body>
+<main class="app"><header class="top"><div><h1>Τα ψηφιακά δίκτυα στη ζωή μας</h1><p class="subtitle">Μάθημα 14</p></div><div class="mascot">✉️</div></header><nav class="path" id="path"></nav><section class="panel" id="panel"></section></main>
+<div class="modal" id="helpModal"><div class="modalBox"><h3>Βοήθεια</h3><p id="helpText"></p><div class="actions"><button class="btn secondary" id="speakHelp">🔊 Άκουσε</button><button class="btn primary" id="closeHelp">Το κατάλαβα</button></div></div></div>
+<script>
+(()=>{'use strict';
+const panel=document.getElementById('panel'),path=document.getElementById('path'),modal=document.getElementById('helpModal'),helpText=document.getElementById('helpText');
+let step=0,completed=new Set(),selfChoice=null,raceDone=false,mailRecipient=null,sorted={post:new Set(),email:new Set()};
+const total=8,helps=[
+'Παρατήρησε τους δύο τρόπους αποστολής. Διάλεξε ποιος χρησιμοποιεί ψηφιακό δίκτυο.',
+'Σύρε τις ανακατεμένες κάρτες στα κενά ώστε να δείξεις τη διαδρομή ενός γράμματος με το ταχυδρομείο.',
+'Σύρε τις ανακατεμένες κάρτες στα κενά ώστε να δείξεις τη διαδρομή ενός ηλεκτρονικού μηνύματος.',
+'Πάτησε «Ξεκίνα» και παρατήρησε τις δύο διαδρομές.',
+'Διάλεξε παραλήπτη, γράψε μία λέξη και στείλε την. Παρακολούθησε το μήνυμα να περνά από το ψηφιακό δίκτυο.',
+'Σύρε κάθε αντικείμενο στη σωστή ομάδα: ταχυδρομείο ή ηλεκτρονικό ταχυδρομείο.',
+'Πάτησε τις συσκευές και σύνδεσέ τες με το Internet. Παρατήρησε ότι το Internet συνδέει πολλά δίκτυα και συσκευές ώστε να ανταλλάσσουν πληροφορίες.',
+'Διάλεξε το πρόσωπο που δείχνει πόσο καλά έμαθες το μάθημα.'
+];
+function speak(t){if(!('speechSynthesis'in window))return;speechSynthesis.cancel();let u=new SpeechSynthesisUtterance(t);u.lang='el-GR';speechSynthesis.speak(u)}
+function helpButton(){return '<button class="helpBtn" id="helpBtn">❔ Βοήθεια</button>'}
+function feedback(ok,t){let f=document.getElementById('feedback');if(!f)return;f.className='feedback '+(ok?'good':'bad');f.textContent=t}
+function complete(d=800){completed.add(step);updatePath();setTimeout(()=>{if(step<total-1){step++;render()}},d)}
+function updatePath(){path.innerHTML='';for(let i=0;i<total;i++){let d=document.createElement('div');d.className='dot'+(i===step?' active':'')+(completed.has(i)?' done':'');d.textContent=i+1;path.appendChild(d)}}
+function bindHelp(){let b=document.getElementById('helpBtn');if(b)b.onclick=()=>{helpText.textContent=helps[step];modal.classList.add('open')}}
+document.getElementById('closeHelp').onclick=()=>modal.classList.remove('open');document.getElementById('speakHelp').onclick=()=>speak(helpText.textContent);modal.onclick=e=>{if(e.target===modal)modal.classList.remove('open')};
+
+function r1(){return `<div class="step-head"><h2>1. Δύο τρόποι να στείλουμε ένα μήνυμα</h2>${helpButton()}</div><p class="instruction">Ποιος τρόπος χρησιμοποιεί <b>ψηφιακό δίκτυο</b>;</p>
+<div class="compare"><div class="routeCard"><h3>📮 Ταχυδρομείο</h3><div class="routeVisual"><div class="node"><span class="icon">✉️</span><small>Γράμμα</small></div><span class="arrow">→</span><div class="node"><span class="icon">📮</span><small>Ταχυδρομείο</small></div><span class="arrow">→</span><div class="node"><span class="icon">🚚</span><small>Μεταφορά</small></div><span class="arrow">→</span><div class="node"><span class="icon">🏠</span><small>Παραλήπτης</small></div></div></div>
+<div class="routeCard"><h3>💻 Ηλεκτρονικό ταχυδρομείο</h3><div class="routeVisual"><div class="node"><span class="icon">💻</span><small>Συσκευή</small></div><span class="arrow">→</span><div class="node"><span class="icon">✉️</span><small>Μήνυμα</small></div><span class="arrow">→</span><div class="node"><span class="icon">🌐</span><small>Δίκτυο</small></div><span class="arrow">→</span><div class="node"><span class="icon">💻</span><small>Παραλήπτης</small></div></div></div></div>
+<div class="choiceRow"><button class="choice" data-answer="post">📮 Το ταχυδρομείο</button><button class="choice" data-answer="email">💻 Το ηλεκτρονικό ταχυδρομείο</button></div><div class="feedback" id="feedback"></div>`}
+const post=[['write','📝','Γράφω το γράμμα'],['env','✉️','Το βάζω σε φάκελο'],['box','📮','Το δίνω στο ταχυδρομείο'],['van','🚚','Το γράμμα μεταφέρεται'],['home','🏠','Φτάνει στον παραλήπτη']];
+const email=[['dev','💻','Ανοίγω τη συσκευή'],['compose','📝','Γράφω το μήνυμα'],['send','📤','Πατάω αποστολή'],['net','🌐','Περνά από το δίκτυο'],['recv','💻','Φτάνει στον παραλήπτη']];
+function seq(title,inst,cards){return `<div class="step-head"><h2>${title}</h2>${helpButton()}</div><p class="instruction">${inst}</p><div class="sequenceWrap"><div class="dropRow">${cards.map((_,i)=>`<div class="dropSlot" data-slot="${i}"><b>${i+1}</b></div>`).join('')}</div><div class="cardsRow">${cards.map(c=>`<div class="dragCard" draggable="true" data-id="${c[0]}"><span class="big">${c[1]}</span><span>${c[2]}</span></div>`).join('')}</div></div><div class="feedback" id="feedback"></div>`}
+function shuffled(cards,order){return order.map(i=>cards[i])}
+function r2(){return seq('2. Η διαδρομή του γράμματος','Σύρε τις κάρτες στη σωστή σειρά.',shuffled(post,[3,0,4,1,2]))}
+function r3(){return seq('3. Η διαδρομή του e-mail','Σύρε τις κάρτες στη σωστή σειρά.',shuffled(email,[2,4,0,3,1]))}
+function r4(){return `<div class="step-head"><h2>4. Ποιο μήνυμα φτάνει πιο γρήγορα;</h2>${helpButton()}</div><p class="instruction">Ξεκίνα τις δύο διαδρομές και παρατήρησε.</p><div class="race" id="race"><div class="track"><div class="trackLabel">📮 Γράμμα</div><div class="runner mail">✉️</div><div class="stepsBand"><span>📮</span><span>🚚</span><span>📬</span></div><div class="finish">🏠</div></div><div class="track"><div class="trackLabel">💻 E-mail</div><div class="runner email">📧</div><div class="stepsBand"><span>💻</span><span>🌐</span></div><div class="finish">💻</div></div></div><div class="actions"><button class="btn primary" id="startRace">▶ Ξεκίνα</button></div><div class="note">Τα ψηφιακά δίκτυα κάνουν την επικοινωνία πιο γρήγορη και πιο εύκολη.</div><div class="feedback" id="feedback"></div>`}
+function r5(){return `<div class="step-head"><h2>5. Στείλε το δικό σου ηλεκτρονικό μήνυμα</h2>${helpButton()}</div><p class="instruction">Διάλεξε παραλήπτη, γράψε <b>μία λέξη</b> και πάτησε «Στείλε».</p><div class="mailApp"><div class="mailTop"><span>✉️ Νέο μήνυμα</span><span>Ψηφιακό ταχυδρομείο</span></div><div class="composeGrid"><label>Προς:</label><div class="people"><button class="personBtn" data-person="Άννα">🙂 Άννα</button><button class="personBtn" data-person="Νίκος">🙂 Νίκος</button><button class="personBtn" data-person="Μαρία">🙂 Μαρία</button></div><label>Μήνυμα:</label><input id="word" class="wordInput" maxlength="18" placeholder="Γράψε μία λέξη"></div><div class="networkScene"><div class="dev a"><div class="i">💻</div>Εσύ</div><div class="cloud">🌐</div><div class="dev b"><div class="i">💻</div><span id="receiverLabel">Παραλήπτης</span></div><div class="flyMail" id="flyMail">📧</div></div></div><div class="actions"><button class="btn primary" id="sendBtn">📤 Στείλε</button></div><div class="feedback" id="feedback"></div>`}
+const items=[['pc','💻','Υπολογιστής','email'],['mailbox','📮','Γραμματοκιβώτιο','post'],['enet','🌐','Ψηφιακό δίκτυο','email'],['stamp','🟦','Γραμματόσημο','post'],['at','@','Σύμβολο @','email'],['van','🚚','Ταχυδρομικό όχημα','post']];
+function r6(){return `<div class="step-head"><h2>6. Σε ποιον τρόπο ανήκει;</h2>${helpButton()}</div><p class="instruction">Σύρε κάθε αντικείμενο στη σωστή ομάδα.</p><div class="bins"><div class="bin" data-bin="post"><h3>📮 Ταχυδρομείο</h3><div class="binItems"></div></div><div class="bin" data-bin="email"><h3>💻 Ηλεκτρονικό ταχυδρομείο</h3><div class="binItems"></div></div></div><div class="sortPool">${items.map(x=>`<div class="sortItem" draggable="true" data-id="${x[0]}" data-type="${x[3]}"><span class="ico">${x[1]}</span><span>${x[2]}</span></div>`).join('')}</div><div class="feedback" id="feedback"></div>`}
+function r7(){return `<div class="step-head"><h2>7. Τι είναι το Internet;</h2>${helpButton()}</div>
+<p class="instruction">Πάτησε τις συσκευές μία-μία για να τις συνδέσεις με το Internet.</p>
+<div class="internetStage">
+  <div class="internetScene" id="internetScene">
+    <svg class="internetSvg" id="internetSvg"></svg>
+    <div class="internetCloud" id="internetCloud"><div><div class="big">🌐</div>Internet</div></div>
+    <button class="internetDevice id1" data-id="1">💻<small>Υπολογιστής</small></button>
+    <button class="internetDevice id2" data-id="2">📱<small>Κινητό</small></button>
+    <button class="internetDevice id3" data-id="3">💻<small>Φορητός</small></button>
+    <button class="deviceNetwork" data-id="4" aria-label="Δίκτυο συσκευών">
+      <span class="dn-device dn-phone">📱</span>
+      <span class="dn-device dn-tablet">▭</span>
+      <span class="dn-device dn-laptop">💻</span>
+      <span class="dn-device dn-desktop">🖥️</span>
+      <span class="dn-router">
+        <span class="dn-wifi" aria-hidden="true">
+          <span class="w1"></span><span class="w2"></span><span class="w3"></span><span class="wdot"></span>
+        </span>
+      </span>
+      <span class="network-label">Δίκτυο συσκευών</span>
+    </button>
+  </div>
+  <div class="internetInfo" id="internetInfo">
+    Το Internet είναι ένα πολύ μεγάλο δίκτυο που συνδέει πολλά μικρότερα δίκτυα και συσκευές σε όλο τον κόσμο, ώστε να μπορούν να ανταλλάσσουν πληροφορίες.
+  </div>
+</div>
+<div class="feedback" id="feedback"></div>`}
+
+function r8(){return `<div class="step-head"><h2>8. Τα κατάφερες!</h2>${helpButton()}</div>
+<div class="stars">⭐ ⭐ ⭐</div>
+<div class="final-summary">Έμαθες να ξεχωρίζεις το ταχυδρομείο από το ηλεκτρονικό ταχυδρομείο και πώς τα ψηφιακά δίκτυα βοηθούν τις συσκευές να ανταλλάσσουν πληροφορίες.</div>
+<p class="instruction">Πώς νιώθεις για όσα έμαθες;</p>
+<div class="self">
+  <button data-self="again"><span class="face">🙂</span></button>
+  <button data-self="good"><span class="face">😊</span></button>
+  <button data-self="great"><span class="face">🤩</span></button>
+</div>
+<div class="final-meter"><span id="finalMeterFill"></span></div>
+<div class="actions">
+  <button class="btn primary" id="finishBtn">Ολοκλήρωση</button>
+  <button class="btn secondary" id="restartNow">Από την αρχή</button>
+</div>
+<div class="feedback" id="feedback"></div>`}
+
+function b1(){document.querySelectorAll('.choice').forEach(b=>b.onclick=()=>{document.querySelectorAll('.choice').forEach(x=>x.classList.remove('selected'));b.classList.add('selected');if(b.dataset.answer==='email'){feedback(true,'Σωστά! Το ηλεκτρονικό ταχυδρομείο χρησιμοποιεί ψηφιακό δίκτυο.');complete()}else feedback(false,'Αυτός είναι ο παραδοσιακός τρόπος. Δοκίμασε ξανά.')})}
+function bseq(cards){let order=[];document.querySelectorAll('.dragCard').forEach(c=>c.addEventListener('dragstart',e=>e.dataTransfer.setData('text/plain',c.dataset.id)));document.querySelectorAll('.dropSlot').forEach(s=>{s.addEventListener('dragover',e=>e.preventDefault());s.addEventListener('drop',e=>{e.preventDefault();let id=e.dataTransfer.getData('text/plain'),card=document.querySelector(`.dragCard[data-id="${id}"]`);if(!card||card.classList.contains('used'))return;let p=+s.dataset.slot;if(order[p])document.querySelector(`.dragCard[data-id="${order[p]}"]`)?.classList.remove('used');order[p]=id;s.innerHTML=card.innerHTML;s.classList.add('filled');card.classList.add('used');if(order.filter(Boolean).length===cards.length){let ok=cards.every((x,i)=>order[i]===x[0]);if(ok){feedback(true,'Μπράβο! Η διαδρομή είναι σωστή.');complete()}else{feedback(false,'Κάποια βήματα δεν είναι στη σωστή σειρά.');setTimeout(()=>{order=[];document.querySelectorAll('.dropSlot').forEach((z,i)=>{z.classList.remove('filled');z.innerHTML=`<b>${i+1}</b>`});document.querySelectorAll('.dragCard').forEach(z=>z.classList.remove('used'))},900)}}})})}
+function b4(){document.getElementById('startRace').onclick=()=>{if(raceDone)return;raceDone=true;document.getElementById('race').classList.add('running');setTimeout(()=>feedback(true,'Το e-mail φτάνει ηλεκτρονικά μέσω του ψηφιακού δικτύου.'),650);setTimeout(()=>complete(),1900)}}
+function b5(){document.querySelectorAll('.personBtn').forEach(b=>b.onclick=()=>{document.querySelectorAll('.personBtn').forEach(x=>x.classList.remove('selected'));b.classList.add('selected');mailRecipient=b.dataset.person;document.getElementById('receiverLabel').textContent=mailRecipient});document.getElementById('sendBtn').onclick=()=>{let w=document.getElementById('word').value.trim();if(!mailRecipient){feedback(false,'Διάλεξε πρώτα παραλήπτη.');return}if(!w||/\s/.test(w)){feedback(false,'Γράψε μία μόνο λέξη.');return}let f=document.getElementById('flyMail');f.classList.remove('go');void f.offsetWidth;f.classList.add('go');feedback(true,`Το μήνυμα «${w}» ταξιδεύει μέσω του ψηφιακού δικτύου!`);setTimeout(()=>complete(),3300)}}
+function b6(){let drag=null;document.querySelectorAll('.sortItem').forEach(i=>i.addEventListener('dragstart',()=>drag=i));document.querySelectorAll('.bin').forEach(bin=>{bin.addEventListener('dragover',e=>e.preventDefault());bin.addEventListener('drop',()=>{if(!drag)return;if(drag.dataset.type===bin.dataset.bin){bin.querySelector('.binItems').appendChild(drag);drag.draggable=false;sorted[bin.dataset.bin].add(drag.dataset.id);feedback(true,'Σωστή ομάδα!');if(sorted.post.size===3&&sorted.email.size===3)setTimeout(()=>{feedback(true,'Μπράβο! Ξεχώρισες τους δύο τρόπους αποστολής.');complete()},500)}else feedback(false,'Αυτό ανήκει στην άλλη ομάδα.');drag=null})})}
+
+function internetCenter(el,root){
+  const r=el.getBoundingClientRect(),rr=root.getBoundingClientRect();
+  return{x:r.left+r.width/2-rr.left,y:r.top+r.height/2-rr.top}
+}
+function internetLine(svg,a,b){
+  const root=svg.parentElement,p1=internetCenter(a,root),p2=internetCenter(b,root);
+  const l=document.createElementNS('http://www.w3.org/2000/svg','line');
+  l.setAttribute('x1',p1.x);l.setAttribute('y1',p1.y);
+  l.setAttribute('x2',p2.x);l.setAttribute('y2',p2.y);
+  svg.appendChild(l);
+}
+function b7(){
+  const done=new Set(),svg=document.getElementById('internetSvg'),cloud=document.getElementById('internetCloud');
+  document.querySelectorAll('.internetDevice,.deviceNetwork').forEach(d=>d.onclick=()=>{
+    if(done.has(d.dataset.id))return;
+    done.add(d.dataset.id);d.classList.add('done');internetLine(svg,d,cloud);
+    if(done.size===4){
+      document.getElementById('internetInfo').style.display='block';
+      feedback(true,'Τώρα όλες οι συσκευές συνδέονται μέσω του Internet.');
+      setTimeout(()=>complete(),2200);
+    }
+  });
+}
+function b8(){
+  document.querySelectorAll('.self button').forEach(b=>b.onclick=()=>{
+    document.querySelectorAll('.self button').forEach(x=>x.classList.remove('selected'));
+    b.classList.add('selected');
+    selfChoice=b.dataset.self;
+  });
+
+  document.getElementById('restartNow').onclick=()=>{
+    step=0;
+    completed.clear();
+    selfChoice=null;
+    raceDone=false;
+    mailRecipient=null;
+    sorted={post:new Set(),email:new Set()};
+    render();
+  };
+
+  document.getElementById('finishBtn').onclick=()=>{
+    if(!selfChoice){
+      feedback(false,'Διάλεξε ένα πρόσωπο.');
+      return;
+    }
+
+    const fill=document.getElementById('finalMeterFill');
+    if(fill)fill.style.width=selfChoice==='again'?'45%':selfChoice==='good'?'75%':'100%';
+
+    completed.add(step);
+    updatePath();
+    feedback(true,'Μπράβο! Ολοκλήρωσες το Μάθημα 14.');
+  };
+}
+function render(){updatePath();let v=[r1,r2,r3,r4,r5,r6,r7,r8];panel.innerHTML=v[step]();bindHelp();if(step===0)b1();if(step===1)bseq(post);if(step===2)bseq(email);if(step===3)b4();if(step===4)b5();if(step===5)b6();if(step===6)b7();if(step===7)b8()}
+render()})();
+</script>
+<footer class="nk-license" aria-label="Πληροφορίες δημιουργού και άδειας χρήσης">
+  <div><strong>Created by Nikos Kalakos · © 2026</strong></div>
+  <div>Original educational content and simulation design licensed under <a class="cc-badge" href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank" rel="license noopener noreferrer">CC BY-NC 4.0</a>.</div>
+  <div>Source code © 2026 Nikos Kalakos.</div>
+  <div>Third-party and textbook materials remain subject to the rights and licences of their respective copyright holders.</div>
+</footer>
+</body></html>

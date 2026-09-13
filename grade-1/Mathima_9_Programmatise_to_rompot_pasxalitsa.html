@@ -1,0 +1,138 @@
+<!--
+ICT Educational Simulation
+Created by Nikos Kalakos
+Copyright © 2026 Nikos Kalakos
+
+Original educational content and simulation design licensed under CC BY-NC 4.0.
+Source code © 2026 Nikos Kalakos.
+Third-party and textbook materials remain subject to the rights and licences of their respective copyright holders.
+-->
+<!doctype html>
+<html lang="el">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="author" content="Nikos Kalakos">
+<meta name="copyright" content="© 2026 Nikos Kalakos">
+<meta name="license" content="Original educational content and simulation design: CC BY-NC 4.0; source code © 2026 Nikos Kalakos; third-party and textbook materials excluded.">
+<title>Μάθημα 9 — Προγραμμάτισε το ρομπότ-πασχαλίτσα</title>
+<style>
+:root{--bg:#f4fbff;--ink:#17324d;--card:#fff;--primary:#3268d5;--primary2:#234fa8;--ok:#15845b;--warn:#a85f00;--soft:#e8f1ff;--line:#bfd2eb;--yellow:#fff7d6;--shadow:0 10px 28px rgba(23,50,77,.13)}
+*{box-sizing:border-box}body{margin:0;font-family:Arial,"Noto Sans",sans-serif;background:linear-gradient(180deg,#e8f7ff,#fff8e8);color:var(--ink);min-height:100vh}button,select{font:inherit}.app{max-width:1180px;margin:auto;padding:16px}.top{display:grid;grid-template-columns:1fr auto;gap:12px;align-items:center;background:#fff;border:3px solid #d8e8f7;border-radius:24px;padding:14px 18px;box-shadow:var(--shadow)}h1{font-size:clamp(25px,4vw,42px);margin:0}.subtitle{margin:5px 0 0;font-size:clamp(15px,2vw,20px)}.mascot{font-size:58px}.path{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin:16px 0}.dot{width:44px;height:44px;border-radius:50%;border:3px solid #9ab6d8;background:#fff;color:#5f7791;font-weight:900;font-size:20px;display:grid;place-items:center;padding:0;line-height:1}.dot.current{background:var(--primary);color:#fff;transform:scale(1.1)}.dot.done{background:var(--ok);color:#fff}.panel{background:rgba(255,255,255,.97);border:3px solid #d8e8f7;border-radius:28px;padding:clamp(15px,3vw,28px);box-shadow:var(--shadow);min-height:620px}.step-head{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap}.step-head h2{font-size:clamp(25px,4vw,38px);margin:0}.help{background:#fff7d6;color:#624700;border:3px solid #e0bd45;border-radius:16px;padding:11px 18px;font-weight:800;cursor:pointer}.instruction{font-size:clamp(18px,2.5vw,25px);font-weight:800;text-align:center;margin:18px auto;max-width:850px}.introbox{max-width:900px;margin:14px auto;background:#f8fbff;border:3px solid var(--line);border-radius:22px;padding:16px;text-align:center;font-size:20px;font-weight:700}.robot-layout{display:grid;grid-template-columns:320px 1fr;gap:18px;align-items:start}.palette,.workspace{background:#f8fbff;border:3px solid var(--line);border-radius:22px;padding:14px}.palette h3,.workspace h3,.world-wrap h3{text-align:center;margin:0 0 12px;font-size:23px}.cmds{display:grid;grid-template-columns:1fr 1fr;gap:10px}.cmd{min-height:94px;border:3px solid #1d58bd;border-radius:18px;background:#4d84e6;color:#fff;font-size:45px;font-weight:900;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;line-height:1}.cmd small{font-size:14px;margin-top:7px;color:#fff}.cmd:active{transform:scale(.97)}.note{font-size:15px;text-align:center;color:#526b83;margin-top:10px}.program{min-height:120px;border:3px dashed #9eb9d8;border-radius:20px;background:#fff;padding:12px;display:flex;gap:9px;flex-wrap:wrap;align-items:center}.pblock{width:64px;height:64px;border:3px solid #1d58bd;background:#4d84e6;color:#fff;border-radius:14px;display:grid;place-items:center;font-size:32px;font-weight:900;position:relative}.pblock.active{outline:5px solid rgba(255,196,0,.55);transform:scale(1.06)}.pblock .n{position:absolute;right:-7px;top:-7px;width:24px;height:24px;border-radius:50%;background:#fff;color:var(--primary);font-size:13px;border:2px solid var(--primary);display:grid;place-items:center}.actions{display:flex;justify-content:center;gap:12px;flex-wrap:wrap;margin-top:18px}.btn{border:0;border-radius:16px;padding:14px 22px;font-weight:900;font-size:18px;cursor:pointer}.primary{background:var(--primary);color:#fff}.secondary{background:#eef3f8;color:var(--ink);border:2px solid #b9cbe0}.btn:disabled{opacity:.45;cursor:not-allowed}.feedback{display:none;max-width:780px;margin:14px auto 0;padding:12px 18px;border-radius:18px;text-align:center;font-size:19px;font-weight:800}.feedback.show{display:block}.feedback.ok{background:#dcf8ec;color:#07583c;border:2px solid #75d6ae}.feedback.try{background:#fff2d8;color:#754500;border:2px solid #e2b85f}.world-wrap{margin-top:18px;background:#f8fbff;border:3px solid var(--line);border-radius:22px;padding:14px}.garden{display:grid;grid-template-columns:repeat(7,72px);grid-template-rows:repeat(5,72px);justify-content:center;gap:0;margin:auto;width:max-content;border:4px solid #799d3d;border-radius:16px;overflow:hidden;background:#b6d67e}.cell{width:72px;height:72px;border:1.5px solid rgba(76,108,44,.5);display:grid;place-items:center;position:relative;background:linear-gradient(135deg,#a9ce71,#bfdc8c)}.flower{font-size:42px;filter:drop-shadow(0 2px 2px rgba(0,0,0,.15));position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);z-index:1}.route-marker{position:absolute;top:4px;right:4px;min-width:27px;height:27px;padding:0 7px;border-radius:14px;background:#fff;color:#17324d;border:3px solid #17324d;display:grid;place-items:center;font-size:14px;font-weight:900;z-index:5}.waypoint{outline:4px dashed #17324d;outline-offset:-7px}.bug{font-size:46px;position:absolute;left:50%;top:50%;transition:transform .28s ease;z-index:3;transform-origin:center}.bug.dirU{transform:translate(-50%,-50%) rotate(0deg)}.bug.dirR{transform:translate(-50%,-50%) rotate(90deg)}.bug.dirD{transform:translate(-50%,-50%) rotate(180deg)}.bug.dirL{transform:translate(-50%,-50%) rotate(-90deg)}.visited{box-shadow:inset 0 0 0 5px rgba(50,104,213,.26)}.target{animation:pulse 1s infinite alternate}@keyframes pulse{from{box-shadow:inset 0 0 0 2px #fff}to{box-shadow:inset 0 0 0 7px #ffd54d}}.legend{display:flex;justify-content:center;gap:16px;flex-wrap:wrap;margin-top:10px;font-size:15px;font-weight:700}.choice-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:14px;margin-top:16px}.choice{border:3px solid var(--line);background:#fff;border-radius:20px;padding:14px;cursor:pointer;text-align:center;min-height:140px}.choice.selected{border-color:var(--primary);background:var(--soft)}.choice .emoji{font-size:52px}.choice .label{font-size:18px;font-weight:800;margin-top:7px}.stars{font-size:58px;text-align:center;letter-spacing:10px}.speech{max-width:760px;margin:12px auto;background:#fff;border:3px solid var(--line);border-radius:20px;padding:15px;text-align:center;font-size:22px;font-weight:800}.meter{height:18px;background:#e8eef5;border-radius:20px;overflow:hidden;margin-top:12px}.meter span{display:block;height:100%;background:var(--ok);width:0;transition:.4s}.modal{position:fixed;inset:0;background:rgba(15,35,55,.55);display:none;align-items:center;justify-content:center;padding:18px;z-index:50}.modal.open{display:flex}.modal-box{max-width:650px;background:#fff;border:4px solid #f1cb52;border-radius:26px;padding:24px;box-shadow:var(--shadow);text-align:center}.modal-box h3{font-size:30px;margin:0 0 10px}.modal-box p{font-size:22px;line-height:1.45}.hidden{display:none!important}
+@media(max-width:900px){.robot-layout{grid-template-columns:1fr}.cmds{grid-template-columns:repeat(4,1fr)}.garden{grid-template-columns:repeat(7,56px);grid-template-rows:repeat(5,56px)}.cell{width:56px;height:56px}.flower{font-size:32px}.bug{font-size:36px}}
+@media(max-width:540px){.cmds{grid-template-columns:1fr 1fr}.garden{grid-template-columns:repeat(7,42px);grid-template-rows:repeat(5,42px)}.cell{width:42px;height:42px}.flower{font-size:26px}.bug{font-size:30px}.top{grid-template-columns:1fr}.mascot{display:none}}
+</style>
+
+<style id="nk-license-style">
+.nk-license{max-width:1100px;margin:14px auto 24px;padding:10px 16px;text-align:center;font:13px/1.45 Arial,"Noto Sans",sans-serif;color:#4e657c}
+.nk-license a{color:inherit;text-decoration:underline;text-underline-offset:2px}
+.nk-license .cc-badge{display:inline-block;margin:0 4px;padding:2px 7px;border:1px solid #8aa0b8;border-radius:6px;background:#fff;font-weight:700;white-space:nowrap}
+</style>
+</head>
+<body>
+<main class="app">
+<header class="top"><div><h1>Προγραμμάτισε το ρομπότ-πασχαλίτσα</h1><p class="subtitle">Μάθημα 9 — Δίνω συγκεκριμένες εντολές στο ρομπότ</p></div><div class="mascot" aria-hidden="true">🐞</div></header>
+<nav class="path" id="path" aria-label="Πρόοδος"></nav>
+<section class="panel" id="panel"></section>
+</main>
+<div class="modal" id="helpModal" role="dialog" aria-modal="true" aria-labelledby="helpTitle"><div class="modal-box"><h3 id="helpTitle">Βοήθεια</h3><p id="helpText"></p><div class="actions"><button class="btn secondary" id="speakHelp" type="button">🔊 Άκουσε</button><button class="btn primary" id="closeHelp" type="button">Το κατάλαβα</button></div></div></div>
+<script>
+(()=>{'use strict';
+const panel=document.getElementById('panel'),path=document.getElementById('path'),modal=document.getElementById('helpModal'),helpText=document.getElementById('helpText');
+let step=0,completed=new Set(),program=[],running=false,selected=null;
+const DIRS=['U','R','D','L'];
+const symbol={F:'↑',B:'↓',L:'↶',R:'↷'};
+const helps=[
+'Το ρομπότ καταλαβαίνει μόνο τέσσερις συγκεκριμένες εντολές. Πάτησε κάθε εντολή και παρακολούθησε τι κάνει. Οι στροφές αλλάζουν μόνο την κατεύθυνση του ρομπότ.',
+'Οδήγησε την πασχαλίτσα στη μαργαρίτα που βρίσκεται στο κέντρο του κήπου. Πάτησε τις εντολές μία μία. Η πασχαλίτσα ξεκινά κοιτάζοντας προς τα πάνω.',
+'Οδήγησε την πασχαλίτσα πρώτα στη μαργαρίτα στην αριστερή πλευρά του κήπου και μετά στο τριαντάφυλλο στην επάνω σειρά. Θυμήσου: η στροφή αλλάζει την κατεύθυνση, αλλά δεν μετακινεί το ρομπότ.',
+'Διάλεξε ένα λουλούδι και φτιάξε μόνος ή μόνη σου ένα πρόγραμμα για να φτάσει εκεί η πασχαλίτσα.',
+'Σκέψου πόσο καλά έμαθες τις εντολές του ρομπότ-πασχαλίτσα και πώς να το προγραμματίζεις.'
+];
+const flowers={
+ '0,3':['🌹','Τριαντάφυλλο στην επάνω σειρά'],
+ '1,0':['🌼','Μαργαρίτα στην αριστερή πλευρά'],
+ '1,2':['🌷','Τουλίπα'],
+ '1,5':['🌻','Ηλίανθος'],
+ '2,3':['🌼','Μαργαρίτα στο κέντρο'],
+ '3,5':['🌷','Τουλίπα δεξιά'],
+ '4,1':['🌹','Τριαντάφυλλο κάτω αριστερά'],
+ '4,3':['🌻','Ηλίανθος κάτω στο κέντρο'],
+ '4,6':['🌼','Μαργαρίτα κάτω δεξιά']
+};
+function speak(t){if(!('speechSynthesis' in window))return;window.speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(t);u.lang='el-GR';u.rate=.86;window.speechSynthesis.speak(u)}
+function helpButton(){return '<button class="help" type="button" id="help">❔ Βοήθεια</button>'}
+function head(title){return `<div class="step-head"><h2>${title}</h2>${helpButton()}</div>`}
+function feedback(){return '<div class="feedback" id="feedback" aria-live="polite"></div>'}
+function showFeedback(ok,msg){const f=document.getElementById('feedback');if(!f)return;f.className='feedback show '+(ok?'ok':'try');f.textContent=msg;speak(msg)}
+function updatePath(){path.innerHTML=helps.map((_,i)=>`<button class="dot ${i===step?'current':''} ${completed.has(i)?'done':''}" type="button" disabled>${i+1}</button>`).join('')}
+function next(){completed.add(step);setTimeout(()=>{step=Math.min(step+1,helps.length-1);render()},800)}
+function commandPalette(){return `<div class="palette"><h3>Εντολές</h3><div class="cmds">
+<button class="cmd" data-c="F" type="button">↑<small>1 βήμα μπροστά</small></button>
+<button class="cmd" data-c="B" type="button">↓<small>1 βήμα πίσω</small></button>
+<button class="cmd" data-c="L" type="button">↶<small>Στροφή αριστερά</small></button>
+<button class="cmd" data-c="R" type="button">↷<small>Στροφή δεξιά</small></button>
+</div><p class="note">Πάτησε μια εντολή για να την προσθέσεις.</p></div>`}
+function programBox(){return `<div class="workspace"><h3>Το πρόγραμμά μου</h3><div class="program" id="program"></div><div class="actions"><button class="btn secondary" id="undo" type="button">↶ Πίσω</button><button class="btn secondary" id="clear" type="button">🧹 Καθάρισμα</button><button class="btn primary" id="check" type="button">Έλεγχος</button></div></div>`}
+function drawProgram(active=-1){const box=document.getElementById('program');if(!box)return;box.innerHTML=program.length?program.map((c,i)=>`<div class="pblock ${i===active?'active':''}"><span class="n">${i+1}</span>${symbol[c]}</div>`).join(''):'<span class="note">Οι εντολές θα εμφανιστούν εδώ.</span>'}
+function gardenHTML(targetKey=null,mustPassKey=null){let s='<div class="garden" id="garden">';for(let r=0;r<5;r++)for(let c=0;c<7;c++){const k=`${r},${c}`,fl=flowers[k];const marker=k===mustPassKey?'<span class="route-marker" aria-label="Πρώτος σταθμός">1</span>':k===targetKey&&mustPassKey?'<span class="route-marker" aria-label="Τελικός στόχος">2</span>':'';s+=`<div class="cell ${k===targetKey?'target':''} ${k===mustPassKey?'waypoint':''}" data-r="${r}" data-c="${c}">${fl?`<span class="flower" title="${fl[1]}">${fl[0]}</span>`:''}${marker}${r===4&&c===0?'<span class="bug dirU" id="bug">🐞</span>':''}</div>`}return s+'</div>'}
+function renderIntro(){return `${head('1. Οι τέσσερις εντολές')}<div class="introbox">Το ρομπότ καταλαβαίνει μόνο συγκεκριμένες εντολές.</div><p class="instruction">Πάτησε κάθε εντολή και παρακολούθησε τι κάνει.</p><div class="robot-layout">${commandPalette()}<div class="workspace"><h3>Δοκιμή</h3><div class="garden" style="grid-template-columns:repeat(3,72px);grid-template-rows:repeat(3,72px)">${[0,1,2,3,4,5,6,7,8].map(i=>`<div class="cell">${i===4?'<span class="bug dirU" id="demoBug">🐞</span>':''}</div>`).join('')}</div><p class="note" id="demoText">Η πασχαλίτσα κοιτάζει προς τα πάνω.</p><div class="actions"><button class="btn primary" id="introCheck" type="button" disabled>Έτοιμο</button></div></div></div>${feedback()}`}
+function renderBlue(){return `${head('2. Φτάσε στη μαργαρίτα στο κέντρο')}<p class="instruction">Φτιάξε το πρόγραμμα και πάτησε «Έλεγχος».</p><div class="robot-layout">${commandPalette()}${programBox()}</div><div class="world-wrap"><h3>Κήπος</h3>${gardenHTML('2,3')}<div class="legend"><span>🐞 Αρχή</span><span>🌼 Στόχος: μαργαρίτα στο κέντρο</span></div></div>${feedback()}`}
+function renderRedViaYellow(){return `${head('3. Πρώτα η μαργαρίτα, μετά το τριαντάφυλλο')}<p class="instruction">Πέρασε πρώτα από τη μαργαρίτα στην αριστερή πλευρά και μετά φτάσε στο τριαντάφυλλο στην επάνω σειρά.</p><div class="robot-layout">${commandPalette()}${programBox()}</div><div class="world-wrap"><h3>Κήπος</h3>${gardenHTML('0,3','1,0')}<div class="legend"><span>1️⃣ 🌼 Πρώτος σταθμός: μαργαρίτα</span><span>2️⃣ 🌹 Τελικός στόχος: τριαντάφυλλο</span></div></div>${feedback()}`}
+function renderFree(){return `${head('4. Διάλεξε το λουλούδι σου')}<p class="instruction">Διάλεξε ένα λουλούδι. Μετά προγραμμάτισε την πασχαλίτσα για να φτάσει εκεί.</p><div class="choice-grid" id="targets">${[['1,5','🌻','Ηλίανθος'],['3,5','🌷','Τουλίπα'],['4,6','🌼','Μαργαρίτα']].map(x=>`<button class="choice" data-k="${x[0]}" type="button"><div class="emoji">${x[1]}</div><div class="label">${x[2]}</div></button>`).join('')}</div><div id="freeArea" class="hidden"><div class="robot-layout">${commandPalette()}${programBox()}</div><div class="world-wrap"><h3>Κήπος</h3><div id="freeGarden"></div></div></div>${feedback()}`}
+function renderFinish(){return `${head('5. Τα κατάφερες!')}<div class="stars">⭐ ⭐ ⭐</div><div class="speech">Μπορώ να δίνω τις σωστές εντολές και να προγραμματίζω το ρομπότ-πασχαλίτσα για να φτάνει εκεί που θέλω.</div><p class="instruction">Πώς νιώθεις;</p><div class="choice-grid" id="self">${[['again','🙂','Θέλω λίγη εξάσκηση'],['good','😊','Τα κατάφερα'],['great','🤩','Τα κατάφερα πολύ καλά']].map(x=>`<button class="choice" data-id="${x[0]}" type="button"><div class="emoji">${x[1]}</div><div class="label">${x[2]}</div></button>`).join('')}</div><div class="meter"><span id="meterFill"></span></div><div class="actions"><button class="btn primary" id="finish" type="button">Ολοκλήρωση</button><button class="btn secondary" id="restart" type="button">Από την αρχή</button></div>${feedback()}`}
+function bindHelp(){const h=document.getElementById('help');if(h)h.onclick=()=>{helpText.textContent=helps[step];modal.classList.add('open')}}
+function cellAt(r,c){return document.querySelector(`.cell[data-r="${r}"][data-c="${c}"]`)}
+function setBug(r,c,dir){document.querySelectorAll('.bug').forEach(x=>x.remove());const cell=cellAt(r,c);if(!cell)return;cell.insertAdjacentHTML('beforeend',`<span class="bug dir${dir}" id="bug">🐞</span>`)}
+function simulate(cmds,{mustPass=null,target=null,done}={}){if(running)return;running=true;let r=4,c=0,d=0,passed=!mustPass;setBug(r,c,DIRS[d]);let i=0;const tick=()=>{if(i>=cmds.length){running=false;done&&done({r,c,dir:DIRS[d],passed});return}drawProgram(i);const cmd=cmds[i];if(cmd==='L')d=(d+3)%4;else if(cmd==='R')d=(d+1)%4;else{const sign=cmd==='F'?1:-1;const dr=[-1,0,1,0][d]*sign,dc=[0,1,0,-1][d]*sign;r+=dr;c+=dc;if(r<0||r>4||c<0||c>6){running=false;showFeedback(false,'Η πασχαλίτσα βγήκε έξω από τον κήπο. Δοκίμασε ξανά.');setBug(4,0,'U');drawProgram();return}cellAt(r,c)?.classList.add('visited')}if(mustPass&&`${r},${c}`===mustPass)passed=true;setBug(r,c,DIRS[d]);i++;setTimeout(tick,420)};tick()}
+function bindProgram(target,mustPass=null,success='Μπράβο!'){
+ program=[];drawProgram();
+ let r=4,c=0,d=0,passed=!mustPass,invalid=false;
+ const resetWorld=()=>{r=4;c=0;d=0;passed=!mustPass;invalid=false;document.querySelectorAll('.visited').forEach(x=>x.classList.remove('visited'));setBug(r,c,DIRS[d])};
+ const applyOne=(cmd,showTrail=true)=>{
+  if(cmd==='L')d=(d+3)%4;
+  else if(cmd==='R')d=(d+1)%4;
+  else{
+   const sign=cmd==='F'?1:-1;
+   const nr=r+[-1,0,1,0][d]*sign,nc=c+[0,1,0,-1][d]*sign;
+   if(nr<0||nr>4||nc<0||nc>6){invalid=true;return false}
+   r=nr;c=nc;if(showTrail)cellAt(r,c)?.classList.add('visited');
+  }
+  if(mustPass&&`${r},${c}`===mustPass)passed=true;
+  setBug(r,c,DIRS[d]);
+  return true;
+ };
+ const rebuild=()=>{resetWorld();for(const cmd of program){if(!applyOne(cmd,true))break}};
+ document.querySelectorAll('.cmd').forEach(b=>b.onclick=()=>{
+  if(running)return;
+  program.push(b.dataset.c);drawProgram(program.length-1);
+  if(!applyOne(b.dataset.c,true)){
+   showFeedback(false,'Αυτή η εντολή βγάζει την πασχαλίτσα έξω από τον κήπο. Πάτησε «Πίσω» και δοκίμασε άλλη εντολή.');
+  }
+ });
+ document.getElementById('undo').onclick=()=>{if(running)return;program.pop();drawProgram();rebuild();const f=document.getElementById('feedback');if(f){f.className='feedback';f.textContent=''}};
+ document.getElementById('clear').onclick=()=>{if(running)return;program=[];drawProgram();resetWorld();const f=document.getElementById('feedback');if(f){f.className='feedback';f.textContent=''}};
+ document.getElementById('check').onclick=()=>{
+  if(!program.length){showFeedback(false,'Βάλε πρώτα εντολές στο πρόγραμμά σου.');return}
+  if(invalid){showFeedback(false,'Η διαδρομή βγαίνει έξω από τον κήπο. Διόρθωσε την τελευταία εντολή.');return}
+  if(`${r},${c}`===target&&passed){showFeedback(true,success);setTimeout(next,900)}
+  else if(mustPass&&!passed)showFeedback(false,'Πρέπει να περάσεις πρώτα από τη μαργαρίτα που έχει το σημάδι 1.');
+  else showFeedback(false,'Η πασχαλίτσα δεν έφτασε ακόμα στο σωστό λουλούδι. Συνέχισε το πρόγραμμά σου.');
+ };
+}
+function bindIntro(){let seen=new Set(),r=1,c=1,d=0;const demo=document.getElementById('demoBug'),text=document.getElementById('demoText');function place(){demo.className='bug dir'+DIRS[d];demo.parentElement.removeChild(demo);const cells=document.querySelectorAll('.workspace .cell');cells[r*3+c].appendChild(demo)}document.querySelectorAll('.cmd').forEach(b=>b.onclick=()=>{const cmd=b.dataset.c;seen.add(cmd);if(cmd==='L')d=(d+3)%4;else if(cmd==='R')d=(d+1)%4;else{const sign=cmd==='F'?1:-1,nr=r+[-1,0,1,0][d]*sign,nc=c+[0,1,0,-1][d]*sign;if(nr>=0&&nr<3&&nc>=0&&nc<3){r=nr;c=nc}}place();text.textContent=cmd==='F'?'Προχώρησε 1 βήμα μπροστά.':cmd==='B'?'Πήγε 1 βήμα πίσω.':cmd==='L'?'Έστριψε αριστερά χωρίς να προχωρήσει.':'Έστριψε δεξιά χωρίς να προχωρήσει.';if(seen.size===4)document.getElementById('introCheck').disabled=false});document.getElementById('introCheck').onclick=()=>{showFeedback(true,'Μπράβο! Δοκίμασες και τις τέσσερις εντολές.');next()}}
+function bindFree(){let freeTarget=null;document.querySelectorAll('#targets .choice').forEach(b=>b.onclick=()=>{document.querySelectorAll('#targets .choice').forEach(x=>x.classList.remove('selected'));b.classList.add('selected');freeTarget=b.dataset.k;document.getElementById('freeArea').classList.remove('hidden');document.getElementById('freeGarden').innerHTML=gardenHTML(freeTarget);bindProgram(freeTarget,null,'Υπέροχα! Έφτιαξες μόνος σου ένα πρόγραμμα για την πασχαλίτσα.')})}
+function bindFinish(){document.querySelectorAll('#self .choice').forEach(b=>b.onclick=()=>{document.querySelectorAll('#self .choice').forEach(x=>x.classList.remove('selected'));b.classList.add('selected');selected=b.dataset.id});document.getElementById('finish').onclick=()=>{if(!selected){showFeedback(false,'Διάλεξε ένα πρόσωπο.');return}document.getElementById('meterFill').style.width=selected==='again'?'45%':selected==='good'?'75%':'100%';showFeedback(true,'Μπράβο! Ολοκλήρωσες το Μάθημα 9!');completed.add(step);updatePath()};document.getElementById('restart').onclick=()=>{step=0;completed.clear();selected=null;render()}}
+function render(){program=[];running=false;updatePath();panel.innerHTML=[renderIntro,renderBlue,renderRedViaYellow,renderFree,renderFinish][step]();bindHelp();if(step===0)bindIntro();if(step===1)bindProgram('2,3',null,'Μπράβο! Η πασχαλίτσα έφτασε στη μαργαρίτα στο κέντρο.');if(step===2)bindProgram('0,3','1,0','Μπράβο! Πέρασες από τη μαργαρίτα στην αριστερή πλευρά και έφτασες στο τριαντάφυλλο στην επάνω σειρά.');if(step===3)bindFree();if(step===4)bindFinish()}
+document.getElementById('closeHelp').onclick=()=>modal.classList.remove('open');document.getElementById('speakHelp').onclick=()=>speak(helpText.textContent);modal.onclick=e=>{if(e.target===modal)modal.classList.remove('open')};render();
+})();
+</script>
+
+<footer class="nk-license" aria-label="Πληροφορίες δημιουργού και άδειας χρήσης">
+  <div><strong>Created by Nikos Kalakos · © 2026</strong></div>
+  <div>Original educational content and simulation design licensed under <a class="cc-badge" href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank" rel="license noopener noreferrer">CC BY-NC 4.0</a>.</div>
+  <div>Source code © 2026 Nikos Kalakos.</div>
+  <div>Third-party and textbook materials remain subject to the rights and licences of their respective copyright holders.</div>
+</footer>
+</body>
+</html>

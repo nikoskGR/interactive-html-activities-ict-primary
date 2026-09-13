@@ -1,0 +1,346 @@
+<!--
+ICT Educational Simulation
+Created by Nikos Kalakos
+Copyright © 2026 Nikos Kalakos
+
+Original educational content and simulation design licensed under CC BY-NC 4.0.
+Source code © 2026 Nikos Kalakos.
+Third-party and textbook materials remain subject to the rights and licences of their respective copyright holders.
+-->
+<!doctype html>
+<html lang="el">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="author" content="Nikos Kalakos">
+<meta name="copyright" content="© 2026 Nikos Kalakos">
+<meta name="license" content="Original educational content and simulation design: CC BY-NC 4.0; source code © 2026 Nikos Kalakos; third-party and textbook materials excluded.">
+<title>Μάθημα 16 - Αποθήκευση και αρχεία | AthenaOS</title>
+<style>
+:root{--ink:#17324d;--blue:#3268d5;--unit:#D19E11;--unit-dark:#9B7300;--line:#c9d8e7;--ok:#15845b;--bad:#cf5f70;--shadow:0 10px 28px rgba(23,50,77,.12);--athena:#4b4f92;--athena-2:#6e72bf;--athena-dark:#30345f;--athena-bg:#eef1ff;--athena-window:#fbfcff;--athena-bar:#292d51;--athena-dock:rgba(35,39,70,.90);--athena-accent:#7f84d8}
+*{box-sizing:border-box}body{margin:0;font-family:Arial,"Noto Sans",sans-serif;background:#f7fafc;color:var(--ink)}button,input{font:inherit}button{cursor:pointer}.app{max-width:1160px;margin:auto;padding:16px}.top{display:grid;grid-template-columns:1fr auto;gap:12px;align-items:center;background:#fff;border:3px solid #eadfbf;border-radius:24px;padding:14px 18px;box-shadow:var(--shadow)}.top h1{margin:0;font-size:clamp(26px,4vw,42px)}.subtitle{margin:5px 0 0;font-size:clamp(15px,2vw,20px)}.athena-brand-mini{display:flex;align-items:center;gap:10px;font-weight:900;color:var(--athena-dark)}
+.owl-logo{width:74px;height:66px;display:grid;place-items:center;flex:0 0 auto}.owl-logo svg{width:74px;height:66px;display:block;filter:drop-shadow(0 3px 4px rgba(30,34,75,.18))}
+.path{display:flex;gap:10px;justify-content:center;align-items:center;flex-wrap:wrap;margin:16px 0}.dot{width:44px;height:44px;border-radius:50%;border:3px solid #a9b9ca;background:#fff;color:#5f7791;display:grid;place-items:center;font-weight:900;font-size:20px}.dot.active{background:var(--blue);border-color:var(--blue);color:#fff;transform:scale(1.12)}.dot.done{background:var(--unit);border-color:var(--unit-dark);color:#fff}.panel{background:#fff;border:3px solid #eadfbf;border-radius:28px;padding:clamp(15px,3vw,28px);box-shadow:var(--shadow);min-height:690px}.step-head{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap}.step-head h2{margin:0;font-size:clamp(25px,4vw,38px)}.help{background:#fff7d6;color:#624700;border:3px solid #e0bd45;border-radius:16px;padding:11px 18px;font-weight:900}.instruction{max-width:940px;margin:16px auto;text-align:center;font-size:clamp(19px,2.5vw,25px);font-weight:800;line-height:1.4}.feedback{display:none;max-width:820px;min-height:56px;margin:16px auto 0;border-radius:18px;padding:13px 18px;text-align:center;font-weight:900;font-size:20px}.feedback.good{display:block;background:#dcf8ec;color:#07583c;border:2px solid #75d6ae}.feedback.bad{display:block;background:#fff2d8;color:#754500;border:2px solid #e2b85f}.actions{display:flex;justify-content:center;gap:12px;flex-wrap:wrap;margin-top:18px}.btn{border:0;border-radius:16px;padding:14px 24px;font-weight:900;font-size:19px}.primary{background:var(--blue);color:#fff}.secondary{background:#eef3f8;color:var(--ink);border:2px solid #b9cbe0}
+.os{max-width:1000px;height:540px;margin:15px auto;border:6px solid #22283d;border-radius:26px;overflow:hidden;position:relative;background:radial-gradient(circle at 18% 20%,rgba(255,255,255,.75),transparent 19%),linear-gradient(135deg,#dce5ff,#f5e7ff 62%,#e7f7ff);box-shadow:0 12px 24px rgba(0,0,0,.16)}.os-topbar{height:38px;background:var(--athena-bar);color:#fff;display:flex;align-items:center;justify-content:space-between;padding:0 14px;font-size:14px;font-weight:800;position:relative;z-index:30}.os-brand{display:flex;align-items:center;gap:8px}.os-owl{width:31px;height:29px;display:grid;place-items:center;flex:0 0 auto}.os-owl svg{width:31px;height:29px;display:block}
+.os-status{display:flex;gap:10px;align-items:center}.desktop{position:absolute;left:0;right:0;top:38px;bottom:66px;padding:22px}.desktop-icons{display:grid;grid-template-columns:repeat(2,110px);gap:18px;width:max-content}.desktop-icon{border:0;background:transparent;color:var(--ink);min-height:98px;border-radius:14px;display:grid;place-items:center;text-align:center;font-weight:900;padding:7px}.desktop-icon:hover,.desktop-icon.focused{background:rgba(255,255,255,.55)}.app-symbol{font-size:49px;line-height:1}.app-label{font-size:14px;margin-top:4px}.dock{position:absolute;bottom:10px;left:50%;transform:translateX(-50%);height:52px;padding:6px 12px;border-radius:18px;background:var(--athena-dock);display:flex;gap:9px;align-items:center;z-index:25;box-shadow:0 4px 12px rgba(0,0,0,.18)}.dock button{width:40px;height:40px;border:0;border-radius:11px;background:rgba(255,255,255,.12);display:grid;place-items:center;font-size:24px}.window{position:absolute;left:90px;right:90px;top:72px;bottom:82px;border:3px solid #9aa6c4;border-radius:15px;background:var(--athena-window);box-shadow:0 12px 25px rgba(0,0,0,.22);overflow:hidden;z-index:20}.window.hidden{display:none}.win-titlebar{height:42px;background:#eef1f8;border-bottom:2px solid #cbd3e5;display:flex;align-items:center;justify-content:space-between;padding:0 11px 0 14px;font-weight:900;color:#2e395c}.win-title-left{display:flex;align-items:center;gap:8px}.win-controls{display:flex;gap:7px}.win-btn{width:27px;height:27px;border-radius:50%;border:0;background:#dde3ef;color:#34405d;display:grid;place-items:center;font-weight:900}.win-btn.close{background:#f4d5d5;color:#8c2929}.win-body{height:calc(100% - 42px);position:relative;background:#fff}.file-window-layout{display:grid;grid-template-columns:160px 1fr;height:100%}.sidebar{background:#f2f4fb;border-right:2px solid #d9dfeb;padding:12px 9px}.side-item{border:0;background:transparent;width:100%;text-align:left;padding:9px 10px;border-radius:9px;font-weight:800;color:#33405e}.side-item.active{background:#e3e5fb;color:#343876}.file-main{padding:14px;overflow:auto}.file-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:13px}.file-icon{min-height:110px;border:2px solid transparent;border-radius:13px;background:#fff;display:grid;place-items:center;text-align:center;padding:7px;font-weight:800;position:relative}.file-icon:hover,.file-icon.selected{background:#f0f2ff;border-color:#b7bce9}.file-icon .big{font-size:49px;line-height:1}.file-icon small{font-size:13px}.folder-svg{width:56px;height:43px;position:relative;background:#f4bd25;border-radius:6px 6px 8px 8px;box-shadow:inset 0 -5px 0 rgba(173,117,0,.16)}.folder-svg:before{content:'';position:absolute;left:5px;top:-9px;width:28px;height:13px;border-radius:6px 7px 0 0;background:#e9a70b}.dialog{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:430px;border:3px solid #9faac4;border-radius:16px;background:#fff;box-shadow:0 15px 28px rgba(0,0,0,.28);z-index:40;overflow:hidden}.dialog.hidden{display:none}.dialog-title{padding:11px 14px;background:#edf0f8;font-weight:900;border-bottom:2px solid #d5dceb}.dialog-body{padding:18px;text-align:center}.dialog-actions{display:flex;justify-content:center;gap:10px;padding:0 18px 18px}.os-btn{border:0;border-radius:11px;padding:10px 16px;font-weight:900}.os-btn.primary{background:var(--athena);color:#fff}.os-btn.danger{background:#f7dddd;color:#922d2d}
+.paint-body{display:grid;grid-template-columns:80px 1fr;height:100%}.paint-tools{background:#f1f3fa;border-right:2px solid #dce1ec;padding:10px;display:grid;align-content:start;gap:9px}.paint-tools button{width:54px;height:54px;border:2px solid #c9d3e1;border-radius:12px;background:#fff;font-size:28px}.canvas{margin:15px;border:3px solid #cbd6e2;border-radius:10px;background:linear-gradient(#bce5ff 0 60%,#56b4e9 60% 100%);position:relative;overflow:hidden}.canvas .sun-art{position:absolute;right:45px;top:36px;font-size:63px;display:none}.canvas .cloud-art{position:absolute;left:70px;top:60px;font-size:54px;display:none}.canvas .boat-art{position:absolute;left:48%;bottom:35px;font-size:57px;display:none}.canvas .show{display:block}.done-paint{position:absolute;right:12px;bottom:12px;border:0;border-radius:10px;padding:9px 14px;background:var(--athena);color:#fff;font-weight:900}
+.naming-layout{position:relative;height:100%;display:grid;grid-template-columns:1fr 1fr;gap:90px;padding:24px;background:#fff}.name-col{display:grid;gap:14px;align-content:center}.name-card{min-height:91px;border:2px solid #d1dbe7;border-radius:13px;background:#fff;display:grid;place-items:center;font-weight:900;position:relative}.name-card .big{font-size:44px}.port{position:absolute;top:50%;transform:translateY(-50%);width:22px;height:22px;border-radius:50%;background:#fff;border:4px solid var(--blue);z-index:8;touch-action:none;cursor:crosshair}.left .port{right:-13px}.right .port{left:-13px}.port.done{background:var(--unit);border-color:var(--unit-dark)}.line-svg{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:2}.line-svg line{stroke:#497fbd;stroke-width:6;stroke-linecap:round}.line-svg line.preview{stroke:#8194a8;stroke-width:4;stroke-dasharray:9 7}.drop-highlight{outline:5px solid rgba(226,167,20,.35)}.drag-file{cursor:grab}.drag-file.dragging{opacity:.45}.folder-content{min-height:62px;border-top:2px dashed #e0e5ec;margin-top:7px;padding-top:6px;display:flex;gap:6px;flex-wrap:wrap;justify-content:center}.mini-chip{padding:5px 7px;border:1px solid #cbd6e2;border-radius:8px;background:#fff;font-size:12px;font-weight:800}.preview-layout{
+  display:grid;
+  grid-template-columns:minmax(0,1fr) 250px;
+  gap:16px;
+  height:100%;
+  padding:14px;
+}
+.preview-files{
+  min-width:0;
+  overflow:auto;
+}
+.preview-files .file-grid{
+  grid-template-columns:repeat(2,minmax(130px,1fr));
+  gap:16px;
+  align-content:start;
+}
+.preview-files .file-icon{
+  min-height:135px;
+}
+.preview-panel{
+  position:static;
+  width:auto;
+  border-left:2px solid #e0e5ec;
+  padding:0 0 0 16px;
+  background:#fafbfe;
+  min-width:0;
+}
+.preview-box{
+  min-height:220px;
+  border:2px solid #ccd7e3;
+  border-radius:12px;
+  background:#fff;
+  display:grid;
+  place-items:center;
+  text-align:center;
+  padding:12px;
+}
+.preview-box .huge{font-size:72px}
+.preview-progress{
+  margin-top:12px;
+  padding:9px 10px;
+  border-radius:12px;
+  background:#eef2f7;
+  text-align:center;
+  font-weight:900;
+  font-size:14px;
+}
+
+.stars{font-size:58px;text-align:center;letter-spacing:10px;margin:20px}.final-summary{max-width:820px;margin:15px auto 22px;padding:20px;border:4px solid var(--unit);border-radius:24px;background:#fff9e8;text-align:center;font-size:23px;font-weight:800;line-height:1.4}.self{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;max-width:760px;margin:auto}.self button{min-height:135px;border:3px solid var(--line);border-radius:22px;background:#fff;font-size:64px}.self button.selected{border-color:var(--blue);background:#edf4ff}.meter{height:18px;background:#e8eef5;border-radius:20px;overflow:hidden;margin:12px auto 0;max-width:1060px}.meter span{display:block;height:100%;background:var(--unit);width:0;transition:.4s}.modal{position:fixed;inset:0;background:rgba(15,35,55,.55);display:none;align-items:center;justify-content:center;padding:18px;z-index:100}.modal.open{display:flex}.modal-box{max-width:680px;background:#fff;border:4px solid #f1cb52;border-radius:26px;padding:24px;box-shadow:var(--shadow);text-align:center}.modal-box h3{font-size:30px;margin:0 0 10px}.modal-box p{font-size:22px;line-height:1.45}
+@media(max-width:800px){.preview-layout{grid-template-columns:1fr}.preview-panel{border-left:0;border-top:2px solid #e0e5ec;padding:14px 0 0}.preview-files .file-grid{grid-template-columns:repeat(2,1fr)}.os{height:600px}.window{left:18px;right:18px}.file-grid{grid-template-columns:repeat(2,1fr)}.naming-layout{gap:45px;padding:15px}.self{grid-template-columns:1fr}.top{grid-template-columns:1fr}.athena-brand-mini{display:none}}
+
+/* ===== Lesson 16 specific ===== */
+.paint16-layout{display:grid;grid-template-columns:82px 1fr;height:100%}
+.paint16-tools{background:#f1f3fa;border-right:2px solid #dce1ec;padding:10px;display:grid;align-content:start;gap:9px}
+.paint16-tools button{width:56px;height:56px;border:2px solid #c9d3e1;border-radius:12px;background:#fff;font-size:28px}
+.paint16-canvas{margin:14px;border:3px solid #cbd6e2;border-radius:10px;background:linear-gradient(#ccecff 0 55%,#4caee8 55% 100%);position:relative;overflow:hidden}
+.paint16-canvas .sun{position:absolute;right:55px;top:38px;font-size:66px}
+.paint16-canvas .cloud1{position:absolute;left:70px;top:50px;font-size:52px}
+.paint16-canvas .cloud2{position:absolute;left:210px;top:82px;font-size:42px}
+.paint16-canvas .boat{position:absolute;left:50%;bottom:38px;transform:translateX(-50%);font-size:58px}
+.paint16-canvas .shine{position:absolute;left:50%;top:52%;transform:translate(-50%,-50%);font-size:40px}
+.menu-row{display:flex;gap:4px;padding:7px 10px;background:#f7f8fc;border-bottom:2px solid #dfe4ed}
+.menu-button{border:0;background:transparent;padding:7px 12px;border-radius:8px;font-weight:900;color:#33405e}
+.menu-button.open{background:#e7e9f8}
+.file-menu{
+  position:absolute;left:10px;top:82px;width:220px;background:#fff;border:2px solid #b7c2d5;border-radius:10px;
+  box-shadow:0 10px 22px rgba(0,0,0,.18);z-index:35;padding:7px
+}
+.file-menu.hidden{display:none}
+.menu-item{width:100%;border:0;background:#fff;text-align:left;padding:10px 12px;border-radius:8px;font-weight:800;display:flex;align-items:center;gap:10px}
+.menu-item:hover,.menu-item.focused{background:#eef0ff}
+
+/* AthenaOS Save icon — refined classic 3.5-inch floppy disk */
+.save-symbol{
+  width:38px;
+  height:38px;
+  display:inline-block;
+  position:relative;
+  vertical-align:middle;
+  box-sizing:border-box;
+  border:3px solid #29245f;
+  border-radius:4px 4px 7px 7px;
+  background:linear-gradient(145deg,#7666dc 0%,#5b49c4 72%,#4939a8 100%);
+  box-shadow:
+    inset 2px 2px 0 rgba(255,255,255,.20),
+    inset -4px -4px 0 rgba(35,28,94,.20),
+    0 1px 1px rgba(25,24,65,.14);
+}
+
+/* characteristic upper metal/shutter area */
+.save-symbol:before{
+  content:'';
+  position:absolute;
+  left:6px;
+  top:-3px;
+  width:23px;
+  height:15px;
+  box-sizing:border-box;
+  background:linear-gradient(90deg,#dce2f5 0 69%,#aeb7d5 69% 100%);
+  border:3px solid #29245f;
+  border-top:0;
+  border-radius:0 0 3px 3px;
+}
+
+/* recessed lower label area */
+.save-symbol:after{
+  content:'';
+  position:absolute;
+  left:6px;
+  bottom:3px;
+  width:23px;
+  height:14px;
+  box-sizing:border-box;
+  background:
+    linear-gradient(#ffffff 0 48%,#dfe4f4 48% 57%,#ffffff 57% 100%);
+  border:3px solid #29245f;
+  border-radius:3px 3px 2px 2px;
+}
+
+/* small shutter detail in AthenaOS gold */
+.save-symbol > i{
+  position:absolute;
+  right:5px;
+  top:2px;
+  width:5px;
+  height:9px;
+  box-sizing:border-box;
+  border:1px solid #29245f;
+  border-radius:1px;
+  background:#ffc642;
+  z-index:2;
+}
+.save-dialog{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:500px;border:3px solid #9faac4;border-radius:16px;background:#fff;box-shadow:0 15px 28px rgba(0,0,0,.28);z-index:45;overflow:hidden}
+.save-dialog.hidden{display:none}
+.save-dialog .dialog-title{padding:11px 14px;background:#edf0f8;font-weight:900;border-bottom:2px solid #d5dceb}
+.save-form{padding:18px;display:grid;grid-template-columns:150px 1fr;gap:13px;align-items:center}
+.save-form label{font-weight:900}
+.save-form input{width:100%;padding:10px 12px;border:3px solid #c7d2df;border-radius:10px;font-size:18px;font-weight:800}
+.save-form select{width:100%;padding:10px;border:3px solid #c7d2df;border-radius:10px;font-size:17px}
+.save-location{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;grid-column:1/-1;margin-top:2px}
+.loc{border:3px solid #cbd7e3;background:#fff;border-radius:13px;padding:10px;text-align:center;font-weight:900}
+.loc.selected{border-color:var(--athena-accent);background:#eef0ff}
+.saved-toast{position:absolute;right:20px;top:54px;background:#fff;border:3px solid #b7c6d8;border-radius:14px;padding:11px 15px;box-shadow:0 8px 18px rgba(0,0,0,.15);font-weight:900;z-index:50;display:none}
+.saved-toast.show{display:block}
+.icon-choice-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:18px;max-width:850px;margin:20px auto}
+.icon-choice{min-height:145px;border:3px solid var(--line);border-radius:20px;background:#fff;display:grid;place-items:center;font-size:55px}
+.icon-choice.correct{border-color:var(--ok);background:#e8fff5}
+.icon-choice.wrong{border-color:var(--bad);background:#fff0f3}
+.generalize-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;max-width:900px;margin:auto}
+.general-card{border:3px solid var(--line);border-radius:22px;background:#fff;padding:18px;min-height:250px;text-align:center}
+.general-card .appbig{font-size:70px;margin:15px}
+.general-card .savearea{display:flex;align-items:center;justify-content:center;gap:12px;margin-top:18px;font-weight:900;font-size:20px}
+.reopen-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.reopen-file{min-height:135px;border:2px solid transparent;border-radius:14px;background:#fff;display:grid;place-items:center;text-align:center;font-weight:900}
+.reopen-file:hover,.reopen-file.selected{background:#f0f2ff;border-color:#b7bce9}
+.reopen-file .big{font-size:55px}
+@media(max-width:800px){.icon-choice-grid,.generalize-grid,.reopen-grid{grid-template-columns:1fr 1fr}.save-dialog{width:90%}}
+</style>
+
+<style id="nk-license-style">
+.nk-license{max-width:1100px;margin:14px auto 24px;padding:10px 16px;text-align:center;font:13px/1.45 Arial,"Noto Sans",sans-serif;color:#4e657c}
+.nk-license a{color:inherit;text-decoration:underline;text-underline-offset:2px}
+.nk-license .cc-badge{display:inline-block;margin:0 4px;padding:2px 7px;border:1px solid #8aa0b8;border-radius:6px;background:#fff;font-weight:700;white-space:nowrap}
+</style>
+</head>
+<body>
+<main class="app">
+<header class="top"><div><h1>Αποθήκευση και αρχεία</h1><p class="subtitle">Μάθημα 16</p></div><div class="athena-brand-mini"><div class="owl-logo" aria-label="Λογότυπο AthenaOS">
+<svg viewBox="0 0 100 90" role="img" aria-label="Κουκουβάγια AthenaOS">
+  <path d="M14 28 7 6 31 18Q50 6 69 18L93 6 86 28Q94 39 91 55Q87 75 69 83Q50 91 31 83Q13 75 9 55Q6 39 14 28Z"
+        fill="#342C7A" stroke="#28245E" stroke-width="4" stroke-linejoin="round"/>
+  <path d="M10 10Q26 17 39 30L24 27Q14 24 10 10Z" fill="#5B43D4"/>
+  <path d="M90 10Q74 17 61 30L76 27Q86 24 90 10Z" fill="#5B43D4"/>
+  <path d="M17 32Q28 20 44 29Q50 33 50 43Q50 33 56 29Q72 20 83 32Q88 42 81 56Q73 69 58 65Q52 63 50 57Q48 63 42 65Q27 69 19 56Q12 42 17 32Z"
+        fill="#A59AF6"/>
+  <circle cx="33" cy="43" r="14" fill="#FFFFFF"/>
+  <circle cx="67" cy="43" r="14" fill="#FFFFFF"/>
+  <circle cx="33" cy="43" r="7" fill="#FFC642"/>
+  <circle cx="67" cy="43" r="7" fill="#FFC642"/>
+  <circle cx="33" cy="43" r="4.5" fill="#1E1E2E"/>
+  <circle cx="67" cy="43" r="4.5" fill="#1E1E2E"/>
+  <circle cx="31" cy="40" r="1.6" fill="#FFFFFF"/>
+  <circle cx="65" cy="40" r="1.6" fill="#FFFFFF"/>
+  <path d="M43 55 50 68 57 55Z" fill="#FFC642"/>
+  <path d="M40 20 50 8 60 20M42 20H58" fill="none" stroke="#FFFFFF" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>
+</div><span>AthenaOS</span></div></header>
+<nav class="path" id="path"></nav>
+<section class="panel" id="panel"></section>
+</main>
+<div class="modal" id="helpModal">
+  <div class="modal-box">
+    <h3>Βοήθεια</h3><p id="helpText"></p>
+    <div class="actions">
+      <button class="btn secondary" id="speakHelp">🔊 Άκουσε</button>
+      <button class="btn primary" id="closeHelp">Το κατάλαβα</button>
+    </div>
+  </div>
+</div>
+<script>
+(()=>{'use strict';
+const panel=document.getElementById('panel'),path=document.getElementById('path'),modal=document.getElementById('helpModal'),helpText=document.getElementById('helpText');
+let step=0,completed=new Set(),selfChoice=null,saved=false;
+const total=6;
+const helps=[
+'Στο AthenaOS άνοιξε τη Ζωγραφική με διπλό κλικ. Η ζωγραφιά με την ανατολή και τη θάλασσα είναι έτοιμη να αποθηκευτεί.',
+'Άνοιξε το μενού «Αρχείο» και διάλεξε «Αποθήκευση». Αυτή είναι η διαδρομή που χρησιμοποιούμε για να κρατήσουμε τη δουλειά μας.',
+'Δώσε στο αρχείο ένα όνομα που να θυμίζει τη ζωγραφιά. Γράψε «ΘΑΛΑΣΣΑ» και αποθήκευσέ το στις Ζωγραφιές.',
+'Βρες το συνηθισμένο εικονίδιο της Αποθήκευσης. Το ίδιο σύμβολο εμφανίζεται σε πολλές εφαρμογές.',
+'Η Αποθήκευση δεν υπάρχει μόνο στη Ζωγραφική. Πάτησε την Αποθήκευση και στην εφαρμογή Κείμενο και μετά άνοιξε το αποθηκευμένο αρχείο από τα Αρχεία.',
+'Διάλεξε το πρόσωπο που δείχνει πόσο καλά έμαθες να αποθηκεύεις τη δουλειά σου.'
+];
+function speak(t){if(!('speechSynthesis'in window))return;speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(t);u.lang='el-GR';u.rate=.86;speechSynthesis.speak(u)}
+function head(t){return `<div class="step-head"><h2>${t}</h2><button class="help" id="help">❔ Βοήθεια</button></div>`}
+function feedback(){return '<div class="feedback" id="feedback"></div>'}
+function fb(ok,t){const f=document.getElementById('feedback');if(!f)return;f.className='feedback '+(ok?'good':'bad');f.textContent=t;speak(t)}
+function complete(delay=850){completed.add(step);updatePath();setTimeout(()=>{if(step<total-1){step++;render()}},delay)}
+function updatePath(){path.innerHTML='';for(let i=0;i<total;i++){const d=document.createElement('div');d.className='dot'+(i===step?' active':'')+(completed.has(i)?' done':'');d.textContent=completed.has(i)?'✓':i+1;path.appendChild(d)}}
+function bindHelp(){const b=document.getElementById('help');if(b)b.onclick=()=>{helpText.textContent=helps[step];modal.classList.add('open')}}
+document.getElementById('closeHelp').onclick=()=>modal.classList.remove('open');
+document.getElementById('speakHelp').onclick=()=>speak(helpText.textContent);
+modal.onclick=e=>{if(e.target===modal)modal.classList.remove('open')};
+
+function osTop(){return `<div class="os-topbar"><div class="os-brand"><span class="os-owl"><svg viewBox="0 0 100 90"><path d="M14 28 7 6 31 18Q50 6 69 18L93 6 86 28Q94 39 91 55Q87 75 69 83Q50 91 31 83Q13 75 9 55Q6 39 14 28Z" fill="#5B43D4" stroke="#D8DBFF" stroke-width="5"/><circle cx="33" cy="43" r="14" fill="white"/><circle cx="67" cy="43" r="14" fill="white"/><circle cx="33" cy="43" r="5" fill="#1E1E2E"/><circle cx="67" cy="43" r="5" fill="#1E1E2E"/><path d="M44 55 50 66 56 55Z" fill="#FFC642"/><path d="M41 21 50 10 59 21M43 21H57" fill="none" stroke="white" stroke-width="5"/></svg></span><span>AthenaOS</span></div><div class="os-status"><span>⌁</span><span>🔊</span><span>10:30</span></div></div>`}
+function dock(){return `<div class="dock"><button>📁</button><button>🎨</button><button>📝</button><button>🎵</button></div>`}
+function desktopIcons(){return `<div class="desktop-icons"><button class="desktop-icon" data-app="paint"><span class="app-symbol">🎨</span><span class="app-label">Ζωγραφική</span></button><button class="desktop-icon" data-app="files"><span class="app-symbol">📁</span><span class="app-label">Αρχεία</span></button><button class="desktop-icon" data-app="text"><span class="app-symbol">📝</span><span class="app-label">Κείμενο</span></button><button class="desktop-icon"><span class="app-symbol">🎵</span><span class="app-label">Ήχοι</span></button></div>`}
+function shell(inner=''){return `<div class="os">${osTop()}<div class="desktop">${desktopIcons()}</div>${dock()}${inner}</div>`}
+function win(title,icon,body,cls=''){return `<div class="window ${cls}"><div class="win-titlebar"><div class="win-title-left"><span>${icon}</span><span>${title}</span></div><div class="win-controls"><button class="win-btn">—</button><button class="win-btn">□</button><button class="win-btn close">×</button></div></div><div class="win-body">${body}</div></div>`}
+
+function paintWindow(extra=''){
+ const body=`<div class="menu-row"><button class="menu-button" id="fileMenuBtn">Αρχείο</button><button class="menu-button">Επεξεργασία</button><button class="menu-button">Προβολή</button></div>
+ <div class="paint16-layout"><div class="paint16-tools"><button>✏️</button><button>🖌️</button><button>🧽</button></div>
+ <div class="paint16-canvas"><span class="sun">☀️</span><span class="cloud1">☁️</span><span class="cloud2">☁️</span><span class="shine">✨</span><span class="boat">⛵</span></div></div>${extra}`;
+ return win('Ζωγραφική','🎨',body);
+}
+
+/* 1 */
+function r1(){return `${head('1. Η ζωγραφιά είναι έτοιμη')}<p class="instruction">Κάνε <b>διπλό κλικ</b> στη «Ζωγραφική». Η ζωγραφιά με την ανατολή πάνω από τη θάλασσα θα ανοίξει στο AthenaOS.</p>${shell(paintWindow('', 'hidden').replace('class="window ','class="window hidden '))}${feedback()}`}
+function bind1(){
+ const icon=document.querySelector('[data-app="paint"]'),w=document.querySelector('.window');let n=0,t;
+ icon.onclick=()=>{n++;clearTimeout(t);t=setTimeout(()=>n=0,380);if(n===2){w.classList.remove('hidden');fb(true,'Η ζωγραφιά άνοιξε. Τώρα πρέπει να την αποθηκεύσουμε για να μην τη χάσουμε.');complete(1200);n=0}}
+}
+
+/* 2 */
+function r2(){
+ const menu=`<div class="file-menu hidden" id="fileMenu"><button class="menu-item">📄 Νέο</button><button class="menu-item">📂 Άνοιγμα</button><button class="menu-item" id="saveItem"><span class="save-symbol"><i></i></span> Αποθήκευση</button><button class="menu-item">🖨️ Εκτύπωση</button></div>`;
+ return `${head('2. Αρχείο → Αποθήκευση')}<p class="instruction">Πάτησε το μενού <b>Αρχείο</b> και μετά την επιλογή <b>Αποθήκευση</b>.</p>${shell(paintWindow(menu))}${feedback()}`;
+}
+function bind2(){
+ const btn=document.getElementById('fileMenuBtn'),menu=document.getElementById('fileMenu');
+ btn.onclick=()=>{menu.classList.toggle('hidden');btn.classList.toggle('open')};
+ document.getElementById('saveItem').onclick=()=>{fb(true,'Σωστά! Η Αποθήκευση κρατά τη δουλειά μας σε αρχείο.');complete()}
+}
+
+/* 3 */
+function r3(){
+ const dialog=`<div class="save-dialog" id="saveDialog"><div class="dialog-title">Αποθήκευση αρχείου</div><div class="save-form"><label>Όνομα αρχείου:</label><input id="filename" maxlength="18" placeholder="Γράψε όνομα"><label>Τύπος:</label><select><option>Εικόνα PNG</option></select><div class="save-location"><button class="loc" data-loc="docs">📁 Έγγραφα</button><button class="loc" data-loc="draw">📁 Ζωγραφιές</button><button class="loc" data-loc="desk">🖥️ Επιφάνεια</button></div></div><div class="dialog-actions"><button class="os-btn neutral">Άκυρο</button><button class="os-btn primary" id="saveNow">Αποθήκευση</button></div></div>`;
+ return `${head('3. Δώσε όνομα στο αρχείο')}<p class="instruction">Γράψε <b>ΘΑΛΑΣΣΑ</b>, διάλεξε τον φάκελο <b>Ζωγραφιές</b> και πάτησε «Αποθήκευση».</p>${shell(paintWindow(dialog))}${feedback()}`;
+}
+function bind3(){
+ let loc=null;
+ document.querySelectorAll('.loc').forEach(b=>b.onclick=()=>{document.querySelectorAll('.loc').forEach(x=>x.classList.remove('selected'));b.classList.add('selected');loc=b.dataset.loc});
+ document.getElementById('saveNow').onclick=()=>{
+   const name=document.getElementById('filename').value.trim().toUpperCase();
+   if(name!=='ΘΑΛΑΣΣΑ'){fb(false,'Το όνομα πρέπει να είναι ΘΑΛΑΣΣΑ.');return}
+   if(loc!=='draw'){fb(false,'Διάλεξε τον φάκελο Ζωγραφιές.');return}
+   saved=true;fb(true,'Αποθηκεύτηκε! Το όνομα βοηθά να θυμόμαστε τι περιέχει το αρχείο.');complete()
+ }
+}
+
+/* 4 */
+function r4(){return `${head('4. Το εικονίδιο της Αποθήκευσης')}<p class="instruction">Πολύ συχνά η Αποθήκευση έχει το ίδιο εικονίδιο. Πάτησε το σωστό.</p><div class="icon-choice-grid"><button class="icon-choice" data-id="print">🖨️</button><button class="icon-choice" data-id="file">📄</button><button class="icon-choice" data-id="save"><span class="save-symbol" style="transform:scale(1.6)"><i></i></span></button><button class="icon-choice" data-id="folder">📁</button></div>${feedback()}`}
+function bind4(){document.querySelectorAll('.icon-choice').forEach(b=>b.onclick=()=>{if(b.dataset.id==='save'){b.classList.add('correct');fb(true,'Σωστά! Αυτό είναι το συνηθισμένο εικονίδιο της Αποθήκευσης.');complete()}else{b.classList.add('wrong');fb(false,'Αυτό είναι άλλο εικονίδιο. Δοκίμασε ξανά.')}})}
+
+/* 5 */
+function r5(){
+ const textBody=`<div class="app-toolbar"><button class="tool">📄 Νέο</button><button class="tool" id="textSave"><span class="save-symbol" style="transform:scale(.75)"><i></i></span> Αποθήκευση</button></div><div style="padding:28px;font-size:24px;font-weight:800;line-height:1.5"><div style="font-size:15px;color:#68748a;margin-bottom:10px">Η ιστορία μου</div>Η θάλασσα είναι όμορφη.</div>`;
+ const textW=win('Κείμενο','📝',textBody);
+ return `${head('5. Η Αποθήκευση υπάρχει και σε άλλες εφαρμογές')}<p class="instruction">Πάτησε την Αποθήκευση στην εφαρμογή <b>Κείμενο</b>. Μετά θα ανοίξουμε τα «Αρχεία» και θα ξαναβρούμε το κείμενο που αποθηκεύσαμε.</p>${shell(textW)}${feedback()}`;
+}
+function bind5(){
+ document.getElementById('textSave').onclick=()=>{
+   fb(true,'Μπράβο! Το κείμενο «Η ιστορία μου» αποθηκεύτηκε. Τώρα θα το βρούμε στα Αρχεία.');
+   setTimeout(()=>showFiles(),900);
+ };
+}
+function showFiles(){
+ const os=document.querySelector('.os');
+ os.querySelector('.window')?.remove();
+ const content=`<div class="file-window-layout"><aside class="sidebar"><button class="side-item">🏠 Αρχική</button><button class="side-item active">📁 Έγγραφα</button><button class="side-item">📁 Ζωγραφιές</button><button class="side-item">📁 Ήχοι</button></aside><main class="file-main"><div style="font-weight:900;margin-bottom:10px">Έγγραφα</div><div class="file-grid"><button class="file-icon" id="storyFile"><span class="big">📄</span><small>Η ιστορία μου</small></button><button class="file-icon"><span class="big">📄</span><small>Λίστα</small></button><button class="file-icon"><span class="big">📄</span><small>Σημείωση</small></button></div></main></div>`;
+ os.insertAdjacentHTML('beforeend',win('Αρχεία','📁',content));
+ let n=0,t;
+ document.getElementById('storyFile').onclick=()=>{n++;clearTimeout(t);t=setTimeout(()=>n=0,400);if(n===2){fb(true,'Το βρήκες! Το κείμενο «Η ιστορία μου» αποθηκεύτηκε και μπορούμε να το ανοίξουμε ξανά.');complete(1200);n=0}}
+}
+
+/* 6 */
+function r6(){return `${head('6. Τα κατάφερες!')}<div class="stars">⭐ ⭐ ⭐</div><div class="final-summary">Έμαθες ότι η Αποθήκευση κρατά τη δουλειά μας σε αρχείο, πώς χρησιμοποιούμε το μενού «Αρχείο → Αποθήκευση», πώς δίνουμε κατάλληλο όνομα σε ένα αρχείο και ότι πολλές εφαρμογές έχουν λειτουργία Αποθήκευσης.</div><p class="instruction">Πώς νιώθεις για όσα έμαθες;</p><div class="self"><button data-self="again">🙂</button><button data-self="good">😊</button><button data-self="great">🤩</button></div><div class="meter"><span id="meterFill"></span></div><div class="actions"><button class="btn primary" id="finish">Ολοκλήρωση</button><button class="btn secondary" id="restart">Από την αρχή</button></div>${feedback()}`}
+function bind6(){
+ document.querySelectorAll('.self button').forEach(b=>b.onclick=()=>{document.querySelectorAll('.self button').forEach(x=>x.classList.remove('selected'));b.classList.add('selected');selfChoice=b.dataset.self});
+ document.getElementById('restart').onclick=()=>{step=0;completed.clear();selfChoice=null;saved=false;render()};
+ document.getElementById('finish').onclick=()=>{if(!selfChoice){fb(false,'Διάλεξε ένα πρόσωπο.');return}document.getElementById('meterFill').style.width=selfChoice==='again'?'45%':selfChoice==='good'?'75%':'100%';completed.add(step);updatePath();fb(true,'Μπράβο! Ολοκλήρωσες το Μάθημα 16.')}
+}
+function render(){
+ updatePath();
+ const views=[r1,r2,r3,r4,r5,r6];
+ panel.innerHTML=views[step]();
+ bindHelp();
+ if(step===0)bind1();if(step===1)bind2();if(step===2)bind3();if(step===3)bind4();if(step===4)bind5();if(step===5)bind6();
+}
+render();
+})();</script>
+
+<footer class="nk-license" aria-label="Πληροφορίες δημιουργού και άδειας χρήσης">
+  <div><strong>Created by Nikos Kalakos · © 2026</strong></div>
+  <div>Original educational content and simulation design licensed under <a class="cc-badge" href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank" rel="license noopener noreferrer">CC BY-NC 4.0</a>.</div>
+  <div>Source code © 2026 Nikos Kalakos.</div>
+  <div>Third-party and textbook materials remain subject to the rights and licences of their respective copyright holders.</div>
+</footer>
+</body>
+</html>

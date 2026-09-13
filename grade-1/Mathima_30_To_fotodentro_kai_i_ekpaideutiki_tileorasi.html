@@ -1,0 +1,232 @@
+<!--
+ICT Educational Simulation
+Created by Nikos Kalakos
+Copyright © 2026 Nikos Kalakos
+
+Original educational content and simulation design licensed under CC BY-NC 4.0.
+Source code © 2026 Nikos Kalakos.
+Third-party and textbook materials remain subject to the rights and licences of their respective copyright holders.
+-->
+<!doctype html>
+<html lang="el">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="author" content="Nikos Kalakos">
+<meta name="copyright" content="© 2026 Nikos Kalakos">
+<meta name="license" content="Original educational content and simulation design: CC BY-NC 4.0; source code © 2026 Nikos Kalakos; third-party and textbook materials excluded.">
+<title>Μάθημα 30 - Mousa και Theatron</title>
+<style>
+:root{
+  --ink:#17324d;--red:#d93a2e;--red2:#a92b22;--soft:#fdecea;
+  --blue:#2476d4;--blue2:#145eaa;--line:#c9d8e7;--ok:#2f9b63;--bad:#d85c4b;
+  --yellow:#f3c84a;--purple:#7350b8;--teal:#178b8f;--shadow:0 10px 28px rgba(23,50,77,.12)
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:#f7fafc;color:var(--ink);font-family:Arial,"Noto Sans",sans-serif}
+button,input{font:inherit}button{cursor:pointer}
+button:focus-visible,input:focus-visible{outline:4px solid rgba(36,118,212,.3);outline-offset:3px}
+.app{max-width:1160px;margin:auto;padding:16px}
+.top{background:#fff;border:3px solid #f0c4bf;border-radius:24px;padding:14px 18px;display:flex;align-items:center;justify-content:space-between;box-shadow:var(--shadow)}
+.top h1{margin:0;font-size:clamp(28px,4vw,42px)}.top small{font-size:18px}
+.badge{width:68px;height:68px;border-radius:22px;background:var(--red);display:grid;place-items:center;color:#fff;font-size:31px;font-weight:900}
+.path{display:flex;gap:10px;justify-content:center;margin:16px 0;flex-wrap:wrap}
+.dot{width:44px;height:44px;border-radius:50%;border:3px solid #aab9c9;background:#fff;color:#5e7389;display:grid;place-items:center;font-weight:900;font-size:20px}
+.dot.active{background:var(--blue);border-color:var(--blue);color:#fff;transform:scale(1.1)}
+.dot.done{background:var(--red);border-color:var(--red2);color:#fff}
+.panel{min-height:720px;background:#fff;border:3px solid #f0c4bf;border-radius:28px;padding:24px;box-shadow:var(--shadow)}
+.step-head{display:flex;justify-content:space-between;gap:12px}.step-head h2{margin:0;font-size:clamp(26px,4vw,38px)}
+.help{background:#fff7d6;color:#624700;border:3px solid #dfbc44;border-radius:16px;padding:10px 17px;font-weight:900}
+.instruction{max-width:930px;margin:14px auto 18px;text-align:center;font-size:clamp(20px,2.4vw,25px);font-weight:900;line-height:1.35}
+.lesson-card{max-width:1000px;margin:auto;border:3px solid #f1c0ba;border-radius:28px;background:#fff;padding:22px;min-height:490px}
+.feedback{display:none;max-width:820px;margin:16px auto 0;padding:12px 18px;border-radius:17px;text-align:center;font-weight:900;font-size:20px}
+.feedback.good{display:block;background:#e5f8ef;color:#07583c;border:2px solid #79d4ae}
+.feedback.bad{display:block;background:#fff0e8;color:#713629;border:2px solid #e5a48d}
+.actions{display:flex;justify-content:center;gap:12px;margin-top:18px;flex-wrap:wrap}
+.btn{border:0;border-radius:15px;padding:13px 22px;font-weight:900;font-size:19px}
+.primary{background:var(--red);color:#fff}.secondary{background:#eef3f8;border:2px solid #b9cbe0;color:var(--ink)}
+.task-strip{max-width:850px;margin:0 auto 14px;border:3px solid var(--red);background:var(--soft);border-radius:17px;padding:12px 16px;text-align:center;font-weight:900;font-size:20px;line-height:1.4}
+.guide{max-width:860px;margin:0 auto 14px;padding:14px 18px;border:3px solid #dfbc44;background:#fff7d6;border-radius:16px;font-weight:900;line-height:1.5}
+
+/* service cards */
+.service-grid{display:grid;grid-template-columns:1fr 1fr;gap:22px;max-width:900px;margin:24px auto}
+.service-card{min-height:250px;border:4px solid var(--line);border-radius:28px;background:#fff;padding:20px;display:grid;place-items:center;text-align:center;transition:.15s;position:relative}
+.service-card:hover{transform:translateY(-2px);box-shadow:0 10px 24px rgba(23,50,77,.12)}
+.service-card.mousa{border-color:#9a7bd5;background:#faf7ff}.service-card.theatron{border-color:#6ab9bc;background:#f4ffff}
+.service-logo{width:92px;height:92px;border-radius:25px;display:grid;place-items:center;font-size:46px;color:#fff;font-weight:900;box-shadow:0 8px 18px rgba(23,50,77,.15)}
+.mousa .service-logo{background:linear-gradient(145deg,#7750bb,#aa6bd8)}.theatron .service-logo{background:linear-gradient(145deg,#16858b,#32a7a9)}
+.service-card h3{font-size:29px;margin:14px 0 8px}.service-card p{font-size:19px;font-weight:800;line-height:1.45;margin:0}
+.service-card.correct{box-shadow:0 0 0 6px rgba(47,155,99,.18);border-color:var(--ok)}
+.service-card.wrong{animation:shake .3s;border-color:var(--bad);background:#fff3ee}
+@keyframes shake{25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+
+/* Ploigos browser */
+.browser{max-width:930px;margin:auto;border:4px solid #485775;border-radius:20px;background:#fff;overflow:hidden;box-shadow:0 12px 28px rgba(23,50,77,.16)}
+.browser-top{background:#3e4a63;color:#fff;display:grid;grid-template-columns:auto 1fr auto;gap:10px;align-items:center;padding:9px 11px}
+.browser-nav{display:flex;gap:7px}.browser-nav button{width:38px;height:38px;border:0;border-radius:10px;background:#ffffff1c;color:#fff;font-weight:900;font-size:18px}.browser-nav button:hover{background:#ffffff2d}
+.address{height:38px;border-radius:11px;background:#fff;color:#56657c;display:flex;align-items:center;padding:0 13px;font-weight:800;font-size:14px;overflow:hidden;white-space:nowrap}
+.browser-brand{font-weight:900;white-space:nowrap}.browser-brand span{display:inline-grid;place-items:center;width:31px;height:31px;border-radius:10px;background:#fff;color:#3e4a63;margin-right:6px}
+.browser-body{min-height:470px;background:#f4f6fa}
+.bookmark-home{padding:28px}.bookmark-title{text-align:center;font-size:26px;font-weight:900;margin:6px 0 20px}.bookmark-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px;max-width:730px;margin:auto}
+.bookmark{border:3px solid #bdcad8;background:#fff;border-radius:22px;padding:20px;display:grid;grid-template-columns:70px 1fr;gap:16px;align-items:center;text-align:left;font-weight:900;font-size:23px}
+.bookmark:hover{border-color:var(--blue);background:#f6fbff}.bookmark .mini-logo{width:66px;height:66px;border-radius:19px;color:#fff;display:grid;place-items:center;font-size:34px}.bookmark[data-site="mousa"] .mini-logo{background:#7750bb}.bookmark[data-site="theatron"] .mini-logo{background:#178b8f}.bookmark small{display:block;color:#687b90;font-size:15px;margin-top:4px}
+
+/* platform shared */
+.site-head{padding:18px 20px;color:#fff;display:flex;align-items:center;justify-content:space-between;gap:12px}.site-head.mousa{background:linear-gradient(100deg,#6d48b0,#a867ce)}.site-head.theatron{background:linear-gradient(100deg,#147a80,#30a0a3)}
+.site-title{display:flex;align-items:center;gap:10px;font-size:28px;font-weight:900}.site-title .site-icon{width:46px;height:46px;border-radius:14px;background:#fff;color:#47506d;display:grid;place-items:center}.site-tag{font-size:14px;font-weight:900;background:#ffffff24;padding:8px 12px;border-radius:999px}
+.site-nav{display:flex;gap:8px;flex-wrap:wrap;padding:11px 15px;background:#fff;border-bottom:2px solid #dde4ed}.site-nav button{border:2px solid #c5d0dc;background:#fff;border-radius:12px;padding:9px 14px;font-weight:900;color:#334a64}.site-nav button.active{border-color:var(--blue);background:#eef7ff;color:#164f8b}
+.site-content{padding:19px;min-height:375px}
+.welcome{max-width:760px;margin:15px auto;text-align:center}.welcome h3{font-size:29px;margin:6px 0}.welcome p{font-size:19px;font-weight:800;line-height:1.45;color:#556a80}.category-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;max-width:830px;margin:20px auto}.category{min-height:110px;border:3px solid #d0d9e4;border-radius:18px;background:#fff;padding:12px;display:grid;place-items:center;text-align:center;font-weight:900;font-size:17px}.category .ico{font-size:36px}.category:hover{border-color:var(--blue);background:#f5faff}
+.content-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:13px;max-width:850px;margin:12px auto}.content-card{border:3px solid #d0d9e4;border-radius:18px;background:#fff;overflow:hidden;text-align:left;padding:0;min-height:210px}.content-card:hover{border-color:var(--blue);transform:translateY(-1px)}.content-thumb{height:115px;display:grid;place-items:center;font-size:54px;background:linear-gradient(145deg,#f0f4f8,#e2e9f1)}.content-card.mousa-item .content-thumb{background:linear-gradient(145deg,#f2eaff,#e8ddf7)}.content-card.video-item .content-thumb{background:linear-gradient(145deg,#e8fbfc,#d8f1f2)}.content-info{padding:12px}.content-info strong{display:block;font-size:17px;line-height:1.25}.content-info small{display:block;margin-top:5px;color:#6a7e92;font-weight:800}
+.open-page{max-width:740px;margin:10px auto;border:3px solid #cbd6e2;border-radius:22px;background:#fff;padding:20px;text-align:center}.open-icon{font-size:74px}.open-page h3{font-size:28px;margin:8px 0}.open-page p{font-size:18px;font-weight:800;color:#5a6d82;line-height:1.45}.open-content{border:0;border-radius:14px;padding:13px 24px;background:var(--blue);color:#fff;font-weight:900;font-size:20px}
+
+/* Theatron player */
+.player{max-width:760px;margin:12px auto;background:#182536;border:4px solid #0f1824;border-radius:20px;overflow:hidden;color:#fff}.screen{height:310px;position:relative;background:linear-gradient(#87d5f4 0 48%,#e8f4fb 48% 61%,#4ea8dc 61% 100%);display:grid;place-items:center;overflow:hidden}.playbtn{width:92px;height:92px;border:0;border-radius:50%;background:#ffffffec;color:#1c637e;font-size:45px;font-weight:900;box-shadow:0 8px 20px #0003}.water-scene{position:absolute;inset:0;display:none}.water-scene.run{display:block}.sun{position:absolute;width:64px;height:64px;border-radius:50%;background:#ffd24d;right:65px;top:35px;box-shadow:0 0 0 12px rgba(255,210,77,.2)}.cloud{position:absolute;left:80px;top:55px;width:120px;height:44px;background:#fff;border-radius:35px}.cloud:before,.cloud:after{content:"";position:absolute;background:#fff;border-radius:50%}.cloud:before{width:55px;height:55px;left:18px;top:-25px}.cloud:after{width:68px;height:68px;right:12px;top:-34px}.drop{position:absolute;width:12px;height:25px;background:#3d9ee5;border-radius:60% 60% 70% 70%;transform:rotate(12deg);animation:fall 1.35s linear infinite}.d1{left:105px;top:110px}.d2{left:145px;top:95px;animation-delay:.35s}.d3{left:180px;top:120px;animation-delay:.7s}.arrow-up{position:absolute;left:420px;bottom:52px;font-size:70px;color:#fff9;animation:floatup 1.6s ease-in-out infinite}.screen-caption{position:absolute;left:18px;right:18px;bottom:16px;background:#0c1823c9;border-radius:10px;padding:9px 12px;text-align:center;font-weight:900}.controls{height:50px;display:flex;align-items:center;gap:10px;padding:0 14px;background:#111b28}.progressline{flex:1;height:8px;border-radius:999px;background:#405166;overflow:hidden}.progressline span{display:block;width:0;height:100%;background:#fff;transition:width 3s linear}.progressline span.run{width:100%}@keyframes fall{0%{transform:translateY(0) rotate(12deg);opacity:1}100%{transform:translateY(120px) rotate(12deg);opacity:.2}}@keyframes floatup{50%{transform:translateY(-12px);opacity:.45}}
+
+/* scenarios */
+.scenario{max-width:820px;margin:16px auto;border:3px solid #cfd9e4;background:#f8fbfe;border-radius:22px;padding:20px;text-align:center}.scenario .bigicon{font-size:62px}.scenario p{font-size:22px;font-weight:900;line-height:1.4;margin:9px 0 18px}.choice-row{display:grid;grid-template-columns:1fr 1fr;gap:14px}.choice{border:4px solid #c8d5e1;border-radius:20px;background:#fff;padding:18px;font-size:22px;font-weight:900}.choice.mousa{color:#6743a7}.choice.theatron{color:#14797d}.choice:hover{border-color:var(--blue)}.choice.correct{border-color:var(--ok);background:#e9fff3}.choice.wrong{animation:shake .3s;border-color:var(--bad);background:#fff0e8}
+.case-count{text-align:center;font-weight:900;color:#596f87;margin-top:8px}
+
+/* total test */
+.mission-status{display:flex;justify-content:center;gap:12px;flex-wrap:wrap;margin:10px 0 15px}.mission-chip{padding:8px 13px;border:2px solid #c5d2df;border-radius:999px;background:#fff;font-weight:900}.mission-chip.done{border-color:var(--ok);background:#e9fff3;color:#07583c}.mission-chip.active{border-color:var(--red);background:var(--soft);color:#7b2d26}
+
+/* self assessment */
+.self-wrap{max-width:930px;margin:16px auto;overflow:auto}.self-table{min-width:760px;display:grid;grid-template-columns:minmax(320px,1.5fr) repeat(3,minmax(130px,1fr));border:3px solid #d3dde7;border-radius:20px;overflow:hidden}.self-cell,.self-goal,.self-head{padding:13px;border-right:1px solid #d3dde7;border-bottom:1px solid #d3dde7}.self-head{background:#fff6f4;text-align:center;font-weight:900}.self-goal{font-weight:900;background:#fff;line-height:1.35}.self-cell{background:#fff;border-top:0;border-left:0;text-align:center;font-size:31px}.self-cell button{width:100%;min-height:74px;border:3px solid transparent;border-radius:14px;background:#fff;font-size:35px}.self-cell button span{display:block;font-size:12px;font-weight:900;color:#5e7288}.self-cell button.sel{border-color:var(--red);background:var(--soft)}
+.stars{text-align:center;font-size:60px;margin:16px}.final-summary{max-width:820px;margin:16px auto;padding:20px;border:4px solid var(--red);border-radius:26px;background:var(--soft);text-align:center;font-size:21px;font-weight:900;line-height:1.45}
+
+.modal{position:fixed;inset:0;background:rgba(15,35,55,.55);display:none;align-items:center;justify-content:center;padding:18px;z-index:100}.modal.open{display:flex}.modal-box{max-width:640px;background:#fff;border:4px solid #efc74f;border-radius:26px;padding:24px;text-align:center}.modal-box p{font-size:22px;font-weight:900;line-height:1.4}
+@media(max-width:820px){.service-grid,.bookmark-grid,.choice-row{grid-template-columns:1fr}.category-grid{grid-template-columns:repeat(2,1fr)}.content-grid{grid-template-columns:1fr}.site-head{align-items:flex-start;flex-direction:column}.top{align-items:flex-start}.bookmark{grid-template-columns:58px 1fr}.service-card{min-height:210px}}
+</style>
+
+<style id="nk-license-style">
+.nk-license{max-width:1100px;margin:14px auto 24px;padding:10px 16px;text-align:center;font:13px/1.45 Arial,"Noto Sans",sans-serif;color:#4e657c}
+.nk-license a{color:inherit;text-decoration:underline;text-underline-offset:2px}
+.nk-license .cc-badge{display:inline-block;margin:0 4px;padding:2px 7px;border:1px solid #8aa0b8;border-radius:6px;background:#fff;font-weight:700;white-space:nowrap}
+</style>
+</head>
+<body>
+<main class="app">
+<header class="top">
+  <div><h1>Mousa και Theatron</h1><small>Μάθημα 30 · Εκπαιδευτικό περιεχόμενο στο διαδίκτυο</small></div>
+  <div class="badge">🌐</div>
+</header>
+<nav class="path" id="path"></nav>
+<section class="panel" id="panel"></section>
+</main>
+
+<div class="modal" id="modal">
+  <div class="modal-box">
+    <h2>❔ Βοήθεια</h2>
+    <p id="helpText"></p>
+    <div class="actions">
+      <button class="btn secondary" id="speak">🔊 Άκουσε</button>
+      <button class="btn primary" id="close">Το κατάλαβα</button>
+    </div>
+  </div>
+</div>
+
+<script>
+(()=>{'use strict';
+
+const panel=document.getElementById('panel'),path=document.getElementById('path');
+const modal=document.getElementById('modal'),helpText=document.getElementById('helpText');
+let step=0,completed=new Set();
+const total=8;
+
+const helps=[
+'Η Mousa έχει πολλά είδη εκπαιδευτικού περιεχομένου, όπως παιχνίδια, κουίζ, παρουσιάσεις και βίντεο. Το Theatron είναι μια πλατφόρμα με εκπαιδευτικά βίντεο και εκπομπές.',
+'Χρησιμοποίησε τον Ploigos όπως έναν αληθινό φυλλομετρητή. Άνοιξε τη Mousa, πάτησε Παιχνίδια και μετά χρησιμοποίησε το σπιτάκι για να επιστρέψεις στην αρχική σελίδα της Mousa.',
+'Μέσα στη Mousa άνοιξε την κατηγορία Παιχνίδια και διάλεξε το παιχνίδι μνήμης με τα μουσικά όργανα. Στη σελίδα του περιεχομένου πάτησε Άνοιγμα.',
+'Άνοιξε το Theatron από την αρχική σελίδα του Ploigos. Πάτησε την κατηγορία Φύση και μετά χρησιμοποίησε το σπιτάκι για να επιστρέψεις στην αρχική σελίδα του Theatron.',
+'Στο Theatron διάλεξε την κατηγορία Φύση, άνοιξε το βίντεο για τον κύκλο του νερού και πάτησε το μεγάλο κουμπί αναπαραγωγής.',
+'Σκέψου τι ψάχνεις. Για παιχνίδια, κουίζ και παρουσιάσεις διάλεξε Mousa. Για εκπαιδευτικές εκπομπές και συλλογές βίντεο διάλεξε Theatron.',
+'Στη συνολική δοκιμή θα κάνεις δύο αποστολές. Πρώτα άνοιξε ένα παιχνίδι στη Mousa. Μετά άνοιξε και αναπαραγάγε ένα βίντεο στο Theatron.',
+'Διάλεξε ένα προσωπάκι για κάθε στόχο. Δεν υπάρχει σωστή ή λάθος απάντηση στην αυτοαξιολόγηση.'
+];
+
+function speak(t){if(!('speechSynthesis'in window))return;speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(t);u.lang='el-GR';u.rate=.84;speechSynthesis.speak(u)}
+function head(n,ico){return `<div class="step-head"><h2>${n}. ${ico}</h2><button class="help" id="help">❔ Βοήθεια</button></div>`}
+function feedback(){return '<div class="feedback" id="feedback"></div>'}
+function fb(ok,t){const f=document.getElementById('feedback');f.className='feedback '+(ok?'good':'bad');f.textContent=t;speak(t)}
+function drawPath(){path.innerHTML='';for(let i=0;i<total;i++){const d=document.createElement('div');d.className='dot'+(i===step?' active':'')+(completed.has(i)?' done':'');d.textContent=completed.has(i)?'✓':i+1;path.appendChild(d)}}
+function complete(ms=1000){completed.add(step);drawPath();setTimeout(()=>{if(step<total-1){step++;render()}},ms)}
+function bindHelp(){document.getElementById('help').onclick=()=>{helpText.textContent=helps[step];modal.classList.add('open')}}
+document.getElementById('close').onclick=()=>modal.classList.remove('open');
+document.getElementById('speak').onclick=()=>speak(helpText.textContent);
+
+function browserShell(body,url='ploigos://αρχική',homeAction='browserHome'){
+ return `<div class="browser"><div class="browser-top"><div class="browser-nav"><button type="button" aria-label="Πίσω" data-browser-back>←</button><button type="button" aria-label="Αρχική σελίδα" data-browser-home="${homeAction}">⌂</button></div><div class="address">${url}</div><div class="browser-brand"><span>Π</span>Ploigos</div></div><div class="browser-body">${body}</div></div>`
+}
+function bookmarks(){return `<div class="bookmark-home"><div class="bookmark-title">Εκπαιδευτικές πλατφόρμες</div><div class="bookmark-grid"><button class="bookmark" data-site="mousa"><span class="mini-logo">Μ</span><span>Mousa<small>Παιχνίδια · κουίζ · παρουσιάσεις · βίντεο</small></span></button><button class="bookmark" data-site="theatron"><span class="mini-logo">▶</span><span>Theatron<small>Εκπαιδευτικά βίντεο · εκπομπές</small></span></button></div></div>`}
+function siteHead(name){const mousa=name==='mousa';return `<div class="site-head ${name}"><div class="site-title"><span class="site-icon">${mousa?'Μ':'▶'}</span>${mousa?'Mousa':'Theatron'}</div><span class="site-tag">${mousa?'Μαθαίνω · παίζω · δημιουργώ':'Παρακολουθώ · μαθαίνω'}</span></div>`}
+function siteNav(name,active='home'){const mousa=name==='mousa';const items=mousa?[['home','⌂ Αρχική'],['games','🎮 Παιχνίδια'],['quiz','❓ Κουίζ'],['present','▤ Παρουσιάσεις'],['videos','▶ Βίντεο']]:[['home','⌂ Αρχική'],['nature','🌦 Φύση'],['health','🦷 Υγεία'],['culture','🏛 Πολιτισμός'],['science','🔬 Επιστήμη']];return `<div class="site-nav">${items.map(([id,label])=>`<button data-nav="${id}" class="${active===id?'active':''}">${label}</button>`).join('')}</div>`}
+function mousaHome(){return `${siteHead('mousa')}${siteNav('mousa','home')}<div class="site-content"><div class="welcome"><h3>Καλωσήρθες στη Mousa!</h3><p>Διάλεξε τι θέλεις να εξερευνήσεις.</p></div><div class="category-grid"><button class="category" data-nav="games"><span class="ico">🎮</span><span>Παιχνίδια</span></button><button class="category" data-nav="quiz"><span class="ico">❓</span><span>Κουίζ</span></button><button class="category" data-nav="present"><span class="ico">▤</span><span>Παρουσιάσεις</span></button><button class="category" data-nav="videos"><span class="ico">▶</span><span>Βίντεο</span></button></div></div>`}
+function mousaGames(target='music'){return `${siteHead('mousa')}${siteNav('mousa','games')}<div class="site-content"><div class="welcome"><h3>🎮 Παιχνίδια</h3><p>Διάλεξε ένα παιχνίδι.</p></div><div class="content-grid"><button class="content-card mousa-item" data-content="music"><div class="content-thumb">🎵</div><div class="content-info"><strong>Μνήμη: Μουσικά όργανα</strong><small>Παιχνίδι μνήμης</small></div></button><button class="content-card mousa-item" data-content="tangram"><div class="content-thumb">🔺</div><div class="content-info"><strong>Tangram: Φτιάχνω σχήματα</strong><small>Παιχνίδι σχημάτων</small></div></button><button class="content-card mousa-item" data-content="animals"><div class="content-thumb">🐾</div><div class="content-info"><strong>Μνήμη: Ζώα</strong><small>Παιχνίδι μνήμης</small></div></button></div></div>`}
+function mousaOpen(id){const data={music:['🎵','Μνήμη: Μουσικά όργανα','Βρες τα ίδια μουσικά όργανα.'],tangram:['🔺','Tangram: Φτιάχνω σχήματα','Ένωσε κομμάτια και δημιούργησε σχήματα.'],animals:['🐾','Μνήμη: Ζώα','Βρες τα ίδια ζωάκια.']}[id];return `${siteHead('mousa')}${siteNav('mousa','games')}<div class="site-content"><div class="open-page"><div class="open-icon">${data[0]}</div><h3>${data[1]}</h3><p>${data[2]}</p><button class="open-content" id="openMousaContent">Άνοιγμα</button></div></div>`}
+function theatronHome(){return `${siteHead('theatron')}${siteNav('theatron','home')}<div class="site-content"><div class="welcome"><h3>Καλωσήρθες στο Theatron!</h3><p>Διάλεξε μια κατηγορία εκπαιδευτικών βίντεο.</p></div><div class="category-grid"><button class="category" data-nav="nature"><span class="ico">🌦</span><span>Φύση</span></button><button class="category" data-nav="health"><span class="ico">🦷</span><span>Υγεία</span></button><button class="category" data-nav="culture"><span class="ico">🏛</span><span>Πολιτισμός</span></button><button class="category" data-nav="science"><span class="ico">🔬</span><span>Επιστήμη</span></button></div></div>`}
+function theatronList(cat='nature'){const lists={nature:[['water','💧','Ο κύκλος του νερού'],['weather','☀️','Ο καιρός αλλάζει'],['forest','🌳','Μια βόλτα στο δάσος']],health:[['teeth','🦷','Φροντίζω τα δόντια μου'],['food','🍎','Τρώω υγιεινά'],['move','🏃','Κινούμαι κάθε μέρα']],culture:[['museum','🏛','Μια επίσκεψη στο μουσείο'],['music','🎼','Μουσικές του κόσμου'],['myths','🏺','Μύθοι και ιστορίες']],science:[['space','🚀','Ταξίδι στο διάστημα'],['magnets','🧲','Παίζω με μαγνήτες'],['light','💡','Φως και σκιά']]};const labels={nature:'🌦 Φύση',health:'🦷 Υγεία',culture:'🏛 Πολιτισμός',science:'🔬 Επιστήμη'};return `${siteHead('theatron')}${siteNav('theatron',cat)}<div class="site-content"><div class="welcome"><h3>${labels[cat]}</h3><p>Διάλεξε ένα εκπαιδευτικό βίντεο.</p></div><div class="content-grid">${lists[cat].map(([id,ico,title])=>`<button class="content-card video-item" data-video="${id}" data-cat="${cat}"><div class="content-thumb">${ico}</div><div class="content-info"><strong>${title}</strong><small>Εκπαιδευτικό βίντεο</small></div></button>`).join('')}</div></div>`}
+function videoPage(id,cat='nature'){const data={water:['💧','Ο κύκλος του νερού'],weather:['☀️','Ο καιρός αλλάζει'],forest:['🌳','Μια βόλτα στο δάσος'],teeth:['🦷','Φροντίζω τα δόντια μου'],food:['🍎','Τρώω υγιεινά'],move:['🏃','Κινούμαι κάθε μέρα'],museum:['🏛','Μια επίσκεψη στο μουσείο'],music:['🎼','Μουσικές του κόσμου'],myths:['🏺','Μύθοι και ιστορίες'],space:['🚀','Ταξίδι στο διάστημα'],magnets:['🧲','Παίζω με μαγνήτες'],light:['💡','Φως και σκιά']}[id];const special=id==='water';return `${siteHead('theatron')}${siteNav('theatron',cat)}<div class="site-content"><div class="welcome"><h3>${data[0]} ${data[1]}</h3></div><div class="player"><div class="screen"><button class="playbtn" id="playVideo" aria-label="Αναπαραγωγή">▶</button>${special?'<div class="water-scene" id="waterScene"><div class="sun"></div><div class="cloud"></div><div class="drop d1"></div><div class="drop d2"></div><div class="drop d3"></div><div class="arrow-up">↑</div><div class="screen-caption">Ο ήλιος ζεσταίνει το νερό · σχηματίζονται σύννεφα · πέφτει βροχή</div></div>':`<div class="water-scene" id="waterScene"><div style="position:absolute;inset:0;display:grid;place-items:center;font-size:90px">${data[0]}</div><div class="screen-caption">${data[1]}</div></div>`}</div><div class="controls"><span>▶</span><div class="progressline"><span id="videoProgress"></span></div><span>0:12</span></div></div></div>`}
+
+/* 1 */
+let s1part=0;
+function r1(){return `${head(1,'🌐')}<p class="instruction">Γνώρισε τις δύο εκπαιδευτικές πλατφόρμες.</p><div class="task-strip">${s1part===0?'Πάτησε την πλατφόρμα με παιχνίδια, κουίζ, παρουσιάσεις και βίντεο.':'Τώρα πάτησε την πλατφόρμα με εκπαιδευτικά βίντεο και εκπομπές.'}</div><div class="service-grid"><button class="service-card mousa" data-s1="mousa"><span class="service-logo">Μ</span><div><h3>Mousa</h3><p>Παιχνίδια · κουίζ · παρουσιάσεις · βίντεο</p></div></button><button class="service-card theatron" data-s1="theatron"><span class="service-logo">▶</span><div><h3>Theatron</h3><p>Εκπαιδευτικά βίντεο · εκπομπές</p></div></button></div>${feedback()}`}
+function b1(){document.querySelectorAll('[data-s1]').forEach(b=>b.onclick=()=>{const ok=s1part===0?'mousa':'theatron';if(b.dataset.s1!==ok){b.classList.add('wrong');fb(false,'Δοκίμασε την άλλη πλατφόρμα.');setTimeout(()=>b.classList.remove('wrong'),600);return}b.classList.add('correct');if(s1part===0){fb(true,'Μπράβο! Η Mousa έχει πολλά είδη εκπαιδευτικού περιεχομένου.');setTimeout(()=>{s1part=1;render()},1100)}else{fb(true,'Σωστά! Το Theatron είναι για εκπαιδευτικά βίντεο και εκπομπές.');complete(1200)}})}
+
+/* 2 */
+let s2=0;
+function r2(){let body,url;if(s2===0){body=bookmarks();url='ploigos://αρχική'}else if(s2===1){body=mousaHome();url='https://mousa.example'}else{body=mousaGames();url='https://mousa.example/παιχνίδια'}return `${head(2,'Μ')}<p class="instruction">Πλοηγήσου στη Mousa.</p><div class="task-strip">${s2===0?'Άνοιξε τη Mousa από την αρχική σελίδα του Ploigos.':s2===1?'Πάτησε την κατηγορία «Παιχνίδια».':'Τώρα πάτησε «⌂ Αρχική» στη Mousa για να επιστρέψεις στην αρχική της σελίδα.'}</div><div class="lesson-card">${browserShell(body,url,s2===2?'mousaHome':'browserHome')}</div>${feedback()}`}
+function b2(){if(s2===0){document.querySelector('[data-site="mousa"]').onclick=()=>{s2=1;render()};document.querySelector('[data-site="theatron"]').onclick=e=>{e.currentTarget.classList.add('wrong');fb(false,'Για αυτή τη δραστηριότητα χρειάζεσαι τη Mousa.')}}else if(s2===1){document.querySelectorAll('[data-nav]').forEach(b=>b.onclick=()=>{if(b.dataset.nav!=='games'){fb(false,'Πάτησε «Παιχνίδια».');return}s2=2;render()})}else{document.querySelector('[data-nav="home"]').onclick=()=>{fb(true,'Μπράβο! Πλοηγήθηκες στη Mousa και επέστρεψες στην αρχική της σελίδα.');complete(1200)}}}
+
+/* 3 */
+let s3=0,s3item='music';
+function r3(){const body=s3===0?mousaHome():s3===1?mousaGames():mousaOpen(s3item);const url=s3===0?'https://mousa.example':s3===1?'https://mousa.example/παιχνίδια':`https://mousa.example/παιχνίδια/${s3item}`;return `${head(3,'🎮')}<p class="instruction">Άνοιξε εκπαιδευτικό περιεχόμενο στη Mousa.</p><div class="task-strip">${s3===0?'Πάτησε «Παιχνίδια».':s3===1?'Άνοιξε το παιχνίδι «Μνήμη: Μουσικά όργανα».':'Πάτησε «Άνοιγμα».'}</div><div class="lesson-card">${browserShell(body,url,'mousaHome')}</div>${feedback()}`}
+function b3(){if(s3===0){document.querySelectorAll('[data-nav]').forEach(b=>b.onclick=()=>{if(b.dataset.nav==='games'){s3=1;render()}else fb(false,'Χρειάζεσαι την κατηγορία «Παιχνίδια».')})}else if(s3===1){document.querySelectorAll('[data-content]').forEach(b=>b.onclick=()=>{if(b.dataset.content!=='music'){b.classList.add('wrong');fb(false,'Διάλεξε το παιχνίδι με τα μουσικά όργανα.');setTimeout(()=>b.classList.remove('wrong'),600);return}s3item='music';s3=2;render()})}else{document.getElementById('openMousaContent').onclick=()=>{fb(true,'Μπράβο! Άνοιξες περιεχόμενο στη Mousa.');complete(1200)}}}
+
+/* 4 */
+let s4=0;
+function r4(){let body,url;if(s4===0){body=bookmarks();url='ploigos://αρχική'}else if(s4===1){body=theatronHome();url='https://theatron.example'}else{body=theatronList('nature');url='https://theatron.example/φύση'}return `${head(4,'▶')}<p class="instruction">Πλοηγήσου στο Theatron.</p><div class="task-strip">${s4===0?'Άνοιξε το Theatron από την αρχική σελίδα του Ploigos.':s4===1?'Πάτησε την κατηγορία «Φύση».':'Τώρα πάτησε «⌂ Αρχική» στο Theatron για να επιστρέψεις στην αρχική του σελίδα.'}</div><div class="lesson-card">${browserShell(body,url,s4===2?'theatronHome':'browserHome')}</div>${feedback()}`}
+function b4(){if(s4===0){document.querySelector('[data-site="theatron"]').onclick=()=>{s4=1;render()};document.querySelector('[data-site="mousa"]').onclick=e=>{e.currentTarget.classList.add('wrong');fb(false,'Για αυτή τη δραστηριότητα χρειάζεσαι το Theatron.')}}else if(s4===1){document.querySelectorAll('[data-nav]').forEach(b=>b.onclick=()=>{if(b.dataset.nav!=='nature'){fb(false,'Πάτησε «Φύση».');return}s4=2;render()})}else{document.querySelector('[data-nav="home"]').onclick=()=>{fb(true,'Μπράβο! Πλοηγήθηκες στο Theatron και επέστρεψες στην αρχική του σελίδα.');complete(1200)}}}
+
+/* 5 */
+let s5=0;
+function r5(){const body=s5===0?theatronHome():s5===1?theatronList('nature'):videoPage('water','nature');const url=s5===0?'https://theatron.example':s5===1?'https://theatron.example/φύση':'https://theatron.example/φύση/κύκλος-νερού';return `${head(5,'💧')}<p class="instruction">Άνοιξε και αναπαραγάγε ένα βίντεο στο Theatron.</p><div class="task-strip">${s5===0?'Πάτησε «Φύση».':s5===1?'Άνοιξε το βίντεο «Ο κύκλος του νερού».':'Πάτησε ▶ για να ξεκινήσει το βίντεο.'}</div><div class="lesson-card">${browserShell(body,url,'theatronHome')}</div>${feedback()}`}
+function b5(){if(s5===0){document.querySelectorAll('[data-nav]').forEach(b=>b.onclick=()=>{if(b.dataset.nav==='nature'){s5=1;render()}else fb(false,'Χρειάζεσαι την κατηγορία «Φύση».')})}else if(s5===1){document.querySelectorAll('[data-video]').forEach(b=>b.onclick=()=>{if(b.dataset.video!=='water'){b.classList.add('wrong');fb(false,'Διάλεξε το βίντεο για τον κύκλο του νερού.');setTimeout(()=>b.classList.remove('wrong'),600);return}s5=2;render()})}else{document.getElementById('playVideo').onclick=()=>{document.getElementById('playVideo').style.display='none';document.getElementById('waterScene').classList.add('run');document.getElementById('videoProgress').classList.add('run');fb(true,'Μπράβο! Άνοιξες και αναπαρήγαγες εκπαιδευτικό βίντεο.');setTimeout(()=>complete(0),3000)}}}
+
+/* 6 */
+const cases=[
+ {ico:'❓',text:'Θέλω να κάνω ένα εκπαιδευτικό κουίζ.',ok:'mousa'},
+ {ico:'📺',text:'Θέλω να βρω μια εκπαιδευτική εκπομπή.',ok:'theatron'},
+ {ico:'▤',text:'Θέλω να ανοίξω μια εκπαιδευτική παρουσίαση.',ok:'mousa'},
+ {ico:'🎬',text:'Θέλω να εξερευνήσω μια συλλογή από εκπαιδευτικά βίντεο.',ok:'theatron'}
+];
+let c6=0,hold6=false;
+function r6(){const d=cases[c6];return `${head(6,'🧭')}<p class="instruction">Ποια πλατφόρμα ταιριάζει καλύτερα;</p><div class="case-count">Περίπτωση ${c6+1} από ${cases.length}</div><div class="scenario"><div class="bigicon">${d.ico}</div><p>${d.text}</p><div class="choice-row"><button class="choice mousa ${hold6&&d.ok==='mousa'?'correct':''}" data-choice="mousa">Μ · Mousa</button><button class="choice theatron ${hold6&&d.ok==='theatron'?'correct':''}" data-choice="theatron">▶ · Theatron</button></div></div>${feedback()}`}
+function b6(){if(hold6){fb(true,'Σωστά!');setTimeout(()=>{hold6=false;c6++;if(c6<cases.length)render();else complete(0)},1050);return}document.querySelectorAll('[data-choice]').forEach(b=>b.onclick=()=>{if(b.dataset.choice!==cases[c6].ok){b.classList.add('wrong');fb(false,'Σκέψου τι είδους περιεχόμενο ψάχνεις.');setTimeout(()=>b.classList.remove('wrong'),600);return}hold6=true;render()})}
+
+/* 7 */
+let mission=0,sub7=0;
+function missionChips(){return `<div class="mission-status"><span class="mission-chip ${mission>0?'done':mission===0?'active':''}">1 · Mousa</span><span class="mission-chip ${mission>1?'done':mission===1?'active':''}">2 · Theatron</span></div>`}
+function r7(){let body,url,task;if(mission===0){if(sub7===0){body=bookmarks();url='ploigos://αρχική';task='Αποστολή 1: Άνοιξε τη Mousa.'}else if(sub7===1){body=mousaHome();url='https://mousa.example';task='Πάτησε «Παιχνίδια».'}else if(sub7===2){body=mousaGames();url='https://mousa.example/παιχνίδια';task='Άνοιξε «Tangram: Φτιάχνω σχήματα».'}else{body=mousaOpen('tangram');url='https://mousa.example/παιχνίδια/tangram';task='Πάτησε «Άνοιγμα».'}}else{if(sub7===0){body=bookmarks();url='ploigos://αρχική';task='Αποστολή 2: Άνοιξε το Theatron.'}else if(sub7===1){body=theatronHome();url='https://theatron.example';task='Πάτησε «Υγεία».'}else if(sub7===2){body=theatronList('health');url='https://theatron.example/υγεία';task='Άνοιξε «Φροντίζω τα δόντια μου».'}else{body=videoPage('teeth','health');url='https://theatron.example/υγεία/δόντια';task='Πάτησε ▶ για να αναπαραχθεί το βίντεο.'}}return `${head(7,'⭐')}<p class="instruction">Συνολική δοκιμή</p>${missionChips()}<div class="task-strip">${task}</div><div class="lesson-card">${browserShell(body,url,'browserHome')}</div>${feedback()}`}
+function b7(){if(mission===0){if(sub7===0){document.querySelector('[data-site="mousa"]').onclick=()=>{sub7=1;render()};document.querySelector('[data-site="theatron"]').onclick=()=>fb(false,'Η πρώτη αποστολή είναι στη Mousa.')}else if(sub7===1){document.querySelectorAll('[data-nav]').forEach(b=>b.onclick=()=>{if(b.dataset.nav==='games'){sub7=2;render()}else fb(false,'Πάτησε «Παιχνίδια».')})}else if(sub7===2){document.querySelectorAll('[data-content]').forEach(b=>b.onclick=()=>{if(b.dataset.content==='tangram'){sub7=3;render()}else fb(false,'Άνοιξε το Tangram.')})}else{document.getElementById('openMousaContent').onclick=()=>{fb(true,'Η πρώτη αποστολή ολοκληρώθηκε!');setTimeout(()=>{mission=1;sub7=0;render()},1100)}}}else{if(sub7===0){document.querySelector('[data-site="theatron"]').onclick=()=>{sub7=1;render()};document.querySelector('[data-site="mousa"]').onclick=()=>fb(false,'Η δεύτερη αποστολή είναι στο Theatron.')}else if(sub7===1){document.querySelectorAll('[data-nav]').forEach(b=>b.onclick=()=>{if(b.dataset.nav==='health'){sub7=2;render()}else fb(false,'Πάτησε «Υγεία».')})}else if(sub7===2){document.querySelectorAll('[data-video]').forEach(b=>b.onclick=()=>{if(b.dataset.video==='teeth'){sub7=3;render()}else fb(false,'Άνοιξε το βίντεο για τα δόντια.')})}else{document.getElementById('playVideo').onclick=()=>{document.getElementById('playVideo').style.display='none';document.getElementById('waterScene').classList.add('run');document.getElementById('videoProgress').classList.add('run');fb(true,'Μπράβο! Ολοκλήρωσες και τις δύο αποστολές.');setTimeout(()=>{mission=2;complete(0)},2400)}}}}
+
+/* 8 */
+const goals=['Να πλοηγούμαι στη Mousa.','Να πλοηγούμαι στο Theatron.','Να ανοίγω περιεχόμενο στη Mousa.','Να ανοίγω περιεχόμενο στο Theatron.'];
+let self=new Map();
+function r8(){return `${head(8,'😊')}<div class="stars">⭐ ⭐ ⭐</div><div class="final-summary">Έμαθες να πλοηγείσαι σε δύο εκπαιδευτικές πλατφόρμες και να ανοίγεις εκπαιδευτικό περιεχόμενο.</div><div class="self-wrap"><div class="self-table"><div class="self-head">Τι έμαθα</div><div class="self-head">🙂<br>Θέλω εξάσκηση</div><div class="self-head">😊<br>Τα κατάφερα</div><div class="self-head">🤩<br>Πολύ καλά</div>${goals.map((g,i)=>`<div class="self-goal">${g}</div>${[1,2,3].map(v=>`<div class="self-cell"><button data-self="${i}" data-v="${v}" class="${self.get(i)===v?'sel':''}">${v===1?'🙂':v===2?'😊':'🤩'}<span>${v===1?'λίγη εξάσκηση':v===2?'τα κατάφερα':'πολύ καλά'}</span></button></div>`).join('')}`).join('')}</div></div><div class="actions"><button class="btn primary" id="finish">Ολοκλήρωση</button><button class="btn secondary" id="restart">↻ Από την αρχή</button></div>${feedback()}`}
+function b8(){document.querySelectorAll('[data-self]').forEach(b=>b.onclick=()=>{self.set(+b.dataset.self,+b.dataset.v);render()});document.getElementById('finish').onclick=()=>{if(self.size!==goals.length){fb(false,'Διάλεξε ένα προσωπάκι για κάθε στόχο.');return}completed.add(7);drawPath();fb(true,'Μπράβο! Ολοκλήρωσες το Μάθημα 30. ⭐')};document.getElementById('restart').onclick=()=>{step=0;completed.clear();s1part=0;s2=0;s3=0;s4=0;s5=0;c6=0;hold6=false;mission=0;sub7=0;self=new Map();render()}}
+
+function render(){drawPath();const R=[r1,r2,r3,r4,r5,r6,r7,r8],B=[b1,b2,b3,b4,b5,b6,b7,b8];panel.innerHTML=R[step]();bindHelp();B[step]();window.scrollTo({top:0,behavior:'smooth'})}
+render();
+
+})();
+</script>
+
+<footer class="nk-license" aria-label="Πληροφορίες δημιουργού και άδειας χρήσης">
+  <div><strong>Created by Nikos Kalakos · © 2026</strong></div>
+  <div>Original educational content and simulation design licensed under <a class="cc-badge" href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank" rel="license noopener noreferrer">CC BY-NC 4.0</a>.</div>
+  <div>Source code © 2026 Nikos Kalakos.</div>
+  <div>Third-party and textbook materials remain subject to the rights and licences of their respective copyright holders.</div>
+</footer>
+</body>
+</html>

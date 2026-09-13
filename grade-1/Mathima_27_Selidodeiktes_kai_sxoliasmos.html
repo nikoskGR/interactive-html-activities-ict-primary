@@ -1,0 +1,406 @@
+<!--
+ICT Educational Simulation
+Created by Nikos Kalakos
+Copyright © 2026 Nikos Kalakos
+
+Original educational content and simulation design licensed under CC BY-NC 4.0.
+Source code © 2026 Nikos Kalakos.
+Third-party and textbook materials remain subject to the rights and licences of their respective copyright holders.
+-->
+<!doctype html>
+<html lang="el">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="author" content="Nikos Kalakos">
+<meta name="copyright" content="© 2026 Nikos Kalakos">
+<meta name="license" content="Original educational content and simulation design: CC BY-NC 4.0; source code © 2026 Nikos Kalakos; third-party and textbook materials excluded.">
+<title>Μάθημα 27 - Σελιδοδείκτες και σχολιασμός σε ιστοσελίδες</title>
+<style>
+:root{
+  --ink:#17324d;--red:#d93a2e;--red2:#a92b22;--soft:#fdecea;
+  --blue:#2476d4;--cyan:#17a7c7;--line:#c9d8e7;--ok:#2f9b63;
+  --bad:#d85c4b;--yellow:#f3c84a;--shadow:0 10px 28px rgba(23,50,77,.12)
+}
+*{box-sizing:border-box}
+body{margin:0;background:#f7fafc;color:var(--ink);font-family:Arial,"Noto Sans",sans-serif}
+button,input{font:inherit}button{cursor:pointer}
+.app{max-width:1160px;margin:auto;padding:16px}
+.top{background:#fff;border:3px solid #f0c4bf;border-radius:24px;padding:14px 18px;display:flex;align-items:center;justify-content:space-between;box-shadow:var(--shadow)}
+.top h1{margin:0;font-size:clamp(28px,4vw,42px)}.top small{font-size:18px}
+.badge{width:68px;height:68px;border-radius:22px;background:var(--red);display:grid;place-items:center;color:#fff;font-size:31px;font-weight:900}
+.path{display:flex;gap:10px;justify-content:center;margin:16px 0}.dot{width:44px;height:44px;border-radius:50%;border:3px solid #aab9c9;background:#fff;color:#5e7389;display:grid;place-items:center;font-weight:900;font-size:20px}
+.dot.active{background:var(--blue);border-color:var(--blue);color:#fff;transform:scale(1.1)}.dot.done{background:var(--red);border-color:var(--red2);color:#fff}
+.panel{min-height:710px;background:#fff;border:3px solid #f0c4bf;border-radius:28px;padding:24px;box-shadow:var(--shadow)}
+.step-head{display:flex;justify-content:space-between;gap:12px}.step-head h2{margin:0;font-size:clamp(26px,4vw,38px)}
+.help{background:#fff7d6;color:#624700;border:3px solid #dfbc44;border-radius:16px;padding:10px 17px;font-weight:900}
+.instruction{max-width:930px;margin:14px auto 18px;text-align:center;font-size:clamp(20px,2.4vw,25px);font-weight:900;line-height:1.35}
+.lesson-card{max-width:1000px;margin:auto;border:3px solid #f1c0ba;border-radius:28px;background:#fff;padding:22px;min-height:480px}
+.feedback{display:none;max-width:820px;margin:16px auto 0;padding:12px 18px;border-radius:17px;text-align:center;font-weight:900;font-size:20px}
+.feedback.good{display:block;background:#e5f8ef;color:#07583c;border:2px solid #79d4ae}.feedback.bad{display:block;background:#fff0e8;color:#713629;border:2px solid #e5a48d}
+.actions{display:flex;justify-content:center;gap:12px;margin-top:18px}.btn{border:0;border-radius:15px;padding:13px 22px;font-weight:900;font-size:19px}
+.primary{background:var(--red);color:#fff}.secondary{background:#eef3f8;border:2px solid #b9cbe0;color:var(--ink)}
+
+/* Ploigos */
+.browser{max-width:900px;margin:auto;border:4px solid #1976d2;border-radius:20px;background:#fff;overflow:hidden;box-shadow:0 10px 22px rgba(23,50,77,.16)}
+.browser-title{height:48px;background:linear-gradient(90deg,#12a8c8,#176bd0);color:#fff;display:flex;align-items:center;justify-content:space-between;padding:0 15px;font-size:21px;font-weight:900}
+.browser-title .brand{display:flex;align-items:center;gap:9px}.compass{width:30px;height:30px;border-radius:50%;background:#fff;color:#1775cf;display:grid;place-items:center;font-size:19px}
+.toolbar{height:55px;background:#f3f6f9;border-bottom:2px solid #d5e0ea;display:flex;align-items:center;gap:10px;padding:7px 12px}
+.navbtn{width:40px;height:40px;border-radius:11px;border:2px solid #aabaca;background:#fff;font-size:22px;font-weight:900;color:#3e566d}
+.address{flex:1;height:39px;border:2px solid #b9c9d8;border-radius:12px;background:#fff;padding:8px 13px;color:#486176;font-weight:700}
+.bookmark-star{width:42px;height:42px;border:3px solid #c39c27;background:#fff7ce;border-radius:12px;font-size:24px;display:grid;place-items:center;color:#9d7908}
+.bookmark-star.saved{background:#ffd749;color:#8d6500;box-shadow:0 0 0 4px rgba(255,215,73,.25)}
+.bookmark-bar{height:42px;background:#fff;border-bottom:2px solid #dbe5ed;display:flex;align-items:center;gap:10px;padding:5px 12px}
+.bookmark-chip{border:2px solid #b8cad8;background:#f6f9fc;border-radius:10px;padding:6px 12px;font-weight:900;color:#2f5270}
+.page{height:350px;overflow-y:auto;background:#fff}
+.site-head{background:linear-gradient(90deg,#e7f7e9,#e8f4ff);padding:18px 24px;border-bottom:2px solid #cde2d2}
+.site-head h3{font-size:30px;margin:0 0 6px;color:#176b4a}.site-head p{margin:0;font-weight:700}
+.web-content{padding:20px}.posts{display:grid;grid-template-columns:repeat(3,1fr);gap:15px}
+.post{border:3px solid #d7e4ee;border-radius:18px;padding:14px;background:#fbfdff;min-height:220px}
+.post .pic{text-align:center;font-size:60px}.post h4{margin:5px 0;font-size:21px}
+.heart{border:2px solid #d6dfe7;background:#fff;border-radius:12px;padding:7px 12px;font-size:21px}
+.heart.liked{background:#ffe8ec;border-color:#e77b8b;color:#c92e48}
+.commentbox{width:100%;border:2px solid #b8c9d8;border-radius:10px;padding:9px 11px;margin-top:8px}
+.comments{margin-top:8px;font-size:14px}.comment{background:#eef6ff;border-radius:9px;padding:7px 9px;margin-top:6px}
+.bookmark-pop{
+  position:absolute;right:68px;top:65px;width:340px;background:#fff;border:4px solid #8eb8dc;
+  border-radius:18px;padding:16px;box-shadow:0 12px 26px rgba(23,50,77,.20);z-index:10
+}
+.browser-wrap{position:relative;max-width:900px;margin:auto}
+.bookmark-pop label{display:block;font-weight:900;margin-bottom:6px}
+.bookmark-pop input{width:100%;border:2px solid #b7c8d7;border-radius:10px;padding:10px;font-size:18px}
+.pop-actions{display:flex;justify-content:flex-end;gap:10px;margin-top:13px}
+.pop-actions button{border:0;border-radius:11px;padding:9px 13px;font-weight:900}
+.donebtn{background:var(--blue);color:#fff}.cancelbtn{background:#eef3f8;color:#435b70}
+
+/* stage 1 */
+.choice-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;max-width:860px;margin:20px auto}
+.choice{min-height:180px;border:4px solid var(--line);border-radius:22px;background:#fff;display:grid;place-items:center;text-align:center;padding:16px;font-weight:900;font-size:18px}
+.choice .ico{font-size:64px}.choice.ok{border-color:var(--ok);background:#effff5}.choice.no{border-color:var(--bad);background:#fff0ed}
+
+
+/* Stage 5 virtual keyboard */
+.vkeyboard{
+  max-width:930px;
+  margin:18px auto 0;
+  padding:14px;
+  border:4px solid #526272;
+  border-radius:20px;
+  background:linear-gradient(#dce2e8,#aeb9c3);
+  box-shadow:0 12px 20px rgba(0,0,0,.14)
+}
+.vrow{
+  display:flex;
+  gap:5px;
+  justify-content:center;
+  margin:6px 0
+}
+.vkey{
+  min-width:44px;
+  height:48px;
+  padding:0 7px;
+  border:2px solid #596774;
+  border-radius:8px;
+  background:linear-gradient(#fff,#e6e9ec);
+  box-shadow:0 4px 0 #7e8993;
+  display:grid;
+  place-items:center;
+  font-weight:900;
+  font-size:14px;
+  color:#17324d;
+  user-select:none
+}
+.vkey.w12{min-width:56px}
+.vkey.w15{min-width:70px}
+.vkey.w18{min-width:86px}
+.vkey.w22{min-width:104px}
+.vkey.space{min-width:315px}
+.vkey.letter{
+  background:linear-gradient(#eef5fb,#dbe7f2);
+}
+.vkey.special{
+  background:linear-gradient(#7657a6,#563d83);
+  color:#fff;
+  border-color:#362653
+}
+.vkey.enter{
+  min-width:104px;
+  background:linear-gradient(#ffcf3f,#f39a00);
+  color:#17212b;
+  border-color:#a86400;
+  box-shadow:0 4px 0 #8f5600,0 0 0 5px rgba(255,194,35,.28);
+  animation:enterPulse 1.05s infinite ease-in-out
+}
+@keyframes enterPulse{
+  0%,100%{
+    transform:scale(1);
+    box-shadow:0 4px 0 #8f5600,0 0 0 5px rgba(255,194,35,.22)
+  }
+  50%{
+    transform:scale(1.05);
+    box-shadow:0 4px 0 #8f5600,0 0 0 11px rgba(255,194,35,.34)
+  }
+}
+.enter-hint{
+  max-width:760px;
+  margin:14px auto 0;
+  border:3px solid #e1b329;
+  background:#fff7cf;
+  border-radius:16px;
+  padding:10px 14px;
+  text-align:center;
+  font-weight:900;
+  font-size:18px
+}
+
+/* final */
+.stars{text-align:center;font-size:60px;margin:20px}
+.final-summary{max-width:820px;margin:20px auto;padding:24px;border:4px solid var(--red);border-radius:26px;background:var(--soft);text-align:center;font-size:22px;font-weight:900;line-height:1.45}
+.faces{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;max-width:760px;margin:20px auto}
+.face{min-height:160px;border:4px solid var(--line);border-radius:24px;background:#fff;display:grid;grid-template-rows:1fr 46px;place-items:center;padding:12px}
+.face .emoji{font-size:64px}.face .label{font-weight:900}.face.sel{border-color:var(--red);background:var(--soft)}
+.modal{position:fixed;inset:0;background:rgba(15,35,55,.55);display:none;align-items:center;justify-content:center;padding:18px;z-index:100}
+.modal.open{display:flex}.modal-box{max-width:620px;background:#fff;border:4px solid #efc74f;border-radius:26px;padding:24px;text-align:center}.modal-box p{font-size:22px;font-weight:900;line-height:1.4}
+@media(max-width:800px){.choice-grid,.posts{grid-template-columns:1fr}.faces{grid-template-columns:1fr}}
+</style>
+
+<style id="nk-license-style">
+.nk-license{max-width:1100px;margin:14px auto 24px;padding:10px 16px;text-align:center;font:13px/1.45 Arial,"Noto Sans",sans-serif;color:#4e657c}
+.nk-license a{color:inherit;text-decoration:underline;text-underline-offset:2px}
+.nk-license .cc-badge{display:inline-block;margin:0 4px;padding:2px 7px;border:1px solid #8aa0b8;border-radius:6px;background:#fff;font-weight:700;white-space:nowrap}
+</style>
+</head>
+<body>
+<main class="app">
+<header class="top"><div><h1>Σελιδοδείκτες και σχολιασμός σε ιστοσελίδες</h1><small>Μάθημα 27</small></div><div class="badge">⭐</div></header>
+<nav class="path" id="path"></nav><section class="panel" id="panel"></section>
+</main>
+<div class="modal" id="modal"><div class="modal-box"><h2>❔ Βοήθεια</h2><p id="helpText"></p><div class="actions"><button class="btn secondary" id="speak">🔊 Άκουσε</button><button class="btn primary" id="close">Το κατάλαβα</button></div></div></div>
+
+<script>
+(()=>{'use strict';
+const panel=document.getElementById('panel'),path=document.getElementById('path'),modal=document.getElementById('modal'),helpText=document.getElementById('helpText');
+let step=0,completed=new Set(),selfChoice=null;const total=6;
+const helps=[
+'Ένας σελιδοδείκτης μάς βοηθά να αποθηκεύσουμε μια αγαπημένη ιστοσελίδα ώστε να τη βρίσκουμε γρήγορα αργότερα.',
+'Στον Ploigos πάτησε το αστεράκι, έλεγξε το όνομα του σελιδοδείκτη και πάτησε «Ολοκληρώθηκε».',
+'Ο σελιδοδείκτης εμφανίζεται στη γραμμή σελιδοδεικτών. Κάνε κλικ στο «Τα ζώα» για να ανοίξεις γρήγορα τη σελίδα.',
+'Πάτησε την καρδούλα σε μία ανάρτηση για να δείξεις ότι σου αρέσει.',
+'Κάνε κλικ στο πλαίσιο σχολίου, γράψε ένα μικρό σχόλιο και πάτησε ENTER στο πραγματικό πληκτρολόγιο για να το αποθηκεύσεις.',
+'Διάλεξε πώς νιώθεις για όσα έμαθες.'
+];
+function speak(t){if(!('speechSynthesis'in window))return;speechSynthesis.cancel();let u=new SpeechSynthesisUtterance(t);u.lang='el-GR';u.rate=.84;speechSynthesis.speak(u)}
+function head(n,ico){return `<div class="step-head"><h2>${n}. ${ico}</h2><button class="help" id="help">❔ Βοήθεια</button></div>`}
+function feedback(){return '<div class="feedback" id="feedback"></div>'}
+function fb(ok,t){let f=document.getElementById('feedback');f.className='feedback '+(ok?'good':'bad');f.textContent=t;speak(t)}
+function draw(){path.innerHTML='';for(let i=0;i<total;i++){let d=document.createElement('div');d.className='dot'+(i===step?' active':'')+(completed.has(i)?' done':'');d.textContent=completed.has(i)?'✓':i+1;path.appendChild(d)}}
+function complete(ms=900){completed.add(step);draw();setTimeout(()=>{if(step<5){step++;render()}},ms)}
+function bindHelp(){document.getElementById('help').onclick=()=>{helpText.textContent=helps[step];modal.classList.add('open')}}
+document.getElementById('close').onclick=()=>modal.classList.remove('open');document.getElementById('speak').onclick=()=>speak(helpText.textContent);
+
+function pageContent(withInteractions=false){
+ return `<div class="page">
+  <div class="site-head"><h3>Τα ζώα</h3><p>Μαθαίνω για αγαπημένα ζώα.</p></div>
+  <div class="web-content">
+   <div class="posts">
+    <div class="post">
+     <div class="pic">🐶</div><h4>Σκύλος</h4><p>Ο σκύλος είναι ένα κοινωνικό κατοικίδιο ζώο.</p>
+     ${withInteractions?'<button class="heart" data-post="dog">♡ 0</button><input class="commentbox" data-post="dog" placeholder="Πρόσθεσε σχόλιο"><div class="comments" id="comments-dog"></div>':''}
+    </div>
+    <div class="post">
+     <div class="pic">🦜</div><h4>Παπαγάλος</h4><p>Ο παπαγάλος έχει πολύχρωμα φτερά.</p>
+     ${withInteractions?'<button class="heart" data-post="parrot">♡ 0</button><input class="commentbox" data-post="parrot" placeholder="Πρόσθεσε σχόλιο"><div class="comments" id="comments-parrot"></div>':''}
+    </div>
+    <div class="post">
+     <div class="pic">🐰</div><h4>Κουνέλι</h4><p>Το κουνέλι έχει μακριά αυτιά και απαλή γούνα.</p>
+     ${withInteractions?'<button class="heart" data-post="rabbit">♡ 0</button><input class="commentbox" data-post="rabbit" placeholder="Πρόσθεσε σχόλιο"><div class="comments" id="comments-rabbit"></div>':''}
+    </div>
+   </div>
+  </div>
+ </div>`
+}
+function browser({saved=false,bar=false,interactions=false,blank=false}={}){
+ return `<div class="browser">
+  <div class="browser-title"><div class="brand"><span class="compass">➤</span><span>AthenaOS - Ploigos</span></div><span>— □ ×</span></div>
+  <div class="toolbar">
+   <button class="navbtn" disabled>←</button><button class="navbtn" disabled>→</button><button class="navbtn" disabled>↻</button>
+   <div class="address">${blank?'ploigos://nea-karta':'🔒 ploigos://ta-zoa'}</div>
+   <button class="bookmark-star ${saved?'saved':''}" id="starBtn">${saved?'★':'☆'}</button>
+  </div>
+  ${bar?'<div class="bookmark-bar"><button class="bookmark-chip" id="animalBookmark">⭐ Τα ζώα</button></div>':''}
+  ${blank?'<div class="page" id="blankPage" style="display:grid;place-items:center;color:#6b7f91;font-size:24px;font-weight:900">Νέα καρτέλα</div>':pageContent(interactions)}
+ </div>`
+}
+
+/* 1 */
+function r1(){return `${head(1,'⭐')}<p class="instruction">Σου άρεσε πολύ η ιστοσελίδα «Τα ζώα» και θέλεις να τη βρεις εύκολα ξανά. Τι πρέπει να χρησιμοποιήσεις;</p>
+<div class="lesson-card">${browser()}
+<div class="choice-grid">
+<button class="choice" data-v="bookmark"><span class="ico">⭐</span><span>Σελιδοδείκτη</span></button>
+<button class="choice" data-v="refresh"><span class="ico">↻</span><span>Ανανέωση</span></button>
+<button class="choice" data-v="back"><span class="ico">←</span><span>Πίσω</span></button>
+</div></div>${feedback()}`}
+function b1(){document.querySelectorAll('.choice').forEach(c=>c.onclick=()=>{if(c.dataset.v==='bookmark'){c.classList.add('ok');fb(true,'Σωστά! Ο σελιδοδείκτης σε βοηθά να ξαναβρείς γρήγορα μια ιστοσελίδα.');complete(1000)}else{c.classList.add('no');fb(false,'Αυτό το κουμπί κάνει κάτι διαφορετικό.')}})}
+
+/* 2 */
+function r2(){return `${head(2,'☆ → ★')}<p class="instruction">Πρόσθεσε την ιστοσελίδα «Τα ζώα» στους σελιδοδείκτες του Ploigos.</p>
+<div class="lesson-card"><div class="browser-wrap">${browser()}<div id="popHost"></div></div></div>${feedback()}`}
+function b2(){
+ const star=document.getElementById('starBtn');
+ star.onclick=()=>{
+  star.textContent='★';star.classList.add('saved');
+  document.getElementById('popHost').innerHTML=`<div class="bookmark-pop">
+   <label>Όνομα σελιδοδείκτη</label>
+   <input id="bookmarkName" value="Τα ζώα">
+   <div class="pop-actions"><button class="cancelbtn">Ακύρωση</button><button class="donebtn" id="saveBookmark">Ολοκληρώθηκε</button></div>
+  </div>`;
+  document.getElementById('bookmarkName').select();
+  document.getElementById('saveBookmark').onclick=()=>{
+    const name=document.getElementById('bookmarkName').value.trim();
+    if(!name){fb(false,'Ο σελιδοδείκτης χρειάζεται όνομα.');return}
+    document.getElementById('popHost').innerHTML='';
+    fb(true,'Μπράβο! Δημιούργησες τον σελιδοδείκτη «'+name+'».');
+    complete(1100)
+  }
+ }
+}
+
+/* 3 */
+function r3(){return `${head(3,'⭐ Τα ζώα')}<p class="instruction">Βρίσκεσαι σε νέα καρτέλα. Χρησιμοποίησε τη <strong>γραμμή σελιδοδεικτών</strong> για να επιστρέψεις γρήγορα στην ιστοσελίδα «Τα ζώα».</p>
+<div class="lesson-card"><div id="browserHost">${browser({saved:true,bar:true,blank:true})}</div></div>${feedback()}`}
+function b3(){document.getElementById('animalBookmark').onclick=()=>{document.getElementById('browserHost').innerHTML=browser({saved:true,bar:true});fb(true,'Μπράβο! Άνοιξες την αποθηκευμένη ιστοσελίδα από τον σελιδοδείκτη.');complete(1100)}}
+
+/* 4 */
+function r4(){return `${head(4,'♡ → ♥')}<p class="instruction">Δείξε ότι σου αρέσει μία ανάρτηση πατώντας την <strong>καρδούλα</strong>.</p>
+<div class="lesson-card">${browser({saved:true,bar:true,interactions:true})}</div>${feedback()}`}
+function b4(){document.querySelectorAll('.heart').forEach(h=>h.onclick=()=>{if(h.classList.contains('liked'))return;h.classList.add('liked');h.textContent='♥ 1';fb(true,'Μπράβο! Έκανες αντίδραση με καρδούλα.');complete(900)})}
+
+/* 5 */
+function r5(){return `${head(5,'💬 + ENTER')}<p class="instruction">Γράψε ένα μικρό σχόλιο σε μία ανάρτηση και πάτησε <strong>ENTER</strong> στο πραγματικό πληκτρολόγιο για να το αποθηκεύσεις.</p>
+<div class="lesson-card">
+  ${browser({saved:true,bar:true,interactions:true})}
+
+  <div class="enter-hint">Το πλήκτρο <strong>ENTER</strong> είναι τονισμένο στο εικονικό πληκτρολόγιο για να το εντοπίσεις πιο εύκολα.</div>
+
+  <div class="vkeyboard">
+    <div class="vrow">
+      <span class="vkey special w12">Esc</span>
+      <span class="vkey">~<br>&#96;</span>
+      <span class="vkey">!<br>1</span>
+      <span class="vkey">@<br>2</span>
+      <span class="vkey">#<br>3</span>
+      <span class="vkey">$<br>4</span>
+      <span class="vkey">%<br>5</span>
+      <span class="vkey">^<br>6</span>
+      <span class="vkey">&amp;<br>7</span>
+      <span class="vkey">*<br>8</span>
+      <span class="vkey">(<br>9</span>
+      <span class="vkey">)<br>0</span>
+      <span class="vkey">_<br>-</span>
+      <span class="vkey">+<br>=</span>
+      <span class="vkey special w22">Backspace</span>
+    </div>
+
+    <div class="vrow">
+      <span class="vkey special w18">Tab</span>
+      <span class="vkey letter">;</span>
+      <span class="vkey letter">Ε</span>
+      <span class="vkey letter">Ρ</span>
+      <span class="vkey letter">Τ</span>
+      <span class="vkey letter">Υ</span>
+      <span class="vkey letter">Θ</span>
+      <span class="vkey letter">Ι</span>
+      <span class="vkey letter">Ο</span>
+      <span class="vkey letter">Π</span>
+      <span class="vkey">[<br>{</span>
+      <span class="vkey">]<br>}</span>
+      <span class="vkey w15">&#92;<br>|</span>
+    </div>
+
+    <div class="vrow">
+      <span class="vkey special w22">Caps Lock</span>
+      <span class="vkey letter">Α</span>
+      <span class="vkey letter">Σ</span>
+      <span class="vkey letter">Δ</span>
+      <span class="vkey letter">Φ</span>
+      <span class="vkey letter">Γ</span>
+      <span class="vkey letter">Η</span>
+      <span class="vkey letter">Ξ</span>
+      <span class="vkey letter">Κ</span>
+      <span class="vkey letter">Λ</span>
+      <span class="vkey">:<br>;</span>
+      <span class="vkey">"<br>'</span>
+      <span class="vkey enter">ENTER ↵</span>
+    </div>
+
+    <div class="vrow">
+      <span class="vkey special w22">Shift</span>
+      <span class="vkey letter">Ζ</span>
+      <span class="vkey letter">Χ</span>
+      <span class="vkey letter">Ψ</span>
+      <span class="vkey letter">Ω</span>
+      <span class="vkey letter">Β</span>
+      <span class="vkey letter">Ν</span>
+      <span class="vkey letter">Μ</span>
+      <span class="vkey">&lt;<br>,</span>
+      <span class="vkey">&gt;<br>.</span>
+      <span class="vkey">?<br>/</span>
+      <span class="vkey special w22">Shift</span>
+    </div>
+
+    <div class="vrow">
+      <span class="vkey special w15">Ctrl</span>
+      <span class="vkey special w15">Win</span>
+      <span class="vkey special w15">Alt</span>
+      <span class="vkey space">Κενό (Space)</span>
+      <span class="vkey special w15">Alt Gr</span>
+      <span class="vkey special w15">Win</span>
+      <span class="vkey special w15">Menu</span>
+      <span class="vkey special w15">Ctrl</span>
+    </div>
+  </div>
+</div>${feedback()}`}
+
+function b5(){
+ document.querySelectorAll('.commentbox').forEach(inp=>{
+  inp.addEventListener('keydown',e=>{
+   if(e.key!=='Enter')return;
+   e.preventDefault();
+   const text=inp.value.trim();
+   if(!text){fb(false,'Γράψε πρώτα ένα μικρό σχόλιο.');return}
+   const host=document.getElementById('comments-'+inp.dataset.post);
+   host.innerHTML=`<div class="comment">💬 ${text}</div>`;
+   inp.value='';inp.disabled=true;
+   fb(true,'Μπράβο! Το σχόλιό σου αποθηκεύτηκε.');
+   complete(1000)
+  })
+ })
+}
+
+/* 6 */
+function r6(){return `${head(6,'⭐')}<div class="stars">⭐ ⭐ ⭐</div>
+<div class="final-summary">Έμαθες τι είναι ένας σελιδοδείκτης, πώς να τον δημιουργείς και να τον χρησιμοποιείς, πώς να αντιδράς με καρδούλα και πώς να προσθέτεις ένα σχόλιο σε μία ανάρτηση.</div>
+<div class="faces">
+<button class="face" data-v="1"><span class="emoji">🙂</span><span class="label">Θέλω λίγη εξάσκηση</span></button>
+<button class="face" data-v="2"><span class="emoji">😊</span><span class="label">Τα κατάφερα</span></button>
+<button class="face" data-v="3"><span class="emoji">🤩</span><span class="label">Τα κατάφερα πολύ καλά</span></button>
+</div><div class="actions"><button class="btn primary" id="finish">Ολοκλήρωση</button><button class="btn secondary" id="restart">↻ Από την αρχή</button></div>${feedback()}`}
+function b6(){
+ document.querySelectorAll('.face').forEach(b=>b.onclick=()=>{document.querySelectorAll('.face').forEach(x=>x.classList.remove('sel'));b.classList.add('sel');selfChoice=b.dataset.v});
+ document.getElementById('finish').onclick=()=>{if(!selfChoice){fb(false,'Διάλεξε μία επιλογή.');return}completed.add(5);draw();fb(true,'Μπράβο! Ολοκλήρωσες το Μάθημα 27. ⭐')};
+ document.getElementById('restart').onclick=()=>{step=0;completed.clear();selfChoice=null;render()}
+}
+
+function render(){draw();let R=[r1,r2,r3,r4,r5,r6],B=[b1,b2,b3,b4,b5,b6];panel.innerHTML=R[step]();bindHelp();B[step]()}
+render();
+})();
+</script>
+
+<footer class="nk-license" aria-label="Πληροφορίες δημιουργού και άδειας χρήσης">
+  <div><strong>Created by Nikos Kalakos · © 2026</strong></div>
+  <div>Original educational content and simulation design licensed under <a class="cc-badge" href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank" rel="license noopener noreferrer">CC BY-NC 4.0</a>.</div>
+  <div>Source code © 2026 Nikos Kalakos.</div>
+  <div>Third-party and textbook materials remain subject to the rights and licences of their respective copyright holders.</div>
+</footer>
+</body>
+</html>
