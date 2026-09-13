@@ -1,0 +1,178 @@
+<!--
+ICT Educational Simulation
+Created by Nikos Kalakos
+Copyright © 2026 Nikos Kalakos
+
+Original educational content and simulation design licensed under CC BY-NC 4.0.
+Source code © 2026 Nikos Kalakos.
+Third-party and textbook materials remain subject to the rights and licences of their respective copyright holders.
+-->
+<!DOCTYPE html>
+<html lang="el">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="author" content="Nikos Kalakos">
+<meta name="copyright" content="© 2026 Nikos Kalakos">
+<meta name="license" content="Original educational content and simulation design: CC BY-NC 4.0; source code © 2026 Nikos Kalakos; third-party and textbook materials excluded.">
+<title>Μάθημα 30 – Άδειες χρήσης Creative Commons</title>
+<style>
+:root{
+  --unit:#EA922C;--unit-dark:#B86610;--unit-soft:#FFF4E6;
+  --secondary:#545F99;--secondary-dark:#3D477C;--secondary-soft:#EEF0F8;
+  --ink:#25324A;--muted:#68758A;--line:#D8DEEA;--bg:#F5F7FB;
+  --good:#23845A;--good-soft:#E9F7F0;--bad:#B64242;--bad-soft:#FDEEEE;
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:Inter,"Segoe UI",Arial,sans-serif;color:var(--ink);background:radial-gradient(circle at 8% 5%,rgba(234,146,44,.12),transparent 28%),radial-gradient(circle at 92% 16%,rgba(84,95,153,.14),transparent 30%),#F4F6FA;font-size:16px}
+button{font:inherit;cursor:pointer}
+.shell-page{max-width:1280px;margin:0 auto;padding:18px}
+.hero{background:#fff;border:1px solid #E3E7EE;border-top:9px solid var(--unit);border-radius:18px;box-shadow:0 14px 35px rgba(45,55,86,.11);padding:20px 24px 18px;display:grid;grid-template-columns:1fr auto;gap:18px;align-items:center}
+.eyebrow{font-size:13px;font-weight:900;letter-spacing:.075em;text-transform:uppercase;color:var(--secondary)}
+.hero h1{margin:5px 0 0;font-size:29px;line-height:1.14;color:var(--secondary-dark);max-width:990px}
+.hero p{margin:8px 0 0;color:var(--muted);font-weight:700;line-height:1.45}
+.lesson-mark{min-width:118px;height:72px;border-radius:16px;background:linear-gradient(135deg,var(--secondary),var(--secondary-dark));color:#fff;display:grid;place-items:center;text-align:center;box-shadow:0 9px 22px rgba(84,95,153,.23)}
+.lesson-mark b{font-size:27px;line-height:1}.lesson-mark span{font-size:11px;font-weight:850;letter-spacing:.08em;text-transform:uppercase}
+.progress{margin:13px 0;background:#fff;border:1px solid #E1E5EC;border-radius:15px;padding:12px 15px;box-shadow:0 7px 20px rgba(48,58,87,.06)}
+.progress-top{display:flex;justify-content:space-between;gap:12px;align-items:center;color:#59667B;font-size:13px;font-weight:850}.bar{height:8px;background:#ECEFF4;border-radius:999px;overflow:hidden;margin:8px 0 10px}.fill{height:100%;width:0;background:linear-gradient(90deg,var(--unit),var(--secondary));transition:.3s ease}.steps{display:flex;gap:8px;flex-wrap:wrap;justify-content:center}.step-dot{width:29px;height:29px;border-radius:9px;border:1px solid #CDD3DE;background:#fff;color:#758197;display:grid;place-items:center;font-size:12px;font-weight:900}.step-dot.current{border:2px solid var(--unit);color:var(--unit-dark);background:var(--unit-soft)}.step-dot.done{border-color:var(--secondary);background:var(--secondary);color:#fff}
+.stage{background:#fff;border:1px solid #E0E5EF;border-radius:18px;box-shadow:0 10px 28px #27364b12;overflow:hidden}.stage-head{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;padding:18px 20px;border-bottom:1px solid #E8ECF3}.stage-kicker{font-size:12px;font-weight:950;color:var(--unit-dark);text-transform:uppercase}.stage-title{font-size:24px;margin:4px 0}.instruction{margin:0;color:#5C687C;font-weight:650;line-height:1.5}.help-btn{border:1px solid #C9D1E0;background:#fff;border-radius:11px;padding:9px 13px;font-weight:850;color:var(--secondary-dark);white-space:nowrap}.help-btn:hover{background:var(--secondary-soft)}.workspace{padding:16px 18px 20px}.task-strip{border-left:5px solid var(--unit);background:#FFF9F1;padding:12px 14px;border-radius:11px;margin-bottom:14px;font-weight:800;line-height:1.45}.feedback{min-height:0;margin-top:12px;border-radius:11px;font-weight:800;line-height:1.45}.feedback.show{padding:11px 13px;border:1px solid}.feedback.info{background:#F2F6FF;border-color:#C8D5EF;color:#46577C}.feedback.good{background:var(--good-soft);border-color:#AADBC5;color:#176943}.feedback.bad{background:var(--bad-soft);border-color:#F0BABA;color:#9B3030}@keyframes shake{25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}.wrong{animation:shake .28s;background:var(--bad-soft)!important;border-color:#E49A9A!important}.correct{background:var(--good-soft)!important;border-color:#7DC7A4!important}
+.choice-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:11px}.choice{border:1px solid #C8D1DF;background:#fff;border-radius:13px;padding:16px;text-align:left;color:#34415B;font-weight:850;line-height:1.38;min-height:78px;font-size:16px}.choice:hover{border-color:var(--secondary);background:var(--secondary-soft)}
+.scenario{border:1px solid #D8DEE9;border-radius:14px;background:#F9FAFC;padding:16px;margin-bottom:14px}.scenario h3{margin:0 0 7px;color:var(--secondary-dark);font-size:19px}.scenario p{margin:0;font-weight:720;color:#536075;line-height:1.5}.scenario .tag{display:inline-block;margin-bottom:8px;padding:5px 9px;border-radius:999px;background:var(--secondary-soft);color:var(--secondary-dark);font-size:12px;font-weight:900}
+.check-strip{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}.check-chip{padding:8px 11px;border-radius:999px;border:1px solid #CDD4DF;background:#F7F8FA;color:#6D788A;font-size:13px;font-weight:850}.check-chip.done{background:var(--good-soft);border-color:#9FD7BD;color:#176943}
+/* Creative Commons visual language */
+.workboard{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(310px,.85fr);gap:16px;align-items:stretch}.digital-work{border:1px solid #D3DAE5;border-radius:16px;background:linear-gradient(145deg,#fff,#F6F8FB);padding:18px;min-height:330px;position:relative;overflow:hidden}.digital-work:before{content:"";position:absolute;inset:0 0 auto 0;height:7px;background:linear-gradient(90deg,var(--unit),var(--secondary))}.work-preview{height:185px;border-radius:13px;border:1px solid #D7DEE8;background:linear-gradient(180deg,#DCE7F7 0 57%,#A8C985 57% 100%);position:relative;overflow:hidden;display:flex;align-items:flex-start;justify-content:center;padding-top:28px}.work-preview .sun{position:absolute;right:25px;top:22px;width:44px;height:44px;border-radius:50%;background:#F3B348}.work-preview .hill1,.work-preview .hill2{position:absolute;bottom:-30px;border-radius:50% 50% 0 0}.work-preview .hill1{left:-30px;width:260px;height:120px;background:#7CAB70}.work-preview .hill2{right:-50px;width:300px;height:145px;background:#64965C}.work-preview .caption{position:relative;z-index:2;background:#ffffffde;padding:7px 12px;border-radius:999px;font-weight:900;color:#3B4963}.work-meta{margin-top:14px}.work-meta h3{margin:0;color:var(--secondary-dark)}.work-meta p{margin:6px 0 0;color:#647086;font-weight:700}.cc-license{margin-top:13px;display:inline-flex;align-items:center;gap:8px;flex-wrap:wrap;border:2px solid #D0D7E2;background:#fff;border-radius:13px;padding:9px 12px;font-weight:950;color:#34415B}.cc-license .ccmark{display:inline-grid;place-items:center;border:2px solid currentColor;border-radius:50%;width:32px;height:32px;font-size:12px}.cc-license .term{display:inline-grid;place-items:center;border:2px solid currentColor;border-radius:50%;min-width:32px;height:32px;padding:0 6px;font-size:11px}.cc-license.big{padding:14px 16px;font-size:18px}.cc-license.big .ccmark,.cc-license.big .term{width:43px;height:43px;font-size:13px}.explain-panel{border:1px solid #D2D9E4;border-radius:16px;background:#fff;padding:18px}.explain-panel h3{margin:0 0 10px;color:var(--secondary-dark)}.explain-panel p{margin:0;color:#5D6A80;font-weight:700;line-height:1.5}.rights-list{display:grid;gap:9px;margin-top:14px}.right-row{display:flex;gap:10px;align-items:flex-start;border:1px solid #DDE2EA;background:#F8F9FB;border-radius:11px;padding:10px}.right-row .mini-symbol{flex:0 0 33px;width:33px;height:33px;border:2px solid var(--secondary);border-radius:50%;display:grid;place-items:center;color:var(--secondary-dark);font-size:10px;font-weight:950}.right-row b{display:block;color:#3C4961}.right-row span{display:block;color:#68758A;font-size:13px;font-weight:700;line-height:1.35;margin-top:2px}
+.work-types{display:grid;grid-template-columns:repeat(3,1fr);gap:13px;margin-bottom:14px}.work-type{border:1px solid #D3DAE5;border-radius:15px;background:#fff;padding:18px;text-align:center}.work-type .emoji{font-size:45px}.work-type b{display:block;margin-top:7px;color:var(--secondary-dark);font-size:17px}
+.term-grid{display:grid;grid-template-columns:repeat(2,minmax(260px,1fr));gap:13px}.term-card{border:1px solid #D4DAE5;border-radius:15px;background:#fff;padding:17px;display:grid;grid-template-columns:auto 1fr;gap:13px;align-items:start}.term-symbol{width:58px;height:58px;border:3px solid var(--secondary);border-radius:50%;display:grid;place-items:center;color:var(--secondary-dark);font-weight:950;font-size:15px}.term-card h3{margin:0;color:var(--secondary-dark);font-size:19px}.term-card p{margin:5px 0 0;color:#657187;font-weight:700;line-height:1.45}
+.license-focus{display:flex;justify-content:center;margin:10px 0 16px}.license-detail{border:1px solid #D7DDE7;border-radius:14px;background:#F8F9FC;padding:15px}.license-detail h3{margin:0 0 6px;color:var(--secondary-dark)}.license-detail p{margin:0;color:#5D6A7F;font-weight:700;line-height:1.5}
+.creator-board{border:1px solid #D3DAE5;border-radius:16px;background:linear-gradient(180deg,#FBFCFD,#F4F6FA);padding:18px}.creator-row{display:grid;grid-template-columns:160px 1fr;gap:15px;align-items:center}.creator-avatar{height:150px;border-radius:15px;border:1px solid #D8DEE8;background:linear-gradient(145deg,var(--secondary-soft),var(--unit-soft));display:grid;place-items:center;text-align:center;font-size:54px}.creator-avatar span{display:block;font-size:13px;font-weight:900;color:#59677D;margin-top:3px}.creator-text h3{margin:0 0 6px;color:var(--secondary-dark)}.creator-text p{margin:0;color:#5C697E;font-weight:720;line-height:1.5}
+/* self assessment */
+.self-wrap{overflow:auto}.self-table{min-width:900px;display:grid;grid-template-columns:2.2fr repeat(4,1fr);border:1px solid #D8DEE8;border-radius:14px;overflow:hidden}.self-head{padding:13px;background:var(--secondary);color:#fff;font-size:14px;font-weight:900;text-align:center;border-right:1px solid #ffffff44}.self-objective{padding:16px;background:#F7F8FB;font-weight:850;color:#3C4961;border-top:1px solid #DCE1E9;line-height:1.45}.self-cell{border:0;border-left:1px solid #DCE1E9;border-top:1px solid #DCE1E9;background:#fff;min-height:82px;padding:13px;font-size:15px;font-weight:800;color:#4B5870}.self-cell:hover{background:var(--secondary-soft)}.self-cell.selected{background:var(--unit-soft);box-shadow:inset 0 0 0 3px var(--unit);color:#71470D}.self-note{margin-top:11px;color:#67748A;font-weight:750}.finish-actions{display:flex;justify-content:flex-end;margin-top:14px}.primary{border:0;border-radius:11px;padding:11px 17px;background:var(--unit);color:#fff;font-weight:900}.primary:disabled{opacity:.45;cursor:not-allowed}.completion{padding:31px 24px;text-align:center}.completion .badge{display:inline-block;padding:7px 11px;background:var(--secondary-soft);color:var(--secondary-dark);border-radius:999px;font-size:12px;font-weight:950}.completion h2{color:var(--secondary-dark);font-size:29px;margin:13px 0 8px}.completion p{max-width:770px;margin:0 auto 18px;color:#637087;font-weight:700;line-height:1.55}.secondary-btn{border:1px solid var(--secondary);background:#fff;color:var(--secondary-dark);border-radius:11px;padding:11px 15px;font-weight:900}
+.modal-backdrop{position:fixed;inset:0;background:#18223888;display:none;align-items:center;justify-content:center;padding:18px;z-index:50}.modal-backdrop.open{display:flex}.modal{max-width:650px;width:100%;border-radius:16px;background:#fff;box-shadow:0 24px 60px #16203755;overflow:hidden}.modal-head{padding:14px 16px;background:var(--secondary);color:#fff;font-weight:950;display:flex;align-items:center;justify-content:space-between}.modal-close{border:0;background:transparent;color:#fff;font-size:25px}.modal-body{padding:18px;line-height:1.55;color:#4F5D73;font-weight:720}.modal-actions{display:flex;justify-content:flex-end;gap:9px;padding:0 18px 18px}.small-btn{border:1px solid #CBD2DE;border-radius:9px;background:#fff;padding:9px 12px;font-weight:850;color:#47546A}
+@media(max-width:800px){.hero{grid-template-columns:1fr}.lesson-mark{display:none}.workboard{grid-template-columns:1fr}.term-grid{grid-template-columns:1fr}.work-types{grid-template-columns:1fr}.creator-row{grid-template-columns:1fr}.creator-avatar{height:110px}.stage-head{flex-direction:column}.help-btn{align-self:flex-end}}
+</style>
+
+<style id="nk-license-style">
+.nk-license{max-width:1100px;margin:14px auto 24px;padding:10px 16px;text-align:center;font:13px/1.45 Arial,"Noto Sans",sans-serif;color:#4e657c}
+.nk-license a{color:inherit;text-decoration:underline;text-underline-offset:2px}
+.nk-license .cc-badge{display:inline-block;margin:0 4px;padding:2px 7px;border:1px solid #8aa0b8;border-radius:6px;background:#fff;font-weight:700;white-space:nowrap}
+</style>
+</head>
+<body>
+<div class="shell-page">
+  <header class="hero">
+    <div><div class="eyebrow">Ενότητα 5 · Ψηφιακές τεχνολογίες και κοινωνία</div><h1>Οι άδειες χρήσης πνευματικών δικαιωμάτων CC (Creative Commons)</h1><p>Αναγνώρισε τι δηλώνουν οι άδειες Creative Commons και τι επιτρέπουν ή απαγορεύουν για ένα ψηφιακό έργο.</p></div>
+    <div class="lesson-mark"><div><b>30</b><br><span>Μάθημα</span></div></div>
+  </header>
+  <section class="progress"><div class="progress-top"><span id="progressText"></span><span id="progressPct"></span></div><div class="bar"><div class="fill" id="fill"></div></div><div class="steps" id="steps"></div></section>
+  <main class="stage"><div class="stage-head"><div><div class="stage-kicker" id="kicker"></div><h2 class="stage-title" id="stageTitle"></h2><p class="instruction" id="instruction"></p></div><button class="help-btn" id="helpBtn">❔ Βοήθεια</button></div><div class="workspace"><div id="activity"></div><div class="feedback" id="feedback"></div></div></main>
+</div>
+<div class="modal-backdrop" id="helpModal"><div class="modal"><div class="modal-head"><span>Βοήθεια</span><button class="modal-close" id="closeHelp">×</button></div><div class="modal-body" id="helpText"></div><div class="modal-actions"><button class="small-btn" id="speakHelp">🔊 Άκουσε</button><button class="small-btn" id="understoodBtn">Το κατάλαβα</button></div></div></div>
+<script>
+const ACTIVITIES=[
+ {t:'Τι δηλώνει μια άδεια Creative Commons;',i:'Αναγνώρισε τον ρόλο μιας άδειας CC σε ένα ψηφιακό έργο.'},
+ {t:'Χαρακτηριστικά και έργα με άδεια CC',i:'Ξεχώρισε βασικά χαρακτηριστικά των αδειών Creative Commons και κατηγορίες έργων που μπορούν να τις χρησιμοποιούν.'},
+ {t:'Οι τέσσερις βασικοί όροι',i:'Σύνδεσε τους όρους BY, NC, SA και ND με τη σημασία τους.'},
+ {t:'Διάβασε συνδυασμούς αδειών CC',i:'Ερμήνευσε τι επιτρέπεται και τι απαγορεύεται σε διαφορετικούς συνδυασμούς Creative Commons.'},
+ {t:'Διάλεξε άδεια ως δημιουργός',i:'Επίλεξε τον κατάλληλο συνδυασμό όρων ανάλογα με το τι θέλει να επιτρέψει ή να απαγορεύσει ο δημιουργός.'},
+ {t:'Συνολική δοκιμή',i:'Έλεγξε αν αναγνωρίζεις τα βασικά χαρακτηριστικά, τους όρους και τους συνδυασμούς των αδειών Creative Commons.'},
+ {t:'Τι έμαθα;',i:'Αξιολόγησε πόσο καλά αναγνωρίζεις τις άδειες χρήσης Creative Commons.'}
+];
+const HELP=[
+ 'Η άδεια CC δείχνει με συγκεκριμένα σύμβολα τι επιτρέπει ο δημιουργός να γίνει με το έργο του και με ποιους όρους.',
+ 'Θυμήσου ότι το βιβλίο αναφέρει ως παραδείγματα έργων φωτογραφίες, βιβλία και μουσικά έργα. Επίσης αναφέρει ότι οι άδειες CC δεν απαιτούν από τον δημιουργό να παραιτηθεί πλήρως από τα δικαιώματά του.',
+ 'BY = Αναφορά στον δημιουργό. NC = Μη εμπορική χρήση. SA = Παρόμοια διανομή με τους ίδιους όρους. ND = Όχι παράγωγα έργα.',
+ 'Διάβασε κάθε σύμβολο χωριστά και συνδύασε τις σημασίες του. Για παράδειγμα, BY + NC σημαίνει ότι χρειάζεται αναφορά και δεν επιτρέπεται εμπορική χρήση.',
+ 'Σκέψου τι ζητά ο δημιουργός. Αν δεν θέλει εμπορική χρήση χρειάζεται NC. Αν δεν θέλει αλλαγές χρειάζεται ND. Αν θέλει οι αλλαγές να μοιράζονται με τους ίδιους όρους χρειάζεται SA. Η αναφορά δηλώνεται με BY.',
+ 'Χρησιμοποίησε όσα έμαθες για τα χαρακτηριστικά των αδειών και για τα σύμβολα BY, NC, SA και ND.',
+ 'Διάλεξε το επίπεδο που περιγράφει καλύτερα πόσο καλά μπορείς να αναγνωρίζεις τις άδειες χρήσης Creative Commons.'
+];
+let stage=0,finished=false;const completed=new Set();let timers=[];const orderCache={};
+const q=s=>document.querySelector(s),qa=s=>[...document.querySelectorAll(s)];
+function later(fn,ms){const t=setTimeout(fn,ms);timers.push(t);return t}function clearTimers(){timers.forEach(clearTimeout);timers=[]}
+function shuffle(arr){const a=[...arr];for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
+function shuffleOnce(key,arr){if(!orderCache[key])orderCache[key]=shuffle(arr);return orderCache[key]}
+function clearFeedback(){const f=q('#feedback');f.className='feedback';f.textContent=''}
+function setFeedback(text,type='info'){const f=q('#feedback');f.className=`feedback show ${type}`;f.textContent=text}
+function wrong(el,msg){el.classList.remove('wrong');void el.offsetWidth;el.classList.add('wrong');setFeedback(msg,'bad');later(()=>{el.classList.remove('wrong');clearFeedback()},560)}
+function advance(delay=900){completed.add(stage);later(()=>{stage++;clearFeedback();render()},delay)}
+function updateProgress(){const total=ACTIVITIES.length;const done=finished?total:completed.size;const pct=Math.round((done/total)*100);q('#progressText').textContent=finished?'Ολοκληρώθηκε':`Δραστηριότητα ${Math.min(stage+1,total)} από ${total}`;q('#progressPct').textContent=`${pct}%`;q('#fill').style.width=`${pct}%`;q('#steps').innerHTML=ACTIVITIES.map((_,i)=>`<span class="step-dot ${completed.has(i)||finished?'done':i===stage?'current':''}">${i+1}</span>`).join('')}
+function licenseHTML(terms,big=false){const labels={BY:'BY',NC:'NC',SA:'SA',ND:'ND'};return `<div class="cc-license ${big?'big':''}"><span class="ccmark">CC</span>${terms.map(t=>`<span class="term">${labels[t]}</span>`).join('')}</div>`}
+function workHTML(terms=['BY']){return `<div class="digital-work"><div class="work-preview"><span class="caption">Φωτογραφία: Ελληνικό τοπίο</span><span class="sun"></span><span class="hill1"></span><span class="hill2"></span></div><div class="work-meta"><h3>Ψηφιακό έργο</h3><p>Δημιουργός: Α. Δημητρίου</p>${licenseHTML(terms)}</div></div>`}
+
+/* Activity 1 */
+let a1step=0;
+function r1(){clearFeedback();if(a1step===0){const opts=shuffleOnce('a1purpose',[['rights','Δηλώνει τι επιτρέπει ο δημιουργός να γίνει με το έργο του και με ποιους όρους.'],['owner','Μεταφέρει αυτόματα την ιδιοκτησία του έργου σε όποιον το κατεβάσει.'],['delete','Διαγράφει τα δικαιώματα του δημιουργού από το έργο.']]);q('#activity').innerHTML=`<div class="workboard">${workHTML(['BY'])}<div class="explain-panel"><h3>Παρατήρησε την άδεια του έργου</h3><p>Στο έργο εμφανίζεται η ένδειξη Creative Commons μαζί με έναν όρο χρήσης.</p><div class="task-strip" style="margin-top:15px">Τι δηλώνει γενικά μια άδεια Creative Commons;</div><div class="choice-grid">${opts.map(o=>`<button class="choice" data-a1="${o[0]}">${o[1]}</button>`).join('')}</div></div></div>`;qa('[data-a1]').forEach(b=>b.onclick=()=>{if(b.dataset.a1!=='rights')return wrong(b,'Η άδεια δεν αφαιρεί τα δικαιώματα του δημιουργού. Δηλώνει τους όρους με τους οποίους επιτρέπει τη χρήση του έργου.');b.classList.add('correct');a1step=1;setFeedback('✓ Σωστά. Η άδεια CC δηλώνει τα δικαιώματα και τους όρους χρήσης που έχει επιλέξει ο δημιουργός.','good');later(r1,1100)});return}
+ const opts=shuffleOnce('a1creator',[['keeps','Ο δημιουργός εξακολουθεί να έχει δικαιώματα και επιλέγει ποια δικαιώματα παραχωρεί.'],['none','Ο δημιουργός παραιτείται υποχρεωτικά από όλα τα δικαιώματά του.'],['secret','Οι όροι της άδειας είναι κρυφοί και δεν εμφανίζονται πάνω στο έργο.']]);q('#activity').innerHTML=`<div class="workboard">${workHTML(['BY'])}<div class="explain-panel"><h3>Ο δημιουργός και τα δικαιώματά του</h3><p>Οι άδειες Creative Commons δίνουν στον δημιουργό ευελιξία να δηλώσει τους όρους εκμετάλλευσης και αναδιαμόρφωσης του έργου.</p><div class="task-strip" style="margin-top:15px">Ποια πρόταση συμφωνεί με αυτό;</div><div class="choice-grid">${opts.map(o=>`<button class="choice" data-a1b="${o[0]}">${o[1]}</button>`).join('')}</div></div></div>`;qa('[data-a1b]').forEach(b=>b.onclick=()=>{if(b.dataset.a1b!=='keeps')return wrong(b,'Το βιβλίο τονίζει ότι η χρήση άδειας CC δεν σημαίνει πλήρη παραίτηση από τα δικαιώματα του δημιουργού.');b.classList.add('correct');setFeedback('✓ Σωστά. Ο δημιουργός επιλέγει ποια δικαιώματα παραχωρεί και με ποιους όρους.','good');advance(1100)})}
+
+/* Activity 2 */
+const A2_ITEMS=shuffle([
+ {type:'work',title:'Φωτογραφία',icon:'📷',text:'Μπορεί να λάβει άδεια CC.',c:'yes'},
+ {type:'work',title:'Βιβλίο',icon:'📘',text:'Μπορεί να λάβει άδεια CC.',c:'yes'},
+ {type:'work',title:'Μουσικό έργο',icon:'🎵',text:'Μπορεί να λάβει άδεια CC.',c:'yes'},
+ {type:'feature',title:'Δωρεάν μέσω διαδικτύου',icon:'🆓',text:'Οι άδειες Creative Commons προσφέρονται δωρεάν μέσω διαδικτύου.',c:'yes'},
+ {type:'feature',title:'Μη αποκλειστικές άδειες',icon:'↔️',text:'Οι άδειες Creative Commons δεν είναι αποκλειστικές.',c:'yes'},
+ {type:'feature',title:'Ανταλλαγή μέσω διαδικτύου',icon:'🌐',text:'Οι άδειες CC επιτρέπουν την ανταλλαγή έργων μέσω διαδικτύου.',c:'yes'},
+ {type:'feature',title:'Πλήρης παραίτηση δικαιωμάτων',icon:'🚫',text:'Η χρήση άδειας CC απαιτεί από τον δημιουργό να παραιτηθεί από όλα τα δικαιώματά του.',c:'no'}
+]);let a2round=0;
+function r2(){clearFeedback();const r=A2_ITEMS[a2round];const opts=shuffleOnce('a2_'+a2round,[['yes','✓ Σωστό'],['no','✗ Λάθος']]);q('#activity').innerHTML=`<div class="scenario"><span class="tag">${r.type==='work'?'Κατηγορία έργου':'Χαρακτηριστικό άδειας'}</span><h3>${r.icon} ${r.title}</h3><p>${r.text}</p></div><div class="choice-grid">${opts.map(o=>`<button class="choice" data-a2="${o[0]}">${o[1]}</button>`).join('')}</div>`;qa('[data-a2]').forEach(b=>b.onclick=()=>{if(b.dataset.a2!==r.c)return wrong(b,'Ξανασκέψου αν η πρόταση συμφωνεί με τα χαρακτηριστικά των αδειών Creative Commons που αναφέρει το μάθημα.');b.classList.add('correct');setFeedback('✓ Σωστά.','good');later(()=>{a2round++;if(a2round>=A2_ITEMS.length)advance(0);else r2()},750)})}
+
+/* Activity 3 */
+const TERMS=shuffle([
+ {code:'BY',name:'Αναφορά',desc:'Όποιος αναπαράγει ή τροποποιεί το έργο οφείλει να αναφέρει τον αρχικό δημιουργό.'},
+ {code:'NC',name:'Μη εμπορική χρήση',desc:'Απαγορεύεται η χρήση του έργου με εμπορικό σκοπό.'},
+ {code:'SA',name:'Παρόμοια διανομή',desc:'Κάθε τροποποιημένη εκδοχή πρέπει να διανέμεται με τους ίδιους ακριβώς όρους.'},
+ {code:'ND',name:'Όχι παράγωγα έργα',desc:'Επιτρέπεται η αναπαραγωγή, αλλά απαγορεύεται η δημιουργία παραγώγου έργου.'}
+]);let a3round=0;
+function r3(){clearFeedback();const r=TERMS[a3round];const opts=shuffleOnce('a3_'+a3round,TERMS.map(x=>[x.code,x.name]));q('#activity').innerHTML=`<div class="license-focus">${licenseHTML([r.code],true)}</div><div class="license-detail"><h3>${r.desc}</h3><p>Ποιος βασικός όρος Creative Commons περιγράφεται;</p></div><div style="height:14px"></div><div class="choice-grid">${opts.map(o=>`<button class="choice" data-a3="${o[0]}">${o[1]} (${o[0]})</button>`).join('')}</div>`;qa('[data-a3]').forEach(b=>b.onclick=()=>{if(b.dataset.a3!==r.code)return wrong(b,'Διάβασε προσεκτικά τι επιτρέπεται ή τι απαγορεύεται στην περιγραφή.');b.classList.add('correct');setFeedback(`✓ ${r.code}: ${r.name}.`,'good');later(()=>{a3round++;if(a3round>=TERMS.length)advance(0);else r3()},850)})}
+
+/* Activity 4 */
+const LICENSES=shuffle([
+ {id:'BY',terms:['BY'],summary:'Επιτρέπεται αναπαραγωγή ή τροποποίηση, αρκεί να γίνεται αναφορά στον αρχικό δημιουργό.',answer:'by'},
+ {id:'BY-SA',terms:['BY','SA'],summary:'Χρειάζεται αναφορά στον δημιουργό και κάθε τροποποιημένη εκδοχή πρέπει να διανέμεται με τους ίδιους όρους.',answer:'bysa'},
+ {id:'BY-ND',terms:['BY','ND'],summary:'Επιτρέπεται η αναπαραγωγή με αναφορά στον δημιουργό, αλλά δεν επιτρέπεται να δημιουργηθεί παράγωγο έργο.',answer:'bynd'},
+ {id:'BY-NC',terms:['BY','NC'],summary:'Χρειάζεται αναφορά στον δημιουργό και δεν επιτρέπεται εμπορική χρήση.',answer:'bync'},
+ {id:'BY-NC-SA',terms:['BY','NC','SA'],summary:'Χρειάζεται αναφορά, δεν επιτρέπεται εμπορική χρήση και οι τροποποιημένες εκδοχές πρέπει να μοιράζονται με τους ίδιους όρους.',answer:'byncsa'}
+]);
+const LICENSE_OPTIONS=[['by','Αναφορά στον δημιουργό.'],['bysa','Αναφορά + οι τροποποιήσεις μοιράζονται με τους ίδιους όρους.'],['bynd','Αναφορά + δεν επιτρέπονται παράγωγα έργα.'],['bync','Αναφορά + δεν επιτρέπεται εμπορική χρήση.'],['byncsa','Αναφορά + μη εμπορική χρήση + ίδιοι όροι στις τροποποιήσεις.']];let a4round=0;
+function r4(){clearFeedback();const r=LICENSES[a4round];const opts=shuffleOnce('a4_'+a4round,LICENSE_OPTIONS);q('#activity').innerHTML=`<div class="license-focus">${licenseHTML(r.terms,true)}</div><div class="task-strip">Ποια περιγραφή ταιριάζει στον συνδυασμό <b>CC ${r.id}</b>;</div><div class="choice-grid">${opts.map(o=>`<button class="choice" data-a4="${o[0]}">${o[1]}</button>`).join('')}</div>`;qa('[data-a4]').forEach(b=>b.onclick=()=>{if(b.dataset.a4!==r.answer)return wrong(b,'Διάβασε κάθε σύμβολο της άδειας χωριστά και συνδύασε τις σημασίες τους.');b.classList.add('correct');setFeedback(`✓ CC ${r.id}: ${r.summary}`,'good');later(()=>{a4round++;if(a4round>=LICENSES.length)advance(0);else r4()},1000)})}
+
+/* Activity 5 */
+const CREATOR_CASES=shuffle([
+ {t:'Η δημιουργός θέλει όλοι να αναφέρουν το όνομά της. Επιτρέπει και τροποποιήσεις και εμπορική χρήση.',c:'BY',terms:['BY']},
+ {t:'Η δημιουργός θέλει αναφορά στο όνομά της και δεν θέλει κανείς να χρησιμοποιήσει το έργο για εμπορικό σκοπό.',c:'BY-NC',terms:['BY','NC']},
+ {t:'Η δημιουργός επιτρέπει την αναπαραγωγή, αλλά δεν θέλει να δημιουργούνται τροποποιημένες εκδοχές του έργου.',c:'BY-ND',terms:['BY','ND']},
+ {t:'Η δημιουργός επιτρέπει τροποποιήσεις, αλλά θέλει κάθε νέα εκδοχή να μοιράζεται με τους ίδιους όρους.',c:'BY-SA',terms:['BY','SA']}
+]);let a5round=0;
+function r5(){clearFeedback();const r=CREATOR_CASES[a5round];const opts=shuffleOnce('a5_'+a5round,[['BY',['BY']],['BY-NC',['BY','NC']],['BY-ND',['BY','ND']],['BY-SA',['BY','SA']]]);q('#activity').innerHTML=`<div class="creator-board"><div class="creator-row"><div class="creator-avatar">👩‍🎨<span>Δημιουργός ψηφιακού έργου</span></div><div class="creator-text"><h3>Τι θέλει να επιτρέψει;</h3><p>${r.t}</p></div></div></div><div style="height:14px"></div><div class="choice-grid">${opts.map(o=>`<button class="choice" data-a5="${o[0]}">${licenseHTML(o[1])}<div style="margin-top:8px">CC ${o[0]}</div></button>`).join('')}</div>`;qa('[data-a5]').forEach(b=>b.onclick=()=>{if(b.dataset.a5!==r.c)return wrong(b,'Σύνδεσε την επιθυμία του δημιουργού με τους όρους BY, NC, SA ή ND.');b.classList.add('correct');setFeedback(`✓ Κατάλληλη επιλογή: CC ${r.c}.`,'good');later(()=>{a5round++;if(a5round>=CREATOR_CASES.length)advance(0);else r5()},900)})}
+
+/* Activity 6 */
+const FINAL=shuffle([
+ {t:'Ο όρος BY απαιτεί αναφορά στον αρχικό δημιουργό.',c:'yes'},
+ {t:'Ο όρος NC επιτρέπει πάντα τη χρήση ενός έργου για εμπορικό σκοπό.',c:'no'},
+ {t:'Ο όρος SA σημαίνει ότι μια τροποποιημένη εκδοχή πρέπει να διανεμηθεί με τους ίδιους όρους.',c:'yes'},
+ {t:'Ο όρος ND επιτρέπει τη δημιουργία παραγώγων έργων χωρίς κανέναν περιορισμό.',c:'no'},
+ {t:'Η άδεια CC BY-NC συνδυάζει αναφορά στον δημιουργό και μη εμπορική χρήση.',c:'yes'},
+ {t:'Η χρήση άδειας Creative Commons σημαίνει ότι ο δημιουργός παραιτείται υποχρεωτικά από όλα τα δικαιώματά του.',c:'no'}
+]);let a6round=0;
+function r6(){clearFeedback();const r=FINAL[a6round];const opts=shuffleOnce('a6_'+a6round,[['yes','✓ Συμφωνώ'],['no','✗ Διαφωνώ']]);q('#activity').innerHTML=`<div class="scenario"><span class="tag">Πρόταση ${a6round+1}</span><h3>${r.t}</h3></div><div class="choice-grid">${opts.map(o=>`<button class="choice" data-a6="${o[0]}">${o[1]}</button>`).join('')}</div>`;qa('[data-a6]').forEach(b=>b.onclick=()=>{if(b.dataset.a6!==r.c)return wrong(b,'Ξανασκέψου τι σημαίνουν τα σύμβολα και τα χαρακτηριστικά των αδειών Creative Commons.');b.classList.add('correct');setFeedback('✓ Σωστά.','good');later(()=>{a6round++;if(a6round>=FINAL.length)advance(0);else r6()},750)})}
+
+/* Activity 7 */
+const levels=['Έχω καταλάβει και μπορώ να εξηγήσω','Έχω καταλάβει αρκετά καλά','Έχω καταλάβει αλλά έχω απορίες','Χρειάζομαι βοήθεια'];
+const objectives=['Να αναγνωρίζω τις άδειες χρήσης μέσω του οργανισμού ελεύθερης διακίνησης πνευματικών δικαιωμάτων CC (Creative Commons).'];let selfSel=[null];
+function r7(){q('#activity').innerHTML=`<div class="self-wrap"><div class="self-table"><div class="self-head">Αξιολογώ πόσο καλά έμαθα</div>${levels.map(x=>`<div class="self-head">${x}</div>`).join('')}${objectives.map((o,row)=>`<div class="self-objective">✓ ${o}</div>${levels.map((l,col)=>`<button class="self-cell ${selfSel[row]===col?'selected':''}" data-self="${row}:${col}">${l}</button>`).join('')}`).join('')}</div></div><div class="self-note">Διάλεξε το επίπεδο που σε εκφράζει καλύτερα.</div><div class="finish-actions"><button class="primary" id="finishBtn" ${selfSel.some(x=>x===null)?'disabled':''}>Ολοκλήρωση</button></div>`;qa('[data-self]').forEach(b=>b.onclick=()=>{const [r,c]=b.dataset.self.split(':').map(Number);selfSel[r]=c;r7()});q('#finishBtn').onclick=()=>{if(selfSel.some(x=>x===null))return;completed.add(stage);finished=true;render()}}
+
+const renderers=[r1,r2,r3,r4,r5,r6,r7];
+function renderCompletion(){q('#kicker').textContent='ΟΛΟΚΛΗΡΩΣΗ';q('#stageTitle').textContent='Μάθημα 30 ολοκληρώθηκε';q('#instruction').textContent='Ολοκλήρωσες τις δραστηριότητες για τις άδειες χρήσης Creative Commons.';q('#activity').innerHTML=`<div class="completion"><span class="badge">Ενότητα 5 · Μάθημα 30</span><h2>Μπορείς να διαβάζεις τους βασικούς όρους μιας άδειας Creative Commons!</h2><p>Αναγνώρισες τα σύμβολα BY, NC, SA και ND και συνδύασες τους όρους τους για να καταλάβεις τι επιτρέπεται και τι απαγορεύεται στη χρήση ενός έργου.</p><button class="secondary-btn" id="restartComplete">↻ Επανάληψη μαθήματος</button></div>`;q('#restartComplete').onclick=()=>location.reload();clearFeedback()}
+function render(){clearTimers();clearFeedback();updateProgress();if(finished){renderCompletion();window.scrollTo({top:0,behavior:'smooth'});return}const s=ACTIVITIES[stage];q('#kicker').textContent=`Δραστηριότητα ${stage+1}`;q('#stageTitle').textContent=s.t;q('#instruction').textContent=s.i;renderers[stage]();window.scrollTo({top:0,behavior:'smooth'})}
+q('#helpBtn').onclick=()=>{q('#helpText').textContent=HELP[stage]||'';q('#helpModal').classList.add('open')};q('#closeHelp').onclick=q('#understoodBtn').onclick=()=>q('#helpModal').classList.remove('open');q('#helpModal').onclick=e=>{if(e.target===q('#helpModal'))q('#helpModal').classList.remove('open')};q('#speakHelp').onclick=()=>{if(!('speechSynthesis' in window))return;window.speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(HELP[stage]||'');u.lang='el-GR';window.speechSynthesis.speak(u)};
+render();
+</script>
+
+<footer class="nk-license" aria-label="Πληροφορίες δημιουργού και άδειας χρήσης">
+  <div><strong>Created by Nikos Kalakos · © 2026</strong></div>
+  <div>Original educational content and simulation design licensed under <a class="cc-badge" href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank" rel="license noopener noreferrer">CC BY-NC 4.0</a>.</div>
+  <div>Source code © 2026 Nikos Kalakos.</div>
+  <div>Third-party and textbook materials remain subject to the rights and licences of their respective copyright holders.</div>
+</footer>
+</body>
+</html>

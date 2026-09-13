@@ -1,0 +1,209 @@
+<!--
+ICT Educational Simulation
+Created by Nikos Kalakos
+Copyright © 2026 Nikos Kalakos
+
+Original educational content and simulation design licensed under CC BY-NC 4.0.
+Source code © 2026 Nikos Kalakos.
+Third-party and textbook materials remain subject to the rights and licences of their respective copyright holders.
+-->
+<!DOCTYPE html>
+<html lang="el">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="author" content="Nikos Kalakos">
+<meta name="copyright" content="© 2026 Nikos Kalakos">
+<meta name="license" content="Original educational content and simulation design: CC BY-NC 4.0; source code © 2026 Nikos Kalakos; third-party and textbook materials excluded.">
+<title>Μάθημα 18 – Αριθμητικές πράξεις στο υπολογιστικό φύλλο</title>
+<style>
+:root{
+  --unit:#EA922C;--unit-dark:#B86610;--unit-soft:#FFF4E6;
+  --secondary:#545F99;--secondary-dark:#3D477C;--secondary-soft:#EEF0F8;
+  --ink:#25324A;--muted:#68758A;--line:#D8DEEA;--bg:#F5F7FB;
+  --good:#23845A;--good-soft:#E9F7F0;--bad:#B64242;--bad-soft:#FDEEEE;
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:Inter,"Segoe UI",Arial,sans-serif;color:var(--ink);background:radial-gradient(circle at 9% 6%,rgba(234,146,44,.11),transparent 28%),radial-gradient(circle at 90% 18%,rgba(84,95,153,.12),transparent 30%),#F4F6FA;font-size:16px}
+button,input{font:inherit}button{cursor:pointer}
+.shell-page{max-width:1280px;margin:0 auto;padding:18px}.hero{background:#fff;border:1px solid #E3E7EE;border-top:9px solid var(--unit);border-radius:18px;box-shadow:0 14px 35px rgba(45,55,86,.11);padding:20px 24px 18px;display:grid;grid-template-columns:1fr auto;gap:18px;align-items:center}.eyebrow{font-size:13px;font-weight:900;letter-spacing:.075em;text-transform:uppercase;color:var(--secondary)}.hero h1{margin:5px 0 0;font-size:29px;line-height:1.14;color:var(--secondary-dark);max-width:990px}.hero p{margin:8px 0 0;color:var(--muted);font-weight:700;line-height:1.45}.lesson-mark{min-width:118px;height:72px;border-radius:16px;background:linear-gradient(135deg,var(--secondary),var(--secondary-dark));color:#fff;display:grid;place-items:center;text-align:center;box-shadow:0 9px 22px rgba(84,95,153,.23)}.lesson-mark b{font-size:27px;line-height:1}.lesson-mark span{font-size:11px;font-weight:850;letter-spacing:.08em;text-transform:uppercase}
+.progress{margin:13px 0;background:#fff;border:1px solid #E1E5EC;border-radius:15px;padding:12px 15px;box-shadow:0 7px 20px rgba(48,58,87,.06)}.progress-top{display:flex;justify-content:space-between;gap:12px;align-items:center;color:#59667B;font-size:13px;font-weight:850}.bar{height:8px;background:#ECEFF4;border-radius:999px;overflow:hidden;margin:8px 0 10px}.fill{height:100%;width:0;background:linear-gradient(90deg,var(--unit),var(--secondary));transition:.3s ease}.steps{display:flex;gap:8px;flex-wrap:wrap;justify-content:center}.step-dot{width:29px;height:29px;border-radius:9px;border:1px solid #CDD3DE;background:#fff;color:#758197;display:grid;place-items:center;font-size:12px;font-weight:900}.step-dot.current{border:2px solid var(--unit);color:var(--unit-dark);background:var(--unit-soft)}.step-dot.done{border-color:var(--secondary);background:var(--secondary);color:#fff}
+.stage{background:#fff;border:1px solid #E0E5EF;border-radius:18px;box-shadow:0 10px 28px #27364b12;overflow:hidden}.stage-head{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;padding:18px 20px;border-bottom:1px solid #E8ECF3}.stage-kicker{font-size:12px;font-weight:950;color:var(--unit-dark);text-transform:uppercase}.stage-title{font-size:24px;margin:4px 0}.instruction{margin:0;color:#5C687C;font-weight:650;line-height:1.5}.help-btn{border:1px solid #C9D1E0;background:#fff;border-radius:11px;padding:9px 13px;font-weight:850;color:var(--secondary-dark);white-space:nowrap}.help-btn:hover{background:var(--secondary-soft)}.workspace{padding:16px 18px 20px}.task-strip{border-left:5px solid var(--unit);background:#FFF9F1;padding:12px 14px;border-radius:11px;margin-bottom:14px;font-weight:800;line-height:1.45}.feedback{min-height:0;margin-top:12px;border-radius:11px;font-weight:800;line-height:1.45}.feedback.show{padding:11px 13px;border:1px solid}.feedback.info{background:#F2F6FF;border-color:#C8D5EF;color:#46577C}.feedback.good{background:var(--good-soft);border-color:#AADBC5;color:#176943}.feedback.bad{background:var(--bad-soft);border-color:#F0BABA;color:#9B3030}@keyframes shake{25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}.wrong{animation:shake .28s;background:var(--bad-soft)!important;border-color:#E49A9A!important}.correct{background:var(--good-soft)!important;border-color:#7DC7A4!important}.check-strip{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px;justify-content:center}.check-chip{border:1px solid #CCD4E2;background:#fff;border-radius:99px;padding:8px 11px;font-size:13px;font-weight:900;color:#637087}.check-chip.done{background:var(--good-soft);border-color:#91CDB0;color:#1F724E}
+
+/* Praxis */
+.app-shell{max-width:1110px;margin:0 auto;border:1px solid #C7CFDD;border-radius:18px;overflow:hidden;background:#fff;box-shadow:0 9px 22px #33435d12}.app-top{height:49px;background:linear-gradient(110deg,var(--secondary-dark),var(--secondary));color:#fff;display:flex;align-items:center;gap:10px;padding:0 14px}.app-icon{width:35px;height:35px;border-radius:10px;background:var(--unit);display:grid;place-items:center;font-weight:950}.app-name{font-weight:950}.app-sub{font-size:12px;opacity:.9;font-weight:750}.sheet-toolbar{min-height:44px;background:#F0F3F8;border-bottom:1px solid #D6DDE8;display:flex;gap:7px;align-items:center;padding:7px 10px;font-size:13px;font-weight:850;color:#68758A;flex-wrap:wrap}.tool{border:1px solid #CAD3E0;background:#fff;border-radius:7px;min-width:37px;height:31px;padding:4px 8px;text-align:center;font-weight:950;color:#4F5F7A}.tool:hover{background:var(--secondary-soft);border-color:#9CA7C5}.tool.active{background:var(--secondary-soft);border-color:var(--secondary);color:var(--secondary-dark)}.tool:disabled{opacity:.45;cursor:not-allowed}.sep{height:25px;width:1px;background:#CBD3E0}.name-box{min-width:72px;border:1px solid #C6D0DE;background:#fff;border-radius:7px;padding:6px 8px;font-weight:900;color:var(--secondary-dark)}.fx{font-style:italic;font-weight:950;color:#66748B}.formula-box{flex:1;min-width:220px;border:1px solid #C6D0DE;background:#fff;border-radius:7px;padding:6px 10px;color:#34415B;font-weight:750;min-height:31px}.sheet-area{padding:18px;background:#FCFDFE;overflow:auto}.sheet-grid{display:grid;grid-template-columns:46px 250px 120px 185px 140px;min-width:742px;max-width:900px;margin:0 auto;border-left:1px solid #B8C3D3;border-top:1px solid #B8C3D3;user-select:none}.gcell{position:relative;min-height:50px;border-right:1px solid #B8C3D3;border-bottom:1px solid #B8C3D3;background:#fff;padding:7px 9px;display:flex;align-items:center;font-weight:750;color:#34415B}.corner,.colhead,.rowhead{background:#EEF1F6;color:#66748B;font-weight:950;justify-content:center}.colhead,.rowhead{cursor:default}.data-cell{cursor:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24'%3E%3Cpath d='M10 2h4v8h8v4h-8v8h-4v-8H2v-4h8z' fill='%23000'/%3E%3C/svg%3E") 12 12,crosshair}.data-cell:hover{background:#F8FAFD}.active-cell{outline:3px solid #111;outline-offset:-3px;z-index:4;background:#FFFDF8}.range-selected{background:#E5EAF8!important}.range-edge{box-shadow:inset 0 0 0 2px #6273AD}.referenced{background:#FFF0D8!important;box-shadow:inset 0 0 0 2px var(--unit)}.number{justify-content:flex-end}.header-text{font-weight:900}.wrapped{white-space:normal!important;line-height:1.25;min-height:76px;align-items:flex-start;padding-top:9px}.nowrap{white-space:nowrap;overflow:hidden;text-overflow:clip}.borders{box-shadow:inset 0 0 0 1.5px #3C4658}.currency:after{content:' €';}.fill-handle{position:absolute;width:10px;height:10px;background:#111;right:-5px;bottom:-5px;border:1px solid #fff;z-index:9;cursor:crosshair}.fill-preview{background:#EEF6EF!important}.drag-select{background:#E8ECF9!important}.sheet-note{max-width:900px;margin:10px auto 0;text-align:center;color:#66748B;font-weight:800;line-height:1.4}.keycap{display:inline-block;border:1px solid #AEB8C8;border-bottom-width:3px;border-radius:6px;background:#fff;padding:1px 7px;font-family:Consolas,monospace;font-size:.9em;color:#33415A}
+
+.choice-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;max-width:900px;margin:12px auto}.choice{min-height:62px;border:1.5px solid #C9D2E2;background:#fff;border-radius:12px;padding:12px 14px;text-align:left;font-weight:850;color:#283650;transition:.15s;line-height:1.4}.choice:hover{border-color:#8897B3;transform:translateY(-1px)}
+.final-card{max-width:1020px;margin:0 auto;border:1px solid #D4DCE8;border-radius:17px;background:#FBFCFE;padding:16px}.final-progress{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:12px}.final-chip{border:1px solid #CBD4E2;background:#fff;border-radius:999px;padding:8px 10px;font-size:12px;font-weight:900;color:#6A768B}.final-chip.done{background:var(--good-soft);border-color:#90CBAE;color:#1F724E}
+.self-wrap{overflow:auto}.self-table{min-width:840px;display:grid;grid-template-columns:2fr repeat(4,1fr);gap:1px;background:#CED5E1;border:1px solid #CED5E1;border-radius:12px;overflow:hidden}.self-head,.self-objective,.self-cell{background:#fff;padding:11px}.self-head{font-size:12px;font-weight:900;color:#5F6C82;text-align:center}.self-objective{font-weight:850;line-height:1.35}.self-cell{border:0;min-height:62px;color:transparent;position:relative}.self-cell:after{content:'○';color:#7D899D;font-size:25px;position:absolute;inset:0;display:grid;place-items:center}.self-cell.selected{background:var(--secondary-soft)}.self-cell.selected:after{content:'●';color:var(--secondary)}.self-note{text-align:center;color:#66748B;font-weight:800;margin-top:12px}.finish-actions{text-align:center;margin-top:14px}.finish-btn{border:0;background:var(--secondary);color:#fff;border-radius:10px;padding:10px 15px;font-weight:900}.finish-btn:disabled{opacity:.4;cursor:not-allowed}.completion{text-align:center;padding:36px 20px}.badge{display:inline-block;background:var(--unit-soft);color:var(--unit-dark);border-radius:99px;padding:7px 11px;font-size:12px;font-weight:900}.completion h2{font-size:28px;margin:12px 0 8px}.secondary-btn{border:1px solid #BCC6D8;background:#fff;border-radius:10px;padding:10px 14px;font-weight:900;color:#3D4A66}
+.modal-backdrop{position:fixed;inset:0;background:#11182788;display:none;align-items:center;justify-content:center;padding:18px;z-index:50}.modal-backdrop.open{display:flex}.modal{width:min(560px,100%);background:#fff;border-radius:16px;box-shadow:0 18px 60px #0004;overflow:hidden}.modal-head{padding:14px 16px;background:var(--secondary);color:#fff;font-weight:900;display:flex;justify-content:space-between;align-items:center}.modal-close{border:0;background:#ffffff1f;color:#fff;width:32px;height:32px;border-radius:8px;font-size:20px}.modal-body{padding:17px;line-height:1.55;color:#3F4D68;font-weight:700}.modal-actions{display:flex;justify-content:flex-end;gap:8px;padding:0 17px 17px}.small-btn{border:1px solid #C5CDDC;background:#fff;border-radius:9px;padding:8px 11px;font-weight:850}
+@media(max-width:760px){.shell-page{padding:9px}.hero{padding:16px}.hero h1{font-size:24px}.lesson-mark{min-width:96px;height:64px}.stage-head{flex-direction:column}.choice-grid{grid-template-columns:1fr}}
+</style>
+<style id="nk-license-style">
+.nk-license{max-width:1100px;margin:14px auto 24px;padding:10px 16px;text-align:center;font:13px/1.45 Arial,"Noto Sans",sans-serif;color:#4e657c}
+.nk-license a{color:inherit;text-decoration:underline;text-underline-offset:2px}
+.nk-license .cc-badge{display:inline-block;margin:0 4px;padding:2px 7px;border:1px solid #8aa0b8;border-radius:6px;background:#fff;font-weight:700;white-space:nowrap}
+</style>
+</head>
+<body>
+<div class="shell-page">
+<header class="hero"><div><div class="eyebrow">Ενότητα 3 · Δεδομένα και ανάλυση δεδομένων</div><h1>Αριθμητικές πράξεις στο υπολογιστικό φύλλο</h1><p>Χρησιμοποίησε συναρτήσεις, τύπους και αυτόματη αντιγραφή στο Praxis.</p></div><div class="lesson-mark"><div><b>18</b><br><span>Μάθημα</span></div></div></header>
+<section class="progress"><div class="progress-top"><span id="progressText"></span><span id="progressPct"></span></div><div class="bar"><div class="fill" id="fill"></div></div><div class="steps" id="steps"></div></section>
+<main class="stage"><div class="stage-head"><div><div class="stage-kicker" id="kicker"></div><h2 class="stage-title" id="stageTitle"></h2><p class="instruction" id="instruction"></p></div><button class="help-btn" id="helpBtn">❔ Βοήθεια</button></div><div class="workspace"><div id="activity"></div><div class="feedback" id="feedback"></div></div></main>
+</div>
+<div class="modal-backdrop" id="helpModal"><div class="modal"><div class="modal-head"><span>Βοήθεια</span><button class="modal-close" id="closeHelp">×</button></div><div class="modal-body" id="helpText"></div><div class="modal-actions"><button class="small-btn" id="speakHelp">🔊 Άκουσε</button><button class="small-btn" id="understoodBtn">Το κατάλαβα</button></div></div></div>
+<script>
+const ACTIVITIES=[
+ {t:'Υπολόγισε το σύνολο',i:'Χρησιμοποίησε τη συνάρτηση αθροίσματος όπως σε ένα πραγματικό υπολογιστικό φύλλο.'},
+ {t:'Φτιάξε έναν τύπο',i:'Δημιούργησε τύπο διαίρεσης χρησιμοποιώντας αναφορές κελιών.'},
+ {t:'Άλλαξε ένα δεδομένο',i:'Παρατήρησε πώς ένας τύπος ενημερώνεται αυτόματα όταν αλλάζει ένα κελί που χρησιμοποιεί.'},
+ {t:'Αντέγραψε τον τύπο',i:'Χρησιμοποίησε τη λαβή συμπλήρωσης για να αντιγράψεις έναν τύπο στις επόμενες γραμμές.'},
+ {t:'Μορφοποίησε τα αποτελέσματα',i:'Χρησιμοποίησε εργαλεία του υπολογιστικού φύλλου για πιο καθαρή παρουσίαση.'},
+ {t:'Συνολική δοκιμή',i:'Εφάρμοσε συνάρτηση, αυτόματη αντιγραφή και μορφοποίηση χωρίς βοήθεια.'},
+ {t:'Τι έμαθα;',i:'Αξιολόγησε πόσο καλά μπορείς να εφαρμόζεις όσα δούλεψες στο μάθημα.'}
+];
+const HELP=[
+ 'Επίλεξε πρώτα το κελί B4. Μετά πάτησε το εικονίδιο Σ. Το Praxis θα προτείνει την περιοχή B2:B3. Για να αποδεχτείς τη συνάρτηση, πάτησε το πραγματικό πλήκτρο Enter.',
+ 'Επίλεξε το D3. Πάτησε =, κάνε κλικ στο D2, πάτησε /, κάνε κλικ στο B4 και τέλος πάτησε Enter. Έτσι ο τύπος χρησιμοποιεί αναφορές κελιών και όχι αριθμούς που πληκτρολόγησες μέσα στον τύπο.',
+ 'Επίλεξε το D2 και πληκτρολόγησε 88. Με Enter η αλλαγή ολοκληρώνεται. Επειδή το D3 έχει τύπο που χρησιμοποιεί το D2, το αποτέλεσμα αλλάζει αυτόματα.',
+ 'Κάνε κλικ στο D7. Στην κάτω δεξιά γωνία του ενεργού κελιού υπάρχει η μικρή λαβή συμπλήρωσης. Σύρε τη λαβή μέχρι το D9 για να αντιγραφεί ο τύπος στις επόμενες γραμμές.',
+ 'Επίλεξε το D6 και χρησιμοποίησε την Αναδίπλωση κειμένου. Θα δεις το μεγάλο κείμενο να χωρίζεται σε περισσότερες γραμμές μέσα στο ίδιο κελί. Μετά σύρε από D7 μέχρι D9 και χρησιμοποίησε τη μορφή νομίσματος.',
+ 'Δούλεψε όπως πριν: επίλεξε κελί, χρησιμοποίησε Σ και Enter, σύρε τη λαβή συμπλήρωσης και χρησιμοποίησε το κατάλληλο εργαλείο μορφοποίησης.',
+ 'Διάλεξε ένα επίπεδο για κάθε στόχο. Δεν υπάρχουν σωστές ή λάθος επιλογές στην αυτοαξιολόγηση.'
+];
+let stage=0,finished=false,renderEpoch=0,pendingTimers=[],transitionLocked=false;const completed=new Set();
+const q=s=>document.querySelector(s),qa=s=>[...document.querySelectorAll(s)];const activity=q('#activity'),feedback=q('#feedback'),kicker=q('#kicker'),stageTitle=q('#stageTitle'),instruction=q('#instruction');
+function clearTimers(){pendingTimers.forEach(clearTimeout);pendingTimers=[]}function later(fn,ms){const s=stage,e=renderEpoch;const id=setTimeout(()=>{if(stage===s&&renderEpoch===e)fn()},ms);pendingTimers.push(id);return id}function setFeedback(txt,type='info'){feedback.className='feedback show '+type;feedback.innerHTML=txt}function clearFeedback(){feedback.className='feedback';feedback.textContent=''}function wrong(el,msg){if(el){el.classList.remove('wrong');void el.offsetWidth;el.classList.add('wrong')}setFeedback(msg,'bad')}function advance(delay=0){if(transitionLocked)return;transitionLocked=true;later(()=>{completed.add(stage);stage++;transitionLocked=false;render()},delay)}function updateProgress(){const n=ACTIVITIES.length,pct=finished?100:Math.round(stage/(n-1)*100);q('#progressText').textContent=finished?'Ολοκληρώθηκε':`Δραστηριότητα ${stage+1} από ${n}`;q('#progressPct').textContent=pct+'%';q('#fill').style.width=pct+'%';q('#steps').innerHTML=ACTIVITIES.map((_,i)=>`<span class="step-dot ${completed.has(i)?'done':''} ${i===stage&&!finished?'current':''}">${i+1}</span>`).join('')}
+function esc(v){return String(v??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]))}
+function praxis(inner){return `<div class="app-shell"><div class="app-top"><div class="app-icon">Σ</div><div><div class="app-name">Praxis</div><div class="app-sub">Υπολογιστικό φύλλο · AthenaOS</div></div></div>${inner}</div>`}
+function toolbar({name='',formula='',sum=false,wrap=false,currency=false,borders=false,wrapActive=false,currencyActive=false,bordersActive=false}={}){return `<div class="sheet-toolbar"><button class="tool" id="sumTool" ${sum?'':'disabled'} title="Άθροισμα">Σ</button><div class="sep"></div><button class="tool ${wrapActive?'active':''}" id="wrapTool" ${wrap?'':'disabled'} title="Αναδίπλωση κειμένου">↩</button><button class="tool ${currencyActive?'active':''}" id="currencyTool" ${currency?'':'disabled'} title="Νόμισμα">€</button><button class="tool ${bordersActive?'active':''}" id="bordersTool" ${borders?'':'disabled'} title="Περιγράμματα">▦</button><div class="sep"></div><div class="name-box">${esc(name)}</div><span class="fx">fx</span><div class="formula-box">${esc(formula)}</div></div>`}
+const COLS=['A','B','C','D'];
+function grid(data={},opt={}){const rows=opt.rows||9;const active=opt.active||'';const range=new Set(opt.range||[]);const refs=new Set(opt.refs||[]);const preview=new Set(opt.preview||[]);const wraps=new Set(opt.wraps||[]);const currencies=new Set(opt.currencies||[]);const borders=new Set(opt.borders||[]);const formulas=opt.formulas||{};let h='<div class="sheet-grid" id="sheetGrid"><div class="gcell corner"></div>';COLS.forEach(c=>h+=`<div class="gcell colhead" data-col="${c}">${c}</div>`);for(let r=1;r<=rows;r++){h+=`<div class="gcell rowhead" data-row="${r}">${r}</div>`;for(const c of COLS){const id=c+r,val=data[id]??'';let cl='gcell data-cell';if(id===active)cl+=' active-cell';if(range.has(id))cl+=' range-selected';if(refs.has(id))cl+=' referenced';if(preview.has(id))cl+=' fill-preview';if(wraps.has(id))cl+=' wrapped';else if(typeof val==='string'&&val!=='')cl+=' nowrap';if(typeof val==='number')cl+=' number';if(currencies.has(id))cl+=' currency';if(borders.has(id))cl+=' borders';h+=`<div class="${cl}" data-cell="${id}" data-formula="${esc(formulas[id]||'')}">${esc(val)}${id===active&&opt.handle?'<span class="fill-handle" id="fillHandle" aria-label="Λαβή συμπλήρωσης"></span>':''}</div>`}}return h+'</div>'}
+function setKey(handler){document.onkeydown=handler}
+function setupRangeDrag(startId,endId,onDone){let dragging=false,last='';const cells=qa('[data-cell]');const order=id=>{const c=COLS.indexOf(id[0]),r=Number(id.slice(1));return {c,r}};const s=order(startId),e=order(endId);function paint(cur){const p=order(cur);cells.forEach(x=>x.classList.remove('drag-select'));if(p.c<s.c||p.r<s.r)return;cells.forEach(x=>{const o=order(x.dataset.cell);if(o.c>=s.c&&o.c<=Math.min(p.c,e.c)&&o.r>=s.r&&o.r<=Math.min(p.r,e.r))x.classList.add('drag-select')})}const move=ev=>{if(!dragging)return;const el=document.elementFromPoint(ev.clientX,ev.clientY)?.closest?.('[data-cell]');if(el){last=el.dataset.cell;paint(last)}};const up=()=>{if(!dragging)return;dragging=false;document.removeEventListener('pointermove',move);document.removeEventListener('pointerup',up);if(last===endId)onDone();else{qa('[data-cell]').forEach(x=>x.classList.remove('drag-select'));setFeedback(`Ξεκίνα από το ${startId} και σύρε μέχρι το ${endId}.`,'info')}};cells.forEach(c=>{c.onpointerdown=ev=>{if(c.dataset.cell!==startId)return;ev.preventDefault();dragging=true;last=startId;c.setPointerCapture?.(ev.pointerId);paint(startId);document.addEventListener('pointermove',move);document.addEventListener('pointerup',up)}})}
+
+/* 1 */
+let a1phase=0,a1sum=false;const excursionBase={A1:'Επιλογές για εκδρομή',A2:'Αρχαιολογικό Μουσείο',B2:12,A3:'Πινακοθήκη',B3:10,A4:'Σύνολο'};
+function r1(){
+ const data={...excursionBase};
+ if(a1phase===2&&!a1sum)data.B4='=SUM(B2:B3)';
+ if(a1sum)data.B4=22;
+ const refs=a1phase===2?['B2','B3']:[];
+ activity.innerHTML=`<div class="task-strip">${a1phase===0?'Κάνε κλικ στο κελί B4.':a1phase===1?'Πάτησε το εικονίδιο Σ στη γραμμή εργαλείων.':a1phase===2?'Η συνάρτηση εμφανίζεται και μέσα στο B4. Πάτησε το πραγματικό πλήκτρο <span class="keycap">Enter</span>.':'Το άθροισμα υπολογίστηκε.'}</div>${praxis(`${toolbar({name:a1phase?'B4':'',formula:a1phase===2?'=SUM(B2:B3)':a1sum?'=SUM(B2:B3)':'',sum:a1phase===1})}<div class="sheet-area">${grid(data,{rows:5,active:a1phase?'B4':'',refs})}</div><div class="check-strip"><span class="check-chip ${a1phase>0?'done':''}">B4 ${a1phase>0?'✓':''}</span><span class="check-chip ${a1phase>1?'done':''}">Σ ${a1phase>1?'✓':''}</span><span class="check-chip ${a1sum?'done':''}">22 ${a1sum?'✓':''}</span></div>`)}`;
+ if(a1phase===0){qa('[data-cell]').forEach(c=>c.onclick=()=>{if(c.dataset.cell!=='B4')return wrong(c,'Επίλεξε το B4, στη γραμμή «Σύνολο».');a1phase=1;r1();setFeedback('✓ Το B4 είναι ενεργό.','good')});return}
+ if(a1phase===1){q('#sumTool').onclick=()=>{a1phase=2;r1();setFeedback('Το Praxis έγραψε τη συνάρτηση =SUM(B2:B3) και μέσα στο ενεργό κελί.','info')};return}
+ if(a1phase===2){setKey(e=>{if(e.key!=='Enter')return;e.preventDefault();a1sum=true;a1phase=3;r1();setFeedback('✓ 12 + 10 = 22. Η συνάρτηση υπολόγισε το άθροισμα.','good');later(()=>advance(0),1400)})}
+}
+
+/* 2 */
+let a2phase=0,a2formula='',a2result=false;
+function a2data(){const d={...excursionBase,B4:22,C1:'Κόστος εκδρομής',C2:'Κόστος λεωφορείου',D2:110,C3:'Κόστος ανά παιδί',D3:a2result?5:''};if(a2phase===1&&a2formula)d.D3=a2formula;return d}
+function r2(){
+ const refs=[];if(a2formula.includes('D2'))refs.push('D2');if(a2formula.includes('B4'))refs.push('B4');
+ activity.innerHTML=`<div class="task-strip">${a2phase===0?'Κάνε κλικ στο D3.':a2phase===1?'Πάτησε <span class="keycap">=</span>, κάνε κλικ στο D2, πάτησε <span class="keycap">/</span>, κάνε κλικ στο B4 και μετά <span class="keycap">Enter</span>.':'Ο τύπος υπολόγισε το κόστος ανά παιδί.'}</div>${praxis(`${toolbar({name:a2phase?'D3':'',formula:a2formula||(a2result?'=D2/B4':'')})}<div class="sheet-area">${grid(a2data(),{rows:5,active:a2phase?'D3':'',refs})}</div><div class="check-strip"><span class="check-chip ${a2phase>0?'done':''}">D3 ${a2phase>0?'✓':''}</span><span class="check-chip ${a2formula==='=D2/B4'||a2result?'done':''}">Τύπος ${(a2formula==='=D2/B4'||a2result)?'✓':''}</span><span class="check-chip ${a2result?'done':''}">5 € ${a2result?'✓':''}</span></div>`)}`;
+ if(a2phase===0){qa('[data-cell]').forEach(c=>c.onclick=()=>{if(c.dataset.cell!=='D3')return wrong(c,'Επίλεξε το D3, όπου θα εμφανιστεί το αποτέλεσμα.');a2phase=1;a2formula='';r2();setFeedback('✓ Το D3 είναι ενεργό. Δημιούργησε τον τύπο.','good')});return}
+ if(a2phase!==1)return;
+ qa('[data-cell]').forEach(c=>c.onclick=()=>{if(!a2formula.startsWith('='))return setFeedback('Ξεκίνα πατώντας = στο πληκτρολόγιο.','info');if(c.dataset.cell==='D2'&&!a2formula.includes('D2')){a2formula+='D2';r2()}else if(c.dataset.cell==='B4'&&a2formula.endsWith('/')){a2formula+='B4';r2()}else setFeedback('Ακολούθησε τη σειρά: = → D2 → / → B4 → Enter.','info')});
+ setKey(e=>{if(e.key==='Enter'){e.preventDefault();if(a2formula!=='=D2/B4')return setFeedback('Ο τύπος πρέπει να είναι =D2/B4. Χρησιμοποίησε τα κλικ στα κελιά.','bad');a2result=true;a2phase=2;r2();setFeedback('✓ 110 / 22 = 5. Ο τύπος χρησιμοποιεί τις αναφορές D2 και B4.','good');later(()=>advance(0),1500);return}if(e.key==='Escape'){a2formula='';r2();return}if(e.key==='='&&a2formula===''){a2formula='=';r2();return}if(e.key==='/'&&a2formula==='=D2'){a2formula+='/';r2();return}})
+}
+
+/* 3 */
+let a3phase=0,a3edit='110',a3replace=true,a3done=false;
+function r3(){
+ const shownD2=a3done?88:(a3phase===1?(a3edit===''?'':(/^[0-9]+$/.test(a3edit)?Number(a3edit):a3edit)):110);
+ const data={...excursionBase,B4:22,C1:'Κόστος εκδρομής',C2:'Κόστος λεωφορείου',D2:shownD2,C3:'Κόστος ανά παιδί',D3:a3done?4:5};
+ const task=a3phase===0?'Κάνε κλικ στο D2.':a3phase===1?'Πληκτρολόγησε 88 και ολοκλήρωσε με <span class="keycap">Enter</span>.':'Το D2 άλλαξε και ο τύπος στο D3 ενημερώθηκε αυτόματα.';
+ activity.innerHTML=`<div class="task-strip">${task}</div>${praxis(`${toolbar({name:a3phase===0?'':'D2',formula:a3phase===1?a3edit:(a3done?'88':'')})}<div class="sheet-area">${grid(data,{rows:5,active:a3phase===1?'D2':'',refs:a3done?['D2','D3']:[]})}</div>`)}`;
+ if(a3phase===0){qa('[data-cell]').forEach(c=>c.onclick=()=>{if(c.dataset.cell!=='D2')return wrong(c,'Επίλεξε το D2, που περιέχει το 110.');a3phase=1;a3edit='110';a3replace=true;r3();setFeedback('Το D2 είναι ενεργό. Πληκτρολόγησε 88.','info')});return}
+ if(a3phase===1){setKey(e=>{if(e.key==='Enter'){e.preventDefault();if(a3edit!=='88')return setFeedback('Η νέα τιμή πρέπει να είναι 88.','bad');a3done=true;a3phase=2;r3();setFeedback('✓ Το D3 άλλαξε αυτόματα από 5 σε 4, επειδή ο τύπος χρησιμοποιεί το D2.','good');later(()=>advance(0),1700);return}if(/^\d$/.test(e.key)){if(a3replace){a3edit=e.key;a3replace=false}else a3edit+=e.key;r3();setFeedback('Η τιμή που πληκτρολογείς εμφανίζεται και μέσα στο D2.','info');return}if(e.key==='Backspace'){e.preventDefault();if(a3replace){a3edit='';a3replace=false}else a3edit=a3edit.slice(0,-1);r3();setFeedback('Διόρθωσε την τιμή και πάτησε Enter.','info')}})}
+}
+
+/* 4 */
+let a4phase=0,a4preview=[];
+const practice={A6:'Τάξη',B6:'Παιδιά',C6:'Κόστος λεωφορείου',D6:'Κόστος λεωφορείου ανά παιδί',A7:'Δ΄',B7:20,C7:100,D7:5,A8:'Ε΄',B8:22,C8:132,D8:'',A9:'ΣΤ΄',B9:24,C9:168,D9:''};
+const practiceFormulas={D7:'=C7/B7'};
+function setupFillDrag(onDone){const handle=q('#fillHandle');if(!handle)return;handle.onpointerdown=e=>{e.preventDefault();e.stopPropagation();let last='D7';const move=ev=>{const el=document.elementFromPoint(ev.clientX,ev.clientY)?.closest?.('[data-cell]');if(el&&['D7','D8','D9'].includes(el.dataset.cell)){last=el.dataset.cell;a4preview=last==='D9'?['D8','D9']:last==='D8'?['D8']:[];qa('[data-cell]').forEach(x=>x.classList.toggle('fill-preview',a4preview.includes(x.dataset.cell)))}};const up=()=>{document.removeEventListener('pointermove',move);document.removeEventListener('pointerup',up);if(last==='D9')onDone();else{a4preview=[];r4();setFeedback('Σύρε τη λαβή μέχρι το D9.','info')}};document.addEventListener('pointermove',move);document.addEventListener('pointerup',up)}}
+function r4(){
+ const data={...practice};const formulas={...practiceFormulas};
+ if(a4phase===2){data.D8=6;data.D9=7;formulas.D8='=C8/B8';formulas.D9='=C9/B9'}
+ const task=a4phase===0?'Κάνε κλικ στο D7.':a4phase===1?'Σύρε τη μικρή λαβή στην κάτω δεξιά γωνία του D7 μέχρι το D9.':'Ο τύπος αντιγράφηκε στα D8 και D9.';
+ const range=a4phase===2?['D7','D8','D9']:[];
+ activity.innerHTML=`<div class="task-strip">${task}</div>${praxis(`${toolbar({name:a4phase===0?'':a4phase===1?'D7':'D7:D9',formula:a4phase===1?'=C7/B7':''})}<div class="sheet-area"><div class="sheet-note" style="margin:0 auto 10px">Δεδομένα εξάσκησης</div>${grid(data,{rows:9,active:a4phase===1?'D7':'',handle:a4phase===1,preview:a4preview,formulas,range})}</div><div class="check-strip"><span class="check-chip ${a4phase>0?'done':''}">D7 ${a4phase>0?'✓':''}</span><span class="check-chip ${a4phase===2?'done':''}">Αντιγραφή ${a4phase===2?'✓':''}</span></div>`)}`;
+ if(a4phase===0){qa('[data-cell]').forEach(c=>c.onclick=()=>{if(c.dataset.cell!=='D7')return wrong(c,'Επίλεξε το D7, που περιέχει τον αρχικό τύπο.');a4phase=1;r4();setFeedback('✓ Το D7 είναι ενεργό και εμφανίστηκε η λαβή συμπλήρωσης.','good')});return}
+ if(a4phase===1){setupFillDrag(()=>{a4phase=2;a4preview=[];r4();setFeedback('✓ Ο τύπος αντιγράφηκε: D8 = C8/B8 και D9 = C9/B9.','good');later(()=>advance(0),1700)})}
+}
+
+/* 5 */
+let a5phase=0,a5range=false,a5wrap=false,a5currency=false;
+function r5(){
+ const data={...practice,D8:6,D9:7};const range=a5range?['D7','D8','D9']:[];const wraps=a5wrap?['D6']:[];const curr=a5currency?['D7','D8','D9']:[];
+ let task='';
+ if(a5phase===0)task='Κάνε κλικ στο D6.';
+ if(a5phase===1)task='Πάτησε το εργαλείο Αναδίπλωση κειμένου.';
+ if(a5phase===2)task='Το μεγάλο κείμενο χωρίστηκε σε περισσότερες γραμμές μέσα στο D6.';
+ if(a5phase===3)task='Σύρε από D7 μέχρι D9 για να επιλέξεις την περιοχή.';
+ if(a5phase===4)task='Χρησιμοποίησε τη μορφή νομίσματος για την επιλεγμένη περιοχή.';
+ if(a5phase===5)task='Η μορφοποίηση ολοκληρώθηκε.';
+ const name=a5phase===1||a5phase===2?'D6':a5phase>=4?'D7:D9':'';
+ const formula=a5phase===1||a5phase===2?'Κόστος λεωφορείου ανά παιδί':'';
+ activity.innerHTML=`<div class="task-strip">${task}</div>${praxis(`${toolbar({name,formula,wrap:a5phase===1,currency:a5phase===4,wrapActive:a5wrap,currencyActive:a5currency})}<div class="sheet-area">${grid(data,{rows:9,active:(a5phase===1||a5phase===2)?'D6':'',range,wraps,currencies:curr})}</div><div class="check-strip"><span class="check-chip ${a5wrap?'done':''}">Αναδίπλωση ${a5wrap?'✓':''}</span><span class="check-chip ${a5currency?'done':''}">Νόμισμα ${a5currency?'✓':''}</span></div>`)}`;
+ if(a5phase===0){qa('[data-cell]').forEach(c=>c.onclick=()=>{if(c.dataset.cell!=='D6')return wrong(c,'Επίλεξε το D6.');a5phase=1;r5();setFeedback('✓ Το D6 είναι ενεργό. Τώρα χρησιμοποίησε την Αναδίπλωση κειμένου.','good')});return}
+ if(a5phase===1){q('#wrapTool').onclick=()=>{a5wrap=true;a5phase=2;r5();setFeedback('✓ Τώρα το κείμενο φαίνεται σε περισσότερες γραμμές μέσα στο ίδιο κελί.','good');later(()=>{a5phase=3;clearFeedback();r5()},1150)};return}
+ if(a5phase===3&&!a5range){setupRangeDrag('D7','D9',()=>{a5range=true;a5phase=4;r5();setFeedback('✓ Επιλέχθηκε η περιοχή D7:D9.','good')});return}
+ if(a5phase===4&&!a5currency){q('#currencyTool').onclick=()=>{a5currency=true;a5phase=5;r5();setFeedback('✓ Τα αποτελέσματα μορφοποιήθηκαν ως ποσά σε ευρώ.','good');later(()=>advance(0),1500)};return}
+}
+
+/* 6 */
+let a6phase=0,a6sum=false,a6filled=false,a6wrap=false,a6preview=[];
+const finalDataBase={A1:'Επιλογές για εκδρομή',A2:'Αρχαιολογικό Μουσείο',B2:12,A3:'Πινακοθήκη',B3:10,A4:'Σύνολο',A6:'Τάξη',B6:'Παιδιά',C6:'Κόστος',D6:'Κόστος λεωφορείου ανά παιδί',A7:'Δ΄',B7:20,C7:100,D7:5,A8:'Ε΄',B8:22,C8:132,A9:'ΣΤ΄',B9:24,C9:168};
+function finalChips(){return `<div class="final-progress"><span class="final-chip ${a6sum?'done':''}">Συνάρτηση ${a6sum?'✓':''}</span><span class="final-chip ${a6filled?'done':''}">Αντιγραφή ${a6filled?'✓':''}</span><span class="final-chip ${a6wrap?'done':''}">Μορφοποίηση ${a6wrap?'✓':''}</span></div>`}
+function setupFinalFill(){const h=q('#fillHandle');if(!h)return;h.onpointerdown=e=>{e.preventDefault();e.stopPropagation();let last='D7';const move=ev=>{const el=document.elementFromPoint(ev.clientX,ev.clientY)?.closest?.('[data-cell]');if(el&&['D7','D8','D9'].includes(el.dataset.cell)){last=el.dataset.cell;a6preview=last==='D9'?['D8','D9']:last==='D8'?['D8']:[];qa('[data-cell]').forEach(x=>x.classList.toggle('fill-preview',a6preview.includes(x.dataset.cell)))}};const up=()=>{document.removeEventListener('pointermove',move);document.removeEventListener('pointerup',up);if(last==='D9'){a6filled=true;a6preview=[];a6phase=6;r6();setFeedback('✓ Ο τύπος αντιγράφηκε μέχρι το D9.','good');later(()=>{a6phase=7;clearFeedback();r6()},1150)}else{a6preview=[];r6();setFeedback('Σύρε τη λαβή μέχρι το D9.','info')}};document.addEventListener('pointermove',move);document.addEventListener('pointerup',up)}}
+function r6(){
+ const data={...finalDataBase};
+ if(a6phase===2&&!a6sum)data.B4='=SUM(B2:B3)';
+ if(a6sum)data.B4=22;
+ if(a6filled){data.D8=6;data.D9=7}
+ const formulas={D7:'=C7/B7'};if(a6filled){formulas.D8='=C8/B8';formulas.D9='=C9/B9'}
+ let task='';
+ if(a6phase===0)task='1ο μέρος: Επίλεξε το B4.';
+ if(a6phase===1)task='Πάτησε Σ.';
+ if(a6phase===2)task='Η συνάρτηση εμφανίζεται και μέσα στο B4. Πάτησε το πραγματικό πλήκτρο <span class="keycap">Enter</span>.';
+ if(a6phase===3)task='Το άθροισμα υπολογίστηκε.';
+ if(a6phase===4)task='2ο μέρος: Επίλεξε το D7.';
+ if(a6phase===5)task='Σύρε τη λαβή συμπλήρωσης μέχρι το D9.';
+ if(a6phase===6)task='Ο τύπος αντιγράφηκε στα D8 και D9.';
+ if(a6phase===7)task='3ο μέρος: Επίλεξε το D6.';
+ if(a6phase===8)task='Χρησιμοποίησε την Αναδίπλωση κειμένου.';
+ if(a6phase===9)task='Η συνολική δοκιμή ολοκληρώθηκε.';
+ let name='',formula='',active='',range=[];
+ if(a6phase===1||a6phase===2||a6phase===3){name='B4';active='B4';formula=a6phase>=2?'=SUM(B2:B3)':''}
+ if(a6phase===5){name='D7';active='D7';formula='=C7/B7'}
+ if(a6phase===6){name='D7:D9';range=['D7','D8','D9']}
+ if(a6phase===8||a6phase===9){name='D6';active='D6';formula='Κόστος λεωφορείου ανά παιδί'}
+ activity.innerHTML=`<div class="task-strip">${task}</div><div class="final-card">${praxis(`${toolbar({name,formula,sum:a6phase===1,wrap:a6phase===8,wrapActive:a6wrap})}<div class="sheet-area">${grid(data,{rows:9,active,range,refs:a6phase===2?['B2','B3']:[],handle:a6phase===5,preview:a6preview,wraps:a6wrap?['D6']:[],formulas})}</div>`) }${finalChips()}</div>`;
+ if(a6phase===0){qa('[data-cell]').forEach(c=>c.onclick=()=>{if(c.dataset.cell!=='B4')return wrong(c,'Επίλεξε το B4.');a6phase=1;r6();setFeedback('✓ Το B4 είναι ενεργό.','good')});return}
+ if(a6phase===1){q('#sumTool').onclick=()=>{a6phase=2;r6();setFeedback('Η συνάρτηση εμφανίζεται τώρα και στο B4.','info')};return}
+ if(a6phase===2){setKey(e=>{if(e.key!=='Enter')return;e.preventDefault();a6sum=true;a6phase=3;r6();setFeedback('✓ Η συνάρτηση υπολογίστηκε και στο B4 εμφανίστηκε το 22.','good');later(()=>{a6phase=4;clearFeedback();r6()},1150)});return}
+ if(a6phase===4){qa('[data-cell]').forEach(c=>c.onclick=()=>{if(c.dataset.cell!=='D7')return wrong(c,'Επίλεξε το D7.');a6phase=5;r6();setFeedback('✓ Το D7 είναι τώρα ενεργό και εμφανίστηκε η λαβή συμπλήρωσης.','good')});return}
+ if(a6phase===5){setupFinalFill();return}
+ if(a6phase===7){qa('[data-cell]').forEach(c=>c.onclick=()=>{if(c.dataset.cell!=='D6')return wrong(c,'Επίλεξε το D6.');a6phase=8;r6();setFeedback('✓ Το D6 είναι ενεργό. Χρησιμοποίησε την Αναδίπλωση κειμένου.','good')});return}
+ if(a6phase===8){q('#wrapTool').onclick=()=>{a6wrap=true;a6phase=9;r6();setFeedback('✓ Το κείμενο αναδιπλώθηκε καθαρά μέσα στο D6. Ολοκλήρωσες τη συνολική δοκιμή.','good');later(()=>advance(0),1700)};return}
+}
+
+/* 7 */
+const levels=['Έχω καταλάβει και μπορώ να εξηγήσω','Έχω καταλάβει αρκετά καλά','Έχω καταλάβει αλλά έχω απορίες','Χρειάζομαι βοήθεια'];const objectives=['Να κάνω απλές αριθμητικές πράξεις με συναρτήσεις και τύπους στο υπολογιστικό φύλλο.','Να μορφοποιώ τα δεδομένα στο υπολογιστικό φύλλο.','Να αντιγράφω δεδομένα και αριθμητικές πράξεις στο υπολογιστικό φύλλο.'];let selfSel=[null,null,null];
+function r7(){activity.innerHTML=`<div class="self-wrap"><div class="self-table"><div class="self-head">Αξιολογώ πόσο καλά έμαθα</div>${levels.map(x=>`<div class="self-head">${x}</div>`).join('')}${objectives.map((o,r)=>`<div class="self-objective">✓ ${o}</div>${levels.map((l,c)=>`<button class="self-cell ${selfSel[r]===c?'selected':''}" data-self="${r}:${c}">${l}</button>`).join('')}`).join('')}</div></div><div class="self-note">Διάλεξε ένα επίπεδο για κάθε στόχο.</div><div class="finish-actions"><button class="finish-btn" id="finishBtn" ${selfSel.some(x=>x===null)?'disabled':''}>Ολοκλήρωση</button></div>`;qa('[data-self]').forEach(b=>b.onclick=()=>{const [r,c]=b.dataset.self.split(':').map(Number);selfSel[r]=c;r7()});q('#finishBtn').onclick=()=>{if(selfSel.some(x=>x===null))return;completed.add(stage);finished=true;render()}}
+const renderers=[r1,r2,r3,r4,r5,r6,r7];
+function renderCompletion(){kicker.textContent='ΟΛΟΚΛΗΡΩΣΗ';stageTitle.textContent='Μάθημα 18 ολοκληρώθηκε';instruction.textContent='Ολοκλήρωσες αριθμητικές πράξεις, αντιγραφή τύπων και μορφοποίηση στο Praxis.';activity.innerHTML=`<div class="completion"><span class="badge">Ενότητα 3 · Μάθημα 18</span><h2>Οι υπολογισμοί ολοκληρώθηκαν!</h2><p>Χρησιμοποίησες συνάρτηση SUM, τύπο με αναφορές κελιών, αυτόματη ενημέρωση, λαβή συμπλήρωσης και μορφοποίηση.</p><button class="secondary-btn" id="restartComplete">↻ Επανάληψη μαθήματος</button></div>`;q('#restartComplete').onclick=()=>location.reload();clearFeedback()}
+function render(){clearTimers();transitionLocked=false;renderEpoch++;document.onkeydown=null;clearFeedback();updateProgress();if(finished){renderCompletion();window.scrollTo({top:0,behavior:'smooth'});return}const s=ACTIVITIES[stage];kicker.textContent=`Δραστηριότητα ${stage+1}`;stageTitle.textContent=s.t;instruction.textContent=s.i;renderers[stage]();window.scrollTo({top:0,behavior:'smooth'})}
+q('#helpBtn').onclick=()=>{q('#helpText').textContent=HELP[stage]||'';q('#helpModal').classList.add('open')};q('#closeHelp').onclick=q('#understoodBtn').onclick=()=>q('#helpModal').classList.remove('open');q('#helpModal').onclick=e=>{if(e.target===q('#helpModal'))q('#helpModal').classList.remove('open')};q('#speakHelp').onclick=()=>{if(!('speechSynthesis'in window))return;window.speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(HELP[stage]||'');u.lang='el-GR';window.speechSynthesis.speak(u)};
+render();
+</script>
+<footer class="nk-license" aria-label="Πληροφορίες δημιουργού και άδειας χρήσης">
+  <div><strong>Created by Nikos Kalakos · © 2026</strong></div>
+  <div>Original educational content and simulation design licensed under <a class="cc-badge" href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank" rel="license noopener noreferrer">CC BY-NC 4.0</a>.</div>
+  <div>Source code © 2026 Nikos Kalakos.</div>
+  <div>Third-party and textbook materials remain subject to the rights and licences of their respective copyright holders.</div>
+</footer>
+</body>
+</html>

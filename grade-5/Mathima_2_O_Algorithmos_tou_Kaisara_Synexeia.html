@@ -1,0 +1,218 @@
+<!--
+ICT Educational Simulation
+Created by Nikos Kalakos
+Copyright © 2026 Nikos Kalakos
+
+Original educational content and simulation design licensed under CC BY-NC 4.0.
+Source code © 2026 Nikos Kalakos.
+Third-party and textbook materials remain subject to the rights and licences of their respective copyright holders.
+-->
+<!doctype html>
+<html lang="el">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="author" content="Nikos Kalakos">
+<meta name="copyright" content="© 2026 Nikos Kalakos">
+<meta name="license" content="Original educational content and simulation design: CC BY-NC 4.0; source code © 2026 Nikos Kalakos; third-party and textbook materials excluded.">
+<title>Μάθημα 2 - Ο αλγόριθμος του Καίσαρα (συνέχεια)</title>
+<style>
+:root{
+  --unit:#EA922C;--unit-dark:#B86610;--unit-soft:#FFF4E6;
+  --secondary:#545F99;--secondary-dark:#3D477C;--secondary-soft:#EEF0F8;
+  --ink:#253044;--muted:#657083;--line:#D9DEE7;--panel:#FFFFFF;
+  --ok:#28765A;--ok-soft:#ECF8F2;--bad:#A84355;--bad-soft:#FFF0F3;
+  --shadow:0 14px 35px rgba(45,55,86,.11)
+}
+*{box-sizing:border-box}html{scroll-behavior:smooth}
+body{margin:0;font-family:Inter,Segoe UI,Arial,sans-serif;color:var(--ink);background:radial-gradient(circle at 14% 10%,rgba(234,146,44,.10),transparent 28%),radial-gradient(circle at 88% 22%,rgba(84,95,153,.10),transparent 30%),#F4F6FA}
+button,select{font:inherit}button{cursor:pointer}button:focus-visible,select:focus-visible{outline:3px solid rgba(84,95,153,.32);outline-offset:2px}
+.shell{max-width:1240px;margin:0 auto;padding:18px}
+.hero{background:#fff;border:1px solid #E3E7EE;border-top:9px solid var(--unit);border-radius:18px;box-shadow:var(--shadow);padding:20px 24px 18px;display:grid;grid-template-columns:1fr auto;gap:18px;align-items:center}
+.eyebrow{font-size:13px;font-weight:900;letter-spacing:.12em;text-transform:uppercase;color:var(--secondary)}
+.hero h1{margin:5px 0 0;font-size:32px;line-height:1.12;color:var(--secondary-dark)}
+.hero p{margin:8px 0 0;color:var(--muted);font-weight:700}
+.lesson-mark{min-width:118px;height:72px;border-radius:16px;background:linear-gradient(135deg,var(--secondary),var(--secondary-dark));color:#fff;display:grid;place-items:center;text-align:center;box-shadow:0 9px 22px rgba(84,95,153,.23)}
+.lesson-mark b{font-size:27px;line-height:1}.lesson-mark span{font-size:11px;font-weight:850;letter-spacing:.08em;text-transform:uppercase}
+.progress{margin:13px 0;background:#fff;border:1px solid #E1E5EC;border-radius:15px;padding:12px 15px;box-shadow:0 7px 20px rgba(48,58,87,.06)}
+.progress-top{display:flex;justify-content:space-between;gap:12px;align-items:center;color:#59667B;font-size:13px;font-weight:850}
+.bar{height:8px;background:#ECEFF4;border-radius:999px;overflow:hidden;margin:8px 0 10px}.fill{height:100%;width:0;background:linear-gradient(90deg,var(--unit),var(--secondary));transition:.3s ease}
+.steps{display:flex;gap:8px;flex-wrap:wrap;justify-content:center}.step-dot{width:29px;height:29px;border-radius:9px;border:1px solid #CDD3DE;background:#fff;color:#758197;display:grid;place-items:center;font-size:12px;font-weight:900;transition:.2s}.step-dot.active{border:2px solid var(--unit);color:var(--unit-dark);background:var(--unit-soft)}.step-dot.done{border-color:var(--secondary);background:var(--secondary);color:#fff}
+.stage{background:var(--panel);border:1px solid #E1E5EC;border-radius:18px;box-shadow:var(--shadow);padding:22px;min-height:650px}
+.stage-head{display:grid;grid-template-columns:1fr auto;gap:20px;align-items:start;border-bottom:1px solid #E7EAF0;padding-bottom:14px}.stage-kicker{font-size:12px;letter-spacing:.1em;text-transform:uppercase;font-weight:900;color:var(--unit-dark)}.stage-title{font-size:27px;line-height:1.16;margin:5px 0 0;color:#303A55}.instruction{font-size:17px;line-height:1.5;color:#5D687B;margin:8px 0 0;font-weight:650;max-width:930px}
+.help-btn{border:1px solid var(--secondary);background:#fff;color:var(--secondary-dark);border-radius:10px;padding:9px 12px;font-weight:900}.help-btn:hover{background:var(--secondary-soft)}
+.workspace{padding-top:18px}.feedback{min-height:50px;margin-top:16px;border-radius:11px;padding:0 14px;display:flex;align-items:center;font-weight:850;line-height:1.35}.feedback:empty{display:none}.feedback.good{background:var(--ok-soft);border:1px solid #9BCFBA;color:#236047}.feedback.bad{background:var(--bad-soft);border:1px solid #E0A0AC;color:#873044}.feedback.info{background:var(--secondary-soft);border:1px solid #B9C0DC;color:var(--secondary-dark)}
+.lab-card{max-width:1060px;margin:0 auto;border:1px solid #D8DEE8;border-radius:15px;background:#FBFCFE;overflow:hidden}.lab-head{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 16px;background:linear-gradient(90deg,#F6F7FB,#FFF8EF);border-bottom:1px solid #DCE1E9}.lab-head strong{color:var(--secondary-dark)}.lab-tag{font-size:11px;font-weight:900;letter-spacing:.08em;text-transform:uppercase;color:#fff;background:var(--unit);border-radius:999px;padding:6px 9px}.lab-body{padding:18px}
+.prompt{max-width:980px;margin:0 auto 14px;background:#fff;border-left:5px solid var(--unit);border-radius:10px;padding:13px 15px;font-size:18px;line-height:1.45;font-weight:800}
+.choice-grid{max-width:920px;margin:14px auto;display:grid;grid-template-columns:repeat(2,1fr);gap:11px}.choice{position:relative;min-height:78px;text-align:left;border:2px solid #D7DDE6;background:#fff;border-radius:12px;padding:14px 16px;font-weight:800;color:#3C4960;line-height:1.35;transition:.18s}.choice:hover{border-color:#AEB7C6;transform:translateY(-1px)}.choice.selected{border-color:var(--secondary);background:var(--secondary-soft);padding-bottom:34px}.choice.selected::after{content:"✓ Επιλεγμένο";position:absolute;left:16px;bottom:9px;color:var(--secondary-dark);font-size:11px;font-weight:900}.choice.wrong{border-color:#D98696;background:#FFF3F5}
+.mini-grid{max-width:900px;margin:14px auto;display:grid;grid-template-columns:repeat(4,1fr);gap:10px}.mini-tile{position:relative;min-height:70px;border:2px solid #D6DCE6;background:#fff;border-radius:11px;font-size:20px;font-weight:950;color:#46536B}.mini-tile:hover{border-color:var(--secondary)}.mini-tile.selected{border-color:var(--secondary);background:var(--secondary-soft);padding-bottom:26px}.mini-tile.selected::after{content:"✓ Επιλεγμένο";position:absolute;left:0;right:0;bottom:6px;font-size:10px;color:var(--secondary-dark)}.mini-tile.wrong{border-color:#D98696;background:#FFF3F5}
+.alphabet-table{overflow:auto;border:1px solid #D9DEE7;border-radius:12px;background:#fff}.alpha-grid{display:grid;grid-template-columns:105px repeat(24,42px);min-width:1115px}.alpha-cell{height:44px;border-right:1px solid #E4E8EF;border-bottom:1px solid #E4E8EF;display:grid;place-items:center;font-weight:800}.alpha-label{position:sticky;left:0;z-index:2;background:#F4F6FA;color:var(--secondary-dark);font-size:12px;text-align:center}.alpha-cell.head{background:#FFF7EC;color:var(--unit-dark);font-size:12px}.alpha-cell.mark{background:#FFF1D9;box-shadow:inset 0 0 0 2px var(--unit);color:#924D08}.alpha-cell.pick{cursor:pointer}.alpha-cell.pick:hover{background:var(--secondary-soft)}.alpha-cell.wrong{background:#FFF3F5;box-shadow:inset 0 0 0 2px #D98696}
+.mapping{max-width:900px;margin:16px auto;display:grid;grid-template-columns:150px 1fr;gap:13px;align-items:center}.map-letter{height:100px;border-radius:14px;background:var(--secondary);color:#fff;display:grid;place-items:center;font-size:40px;font-weight:950}.map-options{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}.map-btn{min-height:70px;border:2px solid #D5DCE7;border-radius:11px;background:#fff;font-size:25px;font-weight:950;color:#46536B}.map-btn:hover{border-color:var(--secondary);background:var(--secondary-soft)}.map-btn.wrong{border-color:#D98696;background:#FFF3F5}
+.code-panel{max-width:960px;margin:12px auto;background:#283047;color:#F7F8FB;border-radius:14px;padding:18px;box-shadow:0 10px 25px rgba(38,48,71,.18)}.code-line{display:flex;gap:11px;align-items:flex-start;padding:8px 10px;border-radius:8px;font-family:Consolas,monospace;font-size:16px;line-height:1.4}.code-line .n{color:#8F9AB4;min-width:22px;text-align:right}.condition{display:inline-block;border-bottom:2px solid transparent;cursor:pointer;padding:1px 3px;border-radius:5px}.condition:hover{background:#3B4564}.condition.found{border-bottom-color:#FFD18C;background:#3B4564;color:#FFD18C}.condition.wrong{background:#6A3744}
+.sequence{max-width:940px;margin:15px auto;display:grid;grid-template-columns:repeat(2,1fr);gap:11px}.seq-card{border:2px solid #D6DCE6;background:#fff;border-radius:12px;padding:14px;min-height:82px;text-align:left;font-weight:800;line-height:1.35}.seq-card:hover{border-color:#AAB4C4}.seq-card.picked{border-color:var(--secondary);background:var(--secondary-soft);opacity:.55}.seq-card.wrong{border-color:#D98696;background:#FFF3F5}.order-strip{max-width:940px;margin:16px auto;display:grid;grid-template-columns:1fr;gap:8px}.order-slot{min-height:58px;border:2px dashed #C7CFDC;border-radius:11px;background:#FAFBFD;padding:8px 11px;display:flex;align-items:center;gap:9px}.order-num{flex:0 0 31px;height:31px;border-radius:8px;background:var(--unit);color:#fff;display:grid;place-items:center;font-weight:950}.order-text{font-size:14px;font-weight:800;color:#4F5C70}
+.branch-card{max-width:920px;margin:14px auto;border:1px solid #D8DEE8;border-radius:14px;background:#fff;padding:16px}.branch-top{display:flex;gap:12px;align-items:center;justify-content:center;flex-wrap:wrap;margin-bottom:14px}.branch-letter{width:64px;height:64px;border-radius:13px;background:var(--secondary);color:#fff;display:grid;place-items:center;font-size:30px;font-weight:950}.calc{font-weight:900;color:#4E5A70;font-size:18px}.route{display:grid;grid-template-columns:1fr 1fr;gap:11px}.route-box{border:2px solid #D8DEE8;border-radius:12px;padding:12px;text-align:center;font-weight:850}.route-box.active{border-color:var(--unit);background:var(--unit-soft);color:var(--unit-dark)}
+.formula{max-width:900px;margin:14px auto;background:#283047;color:#fff;border-radius:14px;padding:18px;font-family:Consolas,monospace;font-size:18px;line-height:1.7}.blank{display:inline-grid;place-items:center;min-width:50px;height:38px;margin:0 4px;border:2px dashed #FFD18C;border-radius:8px;background:#343D59;color:#FFD18C;font-weight:950}.blank.done{border-style:solid;background:#4B5678}
+.num-grid{max-width:680px;margin:14px auto;display:grid;grid-template-columns:repeat(4,1fr);gap:10px}.num-btn{min-height:62px;border:2px solid #D7DDE6;background:#fff;border-radius:11px;font-size:22px;font-weight:950;color:#46536B}.num-btn:hover{border-color:var(--secondary)}.num-btn.wrong{border-color:#D98696;background:#FFF3F5}
+.compare{max-width:930px;margin:14px auto;display:grid;grid-template-columns:1fr 1fr;gap:12px}.compare-card{border:1px solid #D7DEE8;border-top:5px solid var(--secondary);border-radius:12px;background:#fff;padding:15px}.compare-card h3{margin:0 0 8px;color:var(--secondary-dark)}.compare-card ul{margin:0;padding-left:20px;color:#556176;line-height:1.55;font-weight:700}
+.challenge-wrap{max-width:1060px;margin:0 auto}.challenge-brief{display:grid;grid-template-columns:1fr auto;gap:14px;align-items:center;margin:0 auto 14px;padding:14px 16px;border:1px solid #D8DEE8;border-radius:12px;background:#fff}.challenge-word{font-size:28px;font-weight:950;letter-spacing:.12em;color:var(--secondary-dark)}.shift-badge{min-width:145px;text-align:center;border-radius:11px;background:var(--unit-soft);border:2px solid var(--unit);padding:10px 13px;color:var(--unit-dark);font-weight:950}.shift-badge span{display:block;font-size:11px;letter-spacing:.08em;text-transform:uppercase;margin-bottom:2px}.challenge-alpha-scroll{overflow:auto;border:1px solid #D8DEE8;border-radius:12px;background:#fff;padding:10px}.challenge-alphabet{display:grid;grid-template-columns:repeat(24,44px);gap:5px;min-width:1170px}.alpha-pick{height:56px;border:1px solid #C9D1DE;border-radius:9px;background:#fff;color:#34405A;font-size:20px;font-weight:950;position:relative}.alpha-pick small{position:absolute;top:3px;right:5px;font-size:9px;color:#8A94A6;font-weight:800}.alpha-pick:hover{border-color:var(--secondary);background:var(--secondary-soft)}.challenge-result{margin:14px auto 8px;display:flex;justify-content:center;gap:7px;flex-wrap:wrap}.challenge-slot{width:48px;height:52px;border:2px solid #D4DAE5;border-radius:9px;background:#fff;display:grid;place-items:center;font-size:21px;font-weight:950;color:var(--secondary-dark)}.challenge-slot.space{border:0;background:transparent;width:24px}.challenge-slot.filled{border-color:var(--secondary);background:var(--secondary-soft)}.challenge-actions{display:flex;justify-content:center;gap:9px;flex-wrap:wrap;margin-top:10px}.challenge-note{text-align:center;color:#687488;font-size:13px;font-weight:750;margin-top:11px}
+.primary,.secondary-btn{border-radius:10px;padding:10px 15px;font-weight:900}.primary{border:1px solid var(--secondary);background:var(--secondary);color:#fff}.primary:disabled{opacity:.45;cursor:not-allowed}.secondary-btn{border:1px solid #C8CFDA;background:#fff;color:#4F5B70}
+.final-status{display:flex;justify-content:center;gap:8px;flex-wrap:wrap;margin:0 auto 14px}.final-chip{border:1px solid #CDD4DF;background:#fff;color:#6A7688;border-radius:999px;padding:7px 10px;font-size:12px;font-weight:900}.final-chip.done{border-color:var(--secondary);background:var(--secondary-soft);color:var(--secondary-dark)}
+.self-wrap{max-width:1100px;margin:0 auto}.self-table{display:grid;grid-template-columns:2.2fr repeat(4,1fr);border:1px solid #D9DEE7;border-radius:13px;overflow:hidden;background:#fff}.self-head{background:var(--secondary);color:#fff;padding:11px 8px;text-align:center;font-size:15px;font-weight:900;border-right:1px solid rgba(255,255,255,.18)}.self-objective{padding:13px;background:#F9FAFC;border-top:1px solid #E2E6ED;font-weight:800;line-height:1.35;font-size:15px}.self-cell{border:0;border-left:1px solid #E2E6ED;border-top:1px solid #E2E6ED;background:#fff;min-height:72px;padding:8px;font-size:15px;color:#59667B}.self-cell:hover{background:#F5F7FB}.self-cell.selected{background:var(--unit-soft);box-shadow:inset 0 0 0 3px var(--unit);color:#7A430A;font-weight:900}.self-note{text-align:center;color:#687488;margin:12px 0;font-weight:750}.finish-actions{display:flex;justify-content:center;gap:10px;flex-wrap:wrap}
+.completion{max-width:820px;margin:45px auto;text-align:center;padding:35px;border:1px solid #D8DEE8;border-radius:16px;background:linear-gradient(145deg,#fff,#FFF9F1)}.completion .badge{display:inline-block;border-radius:999px;background:var(--unit);color:#fff;padding:7px 11px;font-weight:900;font-size:12px}.completion h2{font-size:30px;color:var(--secondary-dark);margin:15px 0 8px}.completion p{font-size:17px;line-height:1.55;color:#5E6B7E}
+.modal-backdrop{position:fixed;inset:0;background:rgba(25,31,47,.56);display:none;align-items:center;justify-content:center;padding:18px;z-index:50}.modal-backdrop.open{display:flex}.modal{width:min(620px,100%);background:#fff;border-radius:16px;box-shadow:0 18px 55px rgba(0,0,0,.25);overflow:hidden}.modal-head{background:var(--secondary);color:#fff;padding:15px 18px;display:flex;justify-content:space-between;align-items:center;font-weight:900}.modal-close{border:0;background:transparent;color:#fff;font-size:22px}.modal-body{padding:18px;font-size:17px;line-height:1.55;color:#4F5C71}.modal-actions{display:flex;justify-content:flex-end;gap:8px;padding:0 18px 18px}.small-btn{border:1px solid #C7CEDA;background:#fff;border-radius:9px;padding:8px 11px;font-weight:850;color:#4C5870}
+@keyframes pulse{50%{transform:scale(1.02)}}.pulse{animation:pulse .38s ease}
+@media(max-width:760px){.shell{padding:10px}.hero{grid-template-columns:1fr}.lesson-mark{display:none}.hero h1{font-size:26px}.stage{padding:15px}.stage-head{grid-template-columns:1fr}.choice-grid,.compare,.route{grid-template-columns:1fr}.mini-grid,.map-options,.num-grid{grid-template-columns:repeat(2,1fr)}.mapping{grid-template-columns:1fr}.map-letter{height:75px}.sequence{grid-template-columns:1fr}.self-table{grid-template-columns:1.6fr repeat(4,1fr)}.self-head,.self-objective,.self-cell{font-size:13px}}
+</style>
+
+<style id="nk-license-style">
+.nk-license{max-width:1100px;margin:14px auto 24px;padding:10px 16px;text-align:center;font:13px/1.45 Arial,"Noto Sans",sans-serif;color:#4e657c}
+.nk-license a{color:inherit;text-decoration:underline;text-underline-offset:2px}
+.nk-license .cc-badge{display:inline-block;margin:0 4px;padding:2px 7px;border:1px solid #8aa0b8;border-radius:6px;background:#fff;font-weight:700;white-space:nowrap}
+</style>
+</head>
+<body>
+<div class="shell">
+  <header class="hero">
+    <div>
+      <div class="eyebrow">Ενότητα 1 · Αλγοριθμική – Προγραμματισμός – Ρομποτική</div>
+      <h1>Ο αλγόριθμος του Καίσαρα (συνέχεια)</h1>
+      <p>Διόρθωσε τον αλγόριθμο ώστε να λειτουργεί για όλα τα γράμματα και διερεύνησε γιατί μια γενική λύση είναι πιο χρήσιμη.</p>
+    </div>
+    <div class="lesson-mark"><div><b>02</b><br><span>Μάθημα</span></div></div>
+  </header>
+
+  <section class="progress">
+    <div class="progress-top"><span id="progressLabel">Δραστηριότητα 1 από 10</span><span id="progressPercent">0%</span></div>
+    <div class="bar"><div class="fill" id="fill"></div></div><div class="steps" id="dots"></div>
+  </section>
+
+  <main class="stage">
+    <div class="stage-head">
+      <div><div class="stage-kicker" id="kicker"></div><h2 class="stage-title" id="stageTitle"></h2><p class="instruction" id="instruction"></p></div>
+      <button class="help-btn" id="helpBtn">❔ Βοήθεια</button>
+    </div>
+    <div class="workspace" id="activity"></div><div class="feedback" id="feedback" aria-live="polite"></div>
+  </main>
+</div>
+
+<div class="modal-backdrop" id="helpModal" role="dialog" aria-modal="true" aria-labelledby="helpTitle">
+  <div class="modal"><div class="modal-head"><span id="helpTitle">Βοήθεια</span><button class="modal-close" id="closeHelp" aria-label="Κλείσιμο">×</button></div>
+  <div class="modal-body" id="helpText"></div><div class="modal-actions"><button class="small-btn" id="speakHelp">🔊 Άκουσε</button><button class="primary" id="understoodBtn">Το κατάλαβα</button></div></div>
+</div>
+<script>
+const ALPH=['Α','Β','Γ','Δ','Ε','Ζ','Η','Θ','Ι','Κ','Λ','Μ','Ν','Ξ','Ο','Π','Ρ','Σ','Τ','Υ','Φ','Χ','Ψ','Ω'];
+const ACTIVITIES=[
+ {t:'Εντόπισε το πρόβλημα',i:'Βρες ποια γράμματα δημιουργούν πρόβλημα στον Αλγόριθμο 1 όταν η μετατόπιση είναι +3.'},
+ {t:'Συνέχισε από την αρχή του αλφαβήτου',i:'Για κάθε γράμμα που ξεπερνά τη θέση 24, επίλεξε το σωστό κωδικοποιημένο γράμμα.'},
+ {t:'Λογικές εκφράσεις στον Αλγόριθμο 2',i:'Εντόπισε μέσα στον Αλγόριθμο 2 τις λογικές εκφράσεις που ελέγχουν ποια περίπτωση ισχύει.'},
+ {t:'Χτίσε τον Αλγόριθμο 3',i:'Τοποθέτησε τις εντολές του πιο γενικού αλγόριθμου στη σωστή σειρά.'},
+ {t:'Δοκίμασε τα δύο μονοπάτια',i:'Δοκίμασε τον Αλγόριθμο 3 με διαφορετικά γράμματα εισόδου και επίλεξε το γράμμα εξόδου.'},
+ {t:'Άλλαξε τη μετατόπιση σε +5',i:'Προσαρμόσε τον Αλγόριθμο 3 για μετατόπιση +5 και σύγκρινέ τον με τον Αλγόριθμο 2.'},
+ {t:'Άλλαξε το αλφάβητο',i:'Προσάρμοσε τον Αλγόριθμο 3 ώστε να λειτουργεί με το λατινικό αλφάβητο των 26 γραμμάτων.'},
+ {t:'Περισσότεροι από ένας αλγόριθμοι',i:'Σύγκρινε τους Αλγόριθμους 2 και 3 και εντόπισε γιατί ο Αλγόριθμος 3 είναι πιο γενικός.'},
+ {t:'Συνολική δοκιμή',i:'Δοκίμασε τη γενική λύση με διαφορετικό μήνυμα και διαφορετική μετατόπιση.'},
+ {t:'Τι έμαθα;',i:'Αξιολόγησε πόσο καλά έχεις κατανοήσει τους βασικούς στόχους του μαθήματος.'}
+];
+const HELP=[
+ 'Με μετατόπιση +3, οι θέσεις 22, 23 και 24 ξεπερνούν το 24. Σκέψου ποια γράμματα βρίσκονται σε αυτές τις θέσεις.',
+ 'Όταν περάσεις το Ω, συνεχίζεις πάλι από το Α. Έτσι το Χ γίνεται Α, το Ψ γίνεται Β και το Ω γίνεται Γ.',
+ 'Λογική έκφραση είναι ο έλεγχος που βρίσκεται μετά από μια εντολή «Αν». Κάνε κλικ πάνω στο μέρος της γραμμής που εξετάζει αν μια συνθήκη είναι αληθής.',
+ 'Ο Αλγόριθμος 3 ελέγχει μόνο δύο περιπτώσεις: αν η θέση μαζί με τη μετατόπιση ξεπερνά το 24 και αν δεν το ξεπερνά.',
+ 'Υπολόγισε πρώτα θέση + 3. Αν το αποτέλεσμα είναι μεγαλύτερο από 24, αφαίρεσε 24. Διαφορετικά κράτησε το αποτέλεσμα όπως είναι.',
+ 'Για μετατόπιση +5 αλλάζει το 3 σε 5. Ο αριθμός 24 παραμένει επειδή το ελληνικό αλφάβητο έχει 24 γράμματα.',
+ 'Στο λατινικό αλφάβητο αλλάζει το πλήθος των γραμμάτων από 24 σε 26. Η μετατόπιση παραμένει +3 σε αυτή τη δραστηριότητα.',
+ 'Και οι δύο αλγόριθμοι μπορούν να λύσουν το ίδιο πρόβλημα για μετατόπιση +3. Ο Αλγόριθμος 3 όμως χρειάζεται λιγότερες αλλαγές όταν αλλάζει η μετατόπιση ή το αλφάβητο.',
+ 'Χρησιμοποίησε τον ίδιο κανόνα για κάθε γράμμα. Αν περάσεις το Ω, συνέχισε από το Α. Το αποτέλεσμα θα ελεγχθεί μόνο όταν ολοκληρώσεις ολόκληρο το μήνυμα.',
+ 'Διάλεξε ένα επίπεδο για κάθε στόχο. Η αυτοαξιολόγηση δεν έχει σωστή ή λάθος απάντηση.'
+];
+let stage=0,completed=new Set(),finished=false,transitioning=false;
+const activity=document.getElementById('activity'),feedback=document.getElementById('feedback'),kicker=document.getElementById('kicker'),stageTitle=document.getElementById('stageTitle'),instruction=document.getElementById('instruction'),dots=document.getElementById('dots'),fill=document.getElementById('fill'),progressLabel=document.getElementById('progressLabel'),progressPercent=document.getElementById('progressPercent');
+function setFeedback(msg,type='info'){feedback.textContent=msg;feedback.className='feedback '+(type===true?'good':type===false?'bad':type)}
+function clearFeedback(){feedback.textContent='';feedback.className='feedback'}
+function shuffleCopy(arr){const a=[...arr];for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
+function updateProgress(){const pct=Math.round(completed.size/ACTIVITIES.length*100);fill.style.width=pct+'%';progressPercent.textContent=pct+'%';progressLabel.textContent=finished?'Ολοκληρώθηκε':`Δραστηριότητα ${stage+1} από ${ACTIVITIES.length}`;dots.innerHTML=ACTIVITIES.map((_,i)=>`<span class="step-dot ${completed.has(i)?'done':''} ${i===stage&&!finished?'active':''}">${i+1}</span>`).join('')}
+function advance(delay=900){if(transitioning)return;transitioning=true;completed.add(stage);updateProgress();setTimeout(()=>{stage=Math.min(stage+1,ACTIVITIES.length-1);transitioning=false;render()},delay)}
+function wrong(el,msg){if(el){el.classList.add('wrong');setTimeout(()=>el.classList.remove('wrong'),520)}setFeedback(msg,false)}
+function alphaRow(clickable=false,attr=''){return `<div class="alphabet-table"><div class="alpha-grid"><div class="alpha-cell alpha-label head">θέση</div>${ALPH.map((_,i)=>`<div class="alpha-cell head">${i+1}</div>`).join('')}<div class="alpha-cell alpha-label">Αλφάβητο</div>${ALPH.map((x,i)=>`<div class="alpha-cell ${clickable?'pick':''}" ${clickable?`${attr} data-letter="${x}" data-pos="${i+1}"`:''}>${x}</div>`).join('')}</div></div>`}
+function encLetter(letter,shift){const i=ALPH.indexOf(letter);return ALPH[(i+shift)%24]}
+
+/* 1 */
+let a1Found=new Set();
+function r1(){
+ const candidates=shuffleCopy(['Τ','Υ','Φ','Χ','Ψ','Ω','Ρ','Σ']);
+ activity.innerHTML=`<div class="lab-card"><div class="lab-head"><strong>Μετατόπιση +3</strong><span class="lab-tag">24 γράμματα</span></div><div class="lab-body"><div class="prompt">Ποια γράμματα έχουν τέτοια θέση ώστε <b>θέση + 3 &gt; 24</b>; Επίλεξέ τα.</div>${alphaRow(false)}<div class="mini-grid">${candidates.map(x=>`<button class="mini-tile ${a1Found.has(x)?'selected':''}" data-a1="${x}">${x}</button>`).join('')}</div></div></div>`;
+ document.querySelectorAll('[data-a1]').forEach(b=>b.onclick=()=>{const x=b.dataset.a1;if(!['Χ','Ψ','Ω'].includes(x))return wrong(b,'Για αυτό το γράμμα, θέση + 3 δεν ξεπερνά το 24.');if(a1Found.has(x)){a1Found.delete(x);return r1()}a1Found.add(x);r1();if(a1Found.size===3){setFeedback('Σωστά. Τα γράμματα Χ, Ψ και Ω χρειάζονται ειδική αντιμετώπιση.',true);advance(1000)}})
+}
+
+/* 2 */
+const wrapPairs=[['Χ','Α'],['Ψ','Β'],['Ω','Γ']];let a2i=0;
+function r2(){const [src,dst]=wrapPairs[a2i];const opts=shuffleCopy([...new Set([dst,encLetter(src,1),encLetter(src,2),encLetter(src,4),'Δ'])]).slice(0,4);if(!opts.includes(dst))opts[0]=dst;activity.innerHTML=`<div class="lab-card"><div class="lab-head"><strong>Επιστροφή στην αρχή</strong><span class="lab-tag">${a2i+1}/3</span></div><div class="lab-body"><div class="prompt">Με μετατόπιση +3, ποιο γράμμα αντικαθιστά το <b>${src}</b>;</div><div class="mapping"><div class="map-letter">${src}</div><div class="map-options">${shuffleCopy(opts).map(x=>`<button class="map-btn" data-a2="${x}">${x}</button>`).join('')}</div></div></div></div>`;document.querySelectorAll('[data-a2]').forEach(b=>b.onclick=()=>{if(b.dataset.a2!==dst)return wrong(b,'Συνέχισε από το Α όταν περάσεις το Ω.');a2i++;if(a2i===wrapPairs.length){setFeedback('Σωστά: Χ → Α, Ψ → Β, Ω → Γ.',true);advance(950)}else{setFeedback('Σωστά. Συνέχισε με το επόμενο γράμμα.','info');setTimeout(r2,430)}})}
+
+/* 3 */
+const condIds=['c1','c2','c3','c4'];let a3Found=new Set();
+function r3(){activity.innerHTML=`<div class="lab-card"><div class="lab-head"><strong>Αλγόριθμος 2</strong><span class="lab-tag">λογικές εκφράσεις</span></div><div class="lab-body"><div class="prompt">Κάνε κλικ στις λογικές εκφράσεις που ελέγχουν τις διαφορετικές περιπτώσεις.</div><div class="code-panel">
+<div class="code-line"><span class="n">1</span><span>Επανάλαβε ώσπου να τελειώσουν όλα τα γράμματα</span></div>
+<div class="code-line"><span class="n">2</span><span>Διάβασε το επόμενο γράμμα</span></div>
+<div class="code-line"><span class="n">3</span><span>Βρες τη θέση του γράμματος στο αλφάβητο</span></div>
+<div class="code-line"><span class="n">4</span><span>Αν <span class="condition ${a3Found.has('c1')?'found':''}" data-cond="c1">το γράμμα είναι το Χ</span>, τότε γράψε το γράμμα Α</span></div>
+<div class="code-line"><span class="n">5</span><span>Αν <span class="condition ${a3Found.has('c2')?'found':''}" data-cond="c2">το γράμμα είναι το Ψ</span>, τότε γράψε το γράμμα Β</span></div>
+<div class="code-line"><span class="n">6</span><span>Αν <span class="condition ${a3Found.has('c3')?'found':''}" data-cond="c3">το γράμμα είναι το Ω</span>, τότε γράψε το γράμμα Γ</span></div>
+<div class="code-line"><span class="n">7</span><span>Αν <span class="condition ${a3Found.has('c4')?'found':''}" data-cond="c4">το γράμμα ΔΕΝ είναι το Χ ΚΑΙ ΔΕΝ είναι το Ψ ΚΑΙ ΔΕΝ είναι το Ω</span>, τότε</span></div>
+<div class="code-line"><span class="n">8</span><span>Γράψε το γράμμα του αλφαβήτου που υπάρχει στη θέση + 3</span></div></div></div></div>`;document.querySelectorAll('[data-cond]').forEach(c=>c.onclick=()=>{if(a3Found.has(c.dataset.cond))return;a3Found.add(c.dataset.cond);c.classList.add('found');if(a3Found.size===condIds.length){setFeedback('Σωστά. Εντόπισες τις λογικές εκφράσεις του Αλγόριθμου 2.',true);advance(950)}})}
+
+/* 4 */
+const algo3=[
+ 'Επανάλαβε ώσπου να τελειώσουν όλα τα γράμματα',
+ 'Διάβασε το επόμενο γράμμα',
+ 'Βρες τη θέση του γράμματος στο αλφάβητο',
+ 'Αν θέση + 3 > 24 τότε',
+ 'Γράψε το γράμμα που υπάρχει στη (θέση + 3) – 24 του αλφαβήτου',
+ 'Αλλιώς',
+ 'Γράψε το γράμμα που υπάρχει στη θέση + 3 του αλφαβήτου'
+];let a4Placed=[];
+function r4(){const remaining=shuffleCopy(algo3.filter(x=>!a4Placed.includes(x)));activity.innerHTML=`<div class="lab-card"><div class="lab-head"><strong>Αλγόριθμος 3</strong><span class="lab-tag">γενικότερη λύση</span></div><div class="lab-body"><div class="prompt">Πάτησε τις εντολές με τη σειρά που πρέπει να εκτελούνται.</div><div class="sequence">${remaining.map(x=>`<button class="seq-card" data-a4="${encodeURIComponent(x)}">${x}</button>`).join('')}</div><div class="order-strip">${algo3.map((_,i)=>`<div class="order-slot"><span class="order-num">${i+1}</span><span class="order-text">${a4Placed[i]||'...'}</span></div>`).join('')}</div></div></div>`;document.querySelectorAll('[data-a4]').forEach(b=>b.onclick=()=>{const x=decodeURIComponent(b.dataset.a4),expected=algo3[a4Placed.length];if(x!==expected)return wrong(b,'Αυτή η εντολή δεν είναι η επόμενη. Δοκίμασε ξανά.');a4Placed.push(x);if(a4Placed.length===algo3.length){r4();setFeedback('Σωστά. Ο Αλγόριθμος 3 χρειάζεται μόνο δύο διαφορετικά μονοπάτια.',true);advance(1050)}else{setFeedback('Σωστά. Συνέχισε.','info');r4()}})}
+
+/* 5 */
+let a5Letters=null,a5i=0;
+function initA5(){if(!a5Letters){const edge=shuffleCopy(['Χ','Ψ','Ω']).slice(0,2),normal=shuffleCopy(ALPH.slice(0,21)).slice(0,3);a5Letters=shuffleCopy([...edge,...normal])}}
+function r5(){initA5();const src=a5Letters[a5i],pos=ALPH.indexOf(src)+1,sum=pos+3,wrap=sum>24,target=encLetter(src,3);activity.innerHTML=`<div class="lab-card"><div class="lab-head"><strong>Δοκιμή δεδομένων εισόδου</strong><span class="lab-tag">${a5i+1}/${a5Letters.length}</span></div><div class="lab-body"><div class="branch-card"><div class="branch-top"><div class="branch-letter">${src}</div><div class="calc">θέση ${pos} + 3 = ${sum}</div></div><div class="route"><div class="route-box ${wrap?'active':''}">θέση + 3 &gt; 24<br><small>χρησιμοποίησε (θέση + 3) – 24</small></div><div class="route-box ${!wrap?'active':''}">Αλλιώς<br><small>χρησιμοποίησε θέση + 3</small></div></div></div><div class="prompt">Ποιο γράμμα θα γράψει ο αλγόριθμος;</div>${alphaRow(true,'data-a5="1"')}</div></div>`;document.querySelectorAll('[data-a5]').forEach(c=>c.onclick=()=>{if(c.dataset.letter!==target)return wrong(c,'Ακολούθησε το ενεργό μονοπάτι και βρες τη σωστή θέση στο αλφάβητο.');a5i++;if(a5i===a5Letters.length){setFeedback('Σωστά. Δοκίμασες τον ίδιο αλγόριθμο με διαφορετικά δεδομένα εισόδου.',true);advance(1000)}else{setFeedback('Σωστά. Δοκίμασε τώρα άλλο γράμμα.','info');setTimeout(r5,430)}})}
+
+/* 6 */
+let a6step=0,a6vals=[];
+function r6(){if(a6step===0){activity.innerHTML=`<div class="lab-card"><div class="lab-head"><strong>Μετατόπιση +5</strong><span class="lab-tag">προσαρμογή</span></div><div class="lab-body"><div class="prompt">Συμπλήρωσε τον αριθμό της μετατόπισης στα δύο σημεία του Αλγόριθμου 3.</div><div class="formula">Αν θέση + <span class="blank ${a6vals[0]?'done':''}">${a6vals[0]||'?'}</span> &gt; 24 τότε<br>Γράψε το γράμμα που υπάρχει στη (θέση + <span class="blank ${a6vals[1]?'done':''}">${a6vals[1]||'?'}</span>) – 24 του αλφαβήτου</div><div class="num-grid">${shuffleCopy([3,4,5,6,7,8,2,9]).map(n=>`<button class="num-btn" data-a6n="${n}">${n}</button>`).join('')}</div></div></div>`;document.querySelectorAll('[data-a6n]').forEach(b=>b.onclick=()=>{if(+b.dataset.a6n!==5)return wrong(b,'Η νέα μετατόπιση είναι +5.');a6vals.push(5);if(a6vals.length===2){a6step=1;setFeedback('Σωστά. Το 3 άλλαξε σε 5, ενώ το 24 παρέμεινε ίδιο.','info');setTimeout(r6,500)}else r6()})}else{const opts=shuffleCopy([{id:'a3',txt:'Ο Αλγόριθμος 3: αλλάζουμε μόνο τη μετατόπιση.'},{id:'a2',txt:'Ο Αλγόριθμος 2: πρέπει να προσθέσουμε ειδικές περιπτώσεις για περισσότερα γράμματα.'},{id:'same',txt:'Και οι δύο χρειάζονται ακριβώς τις ίδιες αλλαγές.'},{id:'none',txt:'Κανένας αλγόριθμος δεν μπορεί να χρησιμοποιήσει μετατόπιση +5.'}]);activity.innerHTML=`<div class="lab-card"><div class="lab-head"><strong>Σύγκριση αλλαγών</strong><span class="lab-tag">+5</span></div><div class="lab-body"><div class="prompt">Ποιος αλγόριθμος προσαρμόζεται ευκολότερα στη νέα μετατόπιση;</div><div class="choice-grid">${opts.map(o=>`<button class="choice" data-a6c="${o.id}">${o.txt}</button>`).join('')}</div></div></div>`;document.querySelectorAll('[data-a6c]').forEach(b=>b.onclick=()=>{if(b.dataset.a6c!=='a3')return wrong(b,'Σκέψου πόσες διαφορετικές ειδικές περιπτώσεις χρειάζεται ο κάθε αλγόριθμος.');setFeedback('Σωστά. Ο Αλγόριθμος 3 αλλάζει με πολύ μικρότερη προσπάθεια.',true);advance(1000)})}}
+
+/* 7 */
+let a7vals=[];
+function r7(){activity.innerHTML=`<div class="lab-card"><div class="lab-head"><strong>Λατινικό αλφάβητο</strong><span class="lab-tag">26 γράμματα</span></div><div class="lab-body"><div class="prompt">Η μετατόπιση παραμένει +3. Συμπλήρωσε τον αριθμό που πρέπει να χρησιμοποιείται αντί για το 24.</div><div class="formula">Αν θέση + 3 &gt; <span class="blank ${a7vals[0]?'done':''}">${a7vals[0]||'?'}</span> τότε<br>Γράψε το γράμμα που υπάρχει στη (θέση + 3) – <span class="blank ${a7vals[1]?'done':''}">${a7vals[1]||'?'}</span> του αλφαβήτου</div><div class="num-grid">${shuffleCopy([24,25,26,27,22,23,28,29]).map(n=>`<button class="num-btn" data-a7="${n}">${n}</button>`).join('')}</div></div></div>`;document.querySelectorAll('[data-a7]').forEach(b=>b.onclick=()=>{if(+b.dataset.a7!==26)return wrong(b,'Το λατινικό αλφάβητο έχει 26 γράμματα.');a7vals.push(26);if(a7vals.length===2){setFeedback('Σωστά. Για αλφάβητο 26 γραμμάτων, το 24 αντικαθίσταται από 26.',true);advance(1000)}else r7()})}
+
+/* 8 */
+let a8step=0;
+function r8(){if(a8step===0){activity.innerHTML=`<div class="lab-card"><div class="lab-head"><strong>Δύο λύσεις για το ίδιο πρόβλημα</strong><span class="lab-tag">σύγκριση</span></div><div class="lab-body"><div class="compare"><div class="compare-card"><h3>Αλγόριθμος 2</h3><ul><li>Ειδικός έλεγχος για Χ</li><li>Ειδικός έλεγχος για Ψ</li><li>Ειδικός έλεγχος για Ω</li><li>Άλλη περίπτωση για τα υπόλοιπα γράμματα</li></ul></div><div class="compare-card"><h3>Αλγόριθμος 3</h3><ul><li>Έλεγχος αν θέση + μετατόπιση ξεπερνά το πλήθος γραμμάτων</li><li>Αλλιώς χρησιμοποιεί απευθείας τη νέα θέση</li></ul></div></div><div class="prompt">Μπορούν και οι δύο να κωδικοποιήσουν σωστά το ελληνικό αλφάβητο με μετατόπιση +3;</div><div class="choice-grid">${shuffleCopy([{id:'yes',txt:'Ναι, και οι δύο μπορούν να λύσουν αυτό το πρόβλημα.'},{id:'no',txt:'Όχι, μόνο ο Αλγόριθμος 3 μπορεί να το λύσει.'},{id:'a2',txt:'Μόνο ο Αλγόριθμος 2 μπορεί να το λύσει.'},{id:'none',txt:'Κανένας από τους δύο δεν μπορεί.'}]).map(o=>`<button class="choice" data-a8="${o.id}">${o.txt}</button>`).join('')}</div></div></div>`;document.querySelectorAll('[data-a8]').forEach(b=>b.onclick=()=>{if(b.dataset.a8!=='yes')return wrong(b,'Το βιβλίο παρουσιάζει και τους δύο ως λύσεις για μετατόπιση +3.');a8step=1;setFeedback('Σωστά. Ένα πρόβλημα μπορεί να έχει περισσότερους από έναν αλγόριθμους.','info');setTimeout(r8,520)})}else{activity.innerHTML=`<div class="lab-card"><div class="lab-head"><strong>Ποιος είναι πιο γενικός;</strong><span class="lab-tag">γενίκευση</span></div><div class="lab-body"><div class="prompt">Γιατί ο Αλγόριθμος 3 είναι πιο γενικός;</div><div class="choice-grid">${shuffleCopy([{id:'gen',txt:'Με μικρές αλλαγές μπορεί να χρησιμοποιηθεί με άλλες μετατοπίσεις και αλφάβητα διαφορετικού μεγέθους.'},{id:'short',txt:'Επειδή έχει πάντα λιγότερες γραμμές από κάθε άλλον αλγόριθμο.'},{id:'fixed',txt:'Επειδή λειτουργεί μόνο όταν η μετατόπιση είναι +3.'},{id:'letters',txt:'Επειδή δεν χρειάζεται να γνωρίζει πόσα γράμματα έχει το αλφάβητο.'}]).map(o=>`<button class="choice" data-a8b="${o.id}">${o.txt}</button>`).join('')}</div></div></div>`;document.querySelectorAll('[data-a8b]').forEach(b=>b.onclick=()=>{if(b.dataset.a8b!=='gen')return wrong(b,'Σκέψου τι άλλαξες στις δύο προηγούμενες δραστηριότητες.');setFeedback('Σωστά. Η γενική λύση προσαρμόζεται εύκολα σε παρόμοια προβλήματα.',true);advance(1000)})}}
+
+/* 9 */
+const finalWords=['ΥΠΑΤΙΑ','ΗΡΩΝΑΣ','ΤΑΛΩΣ'];let finalWord=null,finalShift=null,finalBuilt=[];
+function initFinal(){if(!finalWord){finalWord=finalWords[Math.floor(Math.random()*finalWords.length)];finalShift=1+Math.floor(Math.random()*23);finalBuilt=[]}}
+function finalTarget(){return [...finalWord].map(ch=>encLetter(ch,finalShift)).join('')}
+function r9(){initFinal();const target=finalTarget();activity.innerHTML=`<div class="challenge-wrap"><div class="challenge-brief"><div><div style="font-size:12px;font-weight:900;color:#788397;text-transform:uppercase;letter-spacing:.08em">Μήνυμα εισόδου</div><div class="challenge-word">${finalWord}</div></div><div class="shift-badge"><span>Μετατόπιση</span>+${finalShift}</div></div><div class="prompt">Κωδικοποίησε ολόκληρη τη λέξη με τον γενικό κανόνα. Το αποτέλεσμα θα ελεγχθεί μόνο όταν συμπληρωθούν όλα τα γράμματα.</div><div class="challenge-alpha-scroll"><div class="challenge-alphabet">${ALPH.map((x,i)=>`<button class="alpha-pick" data-final="${x}"><small>${i+1}</small>${x}</button>`).join('')}</div></div><div class="challenge-result">${[...finalWord].map((_,i)=>`<div class="challenge-slot ${finalBuilt[i]?'filled':''}">${finalBuilt[i]||''}</div>`).join('')}</div><div class="challenge-actions"><button class="secondary-btn" id="undoFinal" ${finalBuilt.length?'':'disabled'}>↶ Αφαίρεση τελευταίου</button><button class="secondary-btn" id="clearFinal" ${finalBuilt.length?'':'disabled'}>Καθαρισμός</button></div><div class="challenge-note">Αν περάσεις το Ω, συνέχισε από το Α.</div></div>`;document.querySelectorAll('[data-final]').forEach(b=>b.onclick=()=>{if(finalBuilt.length>=[...finalWord].length)return;finalBuilt.push(b.dataset.final);if(finalBuilt.length===[...finalWord].length){const got=finalBuilt.join('');if(got===target){r9();setFeedback(`Σωστά. ${finalWord} → ${target} με μετατόπιση +${finalShift}.`,true);advance(1150)}else{setFeedback('Το ολοκληρωμένο κωδικοποιημένο μήνυμα δεν είναι σωστό. Ξεκίνα ξανά με την ίδια λέξη και μετατόπιση.',false);finalBuilt=[];setTimeout(r9,650)}}else r9()});const u=document.getElementById('undoFinal'),c=document.getElementById('clearFinal');u.onclick=()=>{if(finalBuilt.length){finalBuilt.pop();r9()}};c.onclick=()=>{finalBuilt=[];r9()}}
+
+/* 10 */
+const levels=['Έχω καταλάβει και μπορώ να εξηγήσω','Έχω καταλάβει αρκετά καλά','Έχω καταλάβει αλλά έχω απορίες','Χρειάζομαι βοήθεια'];
+const objectives=['Να ανακαλύπτω μια γενική λύση σε ένα πρόβλημα.','Να δοκιμάζω έναν αλγόριθμο για διάφορα δεδομένα εισόδου.'];let selfSel=[null,null];
+function r10(){activity.innerHTML=`<div class="self-wrap"><div class="self-table"><div class="self-head">Αξιολογώ πόσο καλά έμαθα</div>${levels.map(x=>`<div class="self-head">${x}</div>`).join('')}${objectives.map((o,row)=>`<div class="self-objective">✓ ${o}</div>${levels.map((l,col)=>`<button class="self-cell ${selfSel[row]===col?'selected':''}" data-self="${row}:${col}">${l}</button>`).join('')}`).join('')}</div><div class="self-note">Διάλεξε ένα επίπεδο για κάθε στόχο.</div><div class="finish-actions"><button class="primary" id="finishBtn" ${selfSel.some(x=>x===null)?'disabled':''}>Ολοκλήρωση</button><button class="secondary-btn" id="restartBtn">↻ Επανάληψη δραστηριότητας</button></div></div>`;document.querySelectorAll('[data-self]').forEach(b=>b.onclick=()=>{const [r,c]=b.dataset.self.split(':').map(Number);selfSel[r]=selfSel[r]===c?null:c;r10()});document.getElementById('restartBtn').onclick=restart;document.getElementById('finishBtn').onclick=()=>{if(selfSel.some(x=>x===null))return;completed.add(9);finished=true;updateProgress();setFeedback('Η αυτοαξιολόγηση ολοκληρώθηκε.',true);setTimeout(render,650)}}
+function renderCompletion(){kicker.textContent='ΟΛΟΚΛΗΡΩΣΗ';stageTitle.textContent='Μάθημα 2 ολοκληρώθηκε';instruction.textContent='Ολοκλήρωσες τη συνέχεια του αλγόριθμου του Καίσαρα και δοκίμασες μια πιο γενική λύση.';activity.innerHTML=`<div class="completion"><span class="badge">Ενότητα 1 · Μάθημα 2</span><h2>Δοκίμασες και γενίκευσες έναν αλγόριθμο</h2><p>Διόρθωσες το πρόβλημα στα τελευταία γράμματα του αλφαβήτου, σύγκρινες δύο διαφορετικούς αλγόριθμους και προσαρμόσες τη γενική λύση σε διαφορετική μετατόπιση και διαφορετικό πλήθος γραμμάτων.</p><button class="secondary-btn" id="restartComplete">↻ Επανάληψη μαθήματος</button></div>`;document.getElementById('restartComplete').onclick=restart;clearFeedback()}
+function resetState(){stage=0;completed=new Set();finished=false;transitioning=false;a1Found=new Set();a2i=0;a3Found=new Set();a4Placed=[];a5Letters=null;a5i=0;a6step=0;a6vals=[];a7vals=[];a8step=0;finalWord=null;finalShift=null;finalBuilt=[];selfSel=[null,null]}
+function restart(){resetState();render()}
+const renderers=[r1,r2,r3,r4,r5,r6,r7,r8,r9,r10];
+function render(){clearFeedback();updateProgress();if(finished){renderCompletion();window.scrollTo({top:0,behavior:'smooth'});return}const s=ACTIVITIES[stage];kicker.textContent=`Δραστηριότητα ${stage+1}`;stageTitle.textContent=s.t;instruction.textContent=s.i;renderers[stage]();window.scrollTo({top:0,behavior:'smooth'})}
+const modal=document.getElementById('helpModal');document.getElementById('helpBtn').onclick=()=>{document.getElementById('helpText').textContent=HELP[stage];modal.classList.add('open')};document.getElementById('closeHelp').onclick=()=>modal.classList.remove('open');document.getElementById('understoodBtn').onclick=()=>modal.classList.remove('open');modal.onclick=e=>{if(e.target===modal)modal.classList.remove('open')};document.getElementById('speakHelp').onclick=()=>{if(!('speechSynthesis' in window))return;speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(HELP[stage]);u.lang='el-GR';u.rate=.95;speechSynthesis.speak(u)};
+resetState();render();
+</script>
+
+<footer class="nk-license" aria-label="Πληροφορίες δημιουργού και άδειας χρήσης">
+  <div><strong>Created by Nikos Kalakos · © 2026</strong></div>
+  <div>Original educational content and simulation design licensed under <a class="cc-badge" href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank" rel="license noopener noreferrer">CC BY-NC 4.0</a>.</div>
+  <div>Source code © 2026 Nikos Kalakos.</div>
+  <div>Third-party and textbook materials remain subject to the rights and licences of their respective copyright holders.</div>
+</footer>
+</body>
+</html>

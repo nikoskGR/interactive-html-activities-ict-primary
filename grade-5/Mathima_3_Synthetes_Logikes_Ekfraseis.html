@@ -1,0 +1,217 @@
+<!--
+ICT Educational Simulation
+Created by Nikos Kalakos
+Copyright © 2026 Nikos Kalakos
+
+Original educational content and simulation design licensed under CC BY-NC 4.0.
+Source code © 2026 Nikos Kalakos.
+Third-party and textbook materials remain subject to the rights and licences of their respective copyright holders.
+-->
+<!doctype html>
+<html lang="el">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="author" content="Nikos Kalakos">
+<meta name="copyright" content="© 2026 Nikos Kalakos">
+<meta name="license" content="Original educational content and simulation design: CC BY-NC 4.0; source code © 2026 Nikos Kalakos; third-party and textbook materials excluded.">
+<title>Μάθημα 3 - Σύνθετες λογικές εκφράσεις</title>
+<style>
+:root{
+  --unit:#EA922C;--unit-dark:#B86610;--unit-soft:#FFF4E6;
+  --secondary:#545F99;--secondary-dark:#3D477C;--secondary-soft:#EEF0F8;
+  --ink:#253044;--muted:#657083;--line:#D9DEE7;--panel:#FFFFFF;
+  --ok:#28765A;--ok-soft:#ECF8F2;--bad:#A84355;--bad-soft:#FFF0F3;
+  --shadow:0 14px 35px rgba(45,55,86,.11)
+}
+*{box-sizing:border-box}html{scroll-behavior:smooth}
+body{margin:0;font-family:Inter,Segoe UI,Arial,sans-serif;color:var(--ink);background:radial-gradient(circle at 14% 10%,rgba(234,146,44,.10),transparent 28%),radial-gradient(circle at 88% 22%,rgba(84,95,153,.10),transparent 30%),#F4F6FA}
+button{font:inherit;cursor:pointer}button:focus-visible{outline:3px solid rgba(84,95,153,.32);outline-offset:2px}
+.shell{max-width:1240px;margin:0 auto;padding:18px}
+.hero{background:#fff;border:1px solid #E3E7EE;border-top:9px solid var(--unit);border-radius:18px;box-shadow:var(--shadow);padding:20px 24px 18px;display:grid;grid-template-columns:1fr auto;gap:18px;align-items:center}
+.eyebrow{font-size:13px;font-weight:900;letter-spacing:.12em;text-transform:uppercase;color:var(--secondary)}
+.hero h1{margin:5px 0 0;font-size:32px;line-height:1.12;color:var(--secondary-dark)}
+.hero p{margin:8px 0 0;color:var(--muted);font-weight:700}
+.lesson-mark{min-width:118px;height:72px;border-radius:16px;background:linear-gradient(135deg,var(--secondary),var(--secondary-dark));color:#fff;display:grid;place-items:center;text-align:center;box-shadow:0 9px 22px rgba(84,95,153,.23)}
+.lesson-mark b{font-size:27px;line-height:1}.lesson-mark span{font-size:11px;font-weight:850;letter-spacing:.08em;text-transform:uppercase}
+.progress{margin:13px 0;background:#fff;border:1px solid #E1E5EC;border-radius:15px;padding:12px 15px;box-shadow:0 7px 20px rgba(48,58,87,.06)}
+.progress-top{display:flex;justify-content:space-between;gap:12px;align-items:center;color:#59667B;font-size:13px;font-weight:850}.bar{height:8px;background:#ECEFF4;border-radius:999px;overflow:hidden;margin:8px 0 10px}.fill{height:100%;width:0;background:linear-gradient(90deg,var(--unit),var(--secondary));transition:.3s ease}
+.steps{display:flex;gap:8px;flex-wrap:wrap;justify-content:center}.step-dot{width:29px;height:29px;border-radius:9px;border:1px solid #CDD3DE;background:#fff;color:#758197;display:grid;place-items:center;font-size:12px;font-weight:900;transition:.2s}.step-dot.active{border:2px solid var(--unit);color:var(--unit-dark);background:var(--unit-soft)}.step-dot.done{border-color:var(--secondary);background:var(--secondary);color:#fff}
+.stage{background:var(--panel);border:1px solid #E1E5EC;border-radius:18px;box-shadow:var(--shadow);padding:22px;min-height:650px}.stage-head{display:grid;grid-template-columns:1fr auto;gap:20px;align-items:start;border-bottom:1px solid #E7EAF0;padding-bottom:14px}.stage-kicker{font-size:12px;letter-spacing:.1em;text-transform:uppercase;font-weight:900;color:var(--unit-dark)}.stage-title{font-size:27px;line-height:1.16;margin:5px 0 0;color:#303A55}.instruction{font-size:17px;line-height:1.5;color:#5D687B;margin:8px 0 0;font-weight:650;max-width:930px}
+.help-btn{border:1px solid var(--secondary);background:#fff;color:var(--secondary-dark);border-radius:10px;padding:9px 12px;font-weight:900}.help-btn:hover{background:var(--secondary-soft)}.workspace{padding-top:18px}.feedback{min-height:50px;margin-top:16px;border-radius:11px;padding:0 14px;display:flex;align-items:center;font-weight:850;line-height:1.35}.feedback:empty{display:none}.feedback.good{background:var(--ok-soft);border:1px solid #9BCFBA;color:#236047}.feedback.bad{background:var(--bad-soft);border:1px solid #E0A0AC;color:#873044}.feedback.info{background:var(--secondary-soft);border:1px solid #B9C0DC;color:var(--secondary-dark)}
+.lab-card{max-width:1060px;margin:0 auto;border:1px solid #D8DEE8;border-radius:15px;background:#FBFCFE;overflow:hidden}.lab-head{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 16px;background:linear-gradient(90deg,#F6F7FB,#FFF8EF);border-bottom:1px solid #DCE1E9}.lab-head strong{color:var(--secondary-dark)}.lab-tag{font-size:11px;font-weight:900;letter-spacing:.08em;text-transform:uppercase;color:#fff;background:var(--unit);border-radius:999px;padding:6px 9px}.lab-body{padding:18px}.prompt{max-width:980px;margin:0 auto 14px;background:#fff;border-left:5px solid var(--unit);border-radius:10px;padding:13px 15px;font-size:18px;line-height:1.45;font-weight:800}
+.expression{max-width:920px;margin:14px auto;border:1px solid #D9DEE7;border-radius:13px;background:#fff;padding:22px;text-align:center;font-size:22px;font-weight:900;line-height:1.45;color:#34415A}.expression .op{display:inline-block;color:#fff;background:var(--secondary);border-radius:8px;padding:3px 9px;margin:0 5px}.expression .neg{background:var(--unit)}
+.choice-grid{max-width:920px;margin:14px auto;display:grid;grid-template-columns:repeat(2,1fr);gap:11px}.choice{position:relative;min-height:78px;text-align:left;border:2px solid #D7DDE6;background:#fff;border-radius:12px;padding:14px 16px;font-weight:800;color:#3C4960;line-height:1.35;transition:.18s}.choice:hover{border-color:#AEB7C6;transform:translateY(-1px)}.choice.wrong{border-color:#D98696;background:#FFF3F5}.choice.center{text-align:center;font-size:18px}.choice strong{color:var(--secondary-dark)}
+.operator-grid{max-width:780px;margin:15px auto;display:grid;grid-template-columns:repeat(4,1fr);gap:11px}.operator-btn{min-height:76px;border:2px solid #D6DCE6;border-radius:12px;background:#fff;color:#46536B;font-size:21px;font-weight:950;transition:.18s}.operator-btn:hover{border-color:var(--secondary);background:var(--secondary-soft)}.operator-btn.wrong{border-color:#D98696;background:#FFF3F5}
+.truth-board{max-width:900px;margin:16px auto;display:grid;grid-template-columns:1fr 120px 1fr;align-items:center;gap:14px}.truth-box{min-height:120px;border:2px solid #D8DEE8;border-radius:14px;background:#fff;display:grid;place-items:center;text-align:center;padding:14px}.truth-box b{font-size:24px}.truth-box small{font-size:12px;font-weight:900;letter-spacing:.08em;text-transform:uppercase;color:#7B879A}.truth-box.true b{color:var(--ok)}.truth-box.false b{color:var(--bad)}.operator-pill{height:70px;border-radius:16px;background:linear-gradient(135deg,var(--secondary),var(--secondary-dark));color:#fff;display:grid;place-items:center;font-size:24px;font-weight:950;box-shadow:0 8px 18px rgba(84,95,153,.22)}
+.not-board{max-width:650px;margin:18px auto;display:grid;grid-template-columns:1fr 110px 1fr;gap:13px;align-items:center}.not-arrow{font-size:28px;text-align:center;color:var(--secondary);font-weight:950}.unknown{border-style:dashed;background:#FAFBFD}.unknown b{color:#8B95A5}
+.sequence{max-width:950px;margin:15px auto;display:grid;grid-template-columns:repeat(2,1fr);gap:11px}.seq-card{border:2px solid #D6DCE6;background:#fff;border-radius:12px;padding:14px;min-height:82px;text-align:left;font-weight:800;line-height:1.35}.seq-card:hover{border-color:#AAB4C4}.seq-card.picked{border-color:var(--secondary);background:var(--secondary-soft);opacity:.48;cursor:default}.seq-card.wrong{border-color:#D98696;background:#FFF3F5}.order-strip{max-width:950px;margin:16px auto;display:grid;grid-template-columns:1fr;gap:8px}.order-slot{min-height:58px;border:2px dashed #C7CFDC;border-radius:11px;background:#FAFBFD;padding:8px 11px;display:flex;align-items:center;gap:9px}.order-slot.filled{border-style:solid;border-color:#B7C0D2;background:#fff}.order-num{flex:0 0 31px;height:31px;border-radius:8px;background:var(--unit);color:#fff;display:grid;place-items:center;font-weight:950}.order-text{font-size:15px;font-weight:800;color:#4F5C70}
+.progress-chip{display:inline-flex;align-items:center;gap:7px;border:1px solid #D8DEE8;background:#fff;border-radius:999px;padding:7px 11px;color:#687488;font-weight:900;font-size:12px}.progress-chip b{color:var(--secondary-dark)}
+.rule-grid{max-width:950px;margin:15px auto;display:grid;grid-template-columns:repeat(3,1fr);gap:11px}.rule-card{border:1px solid #D8DEE8;background:#fff;border-radius:13px;padding:15px;min-height:148px}.rule-card h3{margin:0 0 9px;color:var(--secondary-dark);font-size:18px}.rule-card p{margin:0;color:#5C687C;line-height:1.45;font-weight:700}.rule-card .symbol{display:inline-grid;place-items:center;width:42px;height:42px;border-radius:11px;background:var(--unit-soft);color:var(--unit-dark);font-weight:950;margin-bottom:9px}
+.challenge-wrap{max-width:980px;margin:0 auto}.challenge-brief{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;border:1px solid #D7DDE7;border-radius:14px;background:#fff;padding:15px}.challenge-brief strong{color:var(--secondary-dark);font-size:18px}.challenge-brief span{font-size:12px;font-weight:900;color:#7B879A}.logic-path{max-width:920px;margin:16px auto;border:1px solid #D8DEE8;border-radius:14px;background:#fff;padding:18px}.logic-path .row{display:grid;grid-template-columns:1fr 100px 1fr;gap:12px;align-items:center}.statement{border:1px solid #DDE2EA;border-radius:11px;padding:12px;font-weight:800;line-height:1.35;background:#FAFBFD}.statement .state{display:block;margin-top:7px;font-size:12px;font-weight:950;color:#6E798B}.statement .state.true{color:var(--ok)}.statement .state.false{color:var(--bad)}
+.self-wrap{max-width:1100px;margin:0 auto}.self-table{display:grid;grid-template-columns:2.2fr repeat(4,1fr);border:1px solid #D9DEE7;border-radius:13px;overflow:hidden;background:#fff}.self-head{background:var(--secondary);color:#fff;padding:11px 8px;text-align:center;font-size:15px;font-weight:900;border-right:1px solid rgba(255,255,255,.18)}.self-objective{padding:13px;background:#F9FAFC;border-top:1px solid #E2E6ED;font-weight:800;line-height:1.35;font-size:15px}.self-cell{position:relative;border:0;border-left:1px solid #E2E6ED;border-top:1px solid #E2E6ED;background:#fff;min-height:76px;padding:8px;font-size:15px;color:#59667B}.self-cell:hover{background:#F5F7FB}.self-cell.selected{background:var(--unit-soft);box-shadow:inset 0 0 0 3px var(--unit);color:#7A430A;font-weight:900;padding-bottom:28px}.self-cell.selected::after{content:"✓ Επιλεγμένο";position:absolute;left:4px;right:4px;bottom:6px;font-size:10px;font-weight:950;color:#7A430A}.self-note{text-align:center;color:#687488;margin:12px 0;font-weight:750}.finish-actions{display:flex;justify-content:center;gap:10px;flex-wrap:wrap}
+.primary,.secondary-btn{border-radius:10px;padding:10px 14px;font-weight:900}.primary{border:1px solid var(--unit-dark);background:var(--unit);color:#fff}.primary:disabled,.secondary-btn:disabled{opacity:.45;cursor:not-allowed}.secondary-btn{border:1px solid #C6CEDA;background:#fff;color:#4E5B72}.secondary-btn:hover:not(:disabled){background:#F6F8FB}.completion{max-width:850px;margin:50px auto;text-align:center;border:1px solid #D8DEE8;border-radius:18px;background:#fff;padding:28px}.badge{display:inline-flex;border-radius:999px;background:var(--unit);color:#fff;padding:7px 11px;font-weight:900;font-size:12px}.completion h2{font-size:30px;color:var(--secondary-dark);margin:15px 0 8px}.completion p{font-size:17px;line-height:1.55;color:#5E6B7E}
+.modal-backdrop{position:fixed;inset:0;background:rgba(25,31,47,.56);display:none;align-items:center;justify-content:center;padding:18px;z-index:50}.modal-backdrop.open{display:flex}.modal{width:min(620px,100%);background:#fff;border-radius:16px;box-shadow:0 18px 55px rgba(0,0,0,.25);overflow:hidden}.modal-head{background:var(--secondary);color:#fff;padding:15px 18px;display:flex;justify-content:space-between;align-items:center;font-weight:900}.modal-close{border:0;background:transparent;color:#fff;font-size:22px}.modal-body{padding:18px;font-size:17px;line-height:1.55;color:#4F5C71}.modal-actions{display:flex;justify-content:flex-end;gap:8px;padding:0 18px 18px}.small-btn{border:1px solid #C7CEDA;background:#fff;border-radius:9px;padding:8px 11px;font-weight:850;color:#4C5870}
+@media(max-width:760px){.shell{padding:10px}.hero{grid-template-columns:1fr}.lesson-mark{display:none}.hero h1{font-size:26px}.stage{padding:15px}.stage-head{grid-template-columns:1fr}.choice-grid,.sequence,.rule-grid{grid-template-columns:1fr}.operator-grid{grid-template-columns:repeat(2,1fr)}.truth-board,.not-board{grid-template-columns:1fr}.operator-pill{height:54px}.logic-path .row{grid-template-columns:1fr}.self-table{grid-template-columns:1.6fr repeat(4,1fr)}.self-head,.self-objective,.self-cell{font-size:13px}}
+</style>
+
+<style id="nk-license-style">
+.nk-license{max-width:1100px;margin:14px auto 24px;padding:10px 16px;text-align:center;font:13px/1.45 Arial,"Noto Sans",sans-serif;color:#4e657c}
+.nk-license a{color:inherit;text-decoration:underline;text-underline-offset:2px}
+.nk-license .cc-badge{display:inline-block;margin:0 4px;padding:2px 7px;border:1px solid #8aa0b8;border-radius:6px;background:#fff;font-weight:700;white-space:nowrap}
+</style>
+</head>
+<body>
+<div class="shell">
+  <header class="hero">
+    <div>
+      <div class="eyebrow">Ενότητα 1 · Αλγοριθμική – Προγραμματισμός – Ρομποτική</div>
+      <h1>Σύνθετες λογικές εκφράσεις</h1>
+      <p>Συνδύασε λογικές εκφράσεις με τους τελεστές ΚΑΙ, Ή και ΔΕΝ και πρόβλεψε το αποτέλεσμά τους.</p>
+    </div>
+    <div class="lesson-mark"><div><b>03</b><br><span>Μάθημα</span></div></div>
+  </header>
+
+  <section class="progress">
+    <div class="progress-top"><span id="progressLabel">Δραστηριότητα 1 από 9</span><span id="progressPercent">0%</span></div>
+    <div class="bar"><div class="fill" id="fill"></div></div><div class="steps" id="dots"></div>
+  </section>
+
+  <main class="stage">
+    <div class="stage-head">
+      <div><div class="stage-kicker" id="kicker"></div><h2 class="stage-title" id="stageTitle"></h2><p class="instruction" id="instruction"></p></div>
+      <button class="help-btn" id="helpBtn">❔ Βοήθεια</button>
+    </div>
+    <div class="workspace" id="activity"></div><div class="feedback" id="feedback" aria-live="polite"></div>
+  </main>
+</div>
+
+<div class="modal-backdrop" id="helpModal" role="dialog" aria-modal="true" aria-labelledby="helpTitle">
+  <div class="modal"><div class="modal-head"><span id="helpTitle">Βοήθεια</span><button class="modal-close" id="closeHelp" aria-label="Κλείσιμο">×</button></div>
+  <div class="modal-body" id="helpText"></div><div class="modal-actions"><button class="small-btn" id="speakHelp">🔊 Άκουσε</button><button class="primary" id="understoodBtn">Το κατάλαβα</button></div></div>
+</div>
+<script>
+const ACTIVITIES=[
+ {t:'Απλή ή σύνθετη λογική έκφραση;',i:'Διάκρινε μια απλή λογική έκφραση από μια έκφραση που συνδυάζει περισσότερες λογικές εκφράσεις.'},
+ {t:'Εντόπισε τον λογικό τελεστή',i:'Βρες ποιος λογικός τελεστής χρησιμοποιείται σε κάθε σύνθετη λογική έκφραση.'},
+ {t:'Ο τελεστής ΚΑΙ',i:'Πρόβλεψε το αποτέλεσμα του ΚΑΙ για διαφορετικούς συνδυασμούς ΑΛΗΘΕΙΑΣ και ΨΕΜΑΤΟΣ.'},
+ {t:'Ο τελεστής Ή',i:'Πρόβλεψε το αποτέλεσμα του Ή για διαφορετικούς συνδυασμούς ΑΛΗΘΕΙΑΣ και ΨΕΜΑΤΟΣ.'},
+ {t:'Ο τελεστής ΔΕΝ',i:'Παρατήρησε πώς ο τελεστής ΔΕΝ αντιστρέφει το αποτέλεσμα μιας λογικής έκφρασης.'},
+ {t:'Σχημάτισε σύνθετες λογικές εκφράσεις',i:'Τοποθέτησε τα τμήματα στη σωστή σειρά και στη συνέχεια πρόβλεψε το αποτέλεσμα της έκφρασης.'},
+ {t:'Δοκίμασε τις εκφράσεις του βιβλίου',i:'Αποφάσισε αν καθεμία από τις λογικές εκφράσεις είναι ΑΛΗΘΕΙΑ ή ΨΕΜΑ.'},
+ {t:'Συνολική δοκιμή',i:'Χρησιμοποίησε και τους τρεις λογικούς τελεστές για να προβλέψεις τα αποτελέσματα νέων περιπτώσεων.'},
+ {t:'Τι έμαθα;',i:'Αξιολόγησε πόσο καλά έχεις κατανοήσει τους βασικούς στόχους του μαθήματος.'}
+];
+const HELP=[
+ 'Μια απλή λογική έκφραση είναι μία πρόταση που μπορεί να χαρακτηριστεί ΑΛΗΘΕΙΑ ή ΨΕΜΑ. Μια σύνθετη λογική έκφραση συνδυάζει λογικές εκφράσεις με λογικούς τελεστές.',
+ 'Οι λέξεις ΚΑΙ, Ή και ΔΕΝ ονομάζονται λογικοί τελεστές. Εντόπισε ποια από αυτές εμφανίζεται στην έκφραση.',
+ 'Το ΚΑΙ δίνει ΑΛΗΘΕΙΑ μόνο όταν και οι δύο λογικές εκφράσεις είναι ΑΛΗΘΕΙΑ.',
+ 'Το Ή δίνει ΑΛΗΘΕΙΑ όταν τουλάχιστον μία από τις δύο λογικές εκφράσεις είναι ΑΛΗΘΕΙΑ.',
+ 'Το ΔΕΝ αντιστρέφει το αποτέλεσμα: η ΑΛΗΘΕΙΑ γίνεται ΨΕΜΑ και το ΨΕΜΑ γίνεται ΑΛΗΘΕΙΑ.',
+ 'Διάβασε πρώτα ολόκληρη τη φράση. Τοποθέτησε τις δύο λογικές εκφράσεις στις σωστές θέσεις και τον τελεστή ανάμεσά τους. Έπειτα εφάρμοσε τον κανόνα του τελεστή.',
+ 'Έλεγξε πρώτα αν κάθε απλή πρόταση είναι ΑΛΗΘΕΙΑ ή ΨΕΜΑ. Στη συνέχεια εφάρμοσε τον κανόνα του ΚΑΙ ή του Ή.',
+ 'Στη συνολική δοκιμή χρησιμοποίησε τους ίδιους τρεις κανόνες: ΚΑΙ, Ή και ΔΕΝ. Τα πλακίδια απάντησης αλλάζουν θέση.',
+ 'Διάλεξε ένα επίπεδο για κάθε στόχο. Η αυτοαξιολόγηση δεν έχει σωστή ή λάθος απάντηση.'
+];
+let stage=0,completed=new Set(),finished=false,transitioning=false;
+const activity=document.getElementById('activity'),feedback=document.getElementById('feedback'),kicker=document.getElementById('kicker'),stageTitle=document.getElementById('stageTitle'),instruction=document.getElementById('instruction'),dots=document.getElementById('dots'),fill=document.getElementById('fill'),progressLabel=document.getElementById('progressLabel'),progressPercent=document.getElementById('progressPercent');
+function setFeedback(msg,type='info'){feedback.textContent=msg;feedback.className='feedback '+(type===true?'good':type===false?'bad':type)}
+function clearFeedback(){feedback.textContent='';feedback.className='feedback'}
+function shuffleCopy(arr){const a=[...arr];for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
+function updateProgress(){const pct=Math.round(completed.size/ACTIVITIES.length*100);fill.style.width=pct+'%';progressPercent.textContent=pct+'%';progressLabel.textContent=finished?'Ολοκληρώθηκε':`Δραστηριότητα ${stage+1} από ${ACTIVITIES.length}`;dots.innerHTML=ACTIVITIES.map((_,i)=>`<span class="step-dot ${completed.has(i)?'done':''} ${i===stage&&!finished?'active':''}">${i+1}</span>`).join('')}
+function advance(delay=900){if(transitioning)return;transitioning=true;completed.add(stage);updateProgress();setTimeout(()=>{stage=Math.min(stage+1,ACTIVITIES.length-1);transitioning=false;render()},delay)}
+function wrong(el,msg){if(el){el.classList.add('wrong');setTimeout(()=>el.classList.remove('wrong'),520)}setFeedback(msg,false)}
+function truthWord(v){return v?'ΑΛΗΘΕΙΑ':'ΨΕΜΑ'}
+function truthClass(v){return v?'true':'false'}
+function answerButtons(correct,attr){return `<div class="choice-grid">${shuffleCopy([{id:true,txt:'ΑΛΗΘΕΙΑ'},{id:false,txt:'ΨΕΜΑ'}]).map(o=>`<button class="choice center" ${attr}="${o.id}">${o.txt}</button>`).join('')}</div>`}
+
+/* 1 */
+const A1_BASE=[
+ {text:'Το πληκτρολόγιο έχει πλήκτρα.',type:'simple'},
+ {text:'Το πληκτρολόγιο έχει πλήκτρα και το ποντίκι έχει κουμπιά.',type:'compound'},
+ {text:'Ένα μολύβι έχει οθόνη ή ένα σχολικό τετράδιο έχει σελίδες.',type:'compound'},
+ {text:'Άνοιξε το τετράδιό σου.',type:'none'}
+];
+let a1Cases=[],a1i=0;
+function r1(){const c=a1Cases[a1i];const opts=shuffleCopy([{id:'simple',txt:'Απλή λογική έκφραση'},{id:'compound',txt:'Σύνθετη λογική έκφραση'},{id:'none',txt:'Δεν είναι λογική έκφραση'}]);activity.innerHTML=`<div class="lab-card"><div class="lab-head"><strong>Διάκριση εκφράσεων</strong><span class="lab-tag">${a1i+1}/${a1Cases.length}</span></div><div class="lab-body"><div class="expression">${c.text}</div><div class="prompt">Πώς χαρακτηρίζεται η παραπάνω έκφραση;</div><div class="choice-grid">${opts.map(o=>`<button class="choice center" data-a1="${o.id}">${o.txt}</button>`).join('')}</div></div></div>`;document.querySelectorAll('[data-a1]').forEach(b=>b.onclick=()=>{if(b.dataset.a1!==c.type)return wrong(b,'Έλεγξε αν η πρόταση συνδυάζει περισσότερες λογικές εκφράσεις με κάποιον λογικό τελεστή.');a1i++;if(a1i===a1Cases.length){setFeedback('Σωστά. Μια σύνθετη λογική έκφραση συνδυάζει απλές λογικές εκφράσεις.',true);advance(950)}else{setFeedback('Σωστά. Συνέχισε με την επόμενη έκφραση.','info');setTimeout(r1,420)}})}
+
+/* 2 */
+const A2_BASE=[
+ {text:'Η Ελλάδα έχει 9 γεωγραφικά διαμερίσματα και 13 περιφέρειες.',op:'ΚΑΙ'},
+ {text:'Η μέρα έχει 23 ώρες ή 1440 λεπτά.',op:'Ή'},
+ {text:'Το 1 δεν είναι μεγαλύτερο του 2.',op:'ΔΕΝ'}
+];
+let a2Cases=[],a2i=0;
+function r2(){const c=a2Cases[a2i];const opts=shuffleCopy(['ΚΑΙ','Ή','ΔΕΝ','ΤΟΤΕ']);activity.innerHTML=`<div class="lab-card"><div class="lab-head"><strong>Λογικοί τελεστές</strong><span class="lab-tag">${a2i+1}/${a2Cases.length}</span></div><div class="lab-body"><div class="expression">${c.text}</div><div class="prompt">Ποιος λογικός τελεστής χρησιμοποιείται;</div><div class="operator-grid">${opts.map(x=>`<button class="operator-btn" data-a2="${x}">${x}</button>`).join('')}</div></div></div>`;document.querySelectorAll('[data-a2]').forEach(b=>b.onclick=()=>{if(b.dataset.a2!==c.op)return wrong(b,'Επίλεξε τη λέξη που συνδέει ή μεταβάλλει τη λογική έκφραση.');a2i++;if(a2i===a2Cases.length){setFeedback('Σωστά. Οι ΚΑΙ, Ή και ΔΕΝ είναι λογικοί τελεστές.',true);advance(950)}else{setFeedback('Σωστά. Συνέχισε.','info');setTimeout(r2,420)}})}
+
+/* 3 */
+let a3Pairs=[],a3i=0;
+function r3(){const [left,right]=a3Pairs[a3i];const result=left&&right;activity.innerHTML=`<div class="lab-card"><div class="lab-head"><strong>Κανόνας ΚΑΙ</strong><span class="lab-tag">${a3i+1}/${a3Pairs.length}</span></div><div class="lab-body"><div class="truth-board"><div class="truth-box ${truthClass(left)}"><small>1η έκφραση</small><b>${truthWord(left)}</b></div><div class="operator-pill">ΚΑΙ</div><div class="truth-box ${truthClass(right)}"><small>2η έκφραση</small><b>${truthWord(right)}</b></div></div><div class="prompt">Ποιο είναι το αποτέλεσμα της σύνθετης λογικής έκφρασης;</div>${answerButtons(result,'data-a3')}</div></div>`;document.querySelectorAll('[data-a3]').forEach(b=>b.onclick=()=>{const ans=b.dataset.a3==='true';if(ans!==result)return wrong(b,'Το ΚΑΙ είναι ΑΛΗΘΕΙΑ μόνο όταν και οι δύο εκφράσεις είναι ΑΛΗΘΕΙΑ.');a3i++;if(a3i===a3Pairs.length){setFeedback('Σωστά. Ολοκλήρωσες όλους τους συνδυασμούς του ΚΑΙ.',true);advance(950)}else{setFeedback('Σωστά. Δοκίμασε τον επόμενο συνδυασμό.','info');setTimeout(r3,420)}})}
+
+/* 4 */
+let a4Pairs=[],a4i=0;
+function r4(){const [left,right]=a4Pairs[a4i];const result=left||right;activity.innerHTML=`<div class="lab-card"><div class="lab-head"><strong>Κανόνας Ή</strong><span class="lab-tag">${a4i+1}/${a4Pairs.length}</span></div><div class="lab-body"><div class="truth-board"><div class="truth-box ${truthClass(left)}"><small>1η έκφραση</small><b>${truthWord(left)}</b></div><div class="operator-pill">Ή</div><div class="truth-box ${truthClass(right)}"><small>2η έκφραση</small><b>${truthWord(right)}</b></div></div><div class="prompt">Ποιο είναι το αποτέλεσμα της σύνθετης λογικής έκφρασης;</div>${answerButtons(result,'data-a4')}</div></div>`;document.querySelectorAll('[data-a4]').forEach(b=>b.onclick=()=>{const ans=b.dataset.a4==='true';if(ans!==result)return wrong(b,'Το Ή είναι ΑΛΗΘΕΙΑ όταν τουλάχιστον μία από τις δύο εκφράσεις είναι ΑΛΗΘΕΙΑ.');a4i++;if(a4i===a4Pairs.length){setFeedback('Σωστά. Ολοκλήρωσες όλους τους συνδυασμούς του Ή.',true);advance(950)}else{setFeedback('Σωστά. Δοκίμασε τον επόμενο συνδυασμό.','info');setTimeout(r4,420)}})}
+
+/* 5 */
+let a5Inputs=[],a5i=0;
+function r5(){const input=a5Inputs[a5i],result=!input;activity.innerHTML=`<div class="lab-card"><div class="lab-head"><strong>Κανόνας ΔΕΝ</strong><span class="lab-tag">${a5i+1}/${a5Inputs.length}</span></div><div class="lab-body"><div class="not-board"><div class="truth-box ${truthClass(input)}"><small>αρχική τιμή</small><b>${truthWord(input)}</b></div><div class="operator-pill">ΔΕΝ</div><div class="truth-box unknown"><small>αποτέλεσμα</small><b>;</b></div></div><div class="prompt">Μετά τον τελεστή ΔΕΝ, ποιο είναι το αποτέλεσμα;</div>${answerButtons(result,'data-a5')}</div></div>`;document.querySelectorAll('[data-a5]').forEach(b=>b.onclick=()=>{const ans=b.dataset.a5==='true';if(ans!==result)return wrong(b,'Το ΔΕΝ αντιστρέφει την τιμή της λογικής έκφρασης.');a5i++;if(a5i===a5Inputs.length){setFeedback('Σωστά. Το ΔΕΝ αντιστρέφει ΑΛΗΘΕΙΑ και ΨΕΜΑ.',true);advance(950)}else{setFeedback('Σωστά. Συνέχισε.','info');setTimeout(r5,420)}})}
+
+/* 6 */
+const A6_BASE=[
+ {parts:[{id:'a',txt:'Ένα αρχείο μπορεί να αποθηκευτεί'},{id:'op',txt:'ΚΑΙ'},{id:'b',txt:'ένα αρχείο μπορεί να διαγραφεί'}],order:['a','op','b'],result:true},
+ {parts:[{id:'a',txt:'Ένα μολύβι έχει οθόνη'},{id:'op',txt:'Ή'},{id:'b',txt:'ένα σχολικό τετράδιο έχει σελίδες'}],order:['a','op','b'],result:true},
+ {parts:[{id:'a',txt:'Το ποντίκι έχει σελίδες'},{id:'op',txt:'ΚΑΙ'},{id:'b',txt:'το πληκτρολόγιο έχει φύλλα χαρτιού'}],order:['a','op','b'],result:false}
+];
+let a6Cases=[],a6i=0,a6Placed=[],a6Phase='build';
+function r6(){const c=a6Cases[a6i];if(a6Phase==='build'){const remaining=c.parts.filter(p=>!a6Placed.includes(p.id));activity.innerHTML=`<div class="lab-card"><div class="lab-head"><strong>Σχηματισμός έκφρασης</strong><span class="lab-tag">${a6i+1}/${a6Cases.length}</span></div><div class="lab-body"><div class="prompt">Τοποθέτησε τα τμήματα στη σωστή σειρά ώστε να σχηματιστεί η σύνθετη λογική έκφραση.</div><div class="order-strip">${c.order.map((_,i)=>{const id=a6Placed[i],p=c.parts.find(x=>x.id===id);return `<div class="order-slot ${p?'filled':''}"><span class="order-num">${i+1}</span><span class="order-text">${p?p.txt:'...'}</span></div>`}).join('')}</div><div class="sequence">${shuffleCopy(remaining).map(p=>`<button class="seq-card" data-a6="${p.id}">${p.txt}</button>`).join('')}</div></div></div>`;document.querySelectorAll('[data-a6]').forEach(b=>b.onclick=()=>{const expected=c.order[a6Placed.length];if(b.dataset.a6!==expected)return wrong(b,'Διάβασε την έκφραση από αριστερά προς τα δεξιά και τοποθέτησε τον τελεστή ανάμεσα στις δύο προτάσεις.');a6Placed.push(b.dataset.a6);if(a6Placed.length===c.order.length){a6Phase='judge';setFeedback('Η έκφραση σχηματίστηκε. Τώρα πρόβλεψε το αποτέλεσμά της.','info');setTimeout(r6,480)}else r6()})}else{const text=c.order.map(id=>c.parts.find(p=>p.id===id).txt).join(' ');const judgeOpts=shuffleCopy([{id:true,txt:'Ισχύει'},{id:false,txt:'Δεν ισχύει'}]);activity.innerHTML=`<div class="lab-card"><div class="lab-head"><strong>Αποτέλεσμα έκφρασης</strong><span class="lab-tag">${a6i+1}/${a6Cases.length}</span></div><div class="lab-body"><div class="expression">${text}</div><div class="prompt">Ισχύει η σύνθετη λογική έκφραση;</div><div class="choice-grid">${judgeOpts.map(o=>`<button class="choice center" data-a6judge="${o.id}">${o.txt}</button>`).join('')}</div></div></div>`;document.querySelectorAll('[data-a6judge]').forEach(b=>b.onclick=()=>{const ans=b.dataset.a6judge==='true';if(ans!==c.result)return wrong(b,'Υπολόγισε πρώτα την τιμή κάθε απλής πρότασης και μετά εφάρμοσε τον τελεστή.');a6i++;a6Placed=[];a6Phase='build';if(a6i===a6Cases.length){setFeedback('Σωστά. Σχημάτισες και αξιολόγησες σύνθετες λογικές εκφράσεις.',true);advance(950)}else{setFeedback('Σωστά. Συνέχισε με την επόμενη.','info');setTimeout(r6,450)}})}}
+
+/* 7 */
+const A7_BASE=[
+ {text:'Οι εποχές έχουν 3 μήνες ΚΑΙ οι μήνες έχουν 30 ημέρες.',result:false},
+ {text:'Η εβδομάδα έχει 6 μέρες Ή η ώρα έχει 60 λεπτά.',result:true},
+ {text:'5 × 6 = 30 ΚΑΙ 3 × 4 = 12.',result:true},
+ {text:'Το 6 είναι μεγαλύτερο του 2 Ή το 9 είναι μεγαλύτερο του 11.',result:true},
+ {text:'4 = 3 + 1 Ή 7 = 4 + 2.',result:true},
+ {text:'Το 8 είναι μεγαλύτερο του 6 ΚΑΙ το 3 είναι μεγαλύτερο του 4.',result:false},
+ {text:'Η μέρα έχει 24 ώρες Ή το λεπτό έχει 60 δευτερόλεπτα.',result:true},
+ {text:'Ο χρόνος έχει 11 μήνες ΚΑΙ οι εποχές έχουν 4 μήνες.',result:false},
+ {text:'Το μέτρο έχει 100 εκατοστά Ή το κιλό έχει 100 γραμμάρια.',result:true},
+ {text:'Οι ισημερίες δεν είναι δύο κάθε χρόνο Ή ο χρόνος έχει 11 μήνες.',result:false}
+];
+let a7Cases=[],a7i=0;
+function r7(){const c=a7Cases[a7i];activity.innerHTML=`<div class="lab-card"><div class="lab-head"><strong>ΑΛΗΘΕΙΑ ή ΨΕΜΑ</strong><span class="lab-tag">${a7i+1}/${a7Cases.length}</span></div><div class="lab-body"><div class="expression">${c.text}</div><div class="prompt">Ποιο είναι το αποτέλεσμα της λογικής έκφρασης;</div>${answerButtons(c.result,'data-a7')}</div></div>`;document.querySelectorAll('[data-a7]').forEach(b=>b.onclick=()=>{const ans=b.dataset.a7==='true';if(ans!==c.result)return wrong(b,'Έλεγξε κάθε μέρος της έκφρασης και μετά εφάρμοσε τον λογικό τελεστή.');a7i++;if(a7i===a7Cases.length){setFeedback('Σωστά. Αξιολόγησες όλες τις λογικές εκφράσεις.',true);advance(1050)}else{setFeedback('Σωστά. Συνέχισε με την επόμενη έκφραση.','info');setTimeout(r7,380)}})}
+
+/* 8 */
+const FINAL_BASE=[
+ {type:'binary',left:'Η μέρα έχει 24 ώρες',lv:true,op:'ΚΑΙ',right:'το λεπτό έχει 60 δευτερόλεπτα',rv:true,result:true},
+ {type:'binary',left:'Η εβδομάδα έχει 6 μέρες',lv:false,op:'Ή',right:'η ώρα έχει 60 λεπτά',rv:true,result:true},
+ {type:'binary',left:'7 × 6 = 48',lv:false,op:'Ή',right:'3 × 7 = 56',rv:false,result:false},
+ {type:'binary',left:'Το 8 είναι μεγαλύτερο του 6',lv:true,op:'ΚΑΙ',right:'το 3 είναι μεγαλύτερο του 4',rv:false,result:false},
+ {type:'not',left:'Το 1 είναι μεγαλύτερο του 2',lv:false,op:'ΔΕΝ',result:true},
+ {type:'not',left:'Το λεπτό έχει 60 δευτερόλεπτα',lv:true,op:'ΔΕΝ',result:false}
+];
+let finalCases=[],finali=0;
+function r8(){const c=finalCases[finali];let body='';if(c.type==='binary'){body=`<div class="logic-path"><div class="row"><div class="statement">${c.left}</div><div class="operator-pill">${c.op}</div><div class="statement">${c.right}</div></div></div>`}else{body=`<div class="not-board"><div class="statement">${c.left}</div><div class="operator-pill">ΔΕΝ</div><div class="truth-box unknown"><small>αποτέλεσμα</small><b>;</b></div></div>`}activity.innerHTML=`<div class="challenge-wrap"><div class="challenge-brief"><strong>Λογική πρόκληση</strong><span>${finali+1}/${finalCases.length}</span></div>${body}<div class="prompt">Ποιο είναι το τελικό αποτέλεσμα;</div>${answerButtons(c.result,'data-final')}</div>`;document.querySelectorAll('[data-final]').forEach(b=>b.onclick=()=>{const ans=b.dataset.final==='true';if(ans!==c.result)return wrong(b,'Εφάρμοσε τον κανόνα του λογικού τελεστή που εμφανίζεται στο κέντρο.');finali++;if(finali===finalCases.length){setFeedback('Μπράβο! Χρησιμοποίησες σωστά τους τελεστές ΚΑΙ, Ή και ΔΕΝ.',true);advance(1050)}else{setFeedback('Σωστά. Συνέχισε με την επόμενη πρόκληση.','info');setTimeout(r8,400)}})}
+
+/* 9 */
+const levels=['Έχω καταλάβει και μπορώ να εξηγήσω','Έχω καταλάβει αρκετά καλά','Έχω καταλάβει αλλά έχω απορίες','Χρειάζομαι βοήθεια'];
+const objectives=['Τι είναι μια σύνθετη λογική έκφραση.','Πώς σχηματίζονται οι σύνθετες λογικές εκφράσεις.','Να προβλέπω το αποτέλεσμα μιας σύνθετης λογικής έκφρασης.'];
+let selfSel=[null,null,null];
+function r9(){activity.innerHTML=`<div class="self-wrap"><div class="self-table"><div class="self-head">Αξιολογώ πόσο καλά έμαθα</div>${levels.map(x=>`<div class="self-head">${x}</div>`).join('')}${objectives.map((o,row)=>`<div class="self-objective">✓ ${o}</div>${levels.map((l,col)=>`<button class="self-cell ${selfSel[row]===col?'selected':''}" data-self="${row}:${col}">${l}</button>`).join('')}`).join('')}</div><div class="self-note">Διάλεξε ένα επίπεδο για κάθε στόχο.</div><div class="finish-actions"><button class="primary" id="finishBtn" ${selfSel.some(x=>x===null)?'disabled':''}>Ολοκλήρωση</button><button class="secondary-btn" id="restartBtn">↻ Επανάληψη δραστηριότητας</button></div></div>`;document.querySelectorAll('[data-self]').forEach(b=>b.onclick=()=>{const [r,c]=b.dataset.self.split(':').map(Number);selfSel[r]=selfSel[r]===c?null:c;r9()});document.getElementById('restartBtn').onclick=restart;document.getElementById('finishBtn').onclick=()=>{if(selfSel.some(x=>x===null))return;completed.add(8);finished=true;updateProgress();setFeedback('Η αυτοαξιολόγηση ολοκληρώθηκε.',true);setTimeout(render,650)}}
+function renderCompletion(){kicker.textContent='ΟΛΟΚΛΗΡΩΣΗ';stageTitle.textContent='Μάθημα 3 ολοκληρώθηκε';instruction.textContent='Ολοκλήρωσες το εργαστήριο σύνθετων λογικών εκφράσεων.';activity.innerHTML=`<div class="completion"><span class="badge">Ενότητα 1 · Μάθημα 3</span><h2>Συνδύασες λογικές εκφράσεις</h2><p>Χρησιμοποίησες τους λογικούς τελεστές ΚΑΙ, Ή και ΔΕΝ και προέβλεψες αν σύνθετες λογικές εκφράσεις δίνουν ΑΛΗΘΕΙΑ ή ΨΕΜΑ.</p><button class="secondary-btn" id="restartComplete">↻ Επανάληψη μαθήματος</button></div>`;document.getElementById('restartComplete').onclick=restart;clearFeedback()}
+function resetState(){stage=0;completed=new Set();finished=false;transitioning=false;a1Cases=shuffleCopy(A1_BASE);a1i=0;a2Cases=shuffleCopy(A2_BASE);a2i=0;a3Pairs=shuffleCopy([[true,true],[true,false],[false,true],[false,false]]);a3i=0;a4Pairs=shuffleCopy([[true,true],[true,false],[false,true],[false,false]]);a4i=0;a5Inputs=shuffleCopy([true,false]);a5i=0;a6Cases=shuffleCopy(A6_BASE);a6i=0;a6Placed=[];a6Phase='build';a7Cases=shuffleCopy(A7_BASE);a7i=0;const must=[FINAL_BASE[0],FINAL_BASE[1],FINAL_BASE[4]];const extra=shuffleCopy([FINAL_BASE[2],FINAL_BASE[3],FINAL_BASE[5]]).slice(0,2);finalCases=shuffleCopy([...must,...extra]);finali=0;selfSel=[null,null,null]}
+function restart(){resetState();render()}
+const renderers=[r1,r2,r3,r4,r5,r6,r7,r8,r9];
+function render(){clearFeedback();updateProgress();if(finished){renderCompletion();window.scrollTo({top:0,behavior:'smooth'});return}const s=ACTIVITIES[stage];kicker.textContent=`Δραστηριότητα ${stage+1}`;stageTitle.textContent=s.t;instruction.textContent=s.i;renderers[stage]();window.scrollTo({top:0,behavior:'smooth'})}
+const modal=document.getElementById('helpModal');document.getElementById('helpBtn').onclick=()=>{document.getElementById('helpText').textContent=HELP[stage];modal.classList.add('open')};document.getElementById('closeHelp').onclick=()=>modal.classList.remove('open');document.getElementById('understoodBtn').onclick=()=>modal.classList.remove('open');modal.onclick=e=>{if(e.target===modal)modal.classList.remove('open')};document.getElementById('speakHelp').onclick=()=>{if(!('speechSynthesis' in window))return;speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(HELP[stage]);u.lang='el-GR';u.rate=.95;speechSynthesis.speak(u)};
+resetState();render();
+</script>
+
+<footer class="nk-license" aria-label="Πληροφορίες δημιουργού και άδειας χρήσης">
+  <div><strong>Created by Nikos Kalakos · © 2026</strong></div>
+  <div>Original educational content and simulation design licensed under <a class="cc-badge" href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank" rel="license noopener noreferrer">CC BY-NC 4.0</a>.</div>
+  <div>Source code © 2026 Nikos Kalakos.</div>
+  <div>Third-party and textbook materials remain subject to the rights and licences of their respective copyright holders.</div>
+</footer>
+</body>
+</html>

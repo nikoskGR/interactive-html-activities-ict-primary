@@ -1,0 +1,504 @@
+<!--
+ICT Educational Simulation
+Created by Nikos Kalakos
+Copyright © 2026 Nikos Kalakos
+
+Original educational content and simulation design licensed under CC BY-NC 4.0.
+Source code © 2026 Nikos Kalakos.
+Third-party and textbook materials remain subject to the rights and licences of their respective copyright holders.
+-->
+<!DOCTYPE html>
+<html lang="el">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="author" content="Nikos Kalakos">
+<meta name="copyright" content="© 2026 Nikos Kalakos">
+<meta name="license" content="Original educational content and simulation design: CC BY-NC 4.0; source code © 2026 Nikos Kalakos; third-party and textbook materials excluded.">
+<title>Μάθημα 13 – Το υλικό και οι χρήστες του υπολογιστή</title>
+<style>
+:root{
+  --unit:#EA922C;
+  --unit-dark:#B86610;
+  --unit-soft:#FFF4E6;
+  --secondary:#545F99;
+  --secondary-dark:#3D477C;
+  --secondary-soft:#EEF0F8;
+  --ink:#25324A;
+  --muted:#68758A;
+  --line:#D8DEEA;
+  --bg:#F5F7FB;
+  --good:#23845A;
+  --good-soft:#E9F7F0;
+  --bad:#B64242;
+  --bad-soft:#FDEEEE;
+  --disk:#C97A18;
+  --memory:#5D6FB5;
+  --cpu:#5C8B61;
+}
+*{box-sizing:border-box}
+body{
+  margin:0;
+  font-family:Inter,"Segoe UI",Arial,sans-serif;
+  color:var(--ink);
+  background:
+    radial-gradient(circle at 10% 7%,rgba(234,146,44,.11),transparent 28%),
+    radial-gradient(circle at 90% 18%,rgba(84,95,153,.12),transparent 30%),
+    #F4F6FA;
+  font-size:16px;
+}
+button,input{font:inherit}
+button{cursor:pointer}
+.shell-page{max-width:1280px;margin:0 auto;padding:18px}
+.hero{background:#fff;border:1px solid #E3E7EE;border-top:9px solid var(--unit);border-radius:18px;box-shadow:0 14px 35px rgba(45,55,86,.11);padding:20px 24px 18px;display:grid;grid-template-columns:1fr auto;gap:18px;align-items:center}
+.eyebrow{font-size:13px;font-weight:900;letter-spacing:.075em;text-transform:uppercase;color:var(--secondary)}
+.hero h1{margin:5px 0 0;font-size:31px;line-height:1.12;color:var(--secondary-dark)}
+.hero p{margin:8px 0 0;color:var(--muted);font-weight:700;line-height:1.45}
+.lesson-mark{min-width:118px;height:72px;border-radius:16px;background:linear-gradient(135deg,var(--secondary),var(--secondary-dark));color:#fff;display:grid;place-items:center;text-align:center;box-shadow:0 9px 22px rgba(84,95,153,.23)}
+.lesson-mark b{font-size:27px;line-height:1}.lesson-mark span{font-size:11px;font-weight:850;letter-spacing:.08em;text-transform:uppercase}
+.progress{margin:13px 0;background:#fff;border:1px solid #E1E5EC;border-radius:15px;padding:12px 15px;box-shadow:0 7px 20px rgba(48,58,87,.06)}
+.progress-top{display:flex;justify-content:space-between;gap:12px;align-items:center;color:#59667B;font-size:13px;font-weight:850}
+.bar{height:8px;background:#ECEFF4;border-radius:999px;overflow:hidden;margin:8px 0 10px}
+.fill{height:100%;width:0;background:linear-gradient(90deg,var(--unit),var(--secondary));transition:.3s ease}
+.steps{display:flex;gap:8px;flex-wrap:wrap;justify-content:center}
+.step-dot{width:29px;height:29px;border-radius:9px;border:1px solid #CDD3DE;background:#fff;color:#758197;display:grid;place-items:center;font-size:12px;font-weight:900}
+.step-dot.current{border:2px solid var(--unit);color:var(--unit-dark);background:var(--unit-soft)}
+.step-dot.done{border-color:var(--secondary);background:var(--secondary);color:#fff}
+.stage{background:#fff;border:1px solid #E0E5EF;border-radius:18px;box-shadow:0 10px 28px #27364b12;overflow:hidden}
+.stage-head{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;padding:18px 20px;border-bottom:1px solid #E8ECF3}
+.stage-kicker{font-size:12px;font-weight:950;color:var(--unit-dark);text-transform:uppercase}
+.stage-title{font-size:24px;margin:4px 0}
+.instruction{margin:0;color:#5C687C;font-weight:650;line-height:1.5}
+.help-btn{border:1px solid #C9D1E0;background:#fff;border-radius:11px;padding:9px 13px;font-weight:850;color:var(--secondary-dark);white-space:nowrap}
+.help-btn:hover{background:var(--secondary-soft)}
+.workspace{padding:16px 18px 20px}
+.task-strip{border-left:5px solid var(--unit);background:#FFF9F1;padding:12px 14px;border-radius:11px;margin-bottom:14px;font-weight:800;line-height:1.45}
+.feedback{min-height:0;margin-top:12px;border-radius:11px;font-weight:800;line-height:1.45}
+.feedback.show{padding:11px 13px;border:1px solid}
+.feedback.info{background:#F2F6FF;border-color:#C8D5EF;color:#46577C}
+.feedback.good{background:var(--good-soft);border-color:#AADBC5;color:#176943}
+.feedback.bad{background:var(--bad-soft);border-color:#F0BABA;color:#9B3030}
+
+.choice-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;max-width:920px;margin:12px auto}
+.choice{min-height:62px;border:1.5px solid #C9D2E2;background:#fff;border-radius:12px;padding:12px 14px;text-align:left;font-weight:850;color:#283650;transition:.15s;line-height:1.4}
+.choice:hover{border-color:#8897B3;transform:translateY(-1px)}
+.choice.correct{background:var(--good-soft);border-color:#7DC7A4}
+.choice.wrong{animation:shake .28s;background:var(--bad-soft);border-color:#E49A9A}
+@keyframes shake{25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
+.check-strip{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px;justify-content:center}
+.check-chip{border:1px solid #CCD4E2;background:#fff;border-radius:99px;padding:8px 11px;font-size:13px;font-weight:900;color:#637087}
+.check-chip.done{background:var(--good-soft);border-color:#91CDB0;color:#1F724E}
+
+/* Hardware lab */
+.hardware-shell{border:1px solid #C9D2E2;border-radius:16px;overflow:hidden;background:#fff;box-shadow:0 9px 24px #33435d12}
+.hardware-top{background:linear-gradient(110deg,var(--secondary-dark),var(--secondary));color:#fff;padding:13px 16px;display:flex;align-items:center;gap:11px}
+.hardware-logo{width:38px;height:38px;border-radius:10px;background:var(--unit);display:grid;place-items:center;font-size:20px;font-weight:950;color:#fff;box-shadow:inset 0 0 0 2px #ffffff35}
+.hardware-title{font-weight:950}.hardware-sub{font-size:12px;opacity:.9;font-weight:700;margin-top:2px}
+.hardware-body{padding:18px;background:linear-gradient(#fff,#FCFDFF)}
+.component-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;max-width:980px;margin:0 auto}
+.component{border:1px solid #D1D9E6;border-radius:16px;background:#fff;padding:15px;min-height:160px;text-align:center;box-shadow:0 7px 18px #35445d0d;transition:.15s}
+button.component:hover{border-color:var(--secondary);transform:translateY(-2px)}
+.component.hit{border-color:#7DC7A4;background:var(--good-soft)}
+.component.miss{animation:shake .28s;background:var(--bad-soft);border-color:#E49A9A}
+.component-icon{width:68px;height:68px;margin:0 auto 10px;border-radius:18px;display:grid;place-items:center;font-size:34px;font-weight:950;color:#fff;box-shadow:0 7px 16px #27364b22}
+.component-icon.cpu{background:linear-gradient(145deg,#6E9A72,#4E7C55)}
+.component-icon.memory{background:linear-gradient(145deg,#7787C8,#4D60A5)}
+.component-icon.disk{background:linear-gradient(145deg,#E5A246,#BB6B12)}
+.component strong{display:block;font-size:18px;color:var(--secondary-dark)}
+.component p{margin:7px 0 0;color:var(--muted);font-size:13px;font-weight:750;line-height:1.4}
+.role-card{max-width:780px;margin:0 auto 14px;border:1px solid #D8DFEA;border-radius:15px;background:#F8FAFD;padding:16px;text-align:center}
+.role-label{font-size:12px;font-weight:950;color:#788498;text-transform:uppercase;letter-spacing:.05em}
+.role-text{font-size:20px;font-weight:900;color:var(--secondary-dark);line-height:1.4;margin-top:6px}
+
+/* Peripheral classification */
+.peripheral-card{max-width:760px;margin:0 auto;border:1px solid #D4DCE8;border-radius:16px;background:#FBFCFE;padding:18px;text-align:center}
+.device-big{width:104px;height:104px;border-radius:24px;background:linear-gradient(145deg,var(--secondary-soft),#fff);border:2px solid #BCC5DF;margin:5px auto 10px;display:grid;place-items:center;font-size:52px;box-shadow:0 9px 20px #545f9916}
+.device-name{font-size:25px;font-weight:950;color:var(--secondary-dark)}
+.io-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;max-width:560px;margin:16px auto 0}
+.io-btn{border:2px solid #C4CCDA;background:#fff;border-radius:14px;padding:15px;font-weight:950;color:#394965;font-size:18px}
+.io-btn:hover{border-color:var(--secondary);background:var(--secondary-soft)}
+.io-btn.wrong{animation:shake .28s;background:var(--bad-soft);border-color:#E49A9A}
+
+/* Flow */
+.flow-board{max-width:980px;margin:0 auto;border:1px solid #D3DBE8;border-radius:17px;background:#FAFBFD;padding:18px}
+.flow-title{text-align:center;font-weight:950;color:var(--secondary-dark);margin-bottom:14px}
+.flow-track{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;align-items:stretch}
+.flow-slot{border:2px dashed #BEC8D7;border-radius:14px;min-height:145px;padding:13px;text-align:center;background:#fff;display:flex;flex-direction:column;justify-content:center;align-items:center}
+.flow-slot.filled{border-style:solid;border-color:#91CDB0;background:var(--good-soft)}
+.flow-num{width:29px;height:29px;border-radius:50%;background:var(--unit);color:#fff;display:grid;place-items:center;font-weight:950;margin-bottom:8px}
+.flow-name{font-size:17px;font-weight:950;color:var(--secondary-dark)}
+.flow-desc{font-size:12px;color:#607087;font-weight:750;line-height:1.35;margin-top:5px}
+.flow-pool{display:flex;gap:9px;flex-wrap:wrap;justify-content:center;margin-top:15px}
+.flow-token{border:1.5px solid #BFC9DA;background:#fff;border-radius:11px;padding:11px 14px;font-weight:900;color:#3E4E6B;min-width:150px}
+.flow-token:hover{border-color:var(--secondary);background:var(--secondary-soft)}
+.flow-token.wrong{animation:shake .28s;background:var(--bad-soft);border-color:#E49A9A}
+
+/* Scenario */
+.scenario-shell{max-width:980px;margin:0 auto;border:1px solid #D2DAE7;border-radius:17px;overflow:hidden;background:#fff}
+.scenario-screen{background:linear-gradient(155deg,#EAF0FF,#FFF7EB);padding:18px;min-height:260px;position:relative}
+.desktop-row{display:flex;gap:18px;align-items:center;justify-content:center;flex-wrap:wrap;margin:12px 0}
+.desktop-icon{width:108px;border:1px solid #CDD5E3;background:#fff;border-radius:16px;padding:12px;text-align:center;box-shadow:0 6px 14px #35445d0c}
+.desktop-icon .ico{font-size:43px}.desktop-icon b{display:block;margin-top:6px;color:var(--secondary-dark)}
+.process-line{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:9px;margin-top:14px}
+.process-box{border:1px solid #D1D9E5;background:#fff;border-radius:12px;padding:10px;text-align:center;font-size:13px;font-weight:850;color:#68758A;min-height:76px;display:grid;place-items:center}
+.process-box.done{background:var(--good-soft);border-color:#8CCBAC;color:#1E704C}
+.process-box.current{background:var(--unit-soft);border:2px solid var(--unit);color:var(--unit-dark)}
+.question-panel{padding:16px;border-top:1px solid #D8DFEA;background:#fff}
+
+/* AthenaOS */
+.os-shell{border:1px solid #BEC7D8;border-radius:17px;overflow:hidden;background:#fff;box-shadow:0 10px 25px #35445d16;max-width:1050px;margin:0 auto}
+.os-top{height:52px;background:linear-gradient(90deg,#3D477C,#545F99);color:#fff;display:flex;align-items:center;gap:10px;padding:0 14px}
+.owlmark{position:relative;width:34px;height:31px;background:#716FB0;border-radius:50% 50% 44% 44%;box-shadow:inset 0 0 0 2px #ffffff28}
+.owlmark:before,.owlmark:after{content:"";position:absolute;top:7px;width:9px;height:9px;border-radius:50%;background:#fff;box-shadow:inset 0 0 0 3px #3D477C}
+.owlmark:before{left:7px}.owlmark:after{right:7px}
+.owl-beak{width:0;height:0;border-left:5px solid transparent;border-right:5px solid transparent;border-top:7px solid #F4B63F;position:absolute;left:12px;top:18px}
+.os-brand{font-weight:950;letter-spacing:.02em}.os-status{margin-left:auto;font-size:12px;font-weight:800;opacity:.9}
+.login-screen{min-height:410px;background:radial-gradient(circle at 50% 20%,#FFFFFF55,transparent 30%),linear-gradient(145deg,#7179B4,#494F87);padding:34px 18px;color:#fff;text-align:center}
+.login-screen h3{margin:0 0 6px;font-size:24px}.login-screen p{margin:0 0 20px;opacity:.9;font-weight:700}
+.user-grid{display:flex;gap:18px;justify-content:center;flex-wrap:wrap}
+.user-card{width:190px;border:1px solid #ffffff55;background:#ffffff18;color:#fff;border-radius:18px;padding:18px;text-align:center;backdrop-filter:blur(4px)}
+button.user-card:hover{background:#ffffff2a;transform:translateY(-2px)}
+.avatar{width:72px;height:72px;border-radius:50%;background:#fff;color:var(--secondary-dark);display:grid;place-items:center;margin:0 auto 10px;font-size:34px;font-weight:950;border:4px solid #ffffff55}
+.user-card strong{font-size:19px}.user-card small{display:block;margin-top:5px;opacity:.85;font-weight:750}
+.signin-info{max-width:600px;margin:17px auto 0;background:#ffffff16;border:1px solid #ffffff40;border-radius:12px;padding:11px;font-weight:800}
+.personal-desktop{min-height:410px;padding:18px;position:relative;overflow:hidden}
+.personal-desktop.hypatia{background:radial-gradient(circle at 82% 15%,#FFFFFF88,transparent 25%),linear-gradient(145deg,#EDE8FF,#D8E2FF 52%,#FFF4E2)}
+.personal-desktop.heron{background:radial-gradient(circle at 18% 16%,#FFFFFF88,transparent 25%),linear-gradient(145deg,#FFF0DA,#E8EAFB 55%,#DCE7FF)}
+.desktop-toolbar{display:flex;align-items:center;gap:10px;background:#ffffffcc;border:1px solid #D4DBE7;border-radius:13px;padding:9px 11px;box-shadow:0 7px 18px #2d3b5412}
+.desktop-profile{display:flex;align-items:center;gap:9px;font-weight:900;color:var(--secondary-dark)}
+.desktop-avatar{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;background:var(--secondary);color:#fff;font-weight:950}
+.signout-btn{margin-left:auto;border:1px solid #BFC8D8;background:#fff;border-radius:10px;padding:8px 11px;color:#3D477C;font-weight:900}
+.signout-btn:hover{background:#F3F5FB}
+.desktop-welcome{margin:18px auto 13px;max-width:680px;text-align:center;background:#ffffffc7;border:1px solid #D5DCE8;border-radius:15px;padding:13px 16px;color:#44516A;font-weight:800;box-shadow:0 7px 18px #2d3b540d}
+.desktop-welcome strong{color:var(--secondary-dark);font-size:18px}
+.desk-app-grid{max-width:680px;margin:0 auto;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.desk-app{min-height:118px;background:#ffffffd9;border:1px solid #D2DAE7;border-radius:15px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:11px;box-shadow:0 6px 15px #2d3b540d}
+.desk-app .desk-ico{font-size:35px;margin-bottom:6px}.desk-app b{color:#394760}.desk-app small{margin-top:3px;color:#738097;font-weight:750}
+.os-desktop{min-height:420px;background:linear-gradient(150deg,#EDF0FB,#FFF7EB);padding:16px}
+.os-window{background:#fff;border:1px solid #C9D2E0;border-radius:14px;overflow:hidden;box-shadow:0 8px 20px #27364b18}
+.window-head{background:#F3F5FA;border-bottom:1px solid #D8DFEA;padding:10px 12px;display:flex;align-items:center;gap:9px}
+.window-dots{display:flex;gap:5px}.window-dots span{width:10px;height:10px;border-radius:50%;background:#C9CED9}.window-title{font-weight:900;color:var(--secondary-dark)}
+.folder-area{padding:16px;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.folder{border:1px solid #D0D8E5;background:#fff;border-radius:13px;padding:14px;text-align:center;min-height:135px;position:relative;transition:.15s}
+button.folder:hover{border-color:var(--secondary);transform:translateY(-1px)}
+.folder .folder-icon{font-size:48px}.folder b{display:block;margin-top:5px;color:#37465F}.folder small{display:block;margin-top:4px;color:#748096;font-weight:750}
+.folder.private:after{content:"🔒";position:absolute;right:8px;top:8px;font-size:17px}
+.folder.denied{background:#F7F8FB}
+.folder.opened{background:var(--good-soft);border-color:#85C7A7}.folder.wrong{animation:shake .28s;background:var(--bad-soft);border-color:#E49A9A}
+.file-view{margin:0 16px 16px;border:1px solid #D6DDE8;border-radius:12px;background:#F9FAFC;padding:12px;display:flex;align-items:center;gap:10px}
+.file-icon{width:40px;height:46px;border-radius:8px;background:#fff;border:1px solid #C9D2E0;display:grid;place-items:center;font-size:22px}
+
+/* Final test */
+.final-card{max-width:900px;margin:0 auto;border:1px solid #D4DCE8;border-radius:17px;background:#FBFCFE;padding:18px}
+.final-title{text-align:center;font-size:21px;font-weight:950;color:var(--secondary-dark);margin-bottom:12px}
+.permission-scene{display:flex;gap:12px;align-items:center;justify-content:center;flex-wrap:wrap;margin:14px 0}
+.person-pill{border:1px solid #C9D2E0;background:#fff;border-radius:99px;padding:10px 14px;font-weight:900;color:#3F4D68}
+.shared-box{border:2px solid var(--unit);background:var(--unit-soft);border-radius:15px;padding:14px 18px;text-align:center;font-weight:950;color:var(--unit-dark)}
+.shared-box .fileline{margin-top:7px;font-size:13px;color:#6D532E}
+
+/* Self assessment */
+.self-wrap{overflow:auto}.self-table{display:grid;grid-template-columns:minmax(260px,1.5fr) repeat(4,minmax(145px,1fr));min-width:900px;border:1px solid #D7DEEA;border-radius:13px;overflow:hidden}.self-head,.self-objective,.self-cell{padding:12px;border-right:1px solid #D7DEEA;border-bottom:1px solid #D7DEEA}.self-head{background:#FFF7EC;color:#6B4C20;font-size:15px;font-weight:900;text-align:center}.self-objective{font-size:15px;font-weight:850;background:#fff}.self-cell{font-size:14px;background:#fff;border-top:0;border-left:0;text-align:center;color:#42506B;font-weight:800}.self-cell.selected{background:var(--secondary-soft);box-shadow:inset 0 0 0 2px var(--secondary);color:var(--secondary-dark)}.self-note{margin-top:9px;color:#6C788C;font-weight:750}.finish-actions{display:flex;justify-content:center;margin-top:16px}.primary{border:0;background:var(--secondary);color:#fff;border-radius:10px;padding:11px 18px;font-weight:900}.primary:disabled{opacity:.45;cursor:not-allowed}.completion{text-align:center;padding:36px 20px}.badge{display:inline-block;background:var(--unit-soft);color:var(--unit-dark);border-radius:99px;padding:7px 11px;font-size:12px;font-weight:900}.completion h2{font-size:28px;margin:12px 0 8px}.secondary-btn{border:1px solid #BCC6D8;background:#fff;border-radius:10px;padding:10px 14px;font-weight:900;color:#3D4A66}
+
+.modal-backdrop{position:fixed;inset:0;background:#11182788;display:none;align-items:center;justify-content:center;padding:18px;z-index:50}.modal-backdrop.open{display:flex}.modal{width:min(560px,100%);background:#fff;border-radius:16px;box-shadow:0 18px 60px #0004;overflow:hidden}.modal-head{padding:14px 16px;background:var(--secondary);color:#fff;font-weight:900;display:flex;justify-content:space-between;align-items:center}.modal-close{border:0;background:#ffffff1f;color:#fff;width:32px;height:32px;border-radius:8px;font-size:20px}.modal-body{padding:17px;line-height:1.55;color:#3F4D68;font-weight:700}.modal-actions{display:flex;justify-content:flex-end;gap:8px;padding:0 17px 17px}.small-btn{border:1px solid #C5CDDC;background:#fff;border-radius:9px;padding:8px 11px;font-weight:850}
+
+@media(max-width:900px){.component-grid{grid-template-columns:1fr}.flow-track{grid-template-columns:1fr}.process-line{grid-template-columns:repeat(2,1fr)}.folder-area{grid-template-columns:1fr}.choice-grid{grid-template-columns:1fr}}
+@media(max-width:680px){.shell-page{padding:9px}.hero{padding:16px}.hero h1{font-size:25px}.lesson-mark{min-width:96px;height:64px}.stage-head{flex-direction:column}.io-grid{grid-template-columns:1fr}.process-line{grid-template-columns:1fr}.user-card{width:100%}}
+</style>
+<style id="nk-license-style">
+.nk-license{max-width:1100px;margin:14px auto 24px;padding:10px 16px;text-align:center;font:13px/1.45 Arial,"Noto Sans",sans-serif;color:#4e657c}
+.nk-license a{color:inherit;text-decoration:underline;text-underline-offset:2px}
+.nk-license .cc-badge{display:inline-block;margin:0 4px;padding:2px 7px;border:1px solid #8aa0b8;border-radius:6px;background:#fff;font-weight:700;white-space:nowrap}
+</style>
+</head>
+<body>
+<div class="shell-page">
+  <header class="hero">
+    <div>
+      <div class="eyebrow">Ενότητα 2 · Υπολογιστικά συστήματα – Ψηφιακές συσκευές – Δίκτυα</div>
+      <h1>Το υλικό και οι χρήστες του υπολογιστή</h1>
+      <p>Ανακάλυψε πώς συνεργάζονται τα βασικά εξαρτήματα του υπολογιστή και πώς το λειτουργικό σύστημα οργανώνει τους χρήστες και τα δικαιώματά τους.</p>
+    </div>
+    <div class="lesson-mark"><div><b>13</b><br><span>Μάθημα</span></div></div>
+  </header>
+
+  <section class="progress">
+    <div class="progress-top"><span id="progressText"></span><span id="progressPct"></span></div>
+    <div class="bar"><div class="fill" id="fill"></div></div>
+    <div class="steps" id="steps"></div>
+  </section>
+
+  <main class="stage">
+    <div class="stage-head">
+      <div>
+        <div class="stage-kicker" id="kicker"></div>
+        <h2 class="stage-title" id="stageTitle"></h2>
+        <p class="instruction" id="instruction"></p>
+      </div>
+      <button class="help-btn" id="helpBtn">❔ Βοήθεια</button>
+    </div>
+    <div class="workspace">
+      <div id="activity"></div>
+      <div class="feedback" id="feedback"></div>
+    </div>
+  </main>
+</div>
+
+<div class="modal-backdrop" id="helpModal">
+  <div class="modal">
+    <div class="modal-head"><span>Βοήθεια</span><button class="modal-close" id="closeHelp">×</button></div>
+    <div class="modal-body" id="helpText"></div>
+    <div class="modal-actions"><button class="small-btn" id="speakHelp">🔊 Άκουσε</button><button class="small-btn" id="understoodBtn">Το κατάλαβα</button></div>
+  </div>
+</div>
+
+<script>
+const ACTIVITIES=[
+ {t:'Γνώρισε τα βασικά εξαρτήματα',i:'Σύνδεσε τον επεξεργαστή, τη μνήμη και τον δίσκο αποθήκευσης με τον σωστό ρόλο.'},
+ {t:'Είσοδος ή έξοδος;',i:'Ξεχώρισε τις περιφερειακές συσκευές ανάλογα με το αν δίνουν δεδομένα στον υπολογιστή ή παίρνουν δεδομένα από αυτόν.'},
+ {t:'Πώς ξεκινά μια εφαρμογή;',i:'Βάλε στη σωστή σειρά τα τρία βασικά βήματα από τον δίσκο αποθήκευσης μέχρι την εκτέλεση του προγράμματος.'},
+ {t:'Από το εικονίδιο στην πρόγνωση καιρού',i:'Ακολούθησε τι συμβαίνει στο υλικό όταν ανοίγεις έναν φυλλομετρητή και πληκτρολογείς μια διεύθυνση.'},
+ {t:'Δύο χρήστες, ένας υπολογιστής',i:'Χρησιμοποίησε το AthenaOS για να καταλάβεις γιατί κάθε χρήστης έχει τον δικό του λογαριασμό.'},
+ {t:'Προσωπικοί και κοινόχρηστοι φάκελοι',i:'Άνοιξε τους φακέλους που επιτρέπεται να χρησιμοποιεί κάθε λογαριασμός.'},
+ {t:'Συνολική δοκιμή',i:'Έλεγξε μαζί τη λειτουργία του υλικού και τα δικαιώματα πρόσβασης των χρηστών.'},
+ {t:'Τι έμαθα;',i:'Αξιολόγησε πόσο καλά μπορείς να εξηγήσεις όσα δούλεψες στο μάθημα.'}
+];
+
+const HELP=[
+ 'Ο επεξεργαστής επεξεργάζεται δεδομένα και ακολουθεί τις εντολές των προγραμμάτων. Η μνήμη κρατά προσωρινά ό,τι χρησιμοποιεί ο επεξεργαστής και αδειάζει όταν κλείνει ο υπολογιστής. Ο δίσκος αποθήκευσης κρατά μόνιμα λογισμικό και αρχεία.',
+ 'Συσκευές εισόδου, όπως το ποντίκι, το πληκτρολόγιο, η κάμερα και το μικρόφωνο, στέλνουν δεδομένα στον υπολογιστή. Συσκευές εξόδου, όπως η οθόνη και τα ηχεία, παρουσιάζουν δεδομένα από τον υπολογιστή.',
+ 'Όταν ανοίγεις μια εφαρμογή, ο υπολογιστής πρώτα την αναζητά στον δίσκο αποθήκευσης, μετά μεταφέρει τις εντολές της στη μνήμη και τέλος ο επεξεργαστής ακολουθεί αυτές τις εντολές.',
+ 'Σκέψου τη διαδρομή: κάνεις μια ενέργεια με συσκευή εισόδου, η εφαρμογή βρίσκεται στον δίσκο, μεταφέρεται στη μνήμη και ο επεξεργαστής εκτελεί τις εντολές της. Η μνήμη κρατά προσωρινά και τα δεδομένα που χρησιμοποιείς.',
+ 'Στον ίδιο υπολογιστή μπορούν να υπάρχουν διαφορετικοί λογαριασμοί. Σύνδεσε τον πρώτο χρήστη και παρατήρησε τη δική του επιφάνεια εργασίας. Έπειτα κάνε αποσύνδεση και σύνδεσε τον άλλο χρήστη για να εμφανιστεί η δική του, διαφορετική επιφάνεια εργασίας.',
+ 'Κάθε χρήστης έχει έναν προσωπικό φάκελο στον οποίο έχει πρόσβαση μόνο ο ίδιος. Ο κοινόχρηστος φάκελος είναι διαθέσιμος σε όλους τους χρήστες του υπολογιστή.',
+ 'Στο πρώτο μέρος θυμήσου τη σειρά Δίσκος αποθήκευσης → Μνήμη → Επεξεργαστής. Στο δεύτερο μέρος πρόσεξε σε ποιον φάκελο βρίσκεται το αρχείο. Αν είναι στον κοινόχρηστο φάκελο, μπορούν να το χρησιμοποιήσουν όλοι οι χρήστες.',
+ 'Διάλεξε ένα επίπεδο για κάθε στόχο. Δεν υπάρχουν σωστές ή λάθος επιλογές εδώ· είναι αυτοαξιολόγηση.'
+];
+
+let stage=0,finished=false,renderEpoch=0,pendingTimers=[],transitionLocked=false;
+const completed=new Set();
+const q=s=>document.querySelector(s),qa=s=>[...document.querySelectorAll(s)];
+const activity=q('#activity'),feedback=q('#feedback'),kicker=q('#kicker'),stageTitle=q('#stageTitle'),instruction=q('#instruction');
+
+function clearTimers(){pendingTimers.forEach(clearTimeout);pendingTimers=[]}
+function later(fn,ms){const s=stage,e=renderEpoch;const id=setTimeout(()=>{if(stage===s&&renderEpoch===e)fn()},ms);pendingTimers.push(id);return id}
+function setFeedback(txt,type='info'){feedback.className='feedback show '+type;feedback.innerHTML=txt}
+function clearFeedback(){feedback.className='feedback';feedback.textContent=''}
+function wrong(el,msg){el.classList.remove('wrong','miss');void el.offsetWidth;el.classList.add(el.classList.contains('component')?'miss':'wrong');setFeedback(msg,'bad')}
+function lockGroup(selector){qa(selector).forEach(el=>el.disabled=true)}
+function updateProgress(){const n=ACTIVITIES.length;const pct=finished?100:Math.round(stage/(n-1)*100);q('#progressText').textContent=finished?'Ολοκληρώθηκε':`Δραστηριότητα ${stage+1} από ${n}`;q('#progressPct').textContent=pct+'%';q('#fill').style.width=pct+'%';q('#steps').innerHTML=ACTIVITIES.map((_,i)=>`<span class="step-dot ${completed.has(i)?'done':''} ${i===stage&&!finished?'current':''}">${i+1}</span>`).join('')}
+function advance(delay=0){if(transitionLocked)return;transitionLocked=true;later(()=>{completed.add(stage);stage++;transitionLocked=false;render()},delay)}
+const shuffleCache={};
+function shuffleCopy(arr){const a=[...arr];for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
+function shuffleOnce(key,arr){if(!shuffleCache[key])shuffleCache[key]=shuffleCopy(arr);return shuffleCache[key]}
+
+function compCard(id,icon,name,cls,desc='',button=true,attr=''){
+ const tag=button?'button':'div';
+ return `<${tag} class="component" ${button?attr:''}><div class="component-icon ${cls}">${icon}</div><strong>${name}</strong>${desc?`<p>${desc}</p>`:''}</${tag}>`;
+}
+function hardwareShell(inner){return `<div class="hardware-shell"><div class="hardware-top"><div class="hardware-logo">⚙</div><div><div class="hardware-title">Εργαστήριο υλικού</div><div class="hardware-sub">Επεξεργαστής · Μνήμη · Δίσκος αποθήκευσης · Περιφερειακές συσκευές</div></div></div><div class="hardware-body">${inner}</div></div>`}
+function owlLogo(){return `<div class="owlmark"><span class="owl-beak"></span></div>`}
+function athenaShell(inner,status='AthenaOS'){return `<div class="os-shell"><div class="os-top">${owlLogo()}<div class="os-brand">AthenaOS</div><div class="os-status">${status}</div></div>${inner}</div>`}
+
+/* Activity 1 */
+const A1_TASKS=[
+ {role:'Επεξεργάζεται δεδομένα, ακολουθεί τις εντολές των προγραμμάτων και ελέγχει τη συνεργασία των εξαρτημάτων.',target:'cpu'},
+ {role:'Κρατά προσωρινά ό,τι χρησιμοποιεί ο επεξεργαστής και το περιεχόμενό της σβήνεται όταν κλείνει ο υπολογιστής.',target:'memory'},
+ {role:'Αποθηκεύει μόνιμα το λογισμικό και τα αρχεία που χρησιμοποιούμε.',target:'disk'}
+];
+let a1pos=0;
+function r1(){
+ const p=A1_TASKS[a1pos];
+ const cards=shuffleOnce('a1-'+a1pos,[
+  ['cpu','▦','Επεξεργαστής','cpu'],['memory','▤','Μνήμη','memory'],['disk','◉','Δίσκος αποθήκευσης','disk']
+ ]);
+ activity.innerHTML=`<div class="task-strip">Διάβασε τον ρόλο και επίλεξε το σωστό εξάρτημα.</div>${hardwareShell(`<div class="role-card"><div class="role-label">Ρόλος ${a1pos+1} από 3</div><div class="role-text">${p.role}</div></div><div class="component-grid">${cards.map(c=>compCard(c[0],c[1],c[2],c[3],'',true,`data-a1="${c[0]}"`)).join('')}</div><div class="check-strip">${A1_TASKS.map((_,i)=>`<span class="check-chip ${i<a1pos?'done':''}">Ρόλος ${i+1} ${i<a1pos?'✓':''}</span>`).join('')}</div>`)}`;
+ qa('[data-a1]').forEach(b=>b.onclick=()=>{
+  if(b.dataset.a1!==p.target)return wrong(b,'Διάβασε ξανά τον ρόλο και σκέψου ποιο εξάρτημα κάνει αυτή την εργασία.');
+  lockGroup('[data-a1]');b.classList.add('hit');setFeedback('✓ Σωστή αντιστοίχιση.','good');a1pos++;
+  if(a1pos<3)later(r1,650);else later(()=>advance(0),1000);
+ });
+}
+
+/* Activity 2 */
+const A2_DEVICES=[
+ {name:'Ποντίκι',icon:'🖱️',type:'in'},
+ {name:'Πληκτρολόγιο',icon:'⌨️',type:'in'},
+ {name:'Κάμερα',icon:'📷',type:'in'},
+ {name:'Μικρόφωνο',icon:'🎙️',type:'in'},
+ {name:'Οθόνη',icon:'🖥️',type:'out'},
+ {name:'Ηχεία',icon:'🔊',type:'out'}
+];
+let a2order=shuffleCopy(A2_DEVICES),a2pos=0;
+function r2(){
+ const d=a2order[a2pos];
+ activity.innerHTML=`<div class="task-strip">Η συσκευή <b>${d.name}</b> χρησιμοποιείται κυρίως για είσοδο ή για έξοδο δεδομένων;</div>${hardwareShell(`<div class="peripheral-card"><div class="device-big">${d.icon}</div><div class="device-name">${d.name}</div><div class="io-grid"><button class="io-btn" data-a2="in">⬇ Είσοδος</button><button class="io-btn" data-a2="out">⬆ Έξοδος</button></div><div class="check-strip"><span class="check-chip ${a2pos>0?'done':''}">${a2pos} / ${A2_DEVICES.length} ολοκληρώθηκαν ${a2pos>0?'✓':''}</span></div></div>`)}`;
+ qa('[data-a2]').forEach(b=>b.onclick=()=>{
+  if(b.dataset.a2!==d.type)return wrong(b,'Σκέψου προς ποια κατεύθυνση κινούνται τα δεδομένα: προς τον υπολογιστή ή από τον υπολογιστή προς εσένα;');
+  lockGroup('[data-a2]');a2pos++;setFeedback(`✓ ${d.name}: ${d.type==='in'?'συσκευή εισόδου':'συσκευή εξόδου'}.`,'good');
+  if(a2pos<A2_DEVICES.length)later(r2,450);else later(()=>advance(0),1000);
+ });
+}
+
+/* Activity 3 */
+const A3_ORDER=['disk','memory','cpu'];
+const A3_INFO={
+ disk:{name:'Δίσκος αποθήκευσης',desc:'Ο υπολογιστής αναζητά την εφαρμογή.',icon:'◉'},
+ memory:{name:'Μνήμη',desc:'Οι εντολές της εφαρμογής μεταφέρονται προσωρινά εδώ.',icon:'▤'},
+ cpu:{name:'Επεξεργαστής',desc:'Ακολουθεί τις εντολές του προγράμματος.',icon:'▦'}
+};
+let a3picked=[];
+function r3(){
+ const remaining=shuffleOnce('a3pool',['disk','memory','cpu']).filter(x=>!a3picked.includes(x));
+ activity.innerHTML=`<div class="task-strip">Πάτησε τα εξαρτήματα με τη σειρά που συμμετέχουν όταν ξεκινάς μια εφαρμογή.</div>${hardwareShell(`<div class="flow-board"><div class="flow-title">Από την αποθήκευση στην εκτέλεση</div><div class="flow-track">${A3_ORDER.map((id,i)=>{const filled=a3picked[i];return `<div class="flow-slot ${filled?'filled':''}"><div class="flow-num">${i+1}</div>${filled?`<div class="flow-name">${A3_INFO[filled].icon} ${A3_INFO[filled].name}</div><div class="flow-desc">${A3_INFO[filled].desc}</div>`:`<div class="flow-name">?</div><div class="flow-desc">Επίλεξε το ${i+1}ο βήμα</div>`}</div>`}).join('')}</div><div class="flow-pool">${remaining.map(id=>`<button class="flow-token" data-a3="${id}">${A3_INFO[id].icon} ${A3_INFO[id].name}</button>`).join('')}</div></div>`)}`;
+ qa('[data-a3]').forEach(b=>b.onclick=()=>{
+  const expected=A3_ORDER[a3picked.length];
+  if(b.dataset.a3!==expected)return wrong(b,'Δεν είναι αυτό το επόμενο βήμα. Θυμήσου: πού βρίσκεται η εφαρμογή πριν τη χρησιμοποιήσεις;');
+  lockGroup('[data-a3]');a3picked.push(b.dataset.a3);setFeedback(`✓ Βήμα ${a3picked.length}: ${A3_INFO[b.dataset.a3].name}.`,'good');
+  if(a3picked.length<3)later(r3,550);else later(()=>{setFeedback('✓ Σωστή σειρά: Δίσκος αποθήκευσης → Μνήμη → Επεξεργαστής.','good');advance(1000)},350);
+ });
+}
+
+/* Activity 4 */
+const A4_STEPS=[
+ {title:'Κάνω διπλό κλικ στον φυλλομετρητή',answer:'mouse',opts:[['mouse','Με το ποντίκι'],['speaker','Με τα ηχεία'],['screen','Με την οθόνη']]},
+ {title:'Ο υπολογιστής βρίσκει την εφαρμογή',answer:'disk',opts:[['disk','Στον δίσκο αποθήκευσης'],['memory','Στη μνήμη'],['screen','Στην οθόνη']]},
+ {title:'Οι εντολές της εφαρμογής και τα δεδομένα που χρησιμοποιώ κρατιούνται προσωρινά',answer:'memory',opts:[['memory','Στη μνήμη'],['disk','Μόνιμα μόνο στον δίσκο'],['speaker','Στα ηχεία']]},
+ {title:'Οι εντολές του προγράμματος εκτελούνται',answer:'cpu',opts:[['cpu','Από τον επεξεργαστή'],['mouse','Από το ποντίκι'],['disk','Από τον δίσκο αποθήκευσης']]}
+];
+let a4pos=0;
+function r4(){
+ const p=A4_STEPS[a4pos],opts=shuffleOnce('a4-'+a4pos,p.opts);
+ activity.innerHTML=`<div class="task-strip">${p.title}. Ποιο μέρος του συστήματος συμμετέχει σε αυτό το βήμα;</div><div class="scenario-shell"><div class="scenario-screen"><div class="desktop-row"><div class="desktop-icon"><div class="ico">🌐</div><b>Φυλλομετρητής</b></div><div class="desktop-icon"><div class="ico">⌨️</div><b>Διεύθυνση ιστοσελίδας</b></div><div class="desktop-icon"><div class="ico">☀️</div><b>Πρόγνωση καιρού</b></div></div><div class="process-line">${A4_STEPS.map((s,i)=>`<div class="process-box ${i<a4pos?'done':''} ${i===a4pos?'current':''}">${i<a4pos?'✓ ':''}${i+1}. ${s.title}</div>`).join('')}</div></div><div class="question-panel"><div class="choice-grid">${opts.map(o=>`<button class="choice" data-a4="${o[0]}">${o[1]}</button>`).join('')}</div></div></div>`;
+ qa('[data-a4]').forEach(b=>b.onclick=()=>{
+  if(b.dataset.a4!==p.answer)return wrong(b,'Σκέψου ποια συσκευή ή ποιο εξάρτημα κάνει αυτή τη συγκεκριμένη εργασία.');
+  lockGroup('[data-a4]');a4pos++;setFeedback('✓ Σωστά. Η διαδρομή συνεχίζεται.','good');
+  if(a4pos<A4_STEPS.length)later(r4,550);else later(()=>advance(0),1050);
+ });
+}
+
+/* Activity 5 */
+let a5phase=0,a5usersSeen=new Set(),a5firstUser=null,a5currentUser=null;
+const A5_USERS={
+ hypatia:{name:'Υπατία',avatar:'Υ',cls:'hypatia',apps:[['📚','Εργασίες Υπατίας','Προσωπικός φάκελος'],['🎨','Chroma','Ζωγραφική'],['📝','Graphis','Κείμενα']]},
+ heron:{name:'Ήρωνας',avatar:'Η',cls:'heron',apps:[['📁','Εργασίες Ήρωνα','Προσωπικός φάκελος'],['🌐','Ploigos','Περιήγηση'],['🧩','Noesis','Προγραμματισμός']]}
+};
+function a5Checks(){
+ return `<div class="check-strip"><span class="check-chip ${a5usersSeen.has('hypatia')?'done':''}">Υπατία ${a5usersSeen.has('hypatia')?'✓':''}</span><span class="check-chip ${a5usersSeen.has('heron')?'done':''}">Ήρωνας ${a5usersSeen.has('heron')?'✓':''}</span></div>`;
+}
+function loginMarkup(second=false){
+ const other=a5firstUser==='hypatia'?'heron':'hypatia';
+ return athenaShell(`<div class="login-screen"><h3>Καλώς ήρθες στο AthenaOS</h3><p>${second?'Ο πρώτος χρήστης αποσυνδέθηκε. Τώρα σύνδεσε τον άλλο χρήστη.':'Επίλεξε τον πρώτο λογαριασμό χρήστη.'}</p><div class="user-grid"><button class="user-card" data-user="hypatia" ${second&&other!=='hypatia'?'disabled':''}><div class="avatar">Υ</div><strong>Υπατία</strong><small>Προσωπικός λογαριασμός${a5usersSeen.has('hypatia')?' ✓':''}</small></button><button class="user-card" data-user="heron" ${second&&other!=='heron'?'disabled':''}><div class="avatar">Η</div><strong>Ήρωνας</strong><small>Προσωπικός λογαριασμός${a5usersSeen.has('heron')?' ✓':''}</small></button></div><div class="signin-info">Κάθε χρήστης συνδέεται με <b>όνομα</b> και <b>κωδικό</b>.</div></div>`,'Οθόνη σύνδεσης');
+}
+function personalDesktop(user,showSignout){
+ const u=A5_USERS[user];
+ return athenaShell(`<div class="personal-desktop ${u.cls}"><div class="desktop-toolbar"><div class="desktop-profile"><span class="desktop-avatar">${u.avatar}</span><span>${u.name}</span></div>${showSignout?'<button class="signout-btn" data-signout>↪ Αποσύνδεση</button>':''}</div><div class="desktop-welcome"><strong>Προσωπική επιφάνεια εργασίας: ${u.name}</strong><br><span>Οι ρυθμίσεις, οι φάκελοι και οι εφαρμογές αυτού του λογαριασμού εμφανίζονται εδώ.</span></div><div class="desk-app-grid">${u.apps.map(a=>`<div class="desk-app"><div class="desk-ico">${a[0]}</div><b>${a[1]}</b><small>${a[2]}</small></div>`).join('')}</div></div>`,`Συνδεδεμένος χρήστης: ${u.name}`);
+}
+function r5(){
+ if(a5phase===0){
+  const opts=shuffleOnce('a5concept',[['yes','Ναι, μπορούν να έχουν διαφορετικούς λογαριασμούς.'],['no','Όχι, ένας υπολογιστής έχει πάντα μόνο έναν χρήστη.'],['files','Μόνο αν δεν αποθηκεύουν αρχεία.']]);
+  activity.innerHTML=`<div class="task-strip">Η Υπατία και ο Ήρωνας χρησιμοποιούν τον ίδιο σχολικό υπολογιστή. Μπορούν να έχουν διαφορετικούς λογαριασμούς;</div><div class="choice-grid">${opts.map(o=>`<button class="choice" data-a5concept="${o[0]}">${o[1]}</button>`).join('')}</div>`;
+  qa('[data-a5concept]').forEach(b=>b.onclick=()=>{if(b.dataset.a5concept!=='yes')return wrong(b,'Το λειτουργικό σύστημα μπορεί να δημιουργήσει διαφορετικούς χρήστες στον ίδιο υπολογιστή.');b.classList.add('correct');a5phase=1;setFeedback('✓ Σωστά. Τώρα σύνδεσε τον πρώτο χρήστη.','good');later(r5,650)});return;
+ }
+ if(a5phase===1){
+  activity.innerHTML=`<div class="task-strip">1. Σύνδεσε έναν από τους δύο χρήστες και παρατήρησε την προσωπική του επιφάνεια εργασίας.</div>${loginMarkup(false)}${a5Checks()}`;
+  qa('[data-user]').forEach(b=>b.onclick=()=>{a5firstUser=b.dataset.user;a5currentUser=b.dataset.user;a5usersSeen.add(b.dataset.user);a5phase=2;setFeedback(`✓ Συνδέθηκε ${b.dataset.user==='hypatia'?'η Υπατία':'ο Ήρωνας'}. Φορτώνεται η προσωπική επιφάνεια εργασίας.`,'good');later(r5,500)});return;
+ }
+ if(a5phase===2){
+  const who=A5_USERS[a5currentUser].name;
+  activity.innerHTML=`<div class="task-strip">2. Η προσωπική επιφάνεια εργασίας του χρήστη φορτώθηκε. Τώρα κάνε <b>Αποσύνδεση</b>.</div>${personalDesktop(a5currentUser,true)}${a5Checks()}`;
+  q('[data-signout]').onclick=()=>{setFeedback(`✓ Ο χρήστης ${who} αποσυνδέθηκε. Επιστρέφεις στην οθόνη σύνδεσης.`,'good');a5currentUser=null;a5phase=3;later(r5,650)};return;
+ }
+ if(a5phase===3){
+  activity.innerHTML=`<div class="task-strip">3. Σύνδεσε τώρα τον <b>άλλο χρήστη</b>.</div>${loginMarkup(true)}${a5Checks()}`;
+  qa('[data-user]').forEach(b=>b.onclick=()=>{if(b.dataset.user===a5firstUser)return; a5currentUser=b.dataset.user;a5usersSeen.add(b.dataset.user);a5phase=4;setFeedback(`✓ Συνδέθηκε ${b.dataset.user==='hypatia'?'η Υπατία':'ο Ήρωνας'}. Φορτώνεται η δική του προσωπική επιφάνεια εργασίας.`,'good');later(r5,500)});return;
+ }
+ const who=A5_USERS[a5currentUser].name;
+ activity.innerHTML=`<div class="task-strip">4. Παρατήρησε ότι ο δεύτερος χρήστης έχει τη <b>δική του προσωπική επιφάνεια εργασίας</b>.</div>${personalDesktop(a5currentUser,false)}${a5Checks()}`;
+ if(a5usersSeen.size===2){setFeedback(`✓ Και οι δύο λογαριασμοί ελέγχθηκαν. Κάθε χρήστης έχει τη δική του προσωπική επιφάνεια εργασίας.`,'good');later(()=>advance(0),1500)}
+}
+
+/* Activity 6 */
+const A6_USERS={hypatia:{name:'Υπατία',own:'hypatia'},heron:{name:'Ήρωνας',own:'heron'}};
+let a6user='hypatia',a6task=0,a6done=[];
+const A6_TASKS=[
+ {user:'hypatia',prompt:'Η Υπατία θέλει να ανοίξει τον προσωπικό της φάκελο.',target:'hypatia'},
+ {user:'hypatia',prompt:'Η Υπατία θέλει έναν φάκελο που μπορούν να χρησιμοποιούν όλοι.',target:'shared'},
+ {user:'heron',prompt:'Ο Ήρωνας θέλει να ανοίξει τον προσωπικό του φάκελο.',target:'heron'},
+ {user:'heron',prompt:'Ο Ήρωνας θέλει έναν φάκελο που μπορούν να χρησιμοποιούν όλοι.',target:'shared'}
+];
+function folderMarkup(id,label,user){
+ const allowed=id==='shared'||id===user;const denied=!allowed;const isPrivate=id!=='shared';
+ return `<button class="folder ${isPrivate?'private':''} ${denied?'denied':''}" data-folder="${id}"><div class="folder-icon">📁</div><b>${label}</b><small>${id==='shared'?'Κοινόχρηστος':'Προσωπικός'} φάκελος</small></button>`;
+}
+function r6(){
+ const t=A6_TASKS[a6task];a6user=t.user;
+ const who=A6_USERS[a6user].name;
+ activity.innerHTML=`<div class="task-strip">${t.prompt}</div>${athenaShell(`<div class="os-desktop"><div class="os-window"><div class="window-head"><div class="window-dots"><span></span><span></span><span></span></div><div class="window-title">Αρχεία · Συνδεδεμένος χρήστης: ${who}</div></div><div class="folder-area">${folderMarkup('hypatia','ΥΠΑΤΙΑ',a6user)}${folderMarkup('heron','ΗΡΩΝΑΣ',a6user)}${folderMarkup('shared','ΚΟΙΝΟΧΡΗΣΤΑ',a6user)}</div></div></div>`,`Χρήστης: ${who}`)}<div class="check-strip">${A6_TASKS.map((_,i)=>`<span class="check-chip ${i<a6task?'done':''}">${i+1}${i<a6task?' ✓':''}</span>`).join('')}</div>`;
+ qa('[data-folder]').forEach(b=>b.onclick=()=>{
+  const id=b.dataset.folder;const allowed=id==='shared'||id===a6user;
+  if(!allowed)return wrong(b,'🔒 Αυτός είναι ο προσωπικός φάκελος του άλλου χρήστη. Ο συνδεδεμένος χρήστης δεν έχει δικαίωμα πρόσβασης.');
+  if(id!==t.target)return wrong(b,'Αυτός ο φάκελος επιτρέπεται, αλλά δεν είναι ο φάκελος που ζητά η οδηγία.');
+  lockGroup('[data-folder]');b.classList.add('opened');a6done.push(id);a6task++;setFeedback(`✓ ${who==='Ήρωνας'?'Ο Ήρωνας':'Η Υπατία'} έχει δικαίωμα πρόσβασης σε αυτόν τον φάκελο.`,'good');
+  if(a6task<A6_TASKS.length)later(r6,650);else later(()=>advance(0),1050);
+ });
+}
+
+/* Activity 7 */
+let a7phase=0,a7seq=[];
+const A7_SEQ=['disk','memory','cpu'];
+const A7_LABEL={disk:'Δίσκος αποθήκευσης',memory:'Μνήμη',cpu:'Επεξεργαστής'};
+function r7(){
+ if(a7phase===0){
+  const remaining=shuffleOnce('a7pool',['disk','memory','cpu']).filter(x=>!a7seq.includes(x));
+  activity.innerHTML=`<div class="task-strip">1ο μέρος: Ανοίγεις μια εφαρμογή. Βάλε τα τρία βασικά εξαρτήματα στη σωστή σειρά.</div><div class="final-card"><div class="final-title">Ποια είναι η σειρά;</div><div class="flow-track">${A7_SEQ.map((_,i)=>`<div class="flow-slot ${a7seq[i]?'filled':''}"><div class="flow-num">${i+1}</div><div class="flow-name">${a7seq[i]?A7_LABEL[a7seq[i]]:'?'}</div></div>`).join('')}</div><div class="flow-pool">${remaining.map(id=>`<button class="flow-token" data-a7seq="${id}">${A7_LABEL[id]}</button>`).join('')}</div><div class="check-strip"><span class="check-chip">Λειτουργία υλικού</span><span class="check-chip">Δικαιώματα χρηστών</span></div></div>`;
+  qa('[data-a7seq]').forEach(b=>b.onclick=()=>{
+   const exp=A7_SEQ[a7seq.length];if(b.dataset.a7seq!==exp)return wrong(b,'Η σειρά ξεκινά από το μέρος όπου η εφαρμογή είναι αποθηκευμένη μόνιμα.');
+   lockGroup('[data-a7seq]');a7seq.push(b.dataset.a7seq);setFeedback(`✓ ${a7seq.length}ο βήμα σωστό.`,'good');
+   if(a7seq.length<3)later(r7,450);else{a7phase=1;later(r7,850)}
+  });return;
+ }
+ const opts=shuffleOnce('a7permission',[['hypatia','Μόνο η Υπατία'],['heron','Μόνο ο Ήρωνας'],['none','Κανένα από τα δύο παιδιά'],['both','Και τα δύο παιδιά']]);
+ activity.innerHTML=`<div class="task-strip">2ο μέρος: Το αρχείο <b>ΟΝΟΜΑΤΑ ΜΑΘΗΤΩΝ ΤΑΞΗΣ</b> βρίσκεται μέσα στον φάκελο <b>ΚΟΙΝΟΧΡΗΣΤΑ</b>. Ποιος έχει δικαίωμα να το ανοίξει;</div><div class="final-card"><div class="permission-scene"><span class="person-pill">👧 Υπατία</span><div class="shared-box">📁 ΚΟΙΝΟΧΡΗΣΤΑ<div class="fileline">📄 ΟΝΟΜΑΤΑ ΜΑΘΗΤΩΝ ΤΑΞΗΣ</div></div><span class="person-pill">👦 Ήρωνας</span></div><div class="choice-grid">${opts.map(o=>`<button class="choice" data-a7perm="${o[0]}">${o[1]}</button>`).join('')}</div><div class="check-strip"><span class="check-chip done">Λειτουργία υλικού ✓</span><span class="check-chip">Δικαιώματα χρηστών</span></div></div>`;
+ qa('[data-a7perm]').forEach(b=>b.onclick=()=>{
+  if(b.dataset.a7perm!=='both')return wrong(b,'Το αρχείο βρίσκεται στον κοινόχρηστο φάκελο. Σκέψου ποιοι χρήστες έχουν πρόσβαση σε αυτόν.');
+  b.classList.add('correct');lockGroup('[data-a7perm]');setFeedback('✓ Και η Υπατία και ο Ήρωνας έχουν δικαίωμα πρόσβασης στον κοινόχρηστο φάκελο.','good');later(()=>advance(0),1200);
+ });
+}
+
+/* Activity 8 */
+const levels=['Έχω καταλάβει και μπορώ να εξηγήσω','Έχω καταλάβει αρκετά καλά','Έχω καταλάβει αλλά έχω απορίες','Χρειάζομαι βοήθεια'];
+const objectives=['Ποια είναι τα βασικά στοιχεία του υλικού του υπολογιστή και τον τρόπο λειτουργίας τους.','Τον ρόλο του λειτουργικού συστήματος για τα δικαιώματα των χρηστών.','Τι είναι τα δικαιώματα των χρηστών του υπολογιστή.'];
+let selfSel=[null,null,null];
+function r8(){
+ activity.innerHTML=`<div class="self-wrap"><div class="self-table"><div class="self-head">Αξιολογώ πόσο καλά έμαθα</div>${levels.map(x=>`<div class="self-head">${x}</div>`).join('')}${objectives.map((o,row)=>`<div class="self-objective">✓ ${o}</div>${levels.map((l,col)=>`<button class="self-cell ${selfSel[row]===col?'selected':''}" data-self="${row}:${col}">${l}</button>`).join('')}`).join('')}</div></div><div class="self-note">Διάλεξε ένα επίπεδο για κάθε στόχο.</div><div class="finish-actions"><button class="primary" id="finishBtn" ${selfSel.some(x=>x===null)?'disabled':''}>Ολοκλήρωση</button></div>`;
+ qa('[data-self]').forEach(b=>b.onclick=()=>{const [r,c]=b.dataset.self.split(':').map(Number);selfSel[r]=c;r8()});
+ q('#finishBtn').onclick=()=>{if(selfSel.some(x=>x===null))return;completed.add(stage);finished=true;render()};
+}
+
+const renderers=[r1,r2,r3,r4,r5,r6,r7,r8];
+function renderCompletion(){
+ kicker.textContent='ΟΛΟΚΛΗΡΩΣΗ';stageTitle.textContent='Μάθημα 13 ολοκληρώθηκε';instruction.textContent='Ολοκλήρωσες την εξερεύνηση του υλικού και των λογαριασμών χρηστών.';
+ activity.innerHTML=`<div class="completion"><span class="badge">Ενότητα 2 · Μάθημα 13</span><h2>Ο υπολογιστής δουλεύει σαν ομάδα!</h2><p>Αναγνώρισες τον ρόλο του επεξεργαστή, της μνήμης και του δίσκου αποθήκευσης και χρησιμοποίησες το AthenaOS για να εξερευνήσεις προσωπικούς και κοινόχρηστους φακέλους.</p><button class="secondary-btn" id="restartComplete">↻ Επανάληψη μαθήματος</button></div>`;
+ q('#restartComplete').onclick=()=>location.reload();clearFeedback();
+}
+function render(){
+ clearTimers();transitionLocked=false;renderEpoch++;clearFeedback();updateProgress();
+ if(finished){renderCompletion();window.scrollTo({top:0,behavior:'smooth'});return}
+ const s=ACTIVITIES[stage];kicker.textContent=`Δραστηριότητα ${stage+1}`;stageTitle.textContent=s.t;instruction.textContent=s.i;renderers[stage]();window.scrollTo({top:0,behavior:'smooth'});
+}
+
+q('#helpBtn').onclick=()=>{q('#helpText').textContent=HELP[stage]||'';q('#helpModal').classList.add('open')};
+q('#closeHelp').onclick=q('#understoodBtn').onclick=()=>q('#helpModal').classList.remove('open');
+q('#helpModal').onclick=e=>{if(e.target===q('#helpModal'))q('#helpModal').classList.remove('open')};
+q('#speakHelp').onclick=()=>{if(!('speechSynthesis'in window))return;window.speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(HELP[stage]||'');u.lang='el-GR';window.speechSynthesis.speak(u)};
+
+render();
+</script>
+<footer class="nk-license" aria-label="Πληροφορίες δημιουργού και άδειας χρήσης">
+  <div><strong>Created by Nikos Kalakos · © 2026</strong></div>
+  <div>Original educational content and simulation design licensed under <a class="cc-badge" href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank" rel="license noopener noreferrer">CC BY-NC 4.0</a>.</div>
+  <div>Source code © 2026 Nikos Kalakos.</div>
+  <div>Third-party and textbook materials remain subject to the rights and licences of their respective copyright holders.</div>
+</footer>
+</body>
+</html>

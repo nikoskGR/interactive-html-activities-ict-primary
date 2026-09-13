@@ -1,0 +1,736 @@
+<!--
+ICT Educational Simulation
+Created by Nikos Kalakos
+Copyright © 2026 Nikos Kalakos
+
+Original educational content and simulation design licensed under CC BY-NC 4.0.
+Source code © 2026 Nikos Kalakos.
+Third-party and textbook materials remain subject to the rights and licences of their respective copyright holders.
+-->
+<!doctype html>
+<html lang="el">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="author" content="Nikos Kalakos">
+<meta name="copyright" content="© 2026 Nikos Kalakos">
+<meta name="license" content="Original educational content and simulation design: CC BY-NC 4.0; source code © 2026 Nikos Kalakos; third-party and textbook materials excluded.">
+<title>Μάθημα 1 - Ο αλγόριθμος του Καίσαρα</title>
+<style>
+:root{
+  --unit:#EA922C;
+  --unit-dark:#B86610;
+  --unit-soft:#FFF4E6;
+  --secondary:#545F99;
+  --secondary-dark:#3D477C;
+  --secondary-soft:#EEF0F8;
+  --ink:#253044;
+  --muted:#657083;
+  --line:#D9DEE7;
+  --panel:#FFFFFF;
+  --ok:#28765A;
+  --ok-soft:#ECF8F2;
+  --bad:#A84355;
+  --bad-soft:#FFF0F3;
+  --shadow:0 14px 35px rgba(45,55,86,.11);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0;
+  font-family:Inter,Segoe UI,Arial,sans-serif;
+  color:var(--ink);
+  background:
+    radial-gradient(circle at 14% 10%,rgba(234,146,44,.10),transparent 28%),
+    radial-gradient(circle at 88% 22%,rgba(84,95,153,.10),transparent 30%),
+    #F4F6FA;
+}
+button,select{font:inherit}
+button{cursor:pointer}
+button:focus-visible,select:focus-visible{outline:3px solid rgba(84,95,153,.32);outline-offset:2px}
+.shell{max-width:1240px;margin:0 auto;padding:18px}
+.hero{
+  background:#fff;
+  border:1px solid #E3E7EE;
+  border-top:9px solid var(--unit);
+  border-radius:18px;
+  box-shadow:var(--shadow);
+  padding:20px 24px 18px;
+  display:grid;
+  grid-template-columns:1fr auto;
+  gap:18px;
+  align-items:center;
+}
+.eyebrow{font-size:13px;font-weight:900;letter-spacing:.12em;text-transform:uppercase;color:var(--secondary)}
+.hero h1{margin:5px 0 0;font-size:32px;line-height:1.12;color:var(--secondary-dark)}
+.hero p{margin:8px 0 0;color:var(--muted);font-weight:700}
+.lesson-mark{
+  min-width:118px;height:72px;border-radius:16px;background:linear-gradient(135deg,var(--secondary),var(--secondary-dark));
+  color:#fff;display:grid;place-items:center;text-align:center;box-shadow:0 9px 22px rgba(84,95,153,.23)
+}
+.lesson-mark b{font-size:27px;line-height:1}.lesson-mark span{font-size:11px;font-weight:850;letter-spacing:.08em;text-transform:uppercase}
+.progress{
+  margin:13px 0;background:#fff;border:1px solid #E1E5EC;border-radius:15px;padding:12px 15px;
+  box-shadow:0 7px 20px rgba(48,58,87,.06)
+}
+.progress-top{display:flex;justify-content:space-between;gap:12px;align-items:center;color:#59667B;font-size:13px;font-weight:850}
+.bar{height:8px;background:#ECEFF4;border-radius:999px;overflow:hidden;margin:8px 0 10px}
+.fill{height:100%;width:0;background:linear-gradient(90deg,var(--unit),var(--secondary));transition:.3s ease}
+.steps{display:flex;gap:8px;flex-wrap:wrap;justify-content:center}
+.step-dot{
+  width:29px;height:29px;border-radius:9px;border:1px solid #CDD3DE;background:#fff;color:#758197;
+  display:grid;place-items:center;font-size:12px;font-weight:900;transition:.2s
+}
+.step-dot.active{border:2px solid var(--unit);color:var(--unit-dark);background:var(--unit-soft)}
+.step-dot.done{border-color:var(--secondary);background:var(--secondary);color:#fff}
+.stage{
+  background:var(--panel);border:1px solid #E1E5EC;border-radius:18px;box-shadow:var(--shadow);
+  padding:22px;min-height:650px
+}
+.stage-head{display:grid;grid-template-columns:1fr auto;gap:20px;align-items:start;border-bottom:1px solid #E7EAF0;padding-bottom:14px}
+.stage-kicker{font-size:12px;letter-spacing:.1em;text-transform:uppercase;font-weight:900;color:var(--unit-dark)}
+.stage-title{font-size:27px;line-height:1.16;margin:5px 0 0;color:#303A55}
+.instruction{font-size:17px;line-height:1.5;color:#5D687B;margin:8px 0 0;font-weight:650;max-width:930px}
+.help-btn{
+  border:1px solid var(--secondary);background:#fff;color:var(--secondary-dark);border-radius:10px;padding:9px 12px;
+  font-weight:900
+}
+.help-btn:hover{background:var(--secondary-soft)}
+.workspace{padding-top:18px}
+.feedback{
+  min-height:50px;margin-top:16px;border-radius:11px;padding:0 14px;display:flex;align-items:center;
+  font-weight:850;line-height:1.35
+}
+.feedback:empty{display:none}
+.feedback.good{background:var(--ok-soft);border:1px solid #9BCFBA;color:#236047}
+.feedback.bad{background:var(--bad-soft);border:1px solid #E0A0AC;color:#873044}
+.feedback.info{background:var(--secondary-soft);border:1px solid #B9C0DC;color:var(--secondary-dark)}
+.lab-card{
+  max-width:1050px;margin:0 auto;border:1px solid #D8DEE8;border-radius:15px;background:#FBFCFE;overflow:hidden
+}
+.lab-head{
+  display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 16px;
+  background:linear-gradient(90deg,#F6F7FB,#FFF8EF);border-bottom:1px solid #DCE1E9
+}
+.lab-head strong{color:var(--secondary-dark)}
+.lab-tag{font-size:11px;font-weight:900;letter-spacing:.08em;text-transform:uppercase;color:#fff;background:var(--unit);border-radius:999px;padding:6px 9px}
+.lab-body{padding:18px}
+.prompt{
+  max-width:980px;margin:0 auto 14px;background:#fff;border-left:5px solid var(--unit);border-radius:10px;
+  padding:13px 15px;font-size:18px;line-height:1.45;font-weight:800
+}
+.choice-grid{max-width:900px;margin:14px auto;display:grid;grid-template-columns:repeat(2,1fr);gap:11px}
+.choice{
+  position:relative;min-height:82px;text-align:left;border:2px solid #D7DDE6;background:#fff;border-radius:12px;padding:14px 16px;
+  font-weight:800;color:#3C4960;line-height:1.35;transition:.18s
+}
+.choice:hover{border-color:#AEB7C6;transform:translateY(-1px)}
+.choice.selected{border-color:var(--secondary);background:var(--secondary-soft);padding-bottom:34px}
+.choice.selected::after{content:"✓ Επιλεγμένο";position:absolute;left:16px;bottom:9px;color:var(--secondary-dark);font-size:11px;font-weight:900}
+.choice.wrong{border-color:#D98696;background:#FFF3F5}
+.message-demo{display:grid;grid-template-columns:1fr auto 1fr;gap:14px;align-items:center;max-width:900px;margin:15px auto}
+.message-box{background:#fff;border:1px solid #D8DEE7;border-radius:13px;padding:16px;text-align:center}
+.message-box code{font-size:25px;letter-spacing:.08em;color:var(--secondary-dark);font-weight:900}
+.arrow{font-size:30px;color:var(--unit);font-weight:900}
+.alphabet-table{overflow:auto;border:1px solid #D9DEE7;border-radius:12px;background:#fff}
+.alpha-grid{display:grid;grid-template-columns:105px repeat(24,42px);min-width:1115px}
+.alpha-cell{height:44px;border-right:1px solid #E4E8EF;border-bottom:1px solid #E4E8EF;display:grid;place-items:center;font-weight:800}
+.alpha-label{position:sticky;left:0;z-index:2;background:#F4F6FA;color:var(--secondary-dark);font-size:12px;text-align:center}
+.alpha-cell.head{background:#FFF7EC;color:var(--unit-dark);font-size:12px}
+.alpha-cell.target{background:#FFF1D9;box-shadow:inset 0 0 0 2px var(--unit);color:#924D08}
+.alpha-cell.clickable{cursor:pointer}
+.alpha-cell.clickable:hover{background:var(--secondary-soft)}
+.alpha-cell.corrected{background:var(--ok-soft);color:var(--ok);font-weight:950}
+.current-letter{
+  display:inline-grid;place-items:center;min-width:44px;height:44px;border-radius:10px;background:var(--secondary);
+  color:#fff;font-size:22px;font-weight:950;margin:0 5px
+}
+.encoding-progress{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin:14px 0}
+.encoded-slot{
+  width:44px;height:47px;border:2px solid #D4DAE5;border-radius:9px;background:#fff;display:grid;place-items:center;
+  font-size:20px;font-weight:900;color:#46536B
+}
+.encoded-slot.current{border-color:var(--unit);background:var(--unit-soft)}
+.encoded-slot.done{border-color:var(--secondary);background:var(--secondary-soft);color:var(--secondary-dark)}
+.sequence{
+  max-width:900px;margin:15px auto;display:grid;grid-template-columns:repeat(3,1fr);gap:11px
+}
+.seq-card{
+  border:2px solid #D6DCE6;background:#fff;border-radius:12px;padding:15px;min-height:95px;text-align:left;font-weight:800;line-height:1.35
+}
+.seq-card:hover{border-color:#AAB4C4}
+.seq-card.picked{border-color:var(--secondary);background:var(--secondary-soft);opacity:.65}
+.order-strip{max-width:900px;margin:16px auto;display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.order-slot{
+  min-height:84px;border:2px dashed #C7CFDC;border-radius:12px;background:#FAFBFD;padding:10px;
+  display:flex;align-items:center;gap:9px
+}
+.order-num{flex:0 0 31px;height:31px;border-radius:8px;background:var(--unit);color:#fff;display:grid;place-items:center;font-weight:950}
+.order-text{font-size:14px;font-weight:800;color:#4F5C70}
+.code-panel{
+  max-width:920px;margin:12px auto;background:#283047;color:#F7F8FB;border-radius:14px;padding:18px;box-shadow:0 10px 25px rgba(38,48,71,.18)
+}
+.code-line{display:flex;gap:11px;align-items:flex-start;padding:8px 10px;border-radius:8px;font-family:Consolas,monospace;font-size:16px;line-height:1.4}
+.code-line .n{color:#8F9AB4;min-width:22px;text-align:right}
+.code-line.keyword{color:#FFD18C}
+.code-line.variable{background:#353E5A;cursor:pointer}
+.code-line.variable:hover{background:#414B69}
+.variable-console{
+  max-width:920px;margin:13px auto;display:grid;grid-template-columns:220px 1fr;gap:12px
+}
+.var-box{background:#fff;border:2px solid var(--secondary);border-radius:12px;padding:15px}
+.var-name{font-size:12px;font-weight:900;color:#6E7890;text-transform:uppercase;letter-spacing:.08em}
+.var-value{font-size:34px;font-weight:950;color:var(--secondary-dark);margin-top:4px}
+.trace{display:flex;gap:7px;flex-wrap:wrap;align-content:flex-start}
+.trace-chip{padding:8px 10px;border-radius:9px;background:#fff;border:1px solid #D7DDE7;font-weight:850;color:#556176}
+.trace-chip.active{border:2px solid var(--unit);background:var(--unit-soft);color:var(--unit-dark)}
+.trace-table{overflow:auto;border:1px solid #D8DEE8;border-radius:12px;background:#fff;max-width:1050px;margin:12px auto}
+.trace-grid{display:grid;grid-template-columns:170px repeat(5,1fr);min-width:760px}
+.trace-cell{min-height:56px;padding:8px;border-right:1px solid #E3E7EE;border-bottom:1px solid #E3E7EE;display:flex;align-items:center;justify-content:center;text-align:center;font-weight:800}
+.trace-cell.label{justify-content:flex-start;background:#F5F6FA;color:var(--secondary-dark);font-size:13px}
+.trace-cell.letter{font-size:21px;background:#FFF8EF;color:#A25D13}
+.trace-cell.active-col{background:#FFF3E1}
+.trace-cell.done-col{background:#F3F6FC}
+.trace-select{width:88%;min-width:72px;border:1px solid #BFC8D6;border-radius:8px;background:#fff;padding:7px;color:#34405A;font-weight:800}
+.trace-select:disabled{opacity:1;color:#34405A;background:#F5F7FA}
+.trace-cell.solved{background:var(--ok-soft);color:var(--ok)}
+.trace-cell.solved .trace-select{border-color:#8EC8B0;background:var(--ok-soft);color:var(--ok);font-weight:900}
+.challenge-wrap{max-width:1050px;margin:0 auto}
+.challenge-brief{display:grid;grid-template-columns:1fr auto;gap:14px;align-items:center;margin:0 auto 14px;padding:14px 16px;border:1px solid #D8DEE8;border-radius:12px;background:#fff}
+.challenge-word{font-size:28px;font-weight:950;letter-spacing:.12em;color:var(--secondary-dark)}
+.shift-badge{min-width:145px;text-align:center;border-radius:11px;background:var(--unit-soft);border:2px solid var(--unit);padding:10px 13px;color:var(--unit-dark);font-weight:950}
+.shift-badge span{display:block;font-size:11px;letter-spacing:.08em;text-transform:uppercase;margin-bottom:2px}
+.challenge-alpha-scroll{overflow:auto;border:1px solid #D8DEE8;border-radius:12px;background:#fff;padding:10px}
+.challenge-alphabet{display:grid;grid-template-columns:repeat(24,44px);gap:5px;min-width:1170px}
+.alpha-pick{height:56px;border:1px solid #C9D1DE;border-radius:9px;background:#fff;color:#34405A;font-size:20px;font-weight:950;position:relative}
+.alpha-pick small{position:absolute;top:3px;right:5px;font-size:9px;color:#8A94A6;font-weight:800}
+.alpha-pick:hover{border-color:var(--secondary);background:var(--secondary-soft)}
+.challenge-result{margin:14px auto 8px;display:flex;justify-content:center;gap:7px;flex-wrap:wrap}
+.challenge-slot{width:48px;height:52px;border:2px solid #D4DAE5;border-radius:9px;background:#fff;display:grid;place-items:center;font-size:21px;font-weight:950;color:var(--secondary-dark)}
+.challenge-slot.filled{border-color:var(--secondary);background:var(--secondary-soft)}
+.challenge-actions{display:flex;justify-content:center;gap:9px;flex-wrap:wrap;margin-top:10px}
+.challenge-note{text-align:center;color:#687488;font-size:13px;font-weight:750;margin-top:11px}
+.summary-grid{max-width:900px;margin:12px auto;display:grid;grid-template-columns:repeat(3,1fr);gap:11px}
+.summary-card{border:1px solid #D8DEE8;border-top:5px solid var(--secondary);border-radius:11px;background:#fff;padding:14px;line-height:1.42}
+.summary-card b{display:block;color:var(--secondary-dark);margin-bottom:5px}
+.final-status{display:flex;justify-content:center;gap:8px;flex-wrap:wrap;margin:0 auto 14px}
+.final-chip{border:1px solid #CDD4DF;background:#fff;color:#6A7688;border-radius:999px;padding:7px 10px;font-size:12px;font-weight:900}
+.final-chip.done{border-color:var(--secondary);background:var(--secondary-soft);color:var(--secondary-dark)}
+.self-wrap{max-width:1100px;margin:0 auto}
+.self-table{display:grid;grid-template-columns:2.2fr repeat(4,1fr);border:1px solid #D9DEE7;border-radius:13px;overflow:hidden;background:#fff}
+.self-head{background:var(--secondary);color:#fff;padding:11px 8px;text-align:center;font-size:15px;font-weight:900;border-right:1px solid rgba(255,255,255,.18)}
+.self-objective{padding:13px;background:#F9FAFC;border-top:1px solid #E2E6ED;font-weight:800;line-height:1.35;font-size:15px}
+.self-cell{border:0;border-left:1px solid #E2E6ED;border-top:1px solid #E2E6ED;background:#fff;min-height:72px;padding:8px;font-size:15px;color:#59667B}
+.self-cell:hover{background:#F5F7FB}
+.self-cell.selected{background:var(--unit-soft);box-shadow:inset 0 0 0 3px var(--unit);color:#7A430A;font-weight:900}
+.self-note{text-align:center;color:#687488;margin:12px 0;font-weight:750}
+.finish-actions{display:flex;justify-content:center;gap:10px;flex-wrap:wrap}
+.primary,.secondary-btn{border-radius:10px;padding:10px 15px;font-weight:900}
+.primary{border:1px solid var(--secondary);background:var(--secondary);color:#fff}
+.primary:disabled{opacity:.45;cursor:not-allowed}
+.secondary-btn{border:1px solid #C8CFDA;background:#fff;color:#4F5B70}
+.completion{max-width:820px;margin:45px auto;text-align:center;padding:35px;border:1px solid #D8DEE8;border-radius:16px;background:linear-gradient(145deg,#fff,#FFF9F1)}
+.completion .badge{display:inline-block;border-radius:999px;background:var(--unit);color:#fff;padding:7px 11px;font-weight:900;font-size:12px}
+.completion h2{font-size:30px;color:var(--secondary-dark);margin:15px 0 8px}
+.completion p{font-size:17px;line-height:1.55;color:#5E6B7E}
+.modal-backdrop{position:fixed;inset:0;background:rgba(25,31,47,.56);display:none;align-items:center;justify-content:center;padding:18px;z-index:50}
+.modal-backdrop.open{display:flex}
+.modal{width:min(620px,100%);background:#fff;border-radius:16px;box-shadow:0 18px 55px rgba(0,0,0,.25);overflow:hidden}
+.modal-head{background:var(--secondary);color:#fff;padding:15px 18px;display:flex;justify-content:space-between;align-items:center;font-weight:900}
+.modal-close{border:0;background:transparent;color:#fff;font-size:22px}
+.modal-body{padding:18px;font-size:17px;line-height:1.55;color:#4F5C71}
+.modal-actions{display:flex;justify-content:flex-end;gap:8px;padding:0 18px 18px}
+.small-btn{border:1px solid #C7CEDA;background:#fff;border-radius:9px;padding:8px 11px;font-weight:850;color:#4C5870}
+@keyframes pulse{50%{transform:scale(1.02)}}
+.pulse{animation:pulse .38s ease}
+@media(max-width:760px){
+  .shell{padding:10px}.hero{grid-template-columns:1fr}.lesson-mark{display:none}
+  .hero h1{font-size:26px}.stage{padding:15px}.stage-head{grid-template-columns:1fr}.choice-grid,.summary-grid{grid-template-columns:1fr}
+  .sequence,.order-strip{grid-template-columns:1fr}.message-demo{grid-template-columns:1fr}.arrow{transform:rotate(90deg)}
+  .variable-console{grid-template-columns:1fr}.self-table{grid-template-columns:1.6fr repeat(4,1fr)}
+  .self-head,.self-objective,.self-cell{font-size:13px}
+}
+</style>
+
+<style id="nk-license-style">
+.nk-license{max-width:1100px;margin:14px auto 24px;padding:10px 16px;text-align:center;font:13px/1.45 Arial,"Noto Sans",sans-serif;color:#4e657c}
+.nk-license a{color:inherit;text-decoration:underline;text-underline-offset:2px}
+.nk-license .cc-badge{display:inline-block;margin:0 4px;padding:2px 7px;border:1px solid #8aa0b8;border-radius:6px;background:#fff;font-weight:700;white-space:nowrap}
+</style>
+</head>
+<body>
+<div class="shell">
+  <header class="hero">
+    <div>
+      <div class="eyebrow">Ενότητα 1 · Αλγοριθμική – Προγραμματισμός – Ρομποτική</div>
+      <h1>Ο αλγόριθμος του Καίσαρα</h1>
+      <p>Διερεύνησε πώς κωδικοποιείται ένα μήνυμα, πώς οργανώνεται ο αλγόριθμος και πώς αλλάζει η τιμή μιας μεταβλητής.</p>
+    </div>
+    <div class="lesson-mark"><div><b>01</b><br><span>Μάθημα</span></div></div>
+  </header>
+
+  <section class="progress">
+    <div class="progress-top"><span id="progressLabel">Δραστηριότητα 1 από 10</span><span id="progressPercent">0%</span></div>
+    <div class="bar"><div class="fill" id="fill"></div></div>
+    <div class="steps" id="dots"></div>
+  </section>
+
+  <main class="stage">
+    <div class="stage-head">
+      <div>
+        <div class="stage-kicker" id="kicker"></div>
+        <h2 class="stage-title" id="stageTitle"></h2>
+        <p class="instruction" id="instruction"></p>
+      </div>
+      <button class="help-btn" id="helpBtn">❔ Βοήθεια</button>
+    </div>
+    <div class="workspace" id="activity"></div>
+    <div class="feedback" id="feedback" aria-live="polite"></div>
+  </main>
+</div>
+
+<div class="modal-backdrop" id="helpModal" role="dialog" aria-modal="true" aria-labelledby="helpTitle">
+  <div class="modal">
+    <div class="modal-head"><span id="helpTitle">Βοήθεια</span><button class="modal-close" id="closeHelp" aria-label="Κλείσιμο">×</button></div>
+    <div class="modal-body" id="helpText"></div>
+    <div class="modal-actions">
+      <button class="small-btn" id="speakHelp">🔊 Άκουσε</button>
+      <button class="primary" id="understoodBtn">Το κατάλαβα</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const PLAIN=['Α','Β','Γ','Δ','Ε','Ζ','Η','Θ','Ι','Κ','Λ','Μ','Ν','Ξ','Ο','Π','Ρ','Σ','Τ','Υ','Φ','Χ','Ψ','Ω'];
+const SHIFT=3;
+const ENCODED=['Δ','Ε','Ζ','Η','Θ','Ι','Κ','Λ','Μ','Ν','Ξ','Ο','Π','Ρ','Σ','Τ','Υ','Φ','Χ','Ψ','Ω','Α','Β','Γ'];
+const ACTIVITIES=[
+ {t:'Γιατί κρυπτογραφούμε;',i:'Διάβασε το σενάριο και επίλεξε τον λόγο για τον οποίο κρυπτογραφούμε ένα μήνυμα.'},
+ {t:'Μετατόπιση +3',i:'Χρησιμοποίησε τον πίνακα αντικατάστασης. Για κάθε γράμμα, επίλεξε το γράμμα που βρίσκεται τρεις θέσεις πιο πέρα.'},
+ {t:'Κωδικοποίησε μια λέξη',i:'Κωδικοποίησε τη λέξη ΜΗΝΥΜΑ. Για κάθε γράμμα, επίλεξε από τον πίνακα το αντίστοιχο κωδικοποιημένο γράμμα.'},
+ {t:'Σπάσε το πρόβλημα σε μικρότερα μέρη',i:'Τοποθέτησε τις τρεις ενέργειες στη σωστή σειρά, από την είσοδο μέχρι την έξοδο.'},
+ {t:'Χτίσε τον Αλγόριθμο 1',i:'Τοποθέτησε τις εντολές του αλγόριθμου κρυπτογράφησης στη σωστή σειρά.'},
+ {t:'Η μεταβλητή «θέση»',i:'Εντόπισε ποιο στοιχείο του αλγόριθμου παίρνει διαφορετική τιμή καθώς διαβάζονται διαφορετικά γράμματα.'},
+ {t:'Παρακολούθησε την εκτέλεση για τη λέξη ΦΩΤΙΑ',i:'Συμπλήρωσε τον πίνακα εκτέλεσης για όλα τα γράμματα της λέξης ΦΩΤΙΑ.'},
+ {t:'Συνολική δοκιμή',i:'Συνδύασε όσα έμαθες για την κρυπτογράφηση, τη μετατόπιση και τη μεταβλητή.'},
+ {t:'Κρυπτογράφησε χωρίς έτοιμη κωδικοποιημένη σειρά',i:'Χρησιμοποίησε μόνο το αλφάβητο και τη μετατόπιση που δίνεται. Κάνε κλικ στα γράμματα που σχηματίζουν το κωδικοποιημένο μήνυμα.'},
+ {t:'Τι έμαθα;',i:'Αξιολόγησε πόσο καλά έχεις κατανοήσει τους βασικούς στόχους του μαθήματος.'}
+];
+const HELP=[
+ 'Σκέψου τι θα συμβεί αν ένα μήνυμα ταξιδεύει σε δίκτυο και κάποιος το υποκλέψει. Η κρυπτογράφηση μετατρέπει το μήνυμα ώστε να μην μπορεί να διαβαστεί εύκολα από κάποιον που δεν πρέπει.',
+ 'Στη μέθοδο του Καίσαρα με μετατόπιση 3, κάθε γράμμα αντικαθίσταται από το γράμμα που βρίσκεται 3 θέσεις πιο πέρα στο αλφάβητο. Για παράδειγμα, Α → Δ και Β → Ε.',
+ 'Βρες πρώτα το απλό γράμμα στην επάνω σειρά. Έπειτα επίλεξε το γράμμα ακριβώς από κάτω, στη σειρά «Κωδικοποιημένο».',
+ 'Η διάσπαση ενός προβλήματος σε μικρότερα υπο-προβλήματα βοηθά να οργανώνουμε καλύτερα τη λύση. Εδώ η σειρά είναι: διαβάζω είσοδο, κωδικοποιώ, εμφανίζω έξοδο.',
+ 'Ο αλγόριθμος επαναλαμβάνει την ίδια διαδικασία για όλα τα γράμματα: διαβάζει γράμμα, βρίσκει τη θέση του και γράφει το γράμμα στη θέση + 3.',
+ 'Μεταβλητή είναι ένα όνομα που μπορεί να κρατά διαφορετικές τιμές. Στον αλγόριθμο, η «θέση» αλλάζει ανάλογα με το γράμμα που διαβάζεται.',
+ 'Συμπλήρωσε κάθε κελί χρησιμοποιώντας τον πίνακα του αλφαβήτου. Κάθε σωστή επιλογή κλειδώνει. Η δραστηριότητα ολοκληρώνεται όταν συμπληρωθεί σωστά ολόκληρος ο πίνακας.',
+ 'Στη συνολική δοκιμή θα χρειαστεί να θυμηθείς γιατί κρυπτογραφούμε, να εφαρμόσεις μετατόπιση 3 και να αναγνωρίσεις τη μεταβλητή.',
+ 'Δες τη μετατόπιση που εμφανίζεται και μέτρα τόσες θέσεις προς τα δεξιά από κάθε γράμμα. Αν περάσεις το Ω, συνέχισε από το Α. Η δραστηριότητα θα ελέγξει μόνο ολόκληρο το μήνυμα, αφού επιλέξεις όλα τα γράμματα.',
+ 'Διάλεξε ένα επίπεδο για κάθε στόχο. Η αυτοαξιολόγηση δεν έχει σωστή ή λάθος απάντηση.'
+];
+
+let stage=0,completed=new Set(),finished=false,transitioning=false;
+const activity=document.getElementById('activity');
+const feedback=document.getElementById('feedback');
+const kicker=document.getElementById('kicker');
+const stageTitle=document.getElementById('stageTitle');
+const instruction=document.getElementById('instruction');
+const dots=document.getElementById('dots');
+const fill=document.getElementById('fill');
+const progressLabel=document.getElementById('progressLabel');
+const progressPercent=document.getElementById('progressPercent');
+
+function setFeedback(msg,type='info'){
+  feedback.textContent=msg;
+  feedback.className='feedback '+(type===true?'good':type===false?'bad':type);
+}
+function clearFeedback(){feedback.textContent='';feedback.className='feedback'}
+function shuffleCopy(arr){
+  const a=[...arr];
+  for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}
+  return a;
+}
+function updateProgress(){
+  const done=completed.size;
+  const pct=Math.round(done/ACTIVITIES.length*100);
+  fill.style.width=pct+'%';
+  progressPercent.textContent=pct+'%';
+  progressLabel.textContent=finished?'Ολοκληρώθηκε':`Δραστηριότητα ${stage+1} από ${ACTIVITIES.length}`;
+  dots.innerHTML=ACTIVITIES.map((_,i)=>`<span class="step-dot ${completed.has(i)?'done':''} ${i===stage&&!finished?'active':''}">${i+1}</span>`).join('');
+}
+function advance(delay=950){
+  if(transitioning)return;
+  transitioning=true;completed.add(stage);updateProgress();
+  setTimeout(()=>{stage=Math.min(stage+1,ACTIVITIES.length-1);transitioning=false;render()},delay);
+}
+function wrong(el,msg){
+  el.classList.add('wrong');setTimeout(()=>el.classList.remove('wrong'),520);setFeedback(msg,false);
+}
+function alphabetHTML(clickable=false,targetPlain=null,handler=''){
+  return `<div class="alphabet-table"><div class="alpha-grid">
+    <div class="alpha-cell alpha-label head">θέση</div>${PLAIN.map((_,i)=>`<div class="alpha-cell head">${i+1}</div>`).join('')}
+    <div class="alpha-cell alpha-label">Απλό</div>${PLAIN.map(x=>`<div class="alpha-cell ${targetPlain===x?'target':''}">${x}</div>`).join('')}
+    <div class="alpha-cell alpha-label">Κωδικοποιημένο</div>${ENCODED.map((x,i)=>`<div class="alpha-cell ${clickable?'clickable':''}" ${clickable?`data-plain="${PLAIN[i]}" data-encoded="${x}" ${handler}`:''}>${x}</div>`).join('')}
+  </div></div>`;
+}
+
+/* Activity 1 */
+function r1(){
+  activity.innerHTML=`<div class="lab-card"><div class="lab-head"><strong>Σενάριο επικοινωνίας</strong><span class="lab-tag">Ασφάλεια</span></div><div class="lab-body">
+  <div class="message-demo"><div class="message-box"><small>Αρχικό μήνυμα</small><br><code>ΣΥΝΑΝΤΗΣΗ</code></div><div class="arrow">→</div><div class="message-box"><small>Κωδικοποιημένο μήνυμα</small><br><code>ΦΨΠΔΠΧΚΦΚ</code></div></div>
+  <div class="prompt">Ένα μήνυμα μεταδίδεται μέσα από ένα δίκτυο. Γιατί είναι χρήσιμο να κρυπτογραφηθεί πριν σταλεί;</div>
+  <div class="choice-grid">${shuffleCopy([
+    {id:'1',txt:'Για να είναι πιο σύντομο και να χρειάζεται λιγότερο χώρο.'},
+    {id:'2',txt:'Για να μην μπορεί να διαβαστεί εύκολα αν το υποκλέψει κάποιος.'},
+    {id:'3',txt:'Για να εμφανίζεται με μεγαλύτερα γράμματα στην οθόνη.'},
+    {id:'4',txt:'Για να αλλάζει αυτόματα η γλώσσα του μηνύματος.'}
+  ]).map(x=>`<button class="choice" data-a="${x.id}">${x.txt}</button>`).join('')}</div></div></div>`;
+  document.querySelectorAll('[data-a]').forEach(b=>b.onclick=()=>{
+    if(b.dataset.a!=='2')return wrong(b,'Σκέψου ποιος είναι ο στόχος της κρυπτογράφησης όταν τα δεδομένα ταξιδεύουν σε ένα δίκτυο.');
+    b.classList.add('selected');setFeedback('Σωστά. Η κρυπτογράφηση ενισχύει την ασφάλεια της επικοινωνίας, επειδή το μήνυμα δεν διαβάζεται εύκολα αν υποκλαπεί.',true);advance(1200);
+  });
+}
+
+/* Activity 2 */
+const a2=[{p:'Α',e:'Δ'},{p:'Θ',e:'Λ'},{p:'Ψ',e:'Β'}]; let a2i=0;
+function r2(){
+  const q=a2[a2i];
+  activity.innerHTML=`<div class="lab-card"><div class="lab-head"><strong>Πίνακας αντικατάστασης γραμμάτων</strong><span class="lab-tag">Μετατόπιση 3</span></div><div class="lab-body">
+  <div class="prompt">Κωδικοποίησε το γράμμα <span class="current-letter">${q.p}</span>. Επίλεξε το σωστό γράμμα από τη σειρά «Κωδικοποιημένο».</div>
+  ${alphabetHTML(true,q.p,'data-a2="1"')}
+  <div class="encoding-progress">${a2.map((x,i)=>`<span class="encoded-slot ${i<a2i?'done':i===a2i?'current':''}">${i<a2i?x.e:''}</span>`).join('')}</div>
+  </div></div>`;
+  document.querySelectorAll('[data-a2]').forEach(cell=>cell.onclick=()=>{
+    if(cell.dataset.plain!==q.p)return wrong(cell,'Βρες πρώτα το απλό γράμμα στην επάνω σειρά και επίλεξε το γράμμα ακριβώς από κάτω.');
+    cell.classList.add('corrected');a2i++;
+    if(a2i===a2.length){setFeedback('Σωστά. Εφάρμοσες τη μετατόπιση 3 σε διαφορετικά σημεία του αλφαβήτου.',true);return advance(1050)}
+    setFeedback('Σωστά. Συνέχισε με το επόμενο γράμμα.','info');setTimeout(r2,550);
+  });
+}
+
+/* Activity 3 */
+const a3word=['Μ','Η','Ν','Υ','Μ','Α']; const a3expected=a3word.map(x=>ENCODED[PLAIN.indexOf(x)]); let a3i=0;
+function r3(){
+  const p=a3word[a3i];
+  activity.innerHTML=`<div class="lab-card"><div class="lab-head"><strong>Κωδικοποίηση λέξης</strong><span class="lab-tag">ΜΗΝΥΜΑ</span></div><div class="lab-body">
+  <div class="prompt">Τρέχον γράμμα: <span class="current-letter">${p}</span> · Επίλεξε το κωδικοποιημένο γράμμα του.</div>
+  ${alphabetHTML(true,p,'data-a3="1"')}
+  <div class="encoding-progress">${a3word.map((x,i)=>`<span class="encoded-slot ${i<a3i?'done':i===a3i?'current':''}">${i<a3i?a3expected[i]:''}</span>`).join('')}</div>
+  </div></div>`;
+  document.querySelectorAll('[data-a3]').forEach(cell=>cell.onclick=()=>{
+    if(cell.dataset.plain!==p)return wrong(cell,'Ακολούθησε την ίδια στήλη: απλό γράμμα επάνω, κωδικοποιημένο γράμμα κάτω.');
+    a3i++;
+    if(a3i===a3word.length){setFeedback(`Σωστά. Η λέξη ΜΗΝΥΜΑ κωδικοποιείται ως ${a3expected.join('')}.`,true);return advance(1200)}
+    setFeedback('Σωστά. Προχώρησε στο επόμενο γράμμα.','info');setTimeout(r3,420);
+  });
+}
+
+/* Activity 4 */
+const decomp=[
+ {id:'input',txt:'Διάβασε τους χαρακτήρες ως είσοδο.'},
+ {id:'encode',txt:'Κωδικοποίησε τους χαρακτήρες με τη μέθοδο του Καίσαρα.'},
+ {id:'output',txt:'Εμφάνισε τους κωδικοποιημένους χαρακτήρες ως έξοδο.'}
+];
+let decompPlaced=[];
+function r4(){
+  const remaining=shuffleCopy(decomp.filter(x=>!decompPlaced.includes(x.id)));
+  activity.innerHTML=`<div class="lab-card"><div class="lab-head"><strong>Αποσύνθεση προβλήματος</strong><span class="lab-tag">3 υπο-προβλήματα</span></div><div class="lab-body">
+  <div class="prompt">Επίλεξε διαδοχικά τις ενέργειες με τη σειρά που πρέπει να γίνουν.</div>
+  <div class="order-strip">${[0,1,2].map(i=>`<div class="order-slot"><span class="order-num">${i+1}</span><span class="order-text">${decompPlaced[i]?decomp.find(x=>x.id===decompPlaced[i]).txt:'—'}</span></div>`).join('')}</div>
+  <div class="sequence">${remaining.map(x=>`<button class="seq-card" data-decomp="${x.id}">${x.txt}</button>`).join('')}</div>
+  </div></div>`;
+  document.querySelectorAll('[data-decomp]').forEach(b=>b.onclick=()=>{
+    const expected=decomp[decompPlaced.length].id;
+    if(b.dataset.decomp!==expected)return wrong(b,'Αυτή η ενέργεια δεν είναι η επόμενη στη σειρά. Σκέψου τη διαδρομή είσοδος → επεξεργασία → έξοδος.');
+    decompPlaced.push(b.dataset.decomp);
+    if(decompPlaced.length===3){setFeedback('Σωστά. Έσπασες το πρόβλημα σε είσοδο, κωδικοποίηση και έξοδο.',true);return advance(1150)}
+    setFeedback('Σωστά. Συνέχισε με το επόμενο υπο-πρόβλημα.','info');setTimeout(r4,450);
+  });
+}
+
+/* Activity 5 */
+const algo=[
+ 'Επανάλαβε ώσπου να τελειώσουν όλα τα γράμματα',
+ 'Διάβασε το επόμενο γράμμα',
+ 'Βρες τη θέση του γράμματος στο αλφάβητο',
+ 'Γράψε το γράμμα του αλφαβήτου που υπάρχει στη θέση + 3'
+];
+let algoPlaced=[];
+function r5(){
+  const remaining=shuffleCopy(algo.map((txt,i)=>({i,txt})).filter(x=>!algoPlaced.includes(x.i)));
+  activity.innerHTML=`<div class="lab-card"><div class="lab-head"><strong>Αλγόριθμος 1</strong><span class="lab-tag">Ψευδοκώδικας</span></div><div class="lab-body">
+  <div class="prompt">Επίλεξε τις εντολές μία-μία στη σωστή σειρά.</div>
+  <div class="code-panel">${[0,1,2,3].map(i=>`<div class="code-line"><span class="n">${i+1}</span><span>${algoPlaced[i]!==undefined?algo[algoPlaced[i]]:'…'}</span></div>`).join('')}</div>
+  <div class="sequence" style="grid-template-columns:repeat(2,1fr)">${remaining.map(x=>`<button class="seq-card" data-algo="${x.i}">${x.txt}</button>`).join('')}</div>
+  </div></div>`;
+  document.querySelectorAll('[data-algo]').forEach(b=>b.onclick=()=>{
+    const expected=algoPlaced.length;
+    if(Number(b.dataset.algo)!==expected)return wrong(b,'Η σειρά δεν είναι σωστή. Σκέψου τι χρειάζεται να κάνει ο αλγόριθμος πριν μπορέσει να γράψει το νέο γράμμα.');
+    algoPlaced.push(expected);
+    if(algoPlaced.length===4){setFeedback('Σωστά. Ο Αλγόριθμος 1 επαναλαμβάνει την ίδια διαδικασία για κάθε γράμμα του μηνύματος.',true);return advance(1150)}
+    setFeedback('Σωστά. Συνέχισε με την επόμενη εντολή.','info');setTimeout(r5,420);
+  });
+}
+
+/* Activity 6 */
+let varPhase=0;
+function r6(){
+  if(varPhase===0){
+    activity.innerHTML=`<div class="lab-card"><div class="lab-head"><strong>Εκτέλεση του αλγόριθμου</strong><span class="lab-tag">Μεταβλητή</span></div><div class="lab-body">
+    <div class="prompt">Ποιο στοιχείο παίρνει διαφορετική τιμή ανάλογα με το γράμμα που διαβάζεται; Κάνε κλικ πάνω του.</div>
+    <div class="code-panel">
+      <div class="code-line keyword"><span class="n">1</span><span>μετατόπιση = 3</span></div>
+      <div class="code-line"><span class="n">2</span><span>Διάβασε το επόμενο γράμμα</span></div>
+      <div class="code-line variable" data-var="position"><span class="n">3</span><span>θέση = θέση του γράμματος στο αλφάβητο</span></div>
+      <div class="code-line variable" data-var="shift"><span class="n">4</span><span>γράψε γράμμα στη θέση + 3</span></div>
+    </div></div></div>`;
+    document.querySelectorAll('[data-var]').forEach(el=>el.onclick=()=>{
+      if(el.dataset.var!=='position')return wrong(el,'Η μετατόπιση παραμένει 3. Αναζήτησε το στοιχείο που αλλάζει όταν αλλάζει το γράμμα.');
+      varPhase=1;setFeedback('Σωστά. Η «θέση» είναι η μεταβλητή.','info');setTimeout(r6,500);
+    });
+  }else{
+    const vals=[2,15,7,8,5,9,1];
+    activity.innerHTML=`<div class="lab-card"><div class="lab-head"><strong>Η ίδια μεταβλητή, διαφορετικές τιμές</strong><span class="lab-tag">ΒΟΗΘΕΙΑ</span></div><div class="lab-body">
+    <div class="variable-console"><div class="var-box"><div class="var-name">όνομα μεταβλητής</div><div class="var-value">θέση</div></div>
+    <div class="trace">${['Β','Ο','Η','Θ','Ε','Ι','Α'].map((x,i)=>`<span class="trace-chip">${x} → ${vals[i]}</span>`).join('')}</div></div>
+    <div class="prompt">Ποια περιγραφή ταιριάζει καλύτερα στη μεταβλητή;</div>
+    <div class="choice-grid">${shuffleCopy([
+      {id:'1',txt:'Έχει ένα όνομα και η τιμή της μπορεί να αλλάζει καθώς εκτελείται ο αλγόριθμος.'},
+      {id:'2',txt:'Έχει διαφορετικό όνομα σε κάθε επανάληψη αλλά πάντα την ίδια τιμή.'},
+      {id:'3',txt:'Είναι μόνο ένας αριθμός που δεν χρησιμοποιείται μέσα σε αλγόριθμο.'},
+      {id:'4',txt:'Είναι το ίδιο πράγμα με το κρυπτογραφημένο μήνυμα.'}
+    ]).map(x=>`<button class="choice" data-vdef="${x.id}">${x.txt}</button>`).join('')}</div></div></div>`;
+    document.querySelectorAll('[data-vdef]').forEach(b=>b.onclick=()=>{
+      if(b.dataset.vdef!=='1')return wrong(b,'Παρατήρησε ότι το όνομα «θέση» μένει ίδιο, ενώ οι αριθμητικές τιμές αλλάζουν.');
+      b.classList.add('selected');setFeedback('Σωστά. Μια μεταβλητή έχει ένα όνομα και μπορεί να παίρνει διαφορετικές τιμές.',true);advance(1200);
+    });
+  }
+}
+
+/* Activity 7 */
+const traceLetters=['Φ','Ω','Τ','Ι','Α'];
+const tracePos=[21,24,19,9,1];
+// The Caesar shift wraps around the 24-letter Greek alphabet.
+// Example: Ω is at position 24, so 24 + 3 wraps to position 3 (Γ), not 27.
+const tracePlus=[24,3,22,12,4];
+const traceEnc=['Ω','Γ','Χ','Μ','Δ'];
+let traceSolved=new Set();
+function selectOptions(nums,placeholder){
+  return `<option value="">${placeholder}</option>${nums.map(x=>`<option value="${x}">${x}</option>`).join('')}`;
+}
+function traceSelect(key,values){
+  return `<select class="trace-select" data-trace-key="${key}">${selectOptions(values,'—')}</select>`;
+}
+function traceAlphabetHTML(){
+  return `<div class="alphabet-table"><div class="alpha-grid">
+    <div class="alpha-cell alpha-label head">θέση</div>${PLAIN.map((_,i)=>`<div class="alpha-cell head">${i+1}</div>`).join('')}
+    <div class="alpha-cell alpha-label">Αλφάβητο</div>${PLAIN.map(x=>`<div class="alpha-cell">${x}</div>`).join('')}
+  </div></div>`;
+}
+function r7(){
+  activity.innerHTML=`<div class="lab-card"><div class="lab-head"><strong>Πίνακας εκτέλεσης</strong><span class="lab-tag">ΦΩΤΙΑ</span></div><div class="lab-body">
+    <div class="prompt">Συμπλήρωσε ολόκληρο τον πίνακα. Κάθε σωστή επιλογή κλειδώνει στο κελί της. Όταν το «θέση + 3» ξεπερνά το 24, συνέχισε πάλι από την αρχή του αλφαβήτου.</div>
+    ${traceAlphabetHTML()}
+    <div class="trace-table"><div class="trace-grid">
+      <div class="trace-cell label">Γράμμα της λέξης</div>${traceLetters.map(x=>`<div class="trace-cell letter">${x}</div>`).join('')}
+      <div class="trace-cell label">Τιμή μεταβλητής «θέση»</div>${traceLetters.map((_,i)=>`<div class="trace-cell">${traceSelect(`p${i}`,[...Array(24)].map((_,j)=>j+1))}</div>`).join('')}
+      <div class="trace-cell label">Τιμή του «θέση + 3»</div>${traceLetters.map((_,i)=>`<div class="trace-cell">${traceSelect(`s${i}`,[...Array(24)].map((_,j)=>j+1))}</div>`).join('')}
+      <div class="trace-cell label">Κωδικοποιημένο γράμμα</div>${traceLetters.map((_,i)=>`<div class="trace-cell">${traceSelect(`e${i}`,PLAIN)}</div>`).join('')}
+    </div></div>
+  </div></div>`;
+
+  const expected={};
+  traceLetters.forEach((_,i)=>{expected[`p${i}`]=String(tracePos[i]);expected[`s${i}`]=String(tracePlus[i]);expected[`e${i}`]=traceEnc[i]});
+
+  document.querySelectorAll('[data-trace-key]').forEach(sel=>{
+    const key=sel.dataset.traceKey;
+    if(traceSolved.has(key)){
+      sel.value=expected[key];sel.disabled=true;sel.parentElement.classList.add('solved');
+    }
+    sel.onchange=()=>{
+      if(sel.value!==expected[key]){
+        sel.value='';
+        setFeedback('Η επιλογή δεν είναι σωστή. Έλεγξε ξανά τη θέση του γράμματος και τη μετατόπιση.',false);
+        return;
+      }
+      traceSolved.add(key);
+      sel.disabled=true;
+      sel.parentElement.classList.add('solved');
+      if(traceSolved.size===15){
+        setFeedback(`Σωστά. Συμπλήρωσες ολόκληρη την εκτέλεση και σχημάτισες το ${traceEnc.join('')}.`,true);
+        advance(1350);
+      }else{
+        setFeedback(`Σωστά. Έχεις συμπληρώσει ${traceSolved.size} από τα 15 στοιχεία.`,'info');
+      }
+    };
+  });
+}
+
+/* Activity 8 */
+let finalStep=0,finalIndex=0;
+const finalWord=['Δ','Ω','Ρ','Ο'];
+const finalEnc=finalWord.map(x=>ENCODED[PLAIN.indexOf(x)]);
+function finalStatus(){
+  return `<div class="final-status">${['Σκοπός κρυπτογράφησης','Εφαρμογή μετατόπισης','Μεταβλητή'].map((x,i)=>`<span class="final-chip ${i<finalStep?'done':''}">${x}</span>`).join('')}</div>`;
+}
+function r8(){
+  if(finalStep===0){
+    activity.innerHTML=`${finalStatus()}<div class="lab-card"><div class="lab-head"><strong>Αποστολή μηνύματος σε δίκτυο</strong><span class="lab-tag">Τελική αποστολή</span></div><div class="lab-body">
+    <div class="prompt">Θέλεις να στείλεις ένα μήνυμα έτσι ώστε, αν υποκλαπεί, να μην είναι εύκολο να διαβαστεί. Ποια ενέργεια επιλέγεις;</div>
+    <div class="choice-grid">${shuffleCopy([
+      {id:'1',txt:'Το κρυπτογραφώ πριν το στείλω.'},
+      {id:'2',txt:'Αλλάζω μόνο το μέγεθος των γραμμάτων.'},
+      {id:'3',txt:'Το αποθηκεύω δύο φορές.'},
+      {id:'4',txt:'Προσθέτω ένα κενό στο τέλος.'}
+    ]).map(x=>`<button class="choice" data-final-purpose="${x.id}">${x.txt}</button>`).join('')}</div></div></div>`;
+    document.querySelectorAll('[data-final-purpose]').forEach(b=>b.onclick=()=>{
+      if(b.dataset.finalPurpose!=='1')return wrong(b,'Σκέψου ποια ενέργεια αλλάζει το μήνυμα ώστε να μην διαβάζεται εύκολα αν υποκλαπεί.');
+      finalStep=1;setFeedback('Σωστά. Τώρα εφάρμοσε τη μέθοδο του Καίσαρα.','info');setTimeout(r8,550);
+    });
+  }else if(finalStep===1){
+    const p=finalWord[finalIndex];
+    activity.innerHTML=`${finalStatus()}<div class="lab-card"><div class="lab-head"><strong>Κωδικοποίησε τη λέξη ΔΩΡΟ</strong><span class="lab-tag">Μετατόπιση 3</span></div><div class="lab-body">
+    <div class="prompt">Τρέχον γράμμα: <span class="current-letter">${p}</span> · Επίλεξε το κωδικοποιημένο γράμμα.</div>
+    ${alphabetHTML(true,p,'data-final-enc="1"')}
+    <div class="encoding-progress">${finalWord.map((x,i)=>`<span class="encoded-slot ${i<finalIndex?'done':i===finalIndex?'current':''}">${i<finalIndex?finalEnc[i]:''}</span>`).join('')}</div>
+    </div></div>`;
+    document.querySelectorAll('[data-final-enc]').forEach(cell=>cell.onclick=()=>{
+      if(cell.dataset.plain!==p)return wrong(cell,'Εντόπισε πρώτα το απλό γράμμα και ακολούθησε την ίδια στήλη προς τα κάτω.');
+      finalIndex++;
+      if(finalIndex===finalWord.length){finalStep=2;setFeedback(`Σωστά. Η λέξη ΔΩΡΟ έγινε ${finalEnc.join('')}.`,'info');return setTimeout(r8,650)}
+      setFeedback('Σωστά. Συνέχισε.','info');setTimeout(r8,350);
+    });
+  }else{
+    activity.innerHTML=`${finalStatus()}<div class="lab-card"><div class="lab-head"><strong>Τι μεταβαλλόταν;</strong><span class="lab-tag">Τελικό βήμα</span></div><div class="lab-body">
+    <div class="summary-grid">
+      <div class="summary-card"><b>μετατόπιση</b>3 σε όλη την εκτέλεση</div>
+      <div class="summary-card"><b>θέση</b>4 → 24 → 17 → 15</div>
+      <div class="summary-card"><b>λέξη</b>ΔΩΡΟ</div>
+    </div>
+    <div class="prompt">Ποιο από τα παραπάνω είναι η μεταβλητή του αλγόριθμου;</div>
+    <div class="choice-grid">${shuffleCopy([
+      {id:'shift',txt:'μετατόπιση'},
+      {id:'position',txt:'θέση'},
+      {id:'word',txt:'λέξη'},
+      {id:'alphabet',txt:'αλφάβητο'}
+    ]).map(x=>`<button class="choice" data-final-var="${x.id}">${x.txt}</button>`).join('')}</div></div></div>`;
+    document.querySelectorAll('[data-final-var]').forEach(b=>b.onclick=()=>{
+      if(b.dataset.finalVar!=='position')return wrong(b,'Παρατήρησε ποια τιμή αλλάζει σε κάθε γράμμα της λέξης.');
+      finalStep=3;b.classList.add('selected');setFeedback('Μπράβο. Ολοκλήρωσες τη συνολική δοκιμή: προστάτεψες το μήνυμα, εφάρμοσες τη μετατόπιση και αναγνώρισες τη μεταβλητή.',true);advance(1450);
+    });
+  }
+}
+
+/* Activity 9 */
+const challengeWords=['ΥΠΑΤΙΑ','ΗΡΩΝΑΣ','ΤΑΛΩΣ'];
+let challengeWord=null;
+let challengeShift=null;
+let challengeBuilt=[];
+let challengeLocked=false;
+function challengeExpected(){
+  return [...challengeWord].map(ch=>PLAIN[(PLAIN.indexOf(ch)+challengeShift)%PLAIN.length]);
+}
+function challengeAlphabetRow(){
+  return `<div class="challenge-alpha-scroll"><div class="challenge-alphabet">${PLAIN.map((ch,i)=>`<button class="alpha-pick" data-ch-letter="${ch}" aria-label="${ch}, θέση ${i+1}"><small>${i+1}</small>${ch}</button>`).join('')}</div></div>`;
+}
+function r9(){
+  if(challengeWord===null)challengeWord=challengeWords[Math.floor(Math.random()*challengeWords.length)];
+  if(challengeShift===null)challengeShift=Math.floor(Math.random()*23)+1;
+  const expected=challengeExpected();
+  activity.innerHTML=`<div class="challenge-wrap"><div class="lab-card"><div class="lab-head"><strong>Κρυπτογράφηση χωρίς έτοιμη κωδικοποιημένη σειρά</strong><span class="lab-tag">Νέα μετατόπιση</span></div><div class="lab-body">
+    <div class="challenge-brief"><div><div style="font-size:12px;font-weight:900;color:#748096;text-transform:uppercase;letter-spacing:.08em">Αρχικό μήνυμα</div><div class="challenge-word">${challengeWord}</div></div><div class="shift-badge"><span>Μετατόπιση</span>+${challengeShift}</div></div>
+    <div class="prompt">Κάνε κλικ στα γράμματα της μίας σειράς του αλφαβήτου για να δημιουργήσεις το κωδικοποιημένο μήνυμα. Η απάντηση θα ελεγχθεί μόνο όταν συμπληρώσεις όλα τα γράμματα.</div>
+    ${challengeAlphabetRow()}
+    <div class="challenge-result">${[...challengeWord].map((_,i)=>`<div class="challenge-slot ${challengeBuilt[i]?'filled':''}">${challengeBuilt[i]||''}</div>`).join('')}</div>
+    <div class="challenge-actions"><button class="secondary-btn" id="challengeUndo" ${challengeBuilt.length===0||challengeLocked?'disabled':''}>↶ Αφαίρεση τελευταίου</button><button class="secondary-btn" id="challengeClear" ${challengeBuilt.length===0||challengeLocked?'disabled':''}>Καθαρισμός</button></div>
+    <div class="challenge-note">Αν περάσεις το Ω, συνέχισε από το Α. Δεν δίνεται έτοιμη κωδικοποιημένη σειρά.</div>
+  </div></div></div>`;
+
+  document.querySelectorAll('[data-ch-letter]').forEach(btn=>btn.onclick=()=>{
+    if(challengeLocked||challengeBuilt.length>=challengeWord.length)return;
+    challengeBuilt.push(btn.dataset.chLetter);
+    if(challengeBuilt.length===challengeWord.length){
+      challengeLocked=true;
+      const ok=challengeBuilt.join('')===expected.join('');
+      if(ok){
+        r9();
+        setFeedback(`Σωστά. Με μετατόπιση +${challengeShift}, το μήνυμα ${challengeWord} κωδικοποιείται ως ${expected.join('')}.`,true);
+        return advance(1450);
+      }
+      r9();
+      setFeedback('Το τελικό κωδικοποιημένο μήνυμα δεν είναι σωστό. Θα αδειάσει ώστε να το δημιουργήσεις ξανά από την αρχή.',false);
+      setTimeout(()=>{challengeBuilt=[];challengeLocked=false;r9();setFeedback('Προσπάθησε ξανά με την ίδια μετατόπιση.','info')},1000);
+      return;
+    }
+    r9();
+  });
+  const undo=document.getElementById('challengeUndo');
+  if(undo)undo.onclick=()=>{if(challengeLocked||!challengeBuilt.length)return;challengeBuilt.pop();r9()};
+  const clear=document.getElementById('challengeClear');
+  if(clear)clear.onclick=()=>{if(challengeLocked)return;challengeBuilt=[];r9()};
+}
+
+/* Activity 10 */
+const levels=['Χρειάζομαι βοήθεια','Έχω καταλάβει αλλά έχω απορίες','Έχω καταλάβει αρκετά καλά','Έχω καταλάβει και μπορώ να εξηγήσω'];
+const objectives=[
+ 'Τι είναι μία μέθοδος κρυπτογράφησης.',
+ 'Πώς κωδικοποιούνται τα δεδομένα με τη μέθοδο του Καίσαρα.',
+ 'Τι είναι μια μεταβλητή και γιατί χρησιμοποιείται στους αλγόριθμους και τα προγράμματα.'
+];
+let selfSel=[null,null,null];
+function r10(){
+  activity.innerHTML=`<div class="self-wrap"><div class="self-table"><div class="self-head">Αξιολογώ πόσο καλά έμαθα</div>${levels.map(x=>`<div class="self-head">${x}</div>`).join('')}
+  ${objectives.map((o,row)=>`<div class="self-objective">✓ ${o}</div>${levels.map((l,col)=>`<button class="self-cell ${selfSel[row]===col?'selected':''}" data-self="${row}:${col}">${l}</button>`).join('')}`).join('')}</div>
+  <div class="self-note">Διάλεξε ένα επίπεδο για κάθε στόχο.</div>
+  <div class="finish-actions"><button class="primary" id="finishBtn" ${selfSel.some(x=>x===null)?'disabled':''}>Ολοκλήρωση</button><button class="secondary-btn" id="restartBtn">↻ Επανάληψη δραστηριότητας</button></div></div>`;
+  document.querySelectorAll('[data-self]').forEach(b=>b.onclick=()=>{
+    const [r,c]=b.dataset.self.split(':').map(Number);selfSel[r]=selfSel[r]===c?null:c;r10();
+  });
+  document.getElementById('restartBtn').onclick=restart;
+  const f=document.getElementById('finishBtn');
+  f.onclick=()=>{
+    if(selfSel.some(x=>x===null))return;
+    completed.add(9);finished=true;updateProgress();setFeedback('Η αυτοαξιολόγηση ολοκληρώθηκε.',true);setTimeout(render,650);
+  };
+}
+function renderCompletion(){
+  kicker.textContent='ΟΛΟΚΛΗΡΩΣΗ';stageTitle.textContent='Μάθημα 1 ολοκληρώθηκε';
+  instruction.textContent='Ολοκλήρωσες τη διερεύνηση της μεθόδου του Καίσαρα, του Αλγόριθμου 1 και της μεταβλητής «θέση».';
+  activity.innerHTML=`<div class="completion"><span class="badge">Ενότητα 1 · Μάθημα 1</span><h2>Κρυπτογράφησες με τη μέθοδο του Καίσαρα</h2><p>Χρησιμοποίησες τη μέθοδο του Καίσαρα με διαφορετικές μετατοπίσεις, οργάνωσες τον αλγόριθμο σε βήματα και παρακολούθησες πώς η μεταβλητή «θέση» παίρνει διαφορετικές τιμές κατά την εκτέλεση.</p><button class="secondary-btn" id="restartComplete">↻ Επανάληψη μαθήματος</button></div>`;
+  document.getElementById('restartComplete').onclick=restart;clearFeedback();
+}
+function resetState(){
+  stage=0;completed=new Set();finished=false;transitioning=false;
+  a2i=0;a3i=0;decompPlaced=[];algoPlaced=[];varPhase=0;traceSolved=new Set();finalStep=0;finalIndex=0;challengeWord=null;challengeShift=null;challengeBuilt=[];challengeLocked=false;selfSel=[null,null,null];
+}
+function restart(){resetState();render()}
+const renderers=[r1,r2,r3,r4,r5,r6,r7,r8,r9,r10];
+function render(){
+  clearFeedback();updateProgress();
+  if(finished){renderCompletion();window.scrollTo({top:0,behavior:'smooth'});return}
+  const s=ACTIVITIES[stage];kicker.textContent=`Δραστηριότητα ${stage+1}`;stageTitle.textContent=s.t;instruction.textContent=s.i;
+  renderers[stage]();window.scrollTo({top:0,behavior:'smooth'});
+}
+
+/* Help */
+const modal=document.getElementById('helpModal');
+document.getElementById('helpBtn').onclick=()=>{document.getElementById('helpText').textContent=HELP[stage];modal.classList.add('open')};
+document.getElementById('closeHelp').onclick=()=>modal.classList.remove('open');
+document.getElementById('understoodBtn').onclick=()=>modal.classList.remove('open');
+modal.onclick=e=>{if(e.target===modal)modal.classList.remove('open')};
+document.getElementById('speakHelp').onclick=()=>{
+  if(!('speechSynthesis' in window))return;
+  speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(HELP[stage]);u.lang='el-GR';u.rate=.95;speechSynthesis.speak(u);
+};
+
+resetState();render();
+</script>
+
+<footer class="nk-license" aria-label="Πληροφορίες δημιουργού και άδειας χρήσης">
+  <div><strong>Created by Nikos Kalakos · © 2026</strong></div>
+  <div>Original educational content and simulation design licensed under <a class="cc-badge" href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank" rel="license noopener noreferrer">CC BY-NC 4.0</a>.</div>
+  <div>Source code © 2026 Nikos Kalakos.</div>
+  <div>Third-party and textbook materials remain subject to the rights and licences of their respective copyright holders.</div>
+</footer>
+</body>
+</html>

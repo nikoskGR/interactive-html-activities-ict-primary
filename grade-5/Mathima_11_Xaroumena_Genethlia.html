@@ -1,0 +1,364 @@
+<!--
+ICT Educational Simulation
+Created by Nikos Kalakos
+Copyright © 2026 Nikos Kalakos
+
+Original educational content and simulation design licensed under CC BY-NC 4.0.
+Source code © 2026 Nikos Kalakos.
+Third-party and textbook materials remain subject to the rights and licences of their respective copyright holders.
+-->
+<!DOCTYPE html>
+<html lang="el">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="author" content="Nikos Kalakos">
+<meta name="copyright" content="© 2026 Nikos Kalakos">
+<meta name="license" content="Original educational content and simulation design: CC BY-NC 4.0; source code © 2026 Nikos Kalakos; third-party and textbook materials excluded.">
+<title>Μάθημα 11 – Χαρούμενα γενέθλια!</title>
+<style>
+:root{
+  --unit:#EA922C;--unit-dark:#B86610;--unit-soft:#FFF4E6;
+  --secondary:#545F99;--secondary-dark:#3D477C;--secondary-soft:#EEF0F8;
+  --ink:#25324A;--muted:#68758A;--line:#D8DEEA;--bg:#F5F7FB;
+  --good:#23845A;--good-soft:#E9F7F0;--bad:#B64242;--bad-soft:#FDEEEE;
+  --basic:#3387D8;--input:#B64CB8;--music:#D53664;--loops:#2789C7;
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:Inter,"Segoe UI",Arial,sans-serif;color:var(--ink);background:radial-gradient(circle at 12% 8%,rgba(234,146,44,.09),transparent 28%),radial-gradient(circle at 90% 20%,rgba(84,95,153,.10),transparent 30%),#F4F6FA;font-size:16px}
+button,input{font:inherit}
+button{cursor:pointer}
+.shell-page{max-width:1280px;margin:0 auto;padding:18px}
+.hero{background:#fff;border:1px solid #E3E7EE;border-top:9px solid var(--unit);border-radius:18px;box-shadow:0 14px 35px rgba(45,55,86,.11);padding:20px 24px 18px;display:grid;grid-template-columns:1fr auto;gap:18px;align-items:center}
+.eyebrow{font-size:13px;font-weight:900;letter-spacing:.1em;text-transform:uppercase;color:var(--secondary)}.hero h1{margin:5px 0 0;font-size:31px;line-height:1.12;color:var(--secondary-dark)}.hero p{margin:8px 0 0;color:var(--muted);font-weight:700}.lesson-mark{min-width:118px;height:72px;border-radius:16px;background:linear-gradient(135deg,var(--secondary),var(--secondary-dark));color:#fff;display:grid;place-items:center;text-align:center;box-shadow:0 9px 22px rgba(84,95,153,.23)}.lesson-mark b{font-size:27px;line-height:1}.lesson-mark span{font-size:11px;font-weight:850;letter-spacing:.08em;text-transform:uppercase}
+.progress{margin:13px 0;background:#fff;border:1px solid #E1E5EC;border-radius:15px;padding:12px 15px;box-shadow:0 7px 20px rgba(48,58,87,.06)}.progress-top{display:flex;justify-content:space-between;gap:12px;align-items:center;color:#59667B;font-size:13px;font-weight:850}.bar{height:8px;background:#ECEFF4;border-radius:999px;overflow:hidden;margin:8px 0 10px}.fill{height:100%;width:0;background:linear-gradient(90deg,var(--unit),var(--secondary));transition:.3s ease}.steps{display:flex;gap:8px;flex-wrap:wrap;justify-content:center}.step-dot{width:29px;height:29px;border-radius:9px;border:1px solid #CDD3DE;background:#fff;color:#758197;display:grid;place-items:center;font-size:12px;font-weight:900}.step-dot.current{border:2px solid var(--unit);color:var(--unit-dark);background:var(--unit-soft);outline:none}.step-dot.done{border-color:var(--secondary);background:var(--secondary);color:#fff}
+.stage{background:#fff;border:1px solid #E0E5EF;border-radius:18px;box-shadow:0 10px 28px #27364b12;overflow:hidden}.stage-head{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;padding:18px 20px;border-bottom:1px solid #E8ECF3}.stage-kicker{font-size:12px;font-weight:950;color:var(--unit-dark);text-transform:uppercase}.stage-title{font-size:24px;margin:4px 0}.instruction{margin:0;color:#5C687C;font-weight:650;line-height:1.5}.help-btn{border:1px solid #C9D1E0;background:#fff;border-radius:11px;padding:9px 13px;font-weight:850;color:var(--secondary-dark);white-space:nowrap}.help-btn:hover{background:var(--secondary-soft)}
+.workspace{padding:16px 18px 20px}.task-strip{border-left:5px solid var(--unit);background:#FFF9F1;padding:12px 14px;border-radius:11px;margin-bottom:14px;font-weight:800;line-height:1.45}.feedback{min-height:0;margin-top:12px;border-radius:11px;font-weight:800;line-height:1.45}.feedback.show{padding:11px 13px;border:1px solid}.feedback.info{background:#F2F6FF;border-color:#C8D5EF;color:#46577C}.feedback.good{background:var(--good-soft);border-color:#AADBC5;color:#176943}.feedback.bad{background:var(--bad-soft);border-color:#F0BABA;color:#9B3030}
+.choice-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;max-width:820px;margin:12px auto}.choice{min-height:58px;border:1.5px solid #C9D2E2;background:#fff;border-radius:12px;padding:12px 14px;text-align:left;font-weight:850;color:#283650;transition:.15s}.choice:hover{border-color:#8897B3;transform:translateY(-1px)}.choice.correct{background:var(--good-soft);border-color:#7DC7A4}.choice.wrong{animation:shake .28s;background:var(--bad-soft);border-color:#E49A9A}@keyframes shake{25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
+.check-strip{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}.check-chip{border:1px solid #CCD4E2;background:#fff;border-radius:99px;padding:8px 11px;font-size:13px;font-weight:900;color:#637087}.check-chip.done{background:var(--good-soft);border-color:#91CDB0;color:#1F724E}
+
+/* MakeCode-like workspace */
+.mc-shell{border:1px solid #BCC7D8;border-radius:15px;overflow:hidden;background:#fff;box-shadow:0 8px 22px #35445d12}.mc-top{height:48px;background:#27345D;color:white;display:flex;align-items:center;gap:14px;padding:0 14px}.mc-logo{font-weight:950;letter-spacing:.02em}.mc-project{background:#ffffff16;border:1px solid #ffffff2e;border-radius:8px;padding:6px 10px;font-size:13px;font-weight:800}.mc-download{margin-left:auto;border:0;border-radius:8px;padding:7px 12px;background:#F1A43A;color:#252C42;font-weight:950}.mc-body{display:grid;grid-template-columns:285px 1fr;min-height:470px}.sim-pane{background:#F6F7FA;border-right:1px solid #CDD5E1;padding:12px}.sim-toolbar{display:flex;align-items:center;gap:7px;margin-bottom:9px}.sim-tool{border:1px solid #C6CFDD;background:#fff;border-radius:8px;padding:6px 9px;font-weight:900}.sim-title{font-size:12px;color:#6C788C;font-weight:850;margin-left:auto}.board-wrap{background:#E7E9EF;border:1px solid #CFD5E0;border-radius:13px;padding:16px 10px;display:flex;justify-content:center;position:relative}.microbit{position:relative;width:230px;height:310px;background:linear-gradient(145deg,#17191F,#252933);border-radius:20px 20px 34px 34px;box-shadow:0 7px 16px #1117,inset 0 0 0 2px #3C424D}.microbit:before,.microbit:after{content:"";position:absolute;bottom:-9px;width:45px;height:29px;background:#D7A928;border-radius:0 0 8px 8px;box-shadow:51px 0 #D7A928,102px 0 #D7A928,153px 0 #D7A928}.microbit:before{left:15px}.microbit:after{display:none}.mb-logo{position:absolute;top:13px;left:0;right:0;text-align:center;font-weight:950;color:#E7E9EE;font-size:18px;letter-spacing:.08em}.led-grid{position:absolute;left:50%;top:69px;transform:translateX(-50%);display:grid;grid-template-columns:repeat(5,14px);grid-template-rows:repeat(5,14px);gap:7px}.led{width:14px;height:14px;border-radius:50%;background:#4C242A;box-shadow:inset 0 0 0 2px #7A323D}.led.on{background:#FF3F50;box-shadow:0 0 9px #FF344E,inset 0 0 0 1px #FF8E98}.mb-button{position:absolute;top:185px;width:48px;height:48px;border-radius:50%;background:#222832;border:4px solid #B0B5BF;color:#fff;font-weight:950;display:grid;place-items:center;user-select:none}.mb-button:active{transform:scale(.94)}.mb-a{left:31px}.mb-b{right:31px}.mb-speaker{position:absolute;left:50%;bottom:41px;transform:translateX(-50%);color:#A9AFBB;font-size:18px}.tempo-monitor{margin-top:11px;background:#fff;border:1px solid #CCD4E2;border-radius:10px;padding:9px 10px;font-size:13px;font-weight:850;display:flex;justify-content:space-between}.shake-btn{width:100%;margin-top:9px;border:1px solid #AEB8CC;background:#fff;border-radius:9px;padding:9px;font-weight:900;color:#384865}.shake-btn.active{background:var(--secondary-soft);border-color:var(--secondary)}
+.editor-pane{display:grid;grid-template-columns:150px 220px 1fr;min-width:0}.categories{border-right:1px solid #D4DBE7;background:#F9FAFC;padding:8px}.cat{padding:9px 8px;border-radius:8px;font-weight:850;font-size:13px;margin-bottom:3px}.cat span{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:7px}.palette{border-right:1px solid #D4DBE7;padding:10px;background:#fff}.palette-title{font-size:12px;color:#7B879A;font-weight:900;margin-bottom:8px}.palette-grid{display:flex;flex-direction:column;gap:7px}.code-area{position:relative;padding:14px;min-height:420px;background-color:#FAFCFF;background-image:radial-gradient(#D2DAE8 1.2px,transparent 1.2px);background-size:20px 20px;overflow:auto}.block{border:0;color:#fff;border-radius:8px;padding:9px 11px;font-weight:850;text-align:left;box-shadow:0 2px 0 #0002;line-height:1.25;display:block;max-width:100%;font-size:13px}.block.pick:hover{filter:brightness(.95);transform:translateY(-1px)}.block.basic{background:var(--basic)}.block.input{background:var(--input)}.block.music{background:var(--music)}.block.loops{background:var(--loops)}.script-stack{display:flex;flex-direction:column;align-items:flex-start;gap:3px;margin-bottom:18px;max-width:480px}.loop-frame{background:#2C87C7;border-radius:9px;color:#fff;padding:8px 8px 9px;min-width:270px;font-weight:900;font-size:13px}.loop-inner{margin:7px 0 0 18px;padding:7px;border-left:8px solid #69B6E8;border-radius:0 0 0 9px;display:flex;flex-direction:column;gap:4px}.event-frame{background:var(--input);border-radius:9px;color:#fff;padding:8px;min-width:305px;font-weight:900;font-size:13px}.event-inner{margin:7px 0 0 18px;padding:5px 0 2px;display:flex;flex-direction:column;gap:4px}.num{display:inline-block;background:#fff;color:#27334A;border-radius:99px;padding:2px 7px;font-weight:900;min-width:32px;text-align:center}.select-chip{display:inline-block;background:#fff2;color:#fff;border:1px solid #fff5;border-radius:6px;padding:2px 6px}.slot-box{border:2px dashed #A9B4C6;border-radius:9px;padding:10px;color:#7C8799;background:#fff8;font-weight:850}.trash-zone{border:2px dashed #B5BFCE;border-radius:10px;padding:12px;text-align:center;color:#7A879A;font-weight:900;background:#F8FAFD;margin-top:9px}.trash-zone.hot{border-color:#D35A5A;background:#FDEEEE;color:#A53B3B}.project-entry{max-width:560px;margin:15px auto;background:#fff;border:1px solid #D5DDEA;border-radius:14px;padding:18px}.project-entry label{display:block;font-weight:900;margin-bottom:7px}.project-entry input{width:100%;border:1.5px solid #BAC5D7;border-radius:10px;padding:11px 12px;font-weight:800}.project-entry small{display:block;margin-top:7px;color:#728096}.observation{max-width:820px;margin:14px auto;background:#F7F9FC;border:1px solid #D6DEEA;border-radius:14px;padding:14px}.observation h4{margin:0 0 10px;font-size:16px}.result-banner{max-width:850px;margin:14px auto;padding:15px;background:var(--good-soft);border:1px solid #A5D7BF;border-radius:13px;color:#1B704B;font-weight:900;text-align:center}
+.self-wrap{overflow:auto}.self-table{display:grid;grid-template-columns:minmax(240px,1.5fr) repeat(4,minmax(140px,1fr));min-width:820px;border:1px solid #D7DEEA;border-radius:13px;overflow:hidden}.self-head,.self-objective,.self-cell{padding:12px;border-right:1px solid #D7DEEA;border-bottom:1px solid #D7DEEA}.self-head{background:#FFF7EC;color:#6B4C20;font-size:15px;font-weight:900;text-align:center}.self-objective{font-size:15px;font-weight:850;background:#fff}.self-cell{font-size:15px;background:#fff;border-top:0;border-left:0;text-align:center;color:#42506B;font-weight:800}.self-cell.selected{background:var(--secondary-soft);box-shadow:inset 0 0 0 2px var(--secondary);color:var(--secondary-dark)}.self-note{margin-top:9px;color:#6C788C;font-weight:750}.finish-actions{display:flex;justify-content:center;margin-top:16px}.primary{border:0;background:var(--secondary);color:#fff;border-radius:10px;padding:11px 18px;font-weight:900}.primary:disabled{opacity:.45;cursor:not-allowed}.completion{text-align:center;padding:36px 20px}.badge{display:inline-block;background:var(--unit-soft);color:var(--unit-dark);border-radius:99px;padding:7px 11px;font-size:12px;font-weight:900}.completion h2{font-size:28px;margin:12px 0 8px}.secondary-btn{border:1px solid #BCC6D8;background:#fff;border-radius:10px;padding:10px 14px;font-weight:900;color:#3D4A66}
+.modal-backdrop{position:fixed;inset:0;background:#11182788;display:none;align-items:center;justify-content:center;padding:18px;z-index:50}.modal-backdrop.open{display:flex}.modal{width:min(560px,100%);background:#fff;border-radius:16px;box-shadow:0 18px 60px #0004;overflow:hidden}.modal-head{padding:14px 16px;background:var(--secondary);color:#fff;font-weight:900;display:flex;justify-content:space-between;align-items:center}.modal-close{border:0;background:#ffffff1f;color:#fff;width:32px;height:32px;border-radius:8px;font-size:20px}.modal-body{padding:17px;line-height:1.55;color:#3F4D68;font-weight:700}.modal-actions{display:flex;justify-content:flex-end;gap:8px;padding:0 17px 17px}.small-btn{border:1px solid #C5CDDC;background:#fff;border-radius:9px;padding:8px 11px;font-weight:850}
+@media(max-width:980px){.mc-body{grid-template-columns:1fr}.sim-pane{border-right:0;border-bottom:1px solid #CDD5E1}.editor-pane{grid-template-columns:125px 190px 1fr}.microbit{transform:scale(.9);margin:-15px 0}}
+@media(max-width:760px){.shell-page{padding:9px}.hero{padding:16px}.hero h1{font-size:25px}.lesson-mark{min-width:96px;height:64px}.stage-head{flex-direction:column}.mc-body{display:block}.editor-pane{display:block}.categories{display:flex;overflow:auto;gap:4px;border-right:0;border-bottom:1px solid #D4DBE7}.cat{white-space:nowrap}.palette{border-right:0;border-bottom:1px solid #D4DBE7}.palette-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}.code-area{min-height:330px}.choice-grid{grid-template-columns:1fr}.self-head,.self-objective,.self-cell{font-size:13px}.microbit{transform:scale(.82);margin:-28px 0}.mc-top{gap:7px}.mc-project{max-width:145px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}}
+</style>
+<style id="nk-license-style">
+.nk-license{max-width:1100px;margin:14px auto 24px;padding:10px 16px;text-align:center;font:13px/1.45 Arial,"Noto Sans",sans-serif;color:#4e657c}
+.nk-license a{color:inherit;text-decoration:underline;text-underline-offset:2px}
+.nk-license .cc-badge{display:inline-block;margin:0 4px;padding:2px 7px;border:1px solid #8aa0b8;border-radius:6px;background:#fff;font-weight:700;white-space:nowrap}
+</style>
+</head>
+<body>
+<div class="shell-page">
+  <header class="hero">
+    <div><div class="eyebrow">Ενότητα 1 · Αλγοριθμική – Προγραμματισμός – Ρομποτική</div><h1>Χαρούμενα γενέθλια!</h1><p>Προγραμμάτισε ένα micro:bit που αναβοσβήνει, παίζει τη μελωδία γενεθλίων και αλλάζει ρυθμό με το κούνημα.</p></div>
+    <div class="lesson-mark"><div><b>11</b><br><span>Μάθημα</span></div></div>
+  </header>
+  <section class="progress"><div class="progress-top"><span id="progressText"></span><span id="progressPct"></span></div><div class="bar"><div class="fill" id="fill"></div></div><div class="steps" id="steps"></div></section>
+  <main class="stage"><div class="stage-head"><div><div class="stage-kicker" id="kicker"></div><h2 class="stage-title" id="stageTitle"></h2><p class="instruction" id="instruction"></p></div><button class="help-btn" id="helpBtn">❔ Βοήθεια</button></div><div class="workspace"><div id="activity"></div><div class="feedback" id="feedback"></div></div></main>
+</div>
+<div class="modal-backdrop" id="helpModal"><div class="modal"><div class="modal-head"><span>Βοήθεια</span><button class="modal-close" id="closeHelp">×</button></div><div class="modal-body" id="helpText"></div><div class="modal-actions"><button class="small-btn" id="speakHelp">🔊 Άκουσε</button><button class="small-btn" id="understoodBtn">Το κατάλαβα</button></div></div></div>
+<script>
+const ACTIVITIES=[
+ {t:'Νέο έργο και καθαρός χώρος',i:'Δώσε ένα κατάλληλο όνομα στο νέο έργο και κράτησε μόνο την εντολή «για πάντα».'},
+ {t:'Κάνε την οθόνη να αναβοσβήνει',i:'Κατασκεύασε το πρόγραμμα που εμφανίζει ένα εικονίδιο, καθαρίζει την οθόνη και περιμένει.'},
+ {t:'Παρατήρησε το αναβόσβημα',i:'Εκτέλεσε το πρόγραμμα στον προσομοιωτή και βγάλε συμπέρασμα από αυτό που συμβαίνει στην οθόνη.'},
+ {t:'Κουμπί Α και κουμπί Β',i:'Προγραμμάτισε το Α να ξεκινά τη μελωδία γενεθλίων και το Β να τη σταματά.'},
+ {t:'Επανάληψη μελωδίας και ρυθμός',i:'Κάνε τη μελωδία να επαναλαμβάνεται στο παρασκήνιο και όρισε κανονικό ρυθμό 100 bpm.'},
+ {t:'Άλλαξε τον ρυθμό με κούνημα',i:'Πρόσθεσε το συμβάν κουνήματος, αύξησε τον ρυθμό κατά 50 bpm και ολοκλήρωσε τη δοκιμή σταματώντας τη μελωδία με το Β.'},
+ {t:'Συνολική δοκιμή',i:'Έλεγξε το αναβόσβημα, το Α, το Β και το κούνημα όπως θα τα χρησιμοποιούσες στο πραγματικό micro:bit.'},
+ {t:'Λήψη στο micro:bit',i:'Αφού όλα λειτουργούν σωστά, κάνε τη λήψη του προγράμματος στη συσκευή.'},
+ {t:'Τι έμαθα;',i:'Αξιολόγησε πόσο καλά μπορείς να εφαρμόζεις όσα δούλεψες στο μάθημα.'}
+];
+const HELP=[
+ 'Γράψε ακριβώς «Γενέθλια» ως όνομα του έργου. Πρόσεξε τα κεφαλαία, τα πεζά και τον τόνο. Μετά σύρε την εντολή «κατά την έναρξη» στον χώρο των εντολών ώστε να διαγραφεί. Η «για πάντα» πρέπει να παραμείνει.',
+ 'Μέσα στη «για πάντα» χρειάζεσαι εμφάνιση εικονιδίου, καθαρισμό οθόνης και παύση 1000 ms. Το 1000 ms αντιστοιχεί σε 1 δευτερόλεπτο.',
+ 'Πάτησε το ▶ του προσομοιωτή και παρατήρησε την οθόνη για μερικά δευτερόλεπτα. Η ερώτηση θα εμφανιστεί αφού έχεις χρόνο να δεις την επανάληψη.',
+ 'Χρησιμοποίησε δύο συμβάντα εισόδου: button A και button B. Στο Α βάλε την έναρξη της μελωδίας «γενέθλια», ενώ στο Β τη διακοπή της μελωδίας.',
+ 'Στην εντολή της μελωδίας επίλεξε «looping in background». Πριν από αυτή, μέσα στο συμβάν του Α, όρισε τον ρυθμό σε 100 bpm. Δοκίμασε με τα πραγματικά κουμπιά Α και Β του προσομοιωτή.',
+ 'Χρειάζεσαι το συμβάν «στο κούνημα» και μέσα του την εντολή «αλλαγή ρυθμού κατά 50 bpm». Ξεκίνα τη μουσική με Α, χρησιμοποίησε το Κούνημα για να ακούσεις τον γρηγορότερο ρυθμό και στο τέλος πάτησε Β. Η δραστηριότητα ολοκληρώνεται μόνο όταν σταματήσεις τη μελωδία με το Β.',
+ 'Το εικονίδιο πρέπει να αναβοσβήνει συνεχώς. Πάτησε Α για μουσική, κούνησε το micro:bit για γρηγορότερο ρυθμό και πάτησε Β για διακοπή. Τα ✓ δείχνουν τι έχεις ήδη ελέγξει.',
+ 'Η λήψη γίνεται μόνο αφού έχουν ελεγχθεί όλες οι περιπτώσεις. Το κουμπί «Λήψη» είναι μέρος του εικονικού περιβάλλοντος προγραμματισμού και προσομοιώνει τη μεταφορά του προγράμματος.',
+ 'Διάλεξε ένα επίπεδο για κάθε στόχο. Δεν υπάρχουν σωστές ή λάθος επιλογές εδώ· είναι αυτοαξιολόγηση.'
+];
+const lessonUrl=new URL(window.location.href);
+const requestedActivity=Number(lessonUrl.searchParams.get('activity'));
+const startStage=Number.isInteger(requestedActivity)&&requestedActivity>=1&&requestedActivity<=ACTIVITIES.length?requestedActivity-1:0;
+let finished=lessonUrl.searchParams.get('complete')==='1';
+let stage=finished?ACTIVITIES.length-1:startStage,projectName=(stage>0||finished)?'Γενέθλια':'',renderEpoch=0,pendingTimers=[];
+const completed=new Set(Array.from({length:finished?ACTIVITIES.length:stage},(_,i)=>i));
+function lessonBaseUrl(){const u=new URL(window.location.href);u.searchParams.delete('activity');u.searchParams.delete('complete');u.hash='';return u}
+function goToActivity(nextStage){stopAllRuntime();const u=lessonBaseUrl();u.searchParams.set('activity',String(nextStage+1));window.location.replace(u.href)}
+function goToCompletion(){stopAllRuntime();const u=lessonBaseUrl();u.searchParams.set('complete','1');window.location.replace(u.href)}
+function restartLesson(){stopAllRuntime();window.location.replace(lessonBaseUrl().href)}
+const q=s=>document.querySelector(s),qa=s=>[...document.querySelectorAll(s)];
+const activity=q('#activity'),feedback=q('#feedback'),kicker=q('#kicker'),stageTitle=q('#stageTitle'),instruction=q('#instruction');
+function clearTimers(){pendingTimers.forEach(clearTimeout);pendingTimers=[]}
+function later(fn,ms){const s=stage,e=renderEpoch;const id=setTimeout(()=>{if(stage===s&&renderEpoch===e)fn()},ms);pendingTimers.push(id);return id}
+function setFeedback(txt,type='info'){feedback.className='feedback show '+type;feedback.innerHTML=txt}
+function clearFeedback(){feedback.className='feedback';feedback.textContent=''}
+function wrong(el,msg){el.classList.remove('wrong');void el.offsetWidth;el.classList.add('wrong');setFeedback(msg,'bad')}
+function updateProgress(){const n=ACTIVITIES.length;const pct=finished?100:Math.round(stage/(n-1)*100);q('#progressText').textContent=finished?'Ολοκληρώθηκε':`Δραστηριότητα ${stage+1} από ${n}`;q('#progressPct').textContent=pct+'%';q('#fill').style.width=pct+'%';q('#steps').innerHTML=ACTIVITIES.map((_,i)=>`<span class="step-dot ${completed.has(i)?'done':''} ${i===stage&&!finished?'current':''}">${i+1}</span>`).join('')}
+function advance(delay=0){stopAllRuntime();later(()=>{completed.add(stage);goToActivity(stage+1)},delay)}
+const shuffleCache={};function shuffleCopy(arr){const a=[...arr];for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}function shuffleOnce(key,arr){if(!shuffleCache[key])shuffleCache[key]=shuffleCopy(arr);return shuffleCache[key]}
+function protectInput(el){['paste','copy','cut','drop','contextmenu'].forEach(ev=>el.addEventListener(ev,e=>e.preventDefault()))}
+
+function block(txt,cat='basic',attr=''){return `<button class="block pick ${cat}" ${attr}>${txt}</button>`}
+function staticBlock(txt,cat='basic'){return `<div class="block ${cat}">${txt}</div>`}
+function cats(){return `<div class="categories"><div class="cat"><span style="background:${getComputedStyle(document.documentElement).getPropertyValue('--basic')}"></span>Βασικά</div><div class="cat"><span style="background:${getComputedStyle(document.documentElement).getPropertyValue('--input')}"></span>Είσοδος</div><div class="cat"><span style="background:${getComputedStyle(document.documentElement).getPropertyValue('--music')}"></span>Μουσική</div></div>`}
+function ledMarkup(){return `<div class="led-grid" id="ledGrid">${Array.from({length:25},(_,i)=>`<span class="led" data-led="${i}"></span>`).join('')}</div>`}
+function microbitMarkup({tempo=100,shake=true}={}){return `<div class="board-wrap"><div class="microbit"><div class="mb-logo">micro:bit</div>${ledMarkup()}<button class="mb-button mb-a" data-mb-a>A</button><button class="mb-button mb-b" data-mb-b>B</button><div class="mb-speaker">◖)))</div></div></div><div class="tempo-monitor"><span>Ρυθμός</span><b id="tempoValue">${tempo} bpm</b></div>${shake?'<button class="shake-btn" data-shake>↝ Κούνημα micro:bit</button>':''}`}
+function mcShell({palette='',code='',project=projectName||'Νέο έργο',tempo=100,shake=true,status='',showDownload=true}={}){return `<div class="mc-shell"><div class="mc-top"><div class="mc-logo">micro:bit Blocks</div><div class="mc-project">${project}</div>${showDownload?'<button class="mc-download" data-download>⬇ Λήψη</button>':''}</div><div class="mc-body"><aside class="sim-pane"><div class="sim-toolbar"><button class="sim-tool" data-run>▶</button><button class="sim-tool" data-stop>■</button><span class="sim-title">Προσομοιωτής</span></div>${microbitMarkup({tempo,shake})}${status?`<div class="result-banner" style="margin:10px 0 0;padding:9px">${status}</div>`:''}</aside><section class="editor-pane">${cats()}<div class="palette"><div class="palette-title">Εντολές</div><div class="palette-grid">${palette}</div><div class="trash-zone" id="trashZone">🗑 Σύρε εδώ για διαγραφή</div></div><div class="code-area">${code}</div></section></div></div>`}
+function foreverCode(inner=''){return `<div class="script-stack"><div class="loop-frame">για πάντα<div class="loop-inner">${inner||'<div class="slot-box">εντολές</div>'}</div></div></div>`}
+function eventCode(label,inner=''){return `<div class="script-stack"><div class="event-frame">${label}<div class="event-inner">${inner||'<div class="slot-box">εντολές</div>'}</div></div></div>`}
+function blinkCode(){return foreverCode(`${staticBlock('εμφάνιση εικονιδίου ♥','basic')}${staticBlock('καθαρισμός οθόνης','basic')}${staticBlock('παύση (1000) ms','basic')}`)}
+function musicStartCode(looping=false,withTempo=false){return eventCode('όταν πιεστεί το πλήκτρο button A',`${withTempo?staticBlock('αλλαγή ρυθμού σε (bpm) 100','music'):''}${staticBlock(`play melody [γενέθλια ▾] ${looping?'[looping in background ▾]':'[in background ▾]'}`,'music')}`)}
+function musicStopCode(){return eventCode('όταν πιεστεί το πλήκτρο button B',staticBlock('διακοπή μελωδίας [όλα ▾]','music'))}
+function shakeCode(){return eventCode('στο κούνημα',staticBlock('αλλαγή ρυθμού κατά (bpm) 50','music'))}
+function fullCode(){return `<div style="display:flex;gap:18px;align-items:flex-start;flex-wrap:wrap"><div>${blinkCode()}</div><div>${musicStartCode(true,true)}${musicStopCode()}</div><div>${shakeCode()}</div></div>`}
+
+// LED simulator
+let blinkInterval=null,blinkOn=false,blinkCount=0;const HEART=[1,3,5,6,7,8,9,11,12,13,17];
+function clearBlink(){if(blinkInterval)clearInterval(blinkInterval);blinkInterval=null;blinkOn=false;blinkCount=0;setLedPattern(false)}
+function setLedPattern(on){qa('.led').forEach((el,i)=>el.classList.toggle('on',on&&HEART.includes(i)))}
+function startBlink(onCycle){clearBlink();blinkOn=true;setLedPattern(true);blinkInterval=setInterval(()=>{blinkOn=!blinkOn;setLedPattern(blinkOn);if(blinkOn){blinkCount++;if(onCycle)onCycle(blinkCount)}},1000)}
+
+// Birthday melody: one Web Audio buffer source for the WHOLE melody.
+// There is no asynchronous per-note worker and no HTMLAudioElement. A hard stop
+// stops the single source immediately, disconnects it, and closes its AudioContext.
+let audioCtx=null,melodySource=null,melodyGain=null,melodyToken=0,audioWatch=null;
+let currentTempo=100,melodyRunning=false,melodyLooping=false;
+const NOTE={C4:261.63,D4:293.66,E4:329.63,F4:349.23,G4:392,A4:440,Bb4:466.16,C5:523.25};
+const BDAY=[['G4',.5],['G4',.5],['A4',1],['G4',1],['C5',1],['B4',2],['G4',.5],['G4',.5],['A4',1],['G4',1],['D5',1],['C5',2],['G4',.5],['G4',.5],['G5',1],['E5',1],['C5',1],['B4',1],['A4',2],['F5',.5],['F5',.5],['E5',1],['C5',1],['D5',1],['C5',2]];
+NOTE.B4=493.88;NOTE.D5=587.33;NOTE.E5=659.25;NOTE.F5=698.46;NOTE.G5=783.99;
+const MELODY_SAMPLE_RATE=22050,MELODY_BASE_TEMPO=100;
+let melodyPCM=null;
+function buildBirthdayPCM(){
+  if(melodyPCM)return melodyPCM;
+  const beatSec=60/MELODY_BASE_TEMPO;
+  const totalSamples=BDAY.reduce((sum,[,beats])=>sum+Math.floor(beats*beatSec*MELODY_SAMPLE_RATE),0);
+  const data=new Float32Array(totalSamples);
+  let p=0;
+  for(const [name,beats] of BDAY){
+    const freq=NOTE[name],noteSamples=Math.floor(beats*beatSec*MELODY_SAMPLE_RATE),soundSamples=Math.floor(noteSamples*.88);
+    const attack=Math.max(1,Math.floor(MELODY_SAMPLE_RATE*.012)),release=Math.max(1,Math.floor(MELODY_SAMPLE_RATE*.035));
+    for(let i=0;i<noteSamples;i++){
+      let sample=0;
+      if(i<soundSamples){
+        let env=1;
+        if(i<attack)env=i/attack;
+        if(i>soundSamples-release)env=Math.max(0,(soundSamples-i)/release);
+        const t=i/MELODY_SAMPLE_RATE;
+        // Bright toy-xylophone/chiptune timbre: a clear fundamental plus
+        // sparkling upper harmonics and a tiny detuned layer.
+        const fundamental=Math.sin(2*Math.PI*freq*t);
+        const octave=Math.sin(2*Math.PI*(freq*2)*t);
+        const sparkle=Math.sin(2*Math.PI*(freq*3)*t);
+        const shimmer=Math.sin(2*Math.PI*(freq*2.015)*t);
+        const pluck=Math.exp(-3.1*i/Math.max(1,soundSamples));
+        sample=(.68*fundamental+.27*octave+.11*sparkle+.10*shimmer)*.18*env*(.72+.28*pluck);
+      }
+      data[p++]=sample;
+    }
+  }
+  melodyPCM=data;
+  return data;
+}
+function clearAudioWatch(){if(audioWatch){clearInterval(audioWatch);audioWatch=null}}
+function hardStopMelody(){
+  melodyToken++;
+  melodyRunning=false;
+  melodyLooping=false;
+  clearAudioWatch();
+  const source=melodySource,gain=melodyGain,ctx=audioCtx;
+  melodySource=null;melodyGain=null;audioCtx=null;
+  if(source){
+    source.onended=null;
+    try{source.stop(0)}catch(_){}
+    try{source.disconnect()}catch(_){}
+  }
+  if(gain){try{gain.gain.value=0}catch(_){};try{gain.disconnect()}catch(_){}}
+  if(ctx&&ctx.state!=='closed'){
+    try{const closing=ctx.close();if(closing&&typeof closing.catch==='function')closing.catch(()=>{})}catch(_){}
+  }
+}
+function stopMelody(){hardStopMelody()}
+function applyPlaybackRate(){
+  if(!melodySource||!audioCtx)return;
+  const rate=Math.max(.4,Math.min(3,currentTempo/MELODY_BASE_TEMPO));
+  try{melodySource.playbackRate.cancelScheduledValues(audioCtx.currentTime)}catch(_){}
+  try{melodySource.playbackRate.setValueAtTime(rate,audioCtx.currentTime)}catch(_){try{melodySource.playbackRate.value=rate}catch(__){}}
+}
+async function startMelody(looping=false){
+  hardStopMelody();
+  const token=melodyToken,ownerStage=stage,ownerEpoch=renderEpoch;
+  const AudioContextClass=window.AudioContext||window.webkitAudioContext;
+  if(!AudioContextClass)return false;
+  const ctx=new AudioContextClass();
+  audioCtx=ctx;
+  const pcm=buildBirthdayPCM();
+  const buffer=ctx.createBuffer(1,pcm.length,MELODY_SAMPLE_RATE);
+  buffer.getChannelData(0).set(pcm);
+  const source=ctx.createBufferSource(),gain=ctx.createGain();
+  source.buffer=buffer;source.loop=looping;gain.gain.value=1;
+  source.connect(gain);gain.connect(ctx.destination);
+  melodySource=source;melodyGain=gain;melodyLooping=looping;melodyRunning=true;
+  applyPlaybackRate();
+  source.onended=()=>{
+    if(token===melodyToken&&melodySource===source&&!source.loop){
+      melodyRunning=false;melodySource=null;
+      try{source.disconnect()}catch(_){}
+      if(melodyGain===gain){try{gain.disconnect()}catch(_){};melodyGain=null}
+      if(audioCtx===ctx){audioCtx=null;try{const closing=ctx.close();if(closing&&typeof closing.catch==='function')closing.catch(()=>{})}catch(_){}}
+      clearAudioWatch();
+    }
+  };
+  try{
+    if(ctx.state==='suspended')await ctx.resume();
+    if(token!==melodyToken||audioCtx!==ctx||stage!==ownerStage||renderEpoch!==ownerEpoch){hardStopMelody();return false}
+    source.start(0);
+    // Independent safety guard: audio is valid only while the same lesson activity is active.
+    audioWatch=setInterval(()=>{
+      if(stage!==ownerStage||renderEpoch!==ownerEpoch||finished)hardStopMelody();
+    },80);
+    return true;
+  }catch(_){
+    if(token===melodyToken)hardStopMelody();
+    return false;
+  }
+}
+function updateTempo(){const el=q('#tempoValue');if(el)el.textContent=currentTempo+' bpm';applyPlaybackRate()}
+function changeTempo(delta){currentTempo=Math.max(40,Math.min(300,currentTempo+delta));updateTempo()}
+function setTempo(v){currentTempo=v;updateTempo()}
+function stopAllRuntime(){clearBlink();hardStopMelody();if('speechSynthesis' in window)window.speechSynthesis.cancel()}
+window.addEventListener('pagehide',stopAllRuntime);
+window.addEventListener('beforeunload',stopAllRuntime);
+document.addEventListener('visibilitychange',()=>{if(document.hidden)stopAllRuntime()});
+
+/* Activity 1 */
+let a1step=0,a1deleted=false;
+function r1(){
+ if(a1step===0){activity.innerHTML=`<div class="task-strip">Δημιούργησε ένα νέο έργο και γράψε ως όνομα ακριβώς <b>«Γενέθλια»</b>.</div><div class="project-entry"><label for="projectNameInput">Όνομα έργου</label><input id="projectNameInput" autocomplete="off" placeholder="Γράψε: Γενέθλια"><small>Πάτησε Enter όταν ολοκληρώσεις.</small></div>`;const i=q('#projectNameInput');protectInput(i);i.focus();i.onkeydown=e=>{if(e.key!=='Enter')return;e.preventDefault();if(i.value!=='Γενέθλια')return wrong(i,'Γράψε ακριβώς «Γενέθλια», με το ίδιο κεφαλαίο, τα ίδια πεζά και τον τόνο.');projectName=i.value;a1step=1;setFeedback('✓ Το όνομα του έργου είναι σωστό: «Γενέθλια».','good');later(r1,450)};return}
+ const onStart=`<div class="script-stack"><div class="block basic" id="onStartBlock" draggable="true">κατά την έναρξη<div style="margin-top:6px" class="slot-box">εντολές</div></div></div>`;
+ activity.innerHTML=`<div class="task-strip">Χρειάζεσαι μόνο τη <b>«για πάντα»</b>. Σύρε την <b>«κατά την έναρξη»</b> στον χώρο των εντολών για να τη διαγράψεις.</div>${mcShell({code:`${onStart}${foreverCode()}`,showDownload:false})}<div class="check-strip"><span class="check-chip ${a1deleted?'done':''}">«κατά την έναρξη» διαγράφηκε ${a1deleted?'✓':''}</span><span class="check-chip done">«για πάντα» παρέμεινε ✓</span></div>`;
+ if(a1deleted){setFeedback('✓ Ο χώρος εργασίας είναι έτοιμος με μόνο την εντολή «για πάντα».','good');later(()=>advance(0),1200);return}
+ const b=q('#onStartBlock'),trash=q('#trashZone');b.ondragstart=e=>e.dataTransfer.setData('text/plain','onStart');trash.ondragover=e=>{e.preventDefault();trash.classList.add('hot')};trash.ondragleave=()=>trash.classList.remove('hot');trash.ondrop=e=>{e.preventDefault();trash.classList.remove('hot');if(e.dataTransfer.getData('text/plain')!=='onStart')return;a1deleted=true;r1()}
+}
+
+/* Activity 2 */
+const A2_ORDER=['icon','clear','pause'];let a2built=[];
+function r2(){const choices=shuffleOnce('a2palette',[['icon','εμφάνιση εικονιδίου ♥'],['clear','καθαρισμός οθόνης'],['pause','παύση (1000) ms'],['number','εμφάνιση αριθμού (1)']]);const remaining=choices.filter(x=>!a2built.includes(x[0]));const inner=`${a2built.includes('icon')?staticBlock('εμφάνιση εικονιδίου ♥'):''}${a2built.includes('clear')?staticBlock('καθαρισμός οθόνης'):''}${a2built.includes('pause')?staticBlock('παύση (1000) ms'):''}`;activity.innerHTML=`<div class="task-strip">Συμπλήρωσε τη «για πάντα» με τη σειρά που δείχνει το βιβλίο.</div>${mcShell({palette:remaining.map(x=>block(x[1],'basic',`data-a2="${x[0]}"`)).join(''),code:foreverCode(inner),showDownload:false,shake:false})}`;qa('[data-a2]').forEach(b=>b.onclick=()=>{const exp=A2_ORDER[a2built.length];if(b.dataset.a2!==exp)return wrong(b,'Έλεγξε τη σειρά των εντολών μέσα στη «για πάντα».');a2built.push(b.dataset.a2);if(a2built.length===3){activity.innerHTML=`<div class="task-strip">Το πρόγραμμα αναβοσβήματος είναι έτοιμο.</div>${mcShell({code:blinkCode(),showDownload:false,shake:false,status:'Κώδικας αναβοσβήματος ✓'})}`;setFeedback('✓ Έλεγξε τον ολοκληρωμένο κώδικα πριν από τη δοκιμή.','good');later(()=>advance(0),1300)}else later(r2,250)})}
+
+/* Activity 3 */
+let a3run=false,a3question=false,a3answered=false;
+function r3(){if(a3question&&!a3answered){const opts=shuffleOnce('a3obs',[['blink','Το εικονίδιο εμφανίζεται και εξαφανίζεται επαναλαμβανόμενα.'],['steady','Το εικονίδιο μένει συνεχώς αναμμένο.'],['none','Η οθόνη μένει συνεχώς σβηστή.']]);activity.innerHTML=`<div class="task-strip">Με βάση τη δοκιμή σου, τι παρατήρησες;</div><div class="observation"><h4>Τι κάνει η οθόνη του micro:bit;</h4><div class="choice-grid">${opts.map(o=>`<button class="choice" data-a3="${o[0]}">${o[1]}</button>`).join('')}</div></div>`;qa('[data-a3]').forEach(b=>b.onclick=()=>{if(b.dataset.a3!=='blink')return wrong(b,'Σκέψου τι παρατήρησες στην οθόνη κατά την επανάληψη.');b.classList.add('correct');a3answered=true;setFeedback('Σωστά. Η «για πάντα» επαναλαμβάνει το αναβόσβημα συνεχώς.','good');later(()=>advance(0),900)});return}
+ activity.innerHTML=`<div class="task-strip">Πάτησε <b>▶</b> και παρατήρησε την οθόνη για μερικά δευτερόλεπτα.</div>${mcShell({code:blinkCode(),showDownload:false,shake:false,status:a3run?'Εκτέλεση αναβοσβημάτων':''})}`;q('[data-run]').onclick=()=>{if(a3run)return;a3run=true;startBlink(c=>{if(c>=2&&!a3question){a3question=true;clearBlink();setFeedback('Παρατήρησες αρκετούς κύκλους. Τώρα απάντησε με βάση αυτό που συνέβη.','info');later(r3,450)}});setFeedback('Ο προσομοιωτής εκτελεί τη «για πάντα». Παρατήρησε την οθόνη.','info')};q('[data-stop]').onclick=()=>{clearBlink();a3run=false;setFeedback('Η εκτέλεση σταμάτησε. Πάτησε ▶ για νέα δοκιμή.','info')}
+}
+
+/* Activity 4 */
+let a4step=0,a4a=false,a4b=false,a4testedA=false,a4testedB=false;
+function r4(){if(a4step===0){const opts=shuffleOnce('a4a',[['start','play melody [γενέθλια ▾] [in background ▾]','music'],['stop','διακοπή μελωδίας [όλα ▾]','music'],['clear','καθαρισμός οθόνης','basic']]);activity.innerHTML=`<div class="task-strip">Στο συμβάν <b>button A</b>, βάλε την εντολή που ξεκινά τη μελωδία «γενέθλια».</div>${mcShell({palette:opts.map(o=>block(o[1],o[2],`data-a4a="${o[0]}"`)).join(''),code:eventCode('όταν πιεστεί το πλήκτρο button A'),tempo:70,showDownload:false})}`;qa('[data-a4a]').forEach(b=>b.onclick=()=>{if(b.dataset.a4a!=='start')return wrong(b,'Το Α πρέπει να ξεκινά τη μελωδία.');a4a=true;a4step=1;setFeedback('Η εντολή μπήκε στο συμβάν του Α.','info');later(r4,300)});return}
+ if(a4step===1){const opts=shuffleOnce('a4b',[['stop','διακοπή μελωδίας [όλα ▾]','music'],['start','play melody [γενέθλια ▾] [in background ▾]','music'],['pause','παύση (1000) ms','basic']]);activity.innerHTML=`<div class="task-strip">Τώρα στο συμβάν <b>button B</b>, βάλε την εντολή που σταματά τη μελωδία.</div>${mcShell({palette:opts.map(o=>block(o[1],o[2],`data-a4b="${o[0]}"`)).join(''),code:`${musicStartCode(false,false)}${eventCode('όταν πιεστεί το πλήκτρο button B')}`,tempo:70,showDownload:false})}`;qa('[data-a4b]').forEach(b=>b.onclick=()=>{if(b.dataset.a4b!=='stop')return wrong(b,'Το Β πρέπει να σταματά τη μελωδία.');a4b=true;a4step=2;setFeedback('Και τα δύο συμβάντα είναι έτοιμα. Δοκίμασέ τα στον προσομοιωτή.','info');later(r4,350)});return}
+ const both=a4testedA&&a4testedB;activity.innerHTML=`<div class="task-strip">Πάτησε το πραγματικό <b>Α</b> του προσομοιωτή για να ακούσεις τη μελωδία και μετά το <b>Β</b> για να τη σταματήσεις.</div>${mcShell({code:`${musicStartCode(false,false)}${musicStopCode()}`,tempo:70,showDownload:false,shake:false,status:both?'Α και Β ελέγχθηκαν ✓':''})}<div class="check-strip"><span class="check-chip ${a4testedA?'done':''}">Α: έναρξη ${a4testedA?'✓':''}</span><span class="check-chip ${a4testedB?'done':''}">Β: διακοπή ${a4testedB?'✓':''}</span></div>`;if(both){setFeedback('✓ Τα δύο κουμπιά λειτουργούν όπως προγραμματίστηκαν.','good');later(()=>advance(0),1200);return}q('[data-mb-a]').onclick=async()=>{if(a4testedA)return;setTempo(70);await startMelody(false);a4testedA=true;q('[data-mb-a]').blur();setFeedback('Ακούγεται η μελωδία σε πιο αργό ρυθμό. Τώρα δοκίμασε το Β για να τη σταματήσεις.','info');later(r4,900)};q('[data-mb-b]').onclick=()=>{stopMelody();if(!a4testedA)return setFeedback('Δοκίμασε πρώτα το Α για να ξεκινήσει η μελωδία.','bad');a4testedB=true;r4()}
+}
+
+/* Activity 5 */
+let a5loop=false,a5tempo=false,a5testedA=false,a5testedB=false;
+function r5(){if(!a5loop){const opts=shuffleOnce('a5loop',[['loop','looping in background'],['once','in background'],['until','until done']]);activity.innerHTML=`<div class="task-strip">Η μελωδία πρέπει να επαναλαμβάνεται συνεχώς. Επίλεξε τη σωστή λειτουργία αναπαραγωγής.</div><div class="observation"><h4>play melody [γενέθλια] …</h4><div class="choice-grid">${opts.map(o=>`<button class="choice" data-a5loop="${o[0]}">${o[1]}</button>`).join('')}</div></div>`;qa('[data-a5loop]').forEach(b=>b.onclick=()=>{if(b.dataset.a5loop!=='loop')return wrong(b,'Η οδηγία ζητά η μελωδία να επαναλαμβάνεται συνεχώς στο παρασκήνιο.');a5loop=true;setFeedback('Η μελωδία θα επαναλαμβάνεται στο παρασκήνιο.','info');later(r5,350)});return}
+ if(!a5tempo){const opts=shuffleOnce('a5tempo',[['tempo','αλλαγή ρυθμού σε (bpm) 100','music'],['plus','αλλαγή ρυθμού κατά (bpm) 50','music'],['pause','παύση (1000) ms','basic']]);activity.innerHTML=`<div class="task-strip">Πρόσθεσε μέσα στο συμβάν του Α, <b>πριν από τη μελωδία</b>, την εντολή που ορίζει κανονικό ρυθμό <b>100 bpm</b>.</div>${mcShell({palette:opts.map(o=>block(o[1],o[2],`data-a5tempo="${o[0]}"`)).join(''),code:`${musicStartCode(true,false)}${musicStopCode()}`,showDownload:false})}`;qa('[data-a5tempo]').forEach(b=>b.onclick=()=>{if(b.dataset.a5tempo!=='tempo')return wrong(b,'Χρειάζεται η εντολή που ορίζει τον ρυθμό σε συγκεκριμένη τιμή 100.');a5tempo=true;setFeedback('Ο ρυθμός 100 bpm μπήκε πριν από τη μελωδία.','info');later(r5,350)});return}
+ const both=a5testedA&&a5testedB;activity.innerHTML=`<div class="task-strip">Δοκίμασε ξανά Α και Β. Με το Α η μελωδία πρέπει να ξεκινά στα <b>100 bpm</b> και να επαναλαμβάνεται.</div>${mcShell({code:`${musicStartCode(true,true)}${musicStopCode()}`,tempo:100,showDownload:false,shake:false,status:both?'Επανάληψη και ρυθμός ✓':''})}<div class="check-strip"><span class="check-chip ${a5testedA?'done':''}">Α: 100 bpm + επανάληψη ${a5testedA?'✓':''}</span><span class="check-chip ${a5testedB?'done':''}">Β: διακοπή ${a5testedB?'✓':''}</span></div>`;if(both){stopMelody();setFeedback('✓ Η μελωδία ξεκινά στα 100 bpm, επαναλαμβάνεται και σταματά με Β.','good');later(()=>advance(0),1100);return}q('[data-mb-a]').onclick=async()=>{if(a5testedA)return;setTempo(100);await startMelody(true);a5testedA=true;setFeedback('Η μελωδία παίζει στα 100 bpm και θα επαναληφθεί. Άκουσέ τη λίγο και μετά πάτησε Β.','info');later(r5,1200)};q('[data-mb-b]').onclick=()=>{if(!a5testedA)return setFeedback('Ξεκίνα πρώτα με το Α.','bad');stopMelody();a5testedB=true;r5()}
+}
+
+/* Activity 6 */
+let a6event=false,a6change=false,a6started=false,a6shaken=false,a6stopped=false,a6busy=false;
+function r6(){
+ if(!a6event){
+  const opts=shuffleOnce('a6event',[['shake','στο κούνημα'],['a','όταν πιεστεί το πλήκτρο button A'],['b','όταν πιεστεί το πλήκτρο button B']]);
+  activity.innerHTML=`<div class="task-strip">Ποιο συμβάν χρειάζεσαι για να αλλάζει ο ρυθμός όταν κουνάς το micro:bit;</div><div class="choice-grid">${opts.map(o=>`<button class="choice" data-a6e="${o[0]}">${o[1]}</button>`).join('')}</div>`;
+  qa('[data-a6e]').forEach(b=>b.onclick=()=>{if(b.dataset.a6e!=='shake')return wrong(b,'Χρειάζεται το συμβάν που ενεργοποιείται από την κίνηση της συσκευής.');a6event=true;setFeedback('Το συμβάν «στο κούνημα» δημιουργήθηκε.','info');later(r6,300)});
+  return;
+ }
+ if(!a6change){
+  const opts=shuffleOnce('a6change',[['plus','αλλαγή ρυθμού κατά (bpm) 50','music'],['set','αλλαγή ρυθμού σε (bpm) 50','music'],['stop','διακοπή μελωδίας [όλα]','music']]);
+  activity.innerHTML=`<div class="task-strip">Βάλε μέσα στο «στο κούνημα» την εντολή που <b>αυξάνει</b> τον υπάρχοντα ρυθμό κατά 50 bpm.</div>${mcShell({palette:opts.map(o=>block(o[1],o[2],`data-a6c="${o[0]}"`)).join(''),code:`${musicStartCode(true,true)}${musicStopCode()}${eventCode('στο κούνημα')}`,showDownload:false})}`;
+  qa('[data-a6c]').forEach(b=>b.onclick=()=>{if(b.dataset.a6c!=='plus')return wrong(b,'Η οδηγία ζητά να προστεθούν 50 bpm στον υπάρχοντα ρυθμό.');a6change=true;setFeedback('Ο κώδικας κουνήματος είναι έτοιμος. Τώρα δοκίμασέ τον.','info');later(r6,350)});
+  return;
+ }
+ const done=a6started&&a6shaken&&a6stopped;
+ let task='Πάτησε πρώτα <b>Α</b> για να ξεκινήσεις τη μελωδία στα <b>100 bpm</b>.';
+ if(a6started&&!a6shaken)task='Τώρα χρησιμοποίησε το <b>Κούνημα micro:bit</b> και άκουσε πώς αλλάζει η μελωδία.';
+ if(a6shaken&&!a6stopped)task='Ο ρυθμός έγινε πιο γρήγορος. Άκουσε τη διαφορά και μετά πάτησε <b>Β</b> για να σταματήσεις τη μελωδία.';
+ if(done)task='Η ολοκληρωμένη δοκιμή Α → Κούνημα → Β έγινε σωστά.';
+ activity.innerHTML=`<div class="task-strip">${task}</div>${mcShell({code:`${musicStartCode(true,true)}${musicStopCode()}${shakeCode()}`,tempo:currentTempo,showDownload:false,status:done?'Α → Κούνημα → Β ολοκληρώθηκαν ✓':(a6shaken?'Ο ρυθμός αυξήθηκε — πάτησε Β για διακοπή':'')})}<div class="check-strip"><span class="check-chip ${a6started?'done':''}">Α: 100 bpm ${a6started?'✓':''}</span><span class="check-chip ${a6shaken?'done':''}">Κούνημα: +50 bpm ${a6shaken?'✓':''}</span><span class="check-chip ${a6stopped?'done':''}">Β: διακοπή ${a6stopped?'✓':''}</span></div>`;
+ if(done){
+  setFeedback('✓ Άριστα! Άλλαξες τον ρυθμό με το κούνημα και σταμάτησες σωστά τη μελωδία με το Β.','good');
+  later(()=>advance(0),1200);
+  return;
+ }
+ q('[data-mb-a]').onclick=async()=>{
+  if(a6busy||a6started)return;
+  a6busy=true;
+  setTempo(100);
+  const started=await startMelody(true);
+  a6busy=false;
+  if(!started)return setFeedback('Δεν ήταν δυνατή η αναπαραγωγή της μελωδίας. Δοκίμασε ξανά το Α.','bad');
+  a6started=true;
+  setFeedback('Α: η μελωδία ξεκίνησε στα 100 bpm ✓. Τώρα χρησιμοποίησε το Κούνημα.','info');
+  later(r6,550);
+ };
+ q('[data-shake]').onclick=()=>{
+  if(a6busy)return;
+  if(!a6started)return setFeedback('Ξεκίνα πρώτα τη μελωδία με το Α.','bad');
+  if(a6shaken)return setFeedback('Το κούνημα έχει ήδη δοκιμαστεί. Τώρα πάτησε Β για να σταματήσεις τη μελωδία.','info');
+  if(!melodyRunning)return setFeedback('Η μελωδία πρέπει να παίζει. Πάτησε πρώτα Α.','bad');
+  changeTempo(50);
+  a6shaken=true;
+  q('[data-shake]').classList.add('active');
+  setFeedback('Κούνημα: ο ρυθμός αυξήθηκε στα 150 bpm ✓. Άκουσε τη διαφορά και μετά πάτησε Β.','info');
+  later(r6,900);
+ };
+ q('[data-mb-b]').onclick=()=>{
+  if(!a6started)return setFeedback('Ξεκίνα πρώτα τη μελωδία με το Α.','bad');
+  if(!a6shaken)return setFeedback('Πριν από το Β, χρησιμοποίησε το Κούνημα για να αυξήσεις τον ρυθμό.','bad');
+  if(a6stopped)return;
+  stopMelody();
+  a6stopped=true;
+  r6();
+ };
+}
+
+/* Activity 7 */
+let a7checks={blink:false,a:false,shake:false,b:false},a7run=false,a7busy=false,a7final=false;
+function r7(){const all=a7checks.blink&&a7checks.a&&a7checks.shake&&a7checks.b;activity.innerHTML=`<div class="task-strip">Έλεγξε όλες τις περιπτώσεις στο ίδιο πρόγραμμα. Το εικονίδιο αναβοσβήνει μόνο του· μετά χρησιμοποίησε Α → Κούνημα → Β.</div>${mcShell({code:fullCode(),tempo:currentTempo,showDownload:false,status:all?'Όλες οι δοκιμές ολοκληρώθηκαν ✓':''})}<div class="check-strip"><span class="check-chip ${a7checks.blink?'done':''}">Αναβόσβημα ${a7checks.blink?'✓':''}</span><span class="check-chip ${a7checks.a?'done':''}">Α: μουσική ${a7checks.a?'✓':''}</span><span class="check-chip ${a7checks.shake?'done':''}">Κούνημα: γρηγορότερα ${a7checks.shake?'✓':''}</span><span class="check-chip ${a7checks.b?'done':''}">Β: σταμάτημα ${a7checks.b?'✓':''}</span></div>`;if(all){stopMelody();setFeedback('✓ Το πλήρες πρόγραμμα λειτουργεί: αναβόσβημα, μουσική, αλλαγή ρυθμού και διακοπή.','good');later(()=>advance(0),1500);return}
+ startBlink(c=>{if(c>=2&&!a7checks.blink){a7checks.blink=true;setFeedback('Το αναβόσβημα λειτουργεί ✓. Συνέχισε με τα χειριστήρια του micro:bit.','info');later(r7,350)}});
+ q('[data-mb-a]').onclick=async()=>{if(a7busy||a7checks.a)return;a7busy=true;setTempo(100);await startMelody(true);a7checks.a=true;a7busy=false;setFeedback('Α: η μελωδία ξεκίνησε στα 100 bpm ✓. Τώρα κούνησε το micro:bit.','info');later(r7,500)};
+ q('[data-shake]').onclick=()=>{if(a7busy||!a7checks.a||a7checks.shake)return;if(!melodyRunning)return setFeedback('Η μουσική πρέπει να παίζει. Πάτησε Α.','bad');a7busy=true;changeTempo(50);a7checks.shake=true;setFeedback('Κούνημα: ο ρυθμός αυξήθηκε ✓. Άκουσε λίγο τη διαφορά και μετά πάτησε Β.','info');later(()=>{a7busy=false;r7()},1200)};
+ q('[data-mb-b]').onclick=()=>{if(a7busy||!a7checks.a||!a7checks.shake)return setFeedback('Πριν από το Β, ολοκλήρωσε τη δοκιμή Α και Κούνημα.','bad');stopMelody();a7checks.b=true;r7()}
+}
+
+/* Activity 8 */
+let a8downloaded=false;
+function r8(){activity.innerHTML=`<div class="task-strip">Οι δοκιμές ολοκληρώθηκαν. Πάτησε το <b>«Λήψη»</b> του περιβάλλοντος για να προσομοιώσεις τη μεταφορά του προγράμματος στο micro:bit.</div>${mcShell({code:fullCode(),tempo:150,status:a8downloaded?'Το πρόγραμμα μεταφέρθηκε στο micro:bit ✓':''})}<div class="check-strip"><span class="check-chip ${a8downloaded?'done':''}">Λήψη στο micro:bit ${a8downloaded?'✓':''}</span></div>`;if(a8downloaded){setFeedback('✓ Το πρόγραμμα είναι έτοιμο για χρήση στη συσκευή.','good');later(()=>advance(0),1200);return}q('[data-download]').onclick=()=>{a8downloaded=true;setFeedback('Γίνεται λήψη και μεταφορά του προγράμματος…','info');later(r8,900)}}
+
+/* Activity 9 */
+const levels=['Έχω καταλάβει και μπορώ να εξηγήσω','Έχω καταλάβει αρκετά καλά','Έχω καταλάβει αλλά έχω απορίες','Χρειάζομαι βοήθεια'];
+const objectives=['Να προγραμματίζω το micro:bit.','Να εμφανίζω ένα σχήμα στην οθόνη.','Να παίζω μία μελωδία στο micro:bit και να αλλάζω τον ρυθμό της.','Να χρησιμοποιώ το συμβάν «στο κούνημα».'];let selfSel=[null,null,null,null];
+function r9(){activity.innerHTML=`<div class="self-wrap"><div class="self-table"><div class="self-head">Αξιολογώ πόσο καλά έμαθα</div>${levels.map(x=>`<div class="self-head">${x}</div>`).join('')}${objectives.map((o,row)=>`<div class="self-objective">✓ ${o}</div>${levels.map((l,col)=>`<button class="self-cell ${selfSel[row]===col?'selected':''}" data-self="${row}:${col}">${l}</button>`).join('')}`).join('')}</div></div><div class="self-note">Διάλεξε ένα επίπεδο για κάθε στόχο.</div><div class="finish-actions"><button class="primary" id="finishBtn" ${selfSel.some(x=>x===null)?'disabled':''}>Ολοκλήρωση</button></div>`;qa('[data-self]').forEach(b=>b.onclick=()=>{const [r,c]=b.dataset.self.split(':').map(Number);selfSel[r]=c;r9()});q('#finishBtn').onclick=()=>{if(selfSel.some(x=>x===null))return;completed.add(stage);goToCompletion()}}
+
+const renderers=[r1,r2,r3,r4,r5,r6,r7,r8,r9];
+function renderCompletion(){kicker.textContent='ΟΛΟΚΛΗΡΩΣΗ';stageTitle.textContent='Μάθημα 11 ολοκληρώθηκε';instruction.textContent='Ολοκλήρωσες το πρόγραμμα γενεθλίων για το micro:bit.';activity.innerHTML=`<div class="completion"><span class="badge">Ενότητα 1 · Μάθημα 11</span><h2>Το micro:bit είναι έτοιμο για το πάρτι!</h2><p>Προγραμμάτισες αναβόσβημα στην οθόνη, μελωδία γενεθλίων, έλεγχο με Α και Β και αλλαγή ρυθμού με κούνημα.</p><button class="secondary-btn" id="restartComplete">↻ Επανάληψη μαθήματος</button></div>`;q('#restartComplete').onclick=restartLesson;clearFeedback()}
+function render(){clearTimers();stopAllRuntime();renderEpoch++;clearFeedback();updateProgress();if(finished){renderCompletion();window.scrollTo({top:0,behavior:'smooth'});return}const s=ACTIVITIES[stage];kicker.textContent=`Δραστηριότητα ${stage+1}`;stageTitle.textContent=s.t;instruction.textContent=s.i;currentTempo=100;renderers[stage]();window.scrollTo({top:0,behavior:'smooth'})}
+q('#helpBtn').onclick=()=>{q('#helpText').textContent=HELP[stage]||'';q('#helpModal').classList.add('open')};q('#closeHelp').onclick=q('#understoodBtn').onclick=()=>q('#helpModal').classList.remove('open');q('#helpModal').onclick=e=>{if(e.target===q('#helpModal'))q('#helpModal').classList.remove('open')};q('#speakHelp').onclick=()=>{if(!('speechSynthesis'in window))return;window.speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(HELP[stage]||'');u.lang='el-GR';window.speechSynthesis.speak(u)};
+render();
+</script>
+<footer class="nk-license" aria-label="Πληροφορίες δημιουργού και άδειας χρήσης">
+  <div><strong>Created by Nikos Kalakos · © 2026</strong></div>
+  <div>Original educational content and simulation design licensed under <a class="cc-badge" href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank" rel="license noopener noreferrer">CC BY-NC 4.0</a>.</div>
+  <div>Source code © 2026 Nikos Kalakos.</div>
+  <div>Third-party and textbook materials remain subject to the rights and licences of their respective copyright holders.</div>
+</footer>
+</body>
+</html>

@@ -1,0 +1,231 @@
+<!--
+ICT Educational Simulation
+Created by Nikos Kalakos
+Copyright © 2026 Nikos Kalakos
+
+Original educational content and simulation design licensed under CC BY-NC 4.0.
+Source code © 2026 Nikos Kalakos.
+Third-party and textbook materials remain subject to the rights and licences of their respective copyright holders.
+-->
+<!DOCTYPE html>
+<html lang="el">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="author" content="Nikos Kalakos">
+<meta name="copyright" content="© 2026 Nikos Kalakos">
+<meta name="license" content="Original educational content and simulation design: CC BY-NC 4.0; source code © 2026 Nikos Kalakos; third-party and textbook materials excluded.">
+<title>Μάθημα 23 – Αποθήκευση και ανάκτηση ψηφιακών αρχείων</title>
+<style>
+:root{
+  --unit:#EA922C;--unit-dark:#B86610;--unit-soft:#FFF4E6;
+  --secondary:#545F99;--secondary-dark:#3D477C;--secondary-soft:#EEF0F8;
+  --ink:#25324A;--muted:#68758A;--line:#D8DEEA;--bg:#F5F7FB;
+  --good:#23845A;--good-soft:#E9F7F0;--bad:#B64242;--bad-soft:#FDEEEE;
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:Inter,"Segoe UI",Arial,sans-serif;color:var(--ink);background:radial-gradient(circle at 8% 5%,rgba(234,146,44,.12),transparent 28%),radial-gradient(circle at 92% 16%,rgba(84,95,153,.13),transparent 30%),#F4F6FA;font-size:16px}
+button,input{font:inherit}button{cursor:pointer}.shell-page{max-width:1280px;margin:0 auto;padding:18px}
+.hero{background:#fff;border:1px solid #E3E7EE;border-top:9px solid var(--unit);border-radius:18px;box-shadow:0 14px 35px rgba(45,55,86,.11);padding:20px 24px 18px;display:grid;grid-template-columns:1fr auto;gap:18px;align-items:center}.eyebrow{font-size:13px;font-weight:900;letter-spacing:.075em;text-transform:uppercase;color:var(--secondary)}.hero h1{margin:5px 0 0;font-size:29px;line-height:1.14;color:var(--secondary-dark);max-width:990px}.hero p{margin:8px 0 0;color:var(--muted);font-weight:700;line-height:1.45}.lesson-mark{min-width:118px;height:72px;border-radius:16px;background:linear-gradient(135deg,var(--secondary),var(--secondary-dark));color:#fff;display:grid;place-items:center;text-align:center;box-shadow:0 9px 22px rgba(84,95,153,.23)}.lesson-mark b{font-size:27px;line-height:1}.lesson-mark span{font-size:11px;font-weight:850;letter-spacing:.08em;text-transform:uppercase}
+.progress{margin:13px 0;background:#fff;border:1px solid #E1E5EC;border-radius:15px;padding:12px 15px;box-shadow:0 7px 20px rgba(48,58,87,.06)}.progress-top{display:flex;justify-content:space-between;gap:12px;align-items:center;color:#59667B;font-size:13px;font-weight:850}.bar{height:8px;background:#ECEFF4;border-radius:999px;overflow:hidden;margin:8px 0 10px}.fill{height:100%;width:0;background:linear-gradient(90deg,var(--unit),var(--secondary));transition:.3s ease}.steps{display:flex;gap:8px;flex-wrap:wrap;justify-content:center}.step-dot{width:29px;height:29px;border-radius:9px;border:1px solid #CDD3DE;background:#fff;color:#758197;display:grid;place-items:center;font-size:12px;font-weight:900}.step-dot.current{border:2px solid var(--unit);color:var(--unit-dark);background:var(--unit-soft)}.step-dot.done{border-color:var(--secondary);background:var(--secondary);color:#fff}
+.stage{background:#fff;border:1px solid #E0E5EF;border-radius:18px;box-shadow:0 10px 28px #27364b12;overflow:hidden}.stage-head{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;padding:18px 20px;border-bottom:1px solid #E8ECF3}.stage-kicker{font-size:12px;font-weight:950;color:var(--unit-dark);text-transform:uppercase}.stage-title{font-size:24px;margin:4px 0}.instruction{margin:0;color:#5C687C;font-weight:650;line-height:1.5}.help-btn{border:1px solid #C9D1E0;background:#fff;border-radius:11px;padding:9px 13px;font-weight:850;color:var(--secondary-dark);white-space:nowrap}.help-btn:hover{background:var(--secondary-soft)}.workspace{padding:16px 18px 20px}.task-strip{border-left:5px solid var(--unit);background:#FFF9F1;padding:12px 14px;border-radius:11px;margin-bottom:14px;font-weight:800;line-height:1.45}.feedback{min-height:0;margin-top:12px;border-radius:11px;font-weight:800;line-height:1.45}.feedback.show{padding:11px 13px;border:1px solid}.feedback.info{background:#F2F6FF;border-color:#C8D5EF;color:#46577C}.feedback.good{background:var(--good-soft);border-color:#AADBC5;color:#176943}.feedback.bad{background:var(--bad-soft);border-color:#F0BABA;color:#9B3030}@keyframes shake{25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}.wrong{animation:shake .28s;background:var(--bad-soft)!important;border-color:#E49A9A!important}.correct{background:var(--good-soft)!important;border-color:#7DC7A4!important}.choice-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:11px}.choice{border:1px solid #C8D1DF;background:#fff;border-radius:13px;padding:14px;text-align:left;color:#34415B;font-weight:800;line-height:1.35;min-height:64px}.choice:hover{border-color:var(--secondary);background:var(--secondary-soft)}.choice:disabled{cursor:default}.scene-card{border:1px solid #D4DAE5;background:#fff;border-radius:16px;padding:16px;box-shadow:0 7px 18px #27364b0e}.tag{display:inline-flex;align-items:center;gap:6px;border:1px solid #CBD4E1;background:#fff;border-radius:999px;padding:5px 9px;font-size:12px;font-weight:900;color:#5C6A82}.practice{background:var(--unit-soft);border-color:#F0C889;color:var(--unit-dark)}
+/* Graphis */
+.graphis{max-width:1120px;margin:0 auto;border:1px solid #BBC5D4;border-radius:17px;overflow:hidden;background:#F7F8FB;box-shadow:0 13px 28px #2838521a}.appbar{height:46px;background:linear-gradient(120deg,var(--secondary-dark),var(--secondary));color:#fff;display:flex;align-items:center;gap:10px;padding:0 14px}.appicon{width:30px;height:30px;border-radius:9px;background:var(--unit);display:grid;place-items:center;font-weight:950}.apptitle{font-weight:950}.docname{margin-left:8px;font-size:13px;font-weight:800;color:#E8ECFF}.window-dots{margin-left:auto;display:flex;gap:7px}.window-dots span{width:10px;height:10px;border-radius:50%;background:#ffffff9c}.menubar{height:36px;background:#fff;border-bottom:1px solid #D7DDE7;display:flex;align-items:center;gap:2px;padding:0 8px;position:relative}.menu-btn{border:0;background:transparent;padding:7px 10px;border-radius:7px;font-size:13px;font-weight:800;color:#47546B}.menu-btn:hover,.menu-btn.open{background:var(--secondary-soft);color:var(--secondary-dark)}.dropdown{position:absolute;z-index:15;top:34px;left:8px;width:245px;background:#fff;border:1px solid #C7D0DC;border-radius:10px;padding:6px;box-shadow:0 12px 30px #27364b2c}.menu-item{width:100%;border:0;background:#fff;text-align:left;padding:9px 11px;border-radius:7px;color:#3E4B63;font-weight:760;display:flex;justify-content:space-between;gap:12px}.menu-item:hover{background:var(--secondary-soft)}.menu-item.disabled{color:#A0A8B4;pointer-events:none}.toolbar{min-height:47px;background:#F4F6F9;border-bottom:1px solid #D5DCE7;display:flex;align-items:center;gap:5px;padding:6px 10px;flex-wrap:wrap}.tool{height:33px;min-width:35px;border:1px solid #CDD5E0;background:#fff;border-radius:7px;display:grid;place-items:center;font-weight:900;color:#4E5B72;padding:0 9px}.tool:hover{background:var(--secondary-soft);border-color:#B9C3D4}.tool.unsaved{border-color:var(--unit);background:var(--unit-soft);box-shadow:0 0 0 2px rgba(234,146,44,.13)}.tool-label{font-size:12px}.separator{height:25px;width:1px;background:#CFD6E1;margin:0 3px}.editor-wrap{padding:18px;background:#DDE2EA;min-height:390px}.paper{max-width:760px;min-height:330px;margin:0 auto;background:#fff;border:1px solid #C9D0D9;box-shadow:0 7px 18px #2c3b541c;padding:46px 55px;position:relative}.paper h2{margin:0 0 17px;color:#28364F;font-size:23px}.editable{min-height:170px;outline:none;line-height:1.65;font-weight:650;color:#39465C;white-space:pre-wrap}.editable:focus{box-shadow:inset 0 0 0 2px rgba(84,95,153,.16)}.statusbar{height:32px;border-top:1px solid #D3D9E3;background:#F7F9FC;display:flex;align-items:center;padding:0 12px;gap:14px;font-size:11px;font-weight:800;color:#6B788D}.dirty{color:var(--unit-dark)}
+/* dialogs */
+.overlay{position:fixed;inset:0;background:#1f294266;display:none;align-items:center;justify-content:center;z-index:80;padding:20px}.overlay.open{display:flex}.dialog{width:min(720px,96vw);background:#fff;border-radius:15px;border:1px solid #C8D0DC;box-shadow:0 22px 60px #17223855;overflow:hidden}.dialog-head{background:#F4F6FA;border-bottom:1px solid #D4DAE4;padding:12px 15px;font-weight:950;color:#36445D;display:flex;justify-content:space-between;align-items:center}.dialog-body{padding:15px}.pathbar{display:flex;align-items:center;gap:8px;border:1px solid #CBD3DF;background:#FAFBFD;border-radius:9px;padding:8px 10px;font-size:13px;font-weight:800;color:#55637A;margin-bottom:12px}.folder-grid{display:grid;grid-template-columns:180px 1fr;gap:12px;min-height:225px}.places{border:1px solid #D7DDE6;border-radius:10px;padding:7px;background:#FAFBFD}.place{width:100%;border:0;background:transparent;text-align:left;padding:9px;border-radius:7px;font-weight:800;color:#526078}.place.active{background:var(--secondary-soft);color:var(--secondary-dark)}.filearea{border:1px solid #D7DDE6;border-radius:10px;background:#fff;padding:8px;display:grid;align-content:start;gap:5px}.file-row{width:100%;border:1px solid transparent;background:#fff;border-radius:8px;padding:9px 10px;display:grid;grid-template-columns:32px 1fr auto;align-items:center;gap:9px;text-align:left;color:#3E4B63;font-weight:800}.file-row:hover{background:#F5F7FA}.file-row.selected{background:var(--secondary-soft);border-color:#AEB9CE}.file-meta{font-size:11px;color:#8A95A7;font-weight:750}.name-row{display:grid;grid-template-columns:120px 1fr;gap:9px;align-items:center;margin-top:12px}.name-row label{font-size:13px;font-weight:900;color:#536077}.filename{height:40px;border:2px solid #C7D0DC;border-radius:9px;padding:0 10px;outline:none;font-weight:800;color:#334159}.filename:focus{border-color:var(--secondary);box-shadow:0 0 0 3px rgba(84,95,153,.11)}.dialog-actions{display:flex;justify-content:flex-end;gap:8px;padding:12px 15px;border-top:1px solid #D8DEE7;background:#FAFBFD}.dlg-btn{border:1px solid #C7D0DC;background:#fff;border-radius:9px;padding:9px 15px;font-weight:850;color:#49566E}.dlg-btn.primary{background:var(--secondary);border-color:var(--secondary);color:#fff}.dlg-btn:disabled{opacity:.45;cursor:default}.error-note{margin-top:9px;background:var(--bad-soft);border:1px solid #EAB7B7;color:#973737;border-radius:8px;padding:9px 10px;font-size:12px;font-weight:800;display:none}.error-note.show{display:block}
+.filename-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:11px}.filename-card{border:1px solid #C8D1DF;background:#fff;border-radius:13px;padding:13px}.fname{font-family:Consolas,"Courier New",monospace;font-size:17px;font-weight:900;color:#34415B;margin-bottom:9px;word-break:break-word}.small-choice-row{display:flex;gap:7px}.mini-choice{flex:1;border:1px solid #CBD3DF;background:#fff;border-radius:9px;padding:8px;font-weight:850;color:#526078}.mini-choice:hover{background:var(--secondary-soft);border-color:var(--secondary)}.check-strip{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}.check-chip{display:inline-flex;align-items:center;gap:7px;border:1px solid #CBD4E1;background:#fff;border-radius:999px;padding:7px 11px;font-size:12px;font-weight:900;color:#5C6A82}.check-chip::before{content:"";width:17px;height:17px;border:2px solid #AEBBD0;border-radius:5px;background:#fff}.check-chip.done{background:var(--good-soft);border-color:#A8D7C0;color:#176943}.check-chip.done::before{content:"✓";display:grid;place-items:center;border-color:var(--good);background:var(--good);color:#fff;font-size:11px}
+.assess{display:grid;gap:12px}.assess-row{border:1px solid #D5DCE6;border-radius:14px;padding:13px;background:#fff}.assess-q{font-weight:900;color:#3D4A62;margin-bottom:9px}.level-row{display:grid;grid-template-columns:repeat(4,1fr);gap:7px}.level-btn{border:1px solid #CBD3DF;background:#fff;border-radius:10px;padding:10px 8px;font-size:12px;font-weight:800;color:#56647B}.level-btn.selected{background:var(--secondary);border-color:var(--secondary);color:#fff}.complete{padding:30px;text-align:center}.complete-mark{width:78px;height:78px;border-radius:24px;background:linear-gradient(135deg,var(--unit),var(--secondary));display:grid;place-items:center;color:#fff;font-size:39px;font-weight:950;margin:0 auto 13px}.secondary-btn{border:1px solid var(--secondary);background:#fff;color:var(--secondary-dark);border-radius:11px;padding:10px 16px;font-weight:900}.secondary-btn:hover{background:var(--secondary-soft)}
+.modal-backdrop{position:fixed;inset:0;background:#222b3f6b;display:none;align-items:center;justify-content:center;z-index:90;padding:20px}.modal-backdrop.open{display:flex}.modal{width:min(650px,95vw);background:#fff;border-radius:16px;overflow:hidden;border:1px solid #C8D0DD;box-shadow:0 22px 60px #1c274b44}.modal-head{padding:13px 15px;background:var(--secondary);color:#fff;display:flex;justify-content:space-between;align-items:center;font-weight:950}.modal-close{border:0;background:#ffffff24;color:#fff;width:29px;height:29px;border-radius:8px;font-size:20px}.modal-body{padding:16px;line-height:1.6;font-weight:700;color:#4B5870}.modal-actions{padding:11px 15px;border-top:1px solid #E0E5EC;display:flex;justify-content:flex-end;gap:8px}.small-btn{border:1px solid #C7D0DC;background:#fff;border-radius:9px;padding:8px 11px;font-weight:800;color:#526078}
+@media(max-width:760px){.hero{grid-template-columns:1fr}.lesson-mark{display:none}.stage-head{flex-direction:column}.help-btn{align-self:flex-end}.folder-grid{grid-template-columns:1fr}.places{display:flex;overflow:auto}.level-row{grid-template-columns:1fr 1fr}.paper{padding:30px 25px}.name-row{grid-template-columns:1fr}}
+</style>
+
+<style id="nk-license-style">
+.nk-license{max-width:1100px;margin:14px auto 24px;padding:10px 16px;text-align:center;font:13px/1.45 Arial,"Noto Sans",sans-serif;color:#4e657c}
+.nk-license a{color:inherit;text-decoration:underline;text-underline-offset:2px}
+.nk-license .cc-badge{display:inline-block;margin:0 4px;padding:2px 7px;border:1px solid #8aa0b8;border-radius:6px;background:#fff;font-weight:700;white-space:nowrap}
+</style>
+</head>
+<body>
+<div class="shell-page">
+<header class="hero"><div><div class="eyebrow">Ενότητα 4 · Ψηφιακός γραμματισμός</div><h1>Αποθήκευση και ανάκτηση ψηφιακών αρχείων</h1><p>Χρησιμοποίησε το Graphis για να αποθηκεύεις, να ενημερώνεις και να ανοίγεις αρχεία με τρόπο παρόμοιο με ένα πραγματικό πρόγραμμα.</p></div><div class="lesson-mark"><div><b>23</b><br><span>Μάθημα</span></div></div></header>
+<section class="progress"><div class="progress-top"><span id="progressText"></span><span id="progressPct"></span></div><div class="bar"><div class="fill" id="fill"></div></div><div class="steps" id="steps"></div></section>
+<main class="stage"><div class="stage-head"><div><div class="stage-kicker" id="kicker"></div><h2 class="stage-title" id="stageTitle"></h2><p class="instruction" id="instruction"></p></div><button class="help-btn" id="helpBtn">❔ Βοήθεια</button></div><div class="workspace"><div id="activity"></div><div class="feedback" id="feedback"></div></div></main>
+</div>
+<div class="modal-backdrop" id="helpModal"><div class="modal"><div class="modal-head"><span>Βοήθεια</span><button class="modal-close" id="closeHelp">×</button></div><div class="modal-body" id="helpText"></div><div class="modal-actions"><button class="small-btn" id="speakHelp">🔊 Άκουσε</button><button class="small-btn" id="understoodBtn">Το κατάλαβα</button></div></div></div>
+<div class="overlay" id="fileDialog"></div>
+<script>
+const ACTIVITIES=[
+ {t:'Αποθήκευσε ένα νέο έγγραφο',i:'Αποθήκευσε το νέο έγγραφο του Graphis με κατάλληλο όνομα στον φάκελο «Έγγραφα».'},
+ {t:'Αποθήκευση και Αποθήκευση ως',i:'Κάνε μια αλλαγή, αποθήκευσέ την στο ίδιο αρχείο και μετά δημιούργησε ένα αντίγραφο σε άλλη θέση.'},
+ {t:'Ποια ονόματα αρχείων επιτρέπονται;',i:'Έλεγξε ποια από τα ονόματα του βιβλίου μπορούν να χρησιμοποιηθούν ως ονόματα αρχείων.'},
+ {t:'Ανάκτησε ένα αποθηκευμένο αρχείο',i:'Άνοιξε το Graphis, χρησιμοποίησε Αρχείο → Άνοιγμα και βρες το αρχείο σου.'},
+ {t:'Οι ίδιες βασικές λειτουργίες σε εφαρμογές',i:'Αναγνώρισε ποιες λειτουργίες χειρισμού αρχείων χρησιμοποιούνται και σε άλλες εφαρμογές.'},
+ {t:'Συνολική δοκιμή',i:'Αποθήκευσε, ενημέρωσε, κλείσε και ξανάνοιξε ένα αρχείο με πραγματικές ενέργειες μενού, πληκτρολογίου και ποντικιού.'},
+ {t:'Τι έμαθα;',i:'Αξιολόγησε πόσο καλά μπορείς να χειρίζεσαι αρχεία μέσα σε μια εφαρμογή.'}
+];
+const HELP=[
+ 'Στο Graphis άνοιξε το μενού «Αρχείο» και διάλεξε «Αποθήκευση» ή χρησιμοποίησε το εικονίδιο 💾. Στο παράθυρο αποθήκευσης γράψε «Στοιχεία για την Εργασία», κράτησε επιλεγμένο τον φάκελο «Έγγραφα» και πάτησε «Αποθήκευση».',
+ 'Κάνε κλικ στο τέλος του κειμένου, πάτησε πρώτα Enter για να δημιουργήσεις νέα γραμμή και μετά πληκτρολόγησε τη λέξη «Πηγές». Έπειτα αποθήκευσε από το 💾 ώστε να ενημερωθεί το ίδιο αρχείο. Στη συνέχεια χρησιμοποίησε «Αρχείο → Αποθήκευση ως…» για να δημιουργήσεις αντίγραφο στην «Επιφάνεια εργασίας».',
+ 'Στο συγκεκριμένο μάθημα το βιβλίο αναφέρει ότι οι χαρακτήρες < > / \\ : | δεν επιτρέπονται σε ονόματα αρχείων. Έλεγξε κάθε όνομα με βάση αυτούς τους χαρακτήρες.',
+ 'Άνοιξε «Αρχείο → Άνοιγμα». Ο φάκελος «Έγγραφα» εμφανίζεται πρώτος. Βρες το «Στοιχεία για την Εργασία» και κάνε διπλό κλικ πάνω στο αρχείο.',
+ 'Η αποθήκευση και το άνοιγμα αρχείων είναι βασικές λειτουργίες σε πολλές εφαρμογές, όπως επεξεργαστές κειμένου, παρουσιάσεις και υπολογιστικά φύλλα.',
+ 'Ακολούθησε τη σειρά που ζητά κάθε βήμα. Όταν χρειάζεται να προσθέσεις κείμενο σε νέα γραμμή στο τέλος, πάτησε πρώτα Enter και μετά γράψε το κείμενο. Η επικόλληση είναι απενεργοποιημένη. Τα ✓ εμφανίζονται μόνο αφού ολοκληρώσεις πραγματικά κάθε ενέργεια.',
+ 'Διάλεξε το επίπεδο που σε περιγράφει καλύτερα. Δεν υπάρχει σωστή ή λάθος επιλογή στην αυτοαξιολόγηση.'
+];
+let stage=0,finished=false,renderEpoch=0,pendingTimers=[];
+const q=s=>document.querySelector(s),qa=s=>[...document.querySelectorAll(s)];
+const activity=q('#activity'),feedback=q('#feedback'),kicker=q('#kicker'),stageTitle=q('#stageTitle'),instruction=q('#instruction');
+function later(fn,ms){const s=stage,e=renderEpoch;const id=setTimeout(()=>{if(stage===s&&renderEpoch===e)fn()},ms);pendingTimers.push(id);return id}
+function clearTimers(){pendingTimers.forEach(clearTimeout);pendingTimers=[]}
+function setFeedback(txt,type='info'){feedback.className='feedback show '+type;feedback.innerHTML=txt}
+function clearFeedback(){feedback.className='feedback';feedback.textContent=''}
+function wrong(el,msg){el.classList.remove('wrong');void el.offsetWidth;el.classList.add('wrong');setFeedback(msg,'bad');setTimeout(()=>el.classList.remove('wrong'),560)}
+function lock(sel){qa(sel).forEach(x=>x.disabled=true)}
+function shuffle(a){a=[...a];for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
+function noPaste(el){if(!el)return;el.addEventListener('paste',e=>{e.preventDefault();setFeedback('Πληκτρολόγησε το κείμενο με το πληκτρολόγιο. Η επικόλληση είναι απενεργοποιημένη.','bad')});el.addEventListener('drop',e=>e.preventDefault());el.addEventListener('keydown',e=>{const k=e.key.toLowerCase();if((e.ctrlKey||e.metaKey)&&k==='v'){e.preventDefault();setFeedback('Πληκτρολόγησε το κείμενο με το πληκτρολόγιο.','bad')}if(e.shiftKey&&e.key==='Insert'){e.preventDefault()}})}
+function updateProgress(){const n=ACTIVITIES.length,pct=finished?100:Math.round(stage/n*100);q('#progressText').textContent=finished?'Ολοκληρώθηκε':`Δραστηριότητα ${stage+1} από ${n}`;q('#progressPct').textContent=pct+'%';q('#fill').style.width=pct+'%';q('#steps').innerHTML=ACTIVITIES.map((_,i)=>`<div class="step-dot ${finished||i<stage?'done':i===stage?'current':''}">${i+1}</div>`).join('')}
+function advance(ms=0){later(()=>{stage++;if(stage>=ACTIVITIES.length){finished=true;render()}else render()},ms)}
+function renderCompletion(){q('#kicker').textContent='Ολοκλήρωση';q('#stageTitle').textContent='Μπράβο! Ολοκλήρωσες το μάθημα.';q('#instruction').textContent='Εξασκήθηκες στην αποθήκευση, στην ενημέρωση και στην ανάκτηση ψηφιακών αρχείων.';activity.innerHTML=`<div class="complete"><div class="complete-mark">✓</div><h2>Το μάθημα ολοκληρώθηκε!</h2><p>Μπορείς τώρα να αποθηκεύεις μια νέα εργασία με κατάλληλο όνομα, να αποθηκεύεις αλλαγές και να βρίσκεις ξανά το αρχείο σου.</p><button class="secondary-btn" id="restartComplete">↻ Επανάληψη μαθήματος</button></div>`;q('#restartComplete').onclick=()=>location.reload();clearFeedback()}
+function render(){clearTimers();renderEpoch++;clearFeedback();updateProgress();if(finished){renderCompletion();return}const s=ACTIVITIES[stage];kicker.textContent=`Δραστηριότητα ${stage+1}`;stageTitle.textContent=s.t;instruction.textContent=s.i;renderers[stage]();window.scrollTo({top:0,behavior:'smooth'})}
+
+let menuOpen=false;
+function graphisShell({name='Άτιτλο 1',content='',dirty=false,fileActions=true,editable=false,status='',extraToolbar=''}){
+ return `<div class="graphis"><div class="appbar"><div class="appicon">Γ</div><div class="apptitle">Graphis</div><div class="docname">${name}${dirty?' •':''}</div><div class="window-dots"><span></span><span></span><span></span></div></div><div class="menubar"><button class="menu-btn" id="fileMenuBtn">Αρχείο</button><button class="menu-btn">Επεξεργασία</button><button class="menu-btn">Προβολή</button><button class="menu-btn">Εισαγωγή</button><div id="fileDrop"></div></div><div class="toolbar"><button class="tool" title="Νέο">▧</button><button class="tool" title="Άνοιγμα" id="openTool">📂</button><button class="tool ${dirty?'unsaved':''}" title="Αποθήκευση" id="saveTool">💾</button><span class="separator"></span><button class="tool">B</button><button class="tool"><i>I</i></button><button class="tool">U̲</button>${extraToolbar}</div><div class="editor-wrap"><div class="paper"><h2>Απειλούμενα ζώα της Ελλάδας</h2><div id="docEdit" class="editable" ${editable?'contenteditable="true"':''}>${content}</div></div></div><div class="statusbar"><span>Σελίδα 1 από 1</span><span>Ελληνικά</span><span class="${dirty?'dirty':''}">${dirty?'● Υπάρχουν αλλαγές που δεν έχουν αποθηκευτεί':'✓ Αποθηκευμένο'}${status?' · '+status:''}</span></div></div>`
+}
+function bindFileMenu({onSave,onSaveAs,onOpen}){const btn=q('#fileMenuBtn'),drop=q('#fileDrop');if(!btn||!drop)return;btn.onclick=()=>{const open=drop.innerHTML!=='';drop.innerHTML=open?'':`<div class="dropdown"><button class="menu-item">Νέο <span>Ctrl+N</span></button><button class="menu-item" id="mOpen">Άνοιγμα… <span>Ctrl+O</span></button><button class="menu-item" id="mSave">Αποθήκευση <span>Ctrl+S</span></button><button class="menu-item" id="mSaveAs">Αποθήκευση ως… <span>Ctrl+Shift+S</span></button><button class="menu-item">Κλείσιμο</button></div>`;btn.classList.toggle('open',!open);if(open)return;q('#mSave').onclick=()=>{drop.innerHTML='';btn.classList.remove('open');onSave&&onSave()};q('#mSaveAs').onclick=()=>{drop.innerHTML='';btn.classList.remove('open');onSaveAs&&onSaveAs()};q('#mOpen').onclick=()=>{drop.innerHTML='';btn.classList.remove('open');onOpen&&onOpen()}};if(q('#saveTool'))q('#saveTool').onclick=()=>onSave&&onSave();if(q('#openTool'))q('#openTool').onclick=()=>onOpen&&onOpen()}
+const SAVED_FILES={docs:['Στοιχεία για την Εργασία'],desktop:['Στοιχεία για την Εργασία - Αντίγραφο']};
+function closeDialog(){q('#fileDialog').classList.remove('open');q('#fileDialog').innerHTML=''}
+function saveDialog({defaultName='Άτιτλο 1',folder='docs',expectedName,onSave,title='Αποθήκευση ως'}){const ov=q('#fileDialog');ov.classList.add('open');ov.innerHTML=`<div class="dialog"><div class="dialog-head"><span>${title}</span><span>Graphis</span></div><div class="dialog-body"><div class="pathbar">📁 <span id="dlgPath">${folder==='docs'?'Έγγραφα':'Επιφάνεια εργασίας'}</span></div><div class="folder-grid"><div class="places"><button class="place ${folder==='docs'?'active':''}" data-place="docs">📄 Έγγραφα</button><button class="place ${folder==='desktop'?'active':''}" data-place="desktop">🖥 Επιφάνεια εργασίας</button></div><div class="filearea" id="saveFiles"><div class="file-meta">Επίλεξε θέση αποθήκευσης από αριστερά.</div></div></div><div class="name-row"><label for="dlgName">Όνομα αρχείου</label><input class="filename" id="dlgName" value="${defaultName}" autocomplete="off"></div><div class="error-note" id="dlgError">Το όνομα περιέχει χαρακτήρα που δεν επιτρέπεται.</div></div><div class="dialog-actions"><button class="dlg-btn" id="dlgCancel">Άκυρο</button><button class="dlg-btn primary" id="dlgSave">Αποθήκευση</button></div></div>`;let selected=folder;const inp=q('#dlgName');noPaste(inp);setTimeout(()=>{inp.focus();inp.select()},20);qa('[data-place]').forEach(b=>b.onclick=()=>{selected=b.dataset.place;qa('[data-place]').forEach(x=>x.classList.toggle('active',x===b));q('#dlgPath').textContent=selected==='docs'?'Έγγραφα':'Επιφάνεια εργασίας'});q('#dlgCancel').onclick=closeDialog;q('#dlgSave').onclick=()=>{const name=inp.value.trim();if(/[<>\/\\:|]/.test(name)){q('#dlgError').classList.add('show');return}q('#dlgError').classList.remove('show');if(expectedName&&name!==expectedName){inp.classList.add('wrong');setFeedback(`Γράψε ακριβώς «${expectedName}».`,'bad');setTimeout(()=>inp.classList.remove('wrong'),560);return}closeDialog();onSave&&onSave({name,folder:selected})}}
+function openDialog({folder='docs',target='Στοιχεία για την Εργασία',onOpen,allowButton=true}){const ov=q('#fileDialog');ov.classList.add('open');const files=folder==='docs'?['Στοιχεία για την Εργασία','Σημειώσεις','Πρόχειρο']:['Στοιχεία για την Εργασία - Αντίγραφο','Εικόνα σχολείου'];ov.innerHTML=`<div class="dialog"><div class="dialog-head"><span>Άνοιγμα</span><span>Graphis</span></div><div class="dialog-body"><div class="pathbar">📁 <span id="dlgPath">${folder==='docs'?'Έγγραφα':'Επιφάνεια εργασίας'}</span></div><div class="folder-grid"><div class="places"><button class="place ${folder==='docs'?'active':''}" data-open-place="docs">📄 Έγγραφα</button><button class="place ${folder==='desktop'?'active':''}" data-open-place="desktop">🖥 Επιφάνεια εργασίας</button></div><div class="filearea" id="openFiles"></div></div></div><div class="dialog-actions"><button class="dlg-btn" id="dlgCancel">Άκυρο</button>${allowButton?'<button class="dlg-btn primary" id="dlgOpen" disabled>Άνοιγμα</button>':''}</div></div>`;let selected='',current=folder;function draw(){const arr=current==='docs'?['Στοιχεία για την Εργασία','Σημειώσεις','Πρόχειρο']:['Στοιχεία για την Εργασία - Αντίγραφο','Εικόνα σχολείου'];q('#openFiles').innerHTML=arr.map(n=>`<button class="file-row ${selected===n?'selected':''}" data-file="${n}"><span>📄</span><span>${n}</span><span class="file-meta">Έγγραφο</span></button>`).join('');qa('[data-file]').forEach(r=>{r.onclick=()=>{selected=r.dataset.file;draw();if(q('#dlgOpen'))q('#dlgOpen').disabled=false};r.ondblclick=()=>{selected=r.dataset.file;if(selected!==target)return wrong(r,`Άνοιξε το αρχείο «${target}».`);closeDialog();onOpen&&onOpen(selected)}})}draw();qa('[data-open-place]').forEach(b=>b.onclick=()=>{current=b.dataset.openPlace;selected='';qa('[data-open-place]').forEach(x=>x.classList.toggle('active',x===b));q('#dlgPath').textContent=current==='docs'?'Έγγραφα':'Επιφάνεια εργασίας';draw()});q('#dlgCancel').onclick=closeDialog;if(q('#dlgOpen'))q('#dlgOpen').onclick=()=>{if(selected!==target){const el=q(`[data-file="${selected}"]`);if(el)wrong(el,`Άνοιξε το αρχείο «${target}».`);return}closeDialog();onOpen&&onOpen(selected)}}
+
+/* Activity 1 */
+let a1saved=false;
+function r1(){const text='Η μεσογειακή φώκια και η θαλάσσια χελώνα είναι ζώα που χρειάζονται προστασία.\nΟι πληροφορίες αυτές θα χρησιμοποιηθούν στη σχολική εργασία.';activity.innerHTML=`<div class="task-strip">Το νέο έγγραφο έχει προσωρινό όνομα <b>«Άτιτλο 1»</b>. Αποθήκευσέ το ως <b>«Στοιχεία για την Εργασία»</b> στον φάκελο <b>«Έγγραφα»</b>.</div>${graphisShell({name:a1saved?'Στοιχεία για την Εργασία':'Άτιτλο 1',content:text,dirty:!a1saved})}`;if(a1saved){setFeedback('✓ Το έγγραφο αποθηκεύτηκε με κατάλληλο όνομα στον φάκελο «Έγγραφα».','good');return later(()=>advance(0),1250)}const doSave=()=>saveDialog({defaultName:'Άτιτλο 1',folder:'docs',expectedName:'Στοιχεία για την Εργασία',title:'Αποθήκευση',onSave:({folder})=>{if(folder!=='docs'){setFeedback('Επίλεξε τον φάκελο «Έγγραφα».','bad');return r1()}a1saved=true;r1()}});bindFileMenu({onSave:doSave,onSaveAs:doSave,onOpen:()=>setFeedback('Πρώτα χρειάζεται να αποθηκεύσεις το νέο έγγραφο.','bad')})}
+
+/* Activity 2 */
+let a2phase=0,a2text='Η μεσογειακή φώκια και η θαλάσσια χελώνα είναι ζώα που χρειάζονται προστασία.',a2dirty=false,a2copy=false;
+function r2(){if(a2phase===0){activity.innerHTML=`<div class="task-strip">Κάνε κλικ στο τέλος του κειμένου, πάτησε πρώτα το πραγματικό <b>Enter</b> για να δημιουργήσεις νέα γραμμή και μετά πληκτρολόγησε τη λέξη <b>Πηγές</b>.</div>${graphisShell({name:'Στοιχεία για την Εργασία',content:a2text,dirty:a2dirty,editable:true})}`;const ed=q('#docEdit');noPaste(ed);ed.focus();let lineStarted=false,completed=false;const placeEnd=()=>{const s=window.getSelection(),r=document.createRange();r.selectNodeContents(ed);r.collapse(false);s.removeAllRanges();s.addRange(r)};placeEnd();const markDirty=()=>{a2dirty=true;a2text=ed.innerText.replace(/\r/g,'');const status=q('.statusbar span:last-child');if(status){status.className='dirty';status.textContent='● Υπάρχουν αλλαγές που δεν έχουν αποθηκευτεί'}q('#saveTool').classList.add('unsaved')};ed.onkeydown=e=>{if(!lineStarted){if(e.key==='Enter'){placeEnd();lineStarted=true;setFeedback('✓ Δημιουργήθηκε νέα γραμμή. Τώρα γράψε «Πηγές».','good');return}if(e.key.length===1||e.key==='Backspace'||e.key==='Delete'){e.preventDefault();setFeedback('Πρώτα πάτησε Enter για να δημιουργήσεις νέα γραμμή.','bad')}return}if(e.key==='Enter'){e.preventDefault();setFeedback('Η νέα γραμμή είναι έτοιμη. Γράψε τώρα τη λέξη «Πηγές».','bad')}};ed.oninput=()=>{markDirty();if(!lineStarted||completed)return;const raw=ed.innerText.replace(/\r/g,'');const lines=raw.split('\n');const last=(lines.filter(x=>x.trim()!=='').pop()||'').trim();if(last==='Πηγές'&&raw.includes('\n')){completed=true;a2text=raw.trimEnd();setFeedback('✓ Η λέξη «Πηγές» γράφτηκε στη νέα γραμμή.','good');later(()=>{a2phase=1;r2()},850);return}if(last&&!('Πηγές'.startsWith(last))){setFeedback('Γράψε ακριβώς τη λέξη «Πηγές» στη νέα γραμμή.','bad')}};bindFileMenu({onSave:()=>setFeedback('Πρώτα πάτησε Enter και γράψε «Πηγές» στη νέα γραμμή.','bad'),onSaveAs:()=>setFeedback('Πρώτα ολοκλήρωσε την αλλαγή.','bad')});return}
+ if(a2phase===1){activity.innerHTML=`<div class="task-strip">Έκανες αλλαγή. Τώρα πάτησε το <b>💾 Αποθήκευση</b> για να ενημερωθεί το <b>ίδιο αρχείο</b>.</div>${graphisShell({name:'Στοιχεία για την Εργασία',content:a2text,dirty:true})}`;const save=()=>{a2dirty=false;a2phase=2;r2()};bindFileMenu({onSave:save,onSaveAs:()=>setFeedback('Σε αυτό το βήμα χρησιμοποίησε «Αποθήκευση», ώστε να ενημερωθεί το ίδιο αρχείο.','bad')});return}
+ if(a2phase===2){activity.innerHTML=`<div class="task-strip">✓ Η αλλαγή αποθηκεύτηκε στο ίδιο αρχείο. Τώρα χρησιμοποίησε <b>Αρχείο → Αποθήκευση ως…</b> για να δημιουργήσεις αντίγραφο με όνομα <b>«Στοιχεία για την Εργασία - Αντίγραφο»</b> στην <b>Επιφάνεια εργασίας</b>.</div>${graphisShell({name:'Στοιχεία για την Εργασία',content:a2text,dirty:false})}`;setFeedback('✓ Η «Αποθήκευση» ενημέρωσε το υπάρχον αρχείο.','good');bindFileMenu({onSave:()=>setFeedback('Τώρα χρειάζεται «Αποθήκευση ως…», επειδή θέλεις νέο όνομα και άλλη θέση.','bad'),onSaveAs:()=>saveDialog({defaultName:'Στοιχεία για την Εργασία',folder:'docs',expectedName:'Στοιχεία για την Εργασία - Αντίγραφο',onSave:({folder})=>{if(folder!=='desktop'){setFeedback('Για το αντίγραφο επίλεξε «Επιφάνεια εργασίας».','bad');return r2()}a2copy=true;a2phase=3;r2()}})});return}
+ activity.innerHTML=`<div class="task-strip">Το αρχικό αρχείο παρέμεινε στα «Έγγραφα» και δημιουργήθηκε νέο αντίγραφο στην «Επιφάνεια εργασίας».</div>${graphisShell({name:'Στοιχεία για την Εργασία - Αντίγραφο',content:a2text,dirty:false,status:'Επιφάνεια εργασίας'})}`;setFeedback('✓ Κατάλαβες τη διαφορά: «Αποθήκευση» ενημερώνει το ίδιο αρχείο, ενώ «Αποθήκευση ως…» επιτρέπει νέο όνομα ή/και νέα θέση.','good');later(()=>advance(0),1500)}
+
+/* Activity 3 */
+const A3_ITEMS=shuffle([
+ ['Εργασία 1',true],['ΑΣΚΗΣΗ-ΙΣΤΟΡΙΑ',true],['ΚΑΤΕΡΙΝΑ<>',false],['ΤΠΕ:Scratch',false],['Robot',true],['Δημοτικό/:',false]
+]);
+const A3_CHOICES=A3_ITEMS.map(()=>shuffle([['yes','Αποδεκτό'],['no','Μη αποδεκτό']]));
+let a3done=new Set();
+function r3(){activity.innerHTML=`<div class="task-strip">Για κάθε όνομα αποφάσισε αν είναι <b>αποδεκτό</b>. Σύμφωνα με το βιβλίο, οι χαρακτήρες <b>&lt; &gt; / \\ : |</b> δεν επιτρέπονται.</div><div class="filename-grid">${A3_ITEMS.map((x,i)=>`<div class="filename-card ${a3done.has(i)?'correct':''}"><div class="fname">${x[0].replace(/</g,'&lt;').replace(/>/g,'&gt;')}</div>${a3done.has(i)?'<div class="tag">✓ Ελέγχθηκε</div>':`<div class="small-choice-row">${A3_CHOICES[i].map(o=>`<button class="mini-choice" data-a3="${i}" data-val="${o[0]}">${o[1]}</button>`).join('')}</div>`}</div>`).join('')}</div>`;qa('[data-a3]').forEach(b=>b.onclick=()=>{const i=Number(b.dataset.a3),correct=A3_ITEMS[i][1],ans=b.dataset.val==='yes';if(ans!==correct)return wrong(b,correct?'Δεν υπάρχει κάποιος από τους απαγορευμένους χαρακτήρες σε αυτό το όνομα.':'Το όνομα περιέχει χαρακτήρα που το βιβλίο αναφέρει ως μη επιτρεπτό.');a3done.add(i);r3();setFeedback('✓ Σωστή ταξινόμηση.','good');if(a3done.size===A3_ITEMS.length)later(()=>advance(0),1250)})}
+
+/* Activity 4 */
+let a4opened=false;
+function r4(){if(a4opened){activity.innerHTML=`<div class="task-strip">Το αποθηκευμένο αρχείο ανακτήθηκε και άνοιξε ξανά στο Graphis.</div>${graphisShell({name:'Στοιχεία για την Εργασία',content:'Η μεσογειακή φώκια και η θαλάσσια χελώνα είναι ζώα που χρειάζονται προστασία.\nΠηγές',dirty:false,status:'Έγγραφα'})}`;setFeedback('✓ Το αρχείο βρέθηκε στον φάκελο «Έγγραφα» και άνοιξε με διπλό κλικ.','good');return later(()=>advance(0),1350)}activity.innerHTML=`<div class="task-strip">Χρησιμοποίησε <b>Αρχείο → Άνοιγμα…</b>. Στον φάκελο «Έγγραφα», άνοιξε το <b>«Στοιχεία για την Εργασία»</b> με <b>διπλό κλικ</b>.</div>${graphisShell({name:'Graphis',content:'',dirty:false})}`;bindFileMenu({onOpen:()=>openDialog({folder:'docs',target:'Στοιχεία για την Εργασία',allowButton:false,onOpen:()=>{a4opened=true;r4()}}),onSave:()=>setFeedback('Σε αυτή τη δραστηριότητα χρειάζεται να ανοίξεις ένα ήδη αποθηκευμένο αρχείο.','bad'),onSaveAs:()=>setFeedback('Χρησιμοποίησε «Άνοιγμα…».','bad')})}
+
+/* Activity 5 */
+const a5opts=shuffle([
+ ['save','Αποθήκευση'],['open','Άνοιγμα'],['new','Νέο αρχείο'],['print','Εκτύπωση']
+]);let a5round=0;
+const A5Q=[
+ {q:'Έχεις διορθώσει ένα αρχείο στο Graphis, στο Praxis ή σε εφαρμογή παρουσιάσεων και θέλεις να κρατήσεις τις αλλαγές. Ποια λειτουργία χρησιμοποιείς;',ans:'save'},
+ {q:'Θέλεις να ξαναβρείς μια εργασία που έχει ήδη αποθηκευτεί. Ποια λειτουργία χρησιμοποιείς;',ans:'open'}
+];
+function r5(){const x=A5Q[a5round];activity.innerHTML=`<div class="task-strip">${x.q}</div><div class="scene-card"><div style="display:flex;gap:18px;justify-content:center;flex-wrap:wrap;margin-bottom:14px"><span class="tag">Γ Graphis</span><span class="tag">Π Praxis</span><span class="tag">▣ Παρουσιάσεις</span></div><div class="choice-grid">${a5opts.map(o=>`<button class="choice" data-a5="${o[0]}">${o[1]}</button>`).join('')}</div></div>`;qa('[data-a5]').forEach(b=>b.onclick=()=>{if(b.dataset.a5!==x.ans)return wrong(b,'Σκέψου ποια ενέργεια χρειάζεται για το αρχείο που ήδη υπάρχει.');lock('[data-a5]');b.classList.add('correct');setFeedback('✓ Η λειτουργία αυτή χρησιμοποιείται σε πολλές εφαρμογές που χειρίζονται αρχεία.','good');if(a5round===A5Q.length-1)return later(()=>advance(0),1100);later(()=>{a5round++;r5()},850)})}
+
+/* Activity 6 */
+let a6phase=0,a6name='',a6dirty=false,a6savedAgain=false,a6opened=false;
+function a6checks(){
+ return `<div class="check-strip">
+   <span class="check-chip ${a6phase>=1?'done':''}">Αρχική αποθήκευση</span>
+   <span class="check-chip ${a6savedAgain?'done':''}">Αποθήκευση αλλαγής</span>
+   <span class="check-chip ${a6opened?'done':''}">Ανάκτηση αρχείου</span>
+ </div>`;
+}
+function r6(){
+ if(a6phase===0){
+   activity.innerHTML=`<div class="task-strip">Νέο αρχείο: αποθήκευσέ το ως <b>«Εργασία 1»</b> στον φάκελο <b>«Έγγραφα»</b>.</div>${graphisShell({name:'Άτιτλο 1',content:'Σχολική εργασία\nΣημειώσεις για το θέμα της ομάδας.',dirty:true})}${a6checks()}`;
+   const save=()=>saveDialog({
+     defaultName:'Άτιτλο 1',folder:'docs',expectedName:'Εργασία 1',title:'Αποθήκευση',
+     onSave:({folder,name})=>{
+       if(folder!=='docs'){setFeedback('Κράτησε την προεπιλεγμένη θέση «Έγγραφα».','bad');return r6()}
+       a6name=name;a6phase=1;r6();setFeedback('✓ Η αρχική αποθήκευση ολοκληρώθηκε.','good');
+       later(()=>{if(stage===5&&a6phase===1){a6phase=2;r6()}},950);
+     }
+   });
+   bindFileMenu({onSave:save,onSaveAs:save});
+   return;
+ }
+ if(a6phase===1){
+   activity.innerHTML=`<div class="task-strip">✓ Το αρχείο αποθηκεύτηκε ως «Εργασία 1».</div>${graphisShell({name:'Εργασία 1',content:'Σχολική εργασία\nΣημειώσεις για το θέμα της ομάδας.',dirty:false})}${a6checks()}`;
+   return;
+ }
+ if(a6phase===2){
+   activity.innerHTML=`<div class="task-strip">Κάνε μια πραγματική αλλαγή: πάτησε πρώτα το πραγματικό <b>Enter</b> στο τέλος του κειμένου για να δημιουργήσεις νέα γραμμή και μετά γράψε <b>Τέλος</b>.</div>${graphisShell({name:'Εργασία 1',content:'Σχολική εργασία\nΣημειώσεις για το θέμα της ομάδας.',dirty:false,editable:true})}${a6checks()}`;
+   const ed=q('#docEdit');noPaste(ed);ed.focus();let lineStarted=false,completed=false;
+   const placeEnd=()=>{const rg=document.createRange(),sel=window.getSelection();rg.selectNodeContents(ed);rg.collapse(false);sel.removeAllRanges();sel.addRange(rg)};placeEnd();
+   const markDirty=()=>{a6dirty=true;q('#saveTool').classList.add('unsaved');const st=q('.statusbar span:last-child');if(st){st.className='dirty';st.textContent='● Υπάρχουν αλλαγές που δεν έχουν αποθηκευτεί'}};
+   ed.onkeydown=e=>{
+     if(!lineStarted){if(e.key==='Enter'){placeEnd();lineStarted=true;setFeedback('✓ Δημιουργήθηκε νέα γραμμή. Τώρα γράψε «Τέλος».','good');return}if(e.key.length===1||e.key==='Backspace'||e.key==='Delete'){e.preventDefault();setFeedback('Πρώτα πάτησε Enter για να δημιουργήσεις νέα γραμμή.','bad')}return}
+     if(e.key==='Enter'){e.preventDefault();setFeedback('Η νέα γραμμή είναι έτοιμη. Γράψε τώρα «Τέλος».','bad')}
+   };
+   ed.oninput=()=>{
+     markDirty();if(!lineStarted||completed)return;
+     const raw=ed.innerText.replace(/\r/g,'');const lines=raw.split('\n');const last=(lines.filter(x=>x.trim()!=='').pop()||'').trim();
+     if(last==='Τέλος'&&raw.includes('\n')){completed=true;setFeedback('✓ Η λέξη «Τέλος» γράφτηκε στη νέα γραμμή.','good');later(()=>{a6phase=3;r6()},850);return}
+     if(last&&!('Τέλος'.startsWith(last))){setFeedback('Γράψε ακριβώς τη λέξη «Τέλος» στη νέα γραμμή.','bad')}
+   };
+   return;
+ }
+ if(a6phase===3){
+   activity.innerHTML=`<div class="task-strip">Η αλλαγή δεν έχει αποθηκευτεί ακόμα. Πάτησε το <b>💾</b> για να την αποθηκεύσεις στο ίδιο αρχείο.</div>${graphisShell({name:'Εργασία 1',content:'Σχολική εργασία\nΣημειώσεις για το θέμα της ομάδας.\nΤέλος',dirty:true})}${a6checks()}`;
+   bindFileMenu({
+     onSave:()=>{
+       a6savedAgain=true;a6phase=4;r6();setFeedback('✓ Η αλλαγή αποθηκεύτηκε στο ίδιο αρχείο.','good');
+       later(()=>{if(stage===5&&a6phase===4){a6phase=5;r6()}},950);
+     },
+     onSaveAs:()=>setFeedback('Δεν χρειάζεται νέο αντίγραφο. Χρησιμοποίησε «Αποθήκευση».','bad')
+   });
+   return;
+ }
+ if(a6phase===4){
+   activity.innerHTML=`<div class="task-strip">✓ Οι αλλαγές αποθηκεύτηκαν.</div>${graphisShell({name:'Εργασία 1',content:'Σχολική εργασία\nΣημειώσεις για το θέμα της ομάδας.\nΤέλος',dirty:false})}${a6checks()}`;
+   return;
+ }
+ if(a6phase===5){
+   activity.innerHTML=`<div class="task-strip">Τώρα ανάκτησε το αρχείο: <b>Αρχείο → Άνοιγμα…</b>, επίλεξε <b>«Εργασία 1»</b> και πάτησε το κουμπί <b>«Άνοιγμα»</b>.</div>${graphisShell({name:'Graphis',content:'',dirty:false})}${a6checks()}`;
+   bindFileMenu({onOpen:()=>{
+     const ov=q('#fileDialog');ov.classList.add('open');
+     ov.innerHTML=`<div class="dialog"><div class="dialog-head"><span>Άνοιγμα</span><span>Graphis</span></div><div class="dialog-body"><div class="pathbar">📁 Έγγραφα</div><div class="filearea"><button class="file-row" data-a6file="Εργασία 1"><span>📄</span><span>Εργασία 1</span><span class="file-meta">Έγγραφο</span></button><button class="file-row" data-a6file="Άλλο αρχείο"><span>📄</span><span>Άλλο αρχείο</span><span class="file-meta">Έγγραφο</span></button></div></div><div class="dialog-actions"><button class="dlg-btn" id="dlgCancel">Άκυρο</button><button class="dlg-btn primary" id="a6openBtn" disabled>Άνοιγμα</button></div></div>`;
+     let chosen='';q('#dlgCancel').onclick=closeDialog;
+     qa('[data-a6file]').forEach(row=>row.onclick=()=>{
+       chosen=row.dataset.a6file;qa('[data-a6file]').forEach(x=>x.classList.toggle('selected',x===row));q('#a6openBtn').disabled=false;
+     });
+     q('#a6openBtn').onclick=()=>{
+       if(chosen!=='Εργασία 1'){
+         const el=q(`[data-a6file="${chosen}"]`);if(el)wrong(el,'Επίλεξε το αρχείο «Εργασία 1».');return;
+       }
+       closeDialog();a6opened=true;a6phase=6;r6();
+     };
+   }});
+   return;
+ }
+ activity.innerHTML=`<div class="task-strip">Η συνολική δοκιμή ολοκληρώθηκε: αποθήκευσες νέο αρχείο, αποθήκευσες αλλαγές και το ανέκτησες.</div>${graphisShell({name:'Εργασία 1',content:'Σχολική εργασία\nΣημειώσεις για το θέμα της ομάδας.\nΤέλος',dirty:false,status:'Έγγραφα'})}${a6checks()}`;
+ setFeedback('✓ Ολοκλήρωσες όλες τις βασικές λειτουργίες χειρισμού αρχείων.','good');
+ later(()=>advance(0),1500);
+}
+
+/* Activity 7 */
+const levels=['Έχω καταλάβει και μπορώ να εξηγήσω','Έχω καταλάβει αρκετά καλά','Έχω καταλάβει αλλά έχω απορίες','Χρειάζομαι βοήθεια'];let a7sel=null;
+function r7(){activity.innerHTML=`<div class="task-strip">Διάλεξε το επίπεδο που σε περιγράφει καλύτερα.</div><div class="assess"><div class="assess-row"><div class="assess-q">✓ Να αξιοποιώ τις δυνατότητες χειρισμού αρχείων μιας εφαρμογής.</div><div class="level-row">${levels.map((l,i)=>`<button class="level-btn ${a7sel===i?'selected':''}" data-level="${i}">${l}</button>`).join('')}</div></div></div>`;qa('[data-level]').forEach(b=>b.onclick=()=>{a7sel=Number(b.dataset.level);r7();setFeedback('✓ Ολοκλήρωσες την αυτοαξιολόγηση.','good');later(()=>advance(0),1100)})}
+const renderers=[r1,r2,r3,r4,r5,r6,r7];
+q('#helpBtn').onclick=()=>{q('#helpText').textContent=HELP[stage]||'';q('#helpModal').classList.add('open')};q('#closeHelp').onclick=q('#understoodBtn').onclick=()=>q('#helpModal').classList.remove('open');q('#helpModal').onclick=e=>{if(e.target===q('#helpModal'))q('#helpModal').classList.remove('open')};q('#speakHelp').onclick=()=>{if(!('speechSynthesis'in window))return;window.speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(HELP[stage]||'');u.lang='el-GR';window.speechSynthesis.speak(u)};
+render();
+</script>
+
+<footer class="nk-license" aria-label="Πληροφορίες δημιουργού και άδειας χρήσης">
+  <div><strong>Created by Nikos Kalakos · © 2026</strong></div>
+  <div>Original educational content and simulation design licensed under <a class="cc-badge" href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank" rel="license noopener noreferrer">CC BY-NC 4.0</a>.</div>
+  <div>Source code © 2026 Nikos Kalakos.</div>
+  <div>Third-party and textbook materials remain subject to the rights and licences of their respective copyright holders.</div>
+</footer>
+</body>
+</html>

@@ -1,0 +1,288 @@
+<!--
+ICT Educational Simulation
+Created by Nikos Kalakos
+Copyright © 2026 Nikos Kalakos
+
+Original educational content and simulation design licensed under CC BY-NC 4.0.
+Source code © 2026 Nikos Kalakos.
+Third-party and textbook materials remain subject to the rights and licences of their respective copyright holders.
+-->
+<!DOCTYPE html>
+<html lang="el">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="author" content="Nikos Kalakos">
+<meta name="copyright" content="© 2026 Nikos Kalakos">
+<meta name="license" content="Original educational content and simulation design: CC BY-NC 4.0; source code © 2026 Nikos Kalakos; third-party and textbook materials excluded.">
+<title>Μάθημα 17 – Υπολογιστικό φύλλο: Οργάνωση δεδομένων σε πίνακα</title>
+<style>
+:root{
+  --unit:#EA922C;--unit-dark:#B86610;--unit-soft:#FFF4E6;
+  --secondary:#545F99;--secondary-dark:#3D477C;--secondary-soft:#EEF0F8;
+  --ink:#25324A;--muted:#68758A;--line:#D8DEEA;--bg:#F5F7FB;
+  --good:#23845A;--good-soft:#E9F7F0;--bad:#B64242;--bad-soft:#FDEEEE;
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:Inter,"Segoe UI",Arial,sans-serif;color:var(--ink);background:radial-gradient(circle at 9% 6%,rgba(234,146,44,.11),transparent 28%),radial-gradient(circle at 90% 18%,rgba(84,95,153,.12),transparent 30%),#F4F6FA;font-size:16px}
+button,input{font:inherit}button{cursor:pointer}
+.shell-page{max-width:1280px;margin:0 auto;padding:18px}
+.hero{background:#fff;border:1px solid #E3E7EE;border-top:9px solid var(--unit);border-radius:18px;box-shadow:0 14px 35px rgba(45,55,86,.11);padding:20px 24px 18px;display:grid;grid-template-columns:1fr auto;gap:18px;align-items:center}
+.eyebrow{font-size:13px;font-weight:900;letter-spacing:.075em;text-transform:uppercase;color:var(--secondary)}
+.hero h1{margin:5px 0 0;font-size:29px;line-height:1.14;color:var(--secondary-dark);max-width:990px}
+.hero p{margin:8px 0 0;color:var(--muted);font-weight:700;line-height:1.45}
+.lesson-mark{min-width:118px;height:72px;border-radius:16px;background:linear-gradient(135deg,var(--secondary),var(--secondary-dark));color:#fff;display:grid;place-items:center;text-align:center;box-shadow:0 9px 22px rgba(84,95,153,.23)}
+.lesson-mark b{font-size:27px;line-height:1}.lesson-mark span{font-size:11px;font-weight:850;letter-spacing:.08em;text-transform:uppercase}
+.progress{margin:13px 0;background:#fff;border:1px solid #E1E5EC;border-radius:15px;padding:12px 15px;box-shadow:0 7px 20px rgba(48,58,87,.06)}
+.progress-top{display:flex;justify-content:space-between;gap:12px;align-items:center;color:#59667B;font-size:13px;font-weight:850}.bar{height:8px;background:#ECEFF4;border-radius:999px;overflow:hidden;margin:8px 0 10px}.fill{height:100%;width:0;background:linear-gradient(90deg,var(--unit),var(--secondary));transition:.3s ease}.steps{display:flex;gap:8px;flex-wrap:wrap;justify-content:center}.step-dot{width:29px;height:29px;border-radius:9px;border:1px solid #CDD3DE;background:#fff;color:#758197;display:grid;place-items:center;font-size:12px;font-weight:900}.step-dot.current{border:2px solid var(--unit);color:var(--unit-dark);background:var(--unit-soft)}.step-dot.done{border-color:var(--secondary);background:var(--secondary);color:#fff}
+.stage{background:#fff;border:1px solid #E0E5EF;border-radius:18px;box-shadow:0 10px 28px #27364b12;overflow:hidden}.stage-head{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;padding:18px 20px;border-bottom:1px solid #E8ECF3}.stage-kicker{font-size:12px;font-weight:950;color:var(--unit-dark);text-transform:uppercase}.stage-title{font-size:24px;margin:4px 0}.instruction{margin:0;color:#5C687C;font-weight:650;line-height:1.5}.help-btn{border:1px solid #C9D1E0;background:#fff;border-radius:11px;padding:9px 13px;font-weight:850;color:var(--secondary-dark);white-space:nowrap}.help-btn:hover{background:var(--secondary-soft)}
+.workspace{padding:16px 18px 20px}.task-strip{border-left:5px solid var(--unit);background:#FFF9F1;padding:12px 14px;border-radius:11px;margin-bottom:14px;font-weight:800;line-height:1.45}.feedback{min-height:0;margin-top:12px;border-radius:11px;font-weight:800;line-height:1.45}.feedback.show{padding:11px 13px;border:1px solid}.feedback.info{background:#F2F6FF;border-color:#C8D5EF;color:#46577C}.feedback.good{background:var(--good-soft);border-color:#AADBC5;color:#176943}.feedback.bad{background:var(--bad-soft);border-color:#F0BABA;color:#9B3030}
+@keyframes shake{25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}.wrong{animation:shake .28s;background:var(--bad-soft)!important;border-color:#E49A9A!important}.correct{background:var(--good-soft)!important;border-color:#7DC7A4!important}.check-strip{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px;justify-content:center}.check-chip{border:1px solid #CCD4E2;background:#fff;border-radius:99px;padding:8px 11px;font-size:13px;font-weight:900;color:#637087}.check-chip.done{background:var(--good-soft);border-color:#91CDB0;color:#1F724E}
+.choice-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;max-width:940px;margin:12px auto}.choice{min-height:66px;border:1.5px solid #C9D2E2;background:#fff;border-radius:13px;padding:12px 14px;text-align:left;font-weight:850;color:#283650;transition:.15s;line-height:1.4}.choice:hover{border-color:#8897B3;transform:translateY(-1px)}
+
+/* Praxis shell */
+.app-shell{max-width:1060px;margin:0 auto;border:1px solid #C7CFDD;border-radius:18px;overflow:hidden;background:#fff;box-shadow:0 9px 22px #33435d12}.app-top{height:49px;background:linear-gradient(110deg,var(--secondary-dark),var(--secondary));color:#fff;display:flex;align-items:center;gap:10px;padding:0 14px}.app-icon{width:35px;height:35px;border-radius:10px;background:var(--unit);display:grid;place-items:center;font-weight:950}.app-name{font-weight:950}.app-sub{font-size:12px;opacity:.9;font-weight:750}.sheet-toolbar{min-height:43px;background:#F0F3F8;border-bottom:1px solid #D6DDE8;display:flex;gap:8px;align-items:center;padding:7px 12px;font-size:13px;font-weight:850;color:#68758A;flex-wrap:wrap}.tool{border:1px solid #CAD3E0;background:#fff;border-radius:8px;padding:6px 8px;min-width:35px;text-align:center;font-weight:900;color:#4F5F7A}.tool.active{background:var(--secondary-soft);border-color:var(--secondary);color:var(--secondary-dark)}.name-box{min-width:68px;border:1px solid #C6D0DE;background:#fff;border-radius:8px;padding:6px 8px;font-weight:900;color:var(--secondary-dark)}.formula-box{flex:1;min-width:180px;border:1px solid #C6D0DE;background:#fff;border-radius:8px;padding:6px 10px;color:#34415B;font-weight:750}.sheet-area{padding:18px;background:#FCFDFE;overflow:auto}.sheet-grid{display:grid;grid-template-columns:46px repeat(4,minmax(120px,1fr));min-width:610px;max-width:820px;margin:0 auto;border-left:1px solid #BCC7D7;border-top:1px solid #BCC7D7;user-select:none}.gcell{position:relative;min-height:52px;border-right:1px solid #BCC7D7;border-bottom:1px solid #BCC7D7;background:#fff;padding:8px;display:flex;align-items:center;font-weight:750;color:#34415B}.corner,.colhead,.rowhead{background:#EEF1F6;color:#66748B;font-weight:950;justify-content:center}.colhead,.rowhead{cursor:pointer}.colhead:hover,.rowhead:hover{background:var(--secondary-soft)}.data-cell{cursor:pointer}.data-cell:hover{background:#F8FAFD}.selected{outline:3px solid #111;outline-offset:-3px;z-index:2;background:#FFFDF8}.target{background:#FFF5E8!important;box-shadow:inset 0 0 0 3px var(--unit)}.range-selected{background:#EDEFF8!important;box-shadow:inset 0 0 0 1px #8995C6}.row-selected,.col-selected{background:#DDE2F3!important;color:var(--secondary-dark)}
+.cell-right{justify-content:flex-end}.overflow-text{white-space:nowrap;overflow:hidden}.divider-hint:after{content:'↔';position:absolute;right:-12px;top:-23px;color:var(--unit-dark);font-size:20px;font-weight:950;z-index:3}
+.context-menu{position:absolute;z-index:9;background:#fff;border:1px solid #C6D0DE;border-radius:10px;box-shadow:0 10px 25px #27364b28;padding:5px;min-width:180px}.context-menu button{width:100%;border:0;background:#fff;padding:9px 10px;text-align:left;border-radius:7px;font-weight:850;color:#40506B}.context-menu button:hover{background:var(--secondary-soft)}
+.sheet-note{max-width:820px;margin:12px auto 0;text-align:center;color:#66748B;font-weight:800;line-height:1.4}.mini-instruction{max-width:820px;margin:0 auto 12px;border:1px solid #D5DDE8;border-radius:12px;background:#fff;padding:10px 12px;font-weight:850;color:#4C5A75;text-align:center}
+
+/* Input stage */
+.input-row{max-width:820px;margin:14px auto 0;display:flex;gap:10px;align-items:center;justify-content:center;flex-wrap:wrap}.cell-input{min-width:280px;border:1.5px solid #BCC7D7;border-radius:10px;padding:10px 12px;font-size:16px}.confirm-btn{border:0;background:var(--secondary);color:#fff;border-radius:10px;padding:10px 14px;font-weight:900}.confirm-btn:hover{background:var(--secondary-dark)}
+
+/* Table build */
+.build-card{max-width:900px;margin:0 auto;border:1px solid #D4DCE8;border-radius:17px;background:#FBFCFE;padding:18px}.action-row{display:flex;gap:9px;justify-content:center;flex-wrap:wrap;margin-top:14px}.action-btn{border:1.5px solid #C9D2E2;background:#fff;border-radius:11px;padding:10px 13px;font-weight:900;color:#40506C}.action-btn:hover{border-color:var(--secondary);background:var(--secondary-soft)}.action-btn.primary{background:var(--secondary);color:#fff;border-color:var(--secondary)}
+
+/* Formatting */
+.format-card{max-width:920px;margin:0 auto}.format-controls{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:14px}.format-btn{border:1.5px solid #C8D1DF;background:#fff;border-radius:10px;padding:9px 12px;font-weight:900;color:#40506C}.format-btn:hover{border-color:var(--secondary);background:var(--secondary-soft)}.range-label{font-family:Consolas,monospace;font-weight:950;color:var(--secondary-dark)}
+
+/* Final */
+.final-card{max-width:950px;margin:0 auto;border:1px solid #D4DCE8;border-radius:17px;background:#FBFCFE;padding:18px}.final-title{text-align:center;font-size:21px;font-weight:950;color:var(--secondary-dark);margin-bottom:12px}.final-progress{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:12px}.final-chip{border:1px solid #CBD4E2;background:#fff;border-radius:999px;padding:8px 10px;font-size:12px;font-weight:900;color:#6A768B}.final-chip.done{background:var(--good-soft);border-color:#90CBAE;color:#1E714D}
+
+/* Self */
+.self-wrap{overflow:auto}.self-table{display:grid;grid-template-columns:minmax(280px,1.5fr) repeat(4,minmax(130px,1fr));min-width:850px;border-left:1px solid #D2D9E4;border-top:1px solid #D2D9E4}.self-head,.self-objective,.self-cell{border-right:1px solid #D2D9E4;border-bottom:1px solid #D2D9E4;padding:11px}.self-head{background:var(--secondary-soft);font-weight:900;color:var(--secondary-dark);text-align:center}.self-objective{font-weight:850;line-height:1.4}.self-cell{background:#fff;border-top:0;border-left:0;min-height:70px;color:#5C687C;font-size:12px;font-weight:800}.self-cell:hover{background:#F6F8FC}.self-cell.selected{outline:none;background:var(--unit-soft);box-shadow:inset 0 0 0 2px var(--unit)}.self-note{text-align:center;margin-top:11px;color:#69758A;font-weight:800}.finish-actions{text-align:center;margin-top:14px}.finish-btn{border:0;background:var(--secondary);color:#fff;border-radius:11px;padding:11px 16px;font-weight:950}.finish-btn:disabled{opacity:.45;cursor:not-allowed}
+.completion{text-align:center;padding:35px 20px}.badge{display:inline-block;background:var(--unit-soft);color:var(--unit-dark);border-radius:99px;padding:7px 11px;font-size:12px;font-weight:900}.completion h2{font-size:28px;margin:12px 0 8px}.secondary-btn{border:1px solid #BCC6D8;background:#fff;border-radius:10px;padding:10px 14px;font-weight:900;color:#3D4A66}
+
+.modal-backdrop{position:fixed;inset:0;background:#11182788;display:none;align-items:center;justify-content:center;padding:18px;z-index:50}.modal-backdrop.open{display:flex}.modal{width:min(560px,100%);background:#fff;border-radius:16px;box-shadow:0 18px 60px #0004;overflow:hidden}.modal-head{padding:14px 16px;background:var(--secondary);color:#fff;font-weight:900;display:flex;justify-content:space-between;align-items:center}.modal-close{border:0;background:#ffffff1f;color:#fff;width:32px;height:32px;border-radius:8px;font-size:20px}.modal-body{padding:17px;line-height:1.55;color:#3F4D68;font-weight:700}.modal-actions{display:flex;justify-content:flex-end;gap:8px;padding:0 17px 17px}.small-btn{border:1px solid #C5CDDC;background:#fff;border-radius:9px;padding:8px 11px;font-weight:850}
+@media(max-width:760px){.shell-page{padding:9px}.hero{padding:16px}.hero h1{font-size:24px}.lesson-mark{min-width:92px;height:64px}.stage-head{flex-direction:column}.choice-grid{grid-template-columns:1fr}.self-table{min-width:760px}}
+
+/* Realistic spreadsheet interaction refinements */
+.sheet-grid .data-cell{
+  cursor:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='25' height='25' viewBox='0 0 25 25'%3E%3Cpath d='M11 1h3v10h10v3H14v10h-3V14H1v-3h10z' fill='%23000'/%3E%3C/svg%3E") 12 12,crosshair;
+}
+.sheet-grid .data-cell.editing,.formula-edit{cursor:text!important}
+.selection-fill{background:#E6ECF7!important}
+.axis-selected{background:#B8C5DF!important;color:#263A63!important;box-shadow:inset 0 0 0 2px #7181AA}
+.active-cell{background:#fff!important;outline:3px solid #111!important;outline-offset:-3px;z-index:4}
+.drag-preview{background:#E7EBF7!important;box-shadow:inset 0 0 0 1px #8995C6}
+.sheet-grid.range-dragging{touch-action:none}
+.range-selected{background:#E4E9F5!important;box-shadow:inset 0 0 0 1px #8995C6}
+.formatted-bold{font-weight:950!important}
+.formatted-border{box-shadow:inset 0 0 0 2px #4D5D7B!important}
+.editing{outline:3px solid #111!important;background:#fff!important;white-space:pre;overflow:hidden}
+.edit-hint{max-width:820px;margin:9px auto 0;text-align:center;font-size:13px;font-weight:850;color:#66748B}
+.keycap{display:inline-block;min-width:30px;padding:3px 8px;border:1px solid #AEB8C8;border-bottom-width:3px;border-radius:6px;background:#fff;color:#3F4B61;font-family:Consolas,monospace;font-weight:900}
+.formula-edit{flex:1;min-width:180px;border:1px solid #B8C4D4;background:#fff;border-radius:7px;padding:6px 10px;color:#34415B;font-weight:750;font-size:16px}
+.context-menu{user-select:none}
+.col-resizer{position:absolute;right:-6px;top:0;width:12px;height:100%;z-index:8;cursor:col-resize;touch-action:none}
+.col-resizer:after{content:'';position:absolute;right:5px;top:0;width:2px;height:100%;background:transparent}
+.colhead:hover .col-resizer:after{background:#7484A8}
+.resizing .col-resizer:after{background:#111}
+.resize-guide{position:absolute;top:0;bottom:0;width:2px;background:#111;pointer-events:none;z-index:20}
+.real-tool{border:1px solid #CAD3E0;background:#fff;border-radius:8px;padding:6px 9px;min-width:36px;text-align:center;font-weight:950;color:#34415B;cursor:pointer}
+.real-tool:hover{background:#E9EDF5;border-color:#9BA8BE}.real-tool.active{background:#DDE4F2;border-color:#6B7DA8}
+.sheet-status{max-width:820px;margin:10px auto 0;display:flex;gap:8px;justify-content:center;flex-wrap:wrap;color:#66748B;font-size:13px;font-weight:850}
+.row-context-target{background:#D7DEED!important;color:#30446F!important}
+
+</style>
+<style id="nk-license-style">
+.nk-license{max-width:1100px;margin:14px auto 24px;padding:10px 16px;text-align:center;font:13px/1.45 Arial,"Noto Sans",sans-serif;color:#4e657c}
+.nk-license a{color:inherit;text-decoration:underline;text-underline-offset:2px}
+.nk-license .cc-badge{display:inline-block;margin:0 4px;padding:2px 7px;border:1px solid #8aa0b8;border-radius:6px;background:#fff;font-weight:700;white-space:nowrap}
+</style>
+</head>
+<body>
+<div class="shell-page">
+<header class="hero">
+  <div>
+    <div class="eyebrow">Ενότητα 3 · Δεδομένα και ανάλυση δεδομένων</div>
+    <h1>Υπολογιστικό φύλλο: Οργάνωση δεδομένων σε πίνακα</h1>
+    <p>Γνώρισε τα βασικά στοιχεία ενός υπολογιστικού φύλλου, οργάνωσε δεδομένα σε κελιά και χρησιμοποίησε απλές μορφοποιήσεις.</p>
+  </div>
+  <div class="lesson-mark"><div><b>17</b><br><span>Μάθημα</span></div></div>
+</header>
+<section class="progress">
+  <div class="progress-top"><span id="progressText"></span><span id="progressPct"></span></div>
+  <div class="bar"><div class="fill" id="fill"></div></div>
+  <div class="steps" id="steps"></div>
+</section>
+<main class="stage">
+  <div class="stage-head">
+    <div><div class="stage-kicker" id="kicker"></div><h2 class="stage-title" id="stageTitle"></h2><p class="instruction" id="instruction"></p></div>
+    <button class="help-btn" id="helpBtn">❔ Βοήθεια</button>
+  </div>
+  <div class="workspace"><div id="activity"></div><div class="feedback" id="feedback"></div></div>
+</main>
+</div>
+<div class="modal-backdrop" id="helpModal"><div class="modal"><div class="modal-head"><span>Βοήθεια</span><button class="modal-close" id="closeHelp">×</button></div><div class="modal-body" id="helpText"></div><div class="modal-actions"><button class="small-btn" id="speakHelp">🔊 Άκουσε</button><button class="small-btn" id="understoodBtn">Το κατάλαβα</button></div></div></div>
+<script>
+
+const ACTIVITIES=[
+ {t:'Γραμμές, στήλες και κελιά',i:'Αναγνώρισε τα βασικά μέρη ενός υπολογιστικού φύλλου.'},
+ {t:'Το όνομα και το ενεργό κελί',i:'Χρησιμοποίησε τη στήλη και τη γραμμή για να βρεις το όνομα ενός κελιού.'},
+ {t:'Γράψε στο ενεργό κελί',i:'Επίλεξε ένα κελί και πληκτρολόγησε δεδομένα όπως σε ένα πραγματικό υπολογιστικό φύλλο.'},
+ {t:'Οργάνωσε τον πίνακα της εκδρομής',i:'Πρόσθεσε μια νέα γραμμή με δεξί κλικ και γράψε την επικεφαλίδα με το πληκτρολόγιο.'},
+ {t:'Προσαρμόζω και διορθώνω',i:'Άλλαξε το πλάτος μιας στήλης με το ποντίκι και διόρθωσε ένα δεδομένο από τη γραμμή εισαγωγής.'},
+ {t:'Περιοχή κελιών και μορφοποίηση',i:'Επίλεξε γειτονικά κελιά με σύρσιμο και χρησιμοποίησε τα εργαλεία μορφοποίησης.'},
+ {t:'Συνολική δοκιμή',i:'Εφάρμοσε πραγματικές ενέργειες υπολογιστικού φύλλου χωρίς βοηθητικά κουμπιά.'},
+ {t:'Τι έμαθα;',i:'Αξιολόγησε πόσο καλά μπορείς να εφαρμόζεις όσα δούλεψες στο μάθημα.'}
+];
+const HELP=[
+ 'Για να επιλέξεις ολόκληρη στήλη, κάνε κλικ στο γράμμα της. Για ολόκληρη γραμμή, κάνε κλικ στον αριθμό της. Για ένα κελί, κάνε κλικ μέσα στο κελί. Η επιλεγμένη περιοχή χρωματίζεται όπως σε ένα κανονικό υπολογιστικό φύλλο.',
+ 'Το όνομα ενός κελιού σχηματίζεται πρώτα από το γράμμα της στήλης και μετά από τον αριθμό της γραμμής. Το ενεργό κελί έχει έντονο περίγραμμα και επισημαίνονται επίσης η στήλη και η γραμμή του.',
+ 'Κάνε κλικ στο A3 και πληκτρολόγησε απευθείας μέσα στο κελί. Όταν τελειώσεις, πάτησε το πραγματικό πλήκτρο Enter του πληκτρολογίου.',
+ 'Άνοιξε το μενού μόνο με δεξί κλικ πάνω στον αριθμό της γραμμής 1. Μετά την εισαγωγή της νέας γραμμής, κάνε κλικ στο A1, πληκτρολόγησε την επικεφαλίδα και πάτησε Enter.',
+ 'Για να αλλάξεις το πλάτος μιας στήλης, σύρε το δεξί όριο της κεφαλίδας της ή κάνε διπλό κλικ στο όριο για αυτόματη προσαρμογή. Για διόρθωση, επίλεξε το κελί και άλλαξε το κείμενο στη γραμμή εισαγωγής. Πάτησε Enter για επιβεβαίωση ή Esc για ακύρωση.',
+ 'Για να επιλέξεις περιοχή κελιών, πάτησε στο πρώτο κελί και, κρατώντας πατημένο το ποντίκι, σύρε ως το τελευταίο. Έπειτα χρησιμοποίησε τα πραγματικά εργαλεία μορφοποίησης της γραμμής εργαλείων.',
+ 'Η συνολική δοκιμή ζητά τις ίδιες ενέργειες που θα έκανες σε πραγματικό υπολογιστικό φύλλο: κλικ σε κελί, δεξί κλικ σε γραμμή, σύρσιμο περιοχής και εργαλείο μορφοποίησης.',
+ 'Διάλεξε ένα επίπεδο για κάθε στόχο. Δεν υπάρχουν σωστές ή λάθος απαντήσεις στην αυτοαξιολόγηση.'
+];
+let stage=0,finished=false,renderEpoch=0,pendingTimers=[],transitionLocked=false;const completed=new Set();
+const q=s=>document.querySelector(s),qa=s=>[...document.querySelectorAll(s)];const activity=q('#activity'),feedback=q('#feedback'),kicker=q('#kicker'),stageTitle=q('#stageTitle'),instruction=q('#instruction');
+function clearTimers(){pendingTimers.forEach(clearTimeout);pendingTimers=[]}
+function later(fn,ms){const s=stage,e=renderEpoch;const id=setTimeout(()=>{if(stage===s&&renderEpoch===e)fn()},ms);pendingTimers.push(id);return id}
+function setFeedback(txt,type='info'){feedback.className='feedback show '+type;feedback.innerHTML=txt}
+function clearFeedback(){feedback.className='feedback';feedback.textContent=''}
+function wrong(el,msg){el.classList.remove('wrong');void el.offsetWidth;el.classList.add('wrong');setFeedback(msg,'bad')}
+function lockGroup(sel){qa(sel).forEach(el=>el.disabled=true)}
+function esc(v){return String(v??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]))}
+function updateProgress(){const n=ACTIVITIES.length,pct=finished?100:Math.round(stage/(n-1)*100);q('#progressText').textContent=finished?'Ολοκληρώθηκε':`Δραστηριότητα ${stage+1} από ${n}`;q('#progressPct').textContent=pct+'%';q('#fill').style.width=pct+'%';q('#steps').innerHTML=ACTIVITIES.map((_,i)=>`<span class="step-dot ${completed.has(i)?'done':''} ${i===stage&&!finished?'current':''}">${i+1}</span>`).join('')}
+function advance(delay=0){if(transitionLocked)return;transitionLocked=true;later(()=>{completed.add(stage);stage++;transitionLocked=false;render()},delay)}
+function praxis(inner,name='Βιβλίο1'){return `<div class="app-shell"><div class="app-top"><div class="app-icon">Π</div><div><div class="app-name">Praxis</div><div class="app-sub">Υπολογιστικό φύλλο · ${name}</div></div></div>${inner}</div>`}
+function toolbar(name='',formula='',extraTools='',formulaEditable=false){
+ const defaults=extraTools||'<span class="tool"><b>B</b></span><span class="tool">≡</span>';
+ const formulaEl=formulaEditable?`<input class="formula-edit" id="formulaEdit" value="${esc(formula)}" aria-label="Γραμμή εισαγωγής">`:`<span class="formula-box">${esc(formula)}</span>`;
+ return `<div class="sheet-toolbar"><span class="tool">💾</span>${defaults}<span class="name-box">${esc(name||'—')}</span>${formulaEl}</div>`
+}
+function splitCell(id){return [id[0],Number(id.slice(1))]}
+function rangeIds(a,b){const cols=['A','B','C','D'];const [ac,ar]=splitCell(a),[bc,br]=splitCell(b);const ai=cols.indexOf(ac),bi=cols.indexOf(bc),out=[];for(let r=Math.min(ar,br);r<=Math.max(ar,br);r++)for(let c=Math.min(ai,bi);c<=Math.max(ai,bi);c++)out.push(cols[c]+r);return out}
+function baseGrid(contents={},opts={}){
+ const cols=['A','B','C','D'];const active=opts.active||'';const activeCol=active?active[0]:null;const activeRow=active?Number(active.slice(1)):null;const range=opts.range||[];
+ let html=`<div class="sheet-grid"${opts.gridStyle?` style="${opts.gridStyle}"`:''}><div class="gcell corner"></div>`;
+ cols.forEach(c=>{const sel=opts.selCol===c;const axis=sel||activeCol===c||range.some(id=>id[0]===c);html+=`<div class="gcell colhead ${axis?'axis-selected':''}" data-col="${c}">${c}</div>`});
+ for(let r=1;r<=4;r++){
+  const axis=opts.selRow===r||activeRow===r||range.some(id=>Number(id.slice(1))===r);html+=`<div class="gcell rowhead ${axis?'axis-selected':''}" data-row="${r}">${r}</div>`;
+  for(const c of cols){const id=c+r,val=contents[id]??'';let cls='gcell data-cell';if(opts.selCol===c||opts.selRow===r)cls+=' selection-fill';if(active===id)cls+=' active-cell';if(range.includes(id))cls+=' range-selected';if((opts.bold||[]).includes(id))cls+=' formatted-bold';if((opts.borders||[]).includes(id))cls+=' formatted-border';if(typeof val==='number')cls+=' cell-right';html+=`<div class="${cls}" data-cell="${id}">${esc(val)}</div>`}
+ }
+ return html+'</div>'
+}
+function paintSelection(type,target){
+ qa('.selection-fill,.axis-selected,.active-cell').forEach(el=>el.classList.remove('selection-fill','axis-selected','active-cell'));
+ if(type==='col'){q(`[data-col="${target}"]`)?.classList.add('axis-selected');qa('[data-cell]').filter(x=>x.dataset.cell[0]===target).forEach(x=>x.classList.add('selection-fill'))}
+ else if(type==='row'){q(`[data-row="${target}"]`)?.classList.add('axis-selected');qa('[data-cell]').filter(x=>Number(x.dataset.cell.slice(1))===Number(target)).forEach(x=>x.classList.add('selection-fill'))}
+ else{const [c,r]=splitCell(target);q(`[data-cell="${target}"]`)?.classList.add('active-cell');q(`[data-col="${c}"]`)?.classList.add('axis-selected');q(`[data-row="${r}"]`)?.classList.add('axis-selected')}
+}
+function placeCaretEnd(el){const range=document.createRange(),sel=window.getSelection();range.selectNodeContents(el);range.collapse(false);sel.removeAllRanges();sel.addRange(range)}
+function startCellEditing(cellId,initial,onCommit,onChange){const cell=q(`[data-cell="${cellId}"]`);if(!cell)return;cell.contentEditable='true';cell.classList.add('editing','active-cell');cell.textContent=initial||'';cell.focus();placeCaretEnd(cell);cell.addEventListener('input',()=>{const v=cell.textContent.replace(/\n/g,'');q('.formula-box')&&(q('.formula-box').textContent=v);onChange&&onChange(v)});cell.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();onCommit(cell.textContent.replace(/\n/g,''),cell)}else if(e.key==='Escape'){e.preventDefault();cell.textContent=initial||'';q('.formula-box')&&(q('.formula-box').textContent=initial||'');onChange&&onChange(initial||'')}})}
+function paintTempRange(a,b){qa('.drag-preview').forEach(x=>x.classList.remove('drag-preview'));rangeIds(a,b).forEach(id=>q(`[data-cell="${id}"]`)?.classList.add('drag-preview'))}
+function setupRangeDrag(requiredStart,requiredEnd,onDone){
+ const grid=q('.sheet-grid');if(!grid)return;
+ let dragging=false,start=null,last=null,pointerId=null;
+ const cellAt=(x,y)=>{const el=document.elementFromPoint(x,y);return el&&el.closest?el.closest('[data-cell]'):null};
+ const clearPreview=()=>qa('.drag-preview').forEach(x=>x.classList.remove('drag-preview'));
+ const cleanup=()=>{document.removeEventListener('pointermove',move);document.removeEventListener('pointerup',up);document.removeEventListener('pointercancel',cancel);grid.classList.remove('range-dragging')};
+ const move=e=>{if(!dragging||e.pointerId!==pointerId)return;const cell=cellAt(e.clientX,e.clientY);if(!cell)return;last=cell.dataset.cell;paintTempRange(start,last);e.preventDefault()};
+ const finish=()=>{dragging=false;cleanup();if(last!==requiredEnd){clearPreview();setFeedback(`Σύρε από το ${requiredStart} μέχρι το ${requiredEnd}.`,'bad');return}const ids=rangeIds(start,last);clearPreview();onDone(ids)};
+ const up=e=>{if(!dragging||e.pointerId!==pointerId)return;finish()};
+ const cancel=e=>{if(!dragging||e.pointerId!==pointerId)return;dragging=false;cleanup();clearPreview()};
+ grid.addEventListener('pointerdown',e=>{
+  if(e.button!==0)return;
+  const cell=e.target.closest&&e.target.closest('[data-cell]');if(!cell)return;
+  const id=cell.dataset.cell;
+  if(id!==requiredStart){wrong(cell,`Ξεκίνα από το ${requiredStart}.`);return}
+  dragging=true;start=id;last=id;pointerId=e.pointerId;grid.classList.add('range-dragging');paintTempRange(start,last);
+  document.addEventListener('pointermove',move,{passive:false});document.addEventListener('pointerup',up);document.addEventListener('pointercancel',cancel);
+  e.preventDefault();
+ });
+}
+
+/* Activity 1 */
+const A1=[
+ {type:'col',target:'C',text:'Επίλεξε ολόκληρη τη στήλη C.'},
+ {type:'row',target:'3',text:'Επίλεξε ολόκληρη τη γραμμή 3.'},
+ {type:'cell',target:'B2',text:'Επίλεξε το κελί B2.'},
+ {type:'cell',target:'D4',text:'Επίλεξε το κελί D4.'}
+];let a1pos=0;
+function r1(){const t=A1[a1pos];activity.innerHTML=`<div class="task-strip">${t.text}</div>${praxis(`${toolbar()}<div class="sheet-area">${baseGrid()}</div><div class="check-strip">${A1.map((_,i)=>`<span class="check-chip ${i<a1pos?'done':''}">${i+1}${i<a1pos?' ✓':''}</span>`).join('')}</div>`)}`;
+ const handler=b=>{const val=t.type==='col'?b.dataset.col:t.type==='row'?b.dataset.row:b.dataset.cell;if(val!==t.target)return wrong(b,t.type==='col'?'Διάβασε το γράμμα στην κορυφή της στήλης.':t.type==='row'?'Διάβασε τον αριθμό στην αρχή της γραμμής.':'Βρες πρώτα τη σωστή στήλη και μετά τη σωστή γραμμή.');paintSelection(t.type,t.target);a1pos++;setFeedback('✓ Η επιλογή επισημάνθηκε όπως σε πραγματικό υπολογιστικό φύλλο.','good');if(a1pos<A1.length)later(r1,850);else later(()=>advance(0),1150)};
+ if(t.type==='col')qa('[data-col]').forEach(b=>b.onclick=()=>handler(b));if(t.type==='row')qa('[data-row]').forEach(b=>b.onclick=()=>handler(b));if(t.type==='cell')qa('[data-cell]').forEach(b=>b.onclick=()=>handler(b));
+}
+
+/* Activity 2 */
+const A2=[{cell:'B3',options:['B3','C3','B2','3B']},{cell:'C2',options:['C2','B2','C3','2C']},{cell:'A4',options:['A4','D1','A3','4A']}];let a2pos=0,a2phase='select';
+function r2(){const t=A2[a2pos];if(a2phase==='select'){activity.innerHTML=`<div class="task-strip">Κάνε κλικ στο κελί <b>${t.cell}</b> για να γίνει ενεργό.</div>${praxis(`${toolbar()}<div class="sheet-area">${baseGrid()}</div>`)}`;qa('[data-cell]').forEach(b=>b.onclick=()=>{if(b.dataset.cell!==t.cell)return wrong(b,'Βρες τη στήλη και τη γραμμή του κελιού.');paintSelection('cell',t.cell);a2phase='name';setFeedback('✓ Το ενεργό κελί έχει έντονο περίγραμμα και επισημαίνονται η γραμμή και η στήλη του.','good');later(r2,800)});return}
+ activity.innerHTML=`<div class="task-strip">Ποιο είναι το όνομα του ενεργού κελιού;</div>${praxis(`${toolbar(t.cell)}<div class="sheet-area">${baseGrid({}, {active:t.cell})}</div><div class="choice-grid">${t.options.map(o=>`<button class="choice" data-a2="${o}">${o}</button>`).join('')}</div><div class="check-strip">${A2.map((_,i)=>`<span class="check-chip ${i<a2pos?'done':''}">${i+1}${i<a2pos?' ✓':''}</span>`).join('')}</div>`)}`;qa('[data-a2]').forEach(b=>b.onclick=()=>{if(b.dataset.a2!==t.cell)return wrong(b,'Το όνομα γράφεται: γράμμα στήλης και μετά αριθμός γραμμής.');b.classList.add('correct');a2pos++;a2phase='select';setFeedback('✓ Σωστό όνομα κελιού.','good');if(a2pos<A2.length)later(r2,650);else later(()=>advance(0),1050)})}
+
+/* Activity 3 */
+let a3phase=0,a3value='';
+function r3(){const done=a3phase===2;activity.innerHTML=`<div class="task-strip">${a3phase===0?'Κάνε κλικ στο κελί A3.':a3phase===1?'Πληκτρολόγησε <b>Πινακοθήκη</b> και πάτησε <span class="keycap">Enter</span>.':'Το δεδομένο καταχωρίστηκε στο κελί.'}</div>${praxis(`${toolbar(a3phase?'A3':'',a3phase?a3value:'')}<div class="sheet-area">${baseGrid({A3:done?'Πινακοθήκη':a3value},{active:a3phase?'A3':''})}</div>${a3phase===1?'<div class="edit-hint">Χρησιμοποίησε το πραγματικό πληκτρολόγιο · Enter = καταχώριση</div>':''}`)}`;
+ if(a3phase===0){qa('[data-cell]').forEach(b=>b.onclick=()=>{if(b.dataset.cell!=='A3')return wrong(b,'Χρειάζεται το κελί A3.');a3phase=1;a3value='';setFeedback('✓ Το A3 είναι τώρα ενεργό. Γράψε απευθείας στο κελί.','good');later(r3,500)});return}
+ if(a3phase===1){startCellEditing('A3',a3value,(v,cell)=>{a3value=v;if(v!=='Πινακοθήκη')return wrong(cell,'Η λέξη πρέπει να γραφτεί ακριβώς όπως δίνεται.');a3phase=2;setFeedback('✓ Το Enter καταχώρισε το δεδομένο.','good');r3();later(()=>advance(0),1250)},v=>a3value=v)}
+}
+
+/* Activity 4 */
+let a4phase=0,a4menu=null,a4heading='';
+function table17(inserted=false,active=''){const data=inserted?{A1:a4heading,A2:'Αρχαιολογικό Μουσείο',B2:12,A3:'Πινακοθήκη',B3:10}:{A1:'Αρχαιολογικό Μουσείο',B1:12,A2:'Πινακοθήκη',B2:10};return baseGrid(data,{active})}
+function r4(){
+ if(a4phase===0){const menu=a4menu?`<div class="context-menu" style="left:${a4menu.x}px;top:${a4menu.y}px"><button id="insertRow">➕ Εισαγωγή γραμμής</button></div>`:'';activity.innerHTML=`<div class="task-strip">Κάνε <b>δεξί κλικ</b> στον αριθμό της γραμμής 1.</div>${praxis(`${toolbar()}<div class="sheet-area" id="a4area" style="position:relative">${table17(false)}${menu}</div>`)}`;const rh=q('[data-row="1"]');rh.oncontextmenu=e=>{e.preventDefault();const area=q('#a4area'),rect=area.getBoundingClientRect();a4menu={x:Math.max(8,e.clientX-rect.left),y:Math.max(8,e.clientY-rect.top)};r4()};rh.onclick=()=>setFeedback('Για αυτή την ενέργεια χρησιμοποίησε δεξί κλικ.','info');const ins=q('#insertRow');if(ins)ins.onclick=()=>{a4menu=null;a4phase=1;setFeedback('✓ Προστέθηκε νέα γραμμή και τα δεδομένα μετακινήθηκαν προς τα κάτω.','good');later(r4,700)};return}
+ if(a4phase===1){activity.innerHTML=`<div class="task-strip">Κάνε κλικ στο A1 για να γράψεις την επικεφαλίδα.</div>${praxis(`${toolbar()}<div class="sheet-area">${table17(true)}</div>`)}`;qa('[data-cell]').forEach(b=>b.onclick=()=>{if(b.dataset.cell!=='A1')return wrong(b,'Η επικεφαλίδα πρέπει να γραφτεί στο A1.');a4phase=2;setFeedback('✓ Το A1 είναι ενεργό.','good');later(r4,450)});return}
+ if(a4phase===2){activity.innerHTML=`<div class="task-strip">Πληκτρολόγησε <b>Προορισμός εκδρομής</b> και πάτησε <span class="keycap">Enter</span>.</div>${praxis(`${toolbar('A1',a4heading)}<div class="sheet-area">${table17(true,'A1')}</div><div class="edit-hint">Πληκτρολόγηση μέσα στο κελί · Enter = καταχώριση</div>`)}`;startCellEditing('A1',a4heading,(v,cell)=>{a4heading=v;if(v!=='Προορισμός εκδρομής')return wrong(cell,'Γράψε την επικεφαλίδα ακριβώς όπως δίνεται.');a4phase=3;setFeedback('✓ Η επικεφαλίδα καταχωρίστηκε με Enter.','good');r4();later(()=>advance(0),1300)},v=>a4heading=v);return}
+ activity.innerHTML=`<div class="task-strip">Η νέα γραμμή έγινε η επικεφαλίδα του πίνακα.</div>${praxis(`${toolbar('A1',a4heading)}<div class="sheet-area">${table17(true,'A1')}</div>`)}`
+}
+
+/* Activity 5 */
+let a5phase=0,a5colWidth=150,a5edit='Πινακοθικη';
+function gridA5(active='',preview=''){const data={A1:'Προορισμός εκδρομής',A2:'Αρχαιολογικό Μουσείο',B2:12,A3:preview||'Πινακοθικη',B3:10};const cols=['A','B','C','D'];let html=`<div class="sheet-grid" id="a5grid" style="grid-template-columns:46px ${a5colWidth}px repeat(3,minmax(120px,1fr));max-width:860px"><div class="gcell corner"></div>`;cols.forEach(c=>{const axis=active&&active[0]===c;html+=`<div class="gcell colhead ${axis?'axis-selected':''}" data-col="${c}">${c}${c==='A'&&a5phase===0?'<span class="col-resizer" id="a5Resizer" title="Σύρε ή κάνε διπλό κλικ"></span>':''}</div>`});for(let r=1;r<=4;r++){const axis=active&&Number(active.slice(1))===r;html+=`<div class="gcell rowhead ${axis?'axis-selected':''}" data-row="${r}">${r}</div>`;for(const c of cols){const id=c+r,val=data[id]??'';let cls='gcell data-cell';if(id===active)cls+=' active-cell';if(c==='A'&&r===1)cls+=' overflow-text';if(typeof val==='number')cls+=' cell-right';html+=`<div class="${cls}" data-cell="${id}">${esc(val)}</div>`}}return html+'</div>'}
+function setupColumnResize(){const h=q('#a5Resizer'),grid=q('#a5grid');if(!h||!grid)return;h.ondblclick=e=>{e.stopPropagation();a5colWidth=285;grid.style.gridTemplateColumns=`46px ${a5colWidth}px repeat(3,minmax(120px,1fr))`;a5phase=1;setFeedback('✓ Η στήλη A προσαρμόστηκε αυτόματα με διπλό κλικ στο όριό της.','good');later(r5,700)};h.onpointerdown=e=>{e.preventDefault();e.stopPropagation();const startX=e.clientX,startW=a5colWidth;grid.classList.add('resizing');const move=ev=>{a5colWidth=Math.max(105,Math.min(330,startW+(ev.clientX-startX)));grid.style.gridTemplateColumns=`46px ${a5colWidth}px repeat(3,minmax(120px,1fr))`};const up=()=>{document.removeEventListener('pointermove',move);grid.classList.remove('resizing');if(a5colWidth>=230){a5phase=1;setFeedback('✓ Μεγάλωσες τη στήλη A σύροντας το όριό της.','good');later(r5,700)}else setFeedback('Μεγάλωσε λίγο περισσότερο τη στήλη A ή κάνε διπλό κλικ στο όριό της.','info')};document.addEventListener('pointermove',move);document.addEventListener('pointerup',up,{once:true})}}
+function r5(){
+ if(a5phase===0){activity.innerHTML=`<div class="task-strip">Η επικεφαλίδα δεν χωράει. <b>Σύρε</b> το δεξί όριο της στήλης A ή κάνε <b>διπλό κλικ</b> στο όριο.</div>${praxis(`${toolbar()}<div class="sheet-area">${gridA5()}</div><div class="edit-hint">Το όριο της στήλης έχει δείκτη αλλαγής πλάτους ↔</div>`)}`;setupColumnResize();return}
+ if(a5phase===1){activity.innerHTML=`<div class="task-strip">Κάνε κλικ στο κελί A3 για να το διορθώσεις από τη γραμμή εισαγωγής.</div>${praxis(`${toolbar()}<div class="sheet-area">${gridA5()}</div>`)}`;qa('[data-cell]').forEach(b=>b.onclick=()=>{if(b.dataset.cell!=='A3')return wrong(b,'Επίλεξε το A3.');a5phase=2;setFeedback('✓ Το A3 είναι ενεργό. Τώρα χρησιμοποίησε τη γραμμή εισαγωγής.','good');later(r5,450)});return}
+ if(a5phase===2){activity.innerHTML=`<div class="task-strip">Διόρθωσε τη λέξη στη γραμμή εισαγωγής και πάτησε <span class="keycap">Enter</span>. <span class="keycap">Esc</span> ακυρώνει.</div>${praxis(`${toolbar('A3',a5edit,'',true)}<div class="sheet-area">${gridA5('A3',a5edit)}</div><div class="edit-hint">Enter = επιβεβαίωση · Esc = ακύρωση</div>`)}`;const inp=q('#formulaEdit');inp.focus();inp.select();inp.oninput=()=>{a5edit=inp.value;const cell=q('[data-cell="A3"]');if(cell)cell.textContent=a5edit};inp.onkeydown=e=>{if(e.key==='Escape'){e.preventDefault();a5edit='Πινακοθικη';setFeedback('Η διόρθωση ακυρώθηκε.','info');r5();return}if(e.key==='Enter'){e.preventDefault();if(a5edit!=='Πινακοθήκη')return wrong(inp,'Η σωστή λέξη είναι «Πινακοθήκη».');a5phase=3;setFeedback('✓ Η διόρθωση οριστικοποιήθηκε με Enter.','good');r5();later(()=>advance(0),1250)}};return}
+ activity.innerHTML=`<div class="task-strip">Η στήλη έχει σωστό πλάτος και το A3 διορθώθηκε.</div>${praxis(`${toolbar('A3','Πινακοθήκη')}<div class="sheet-area">${gridA5('A3','Πινακοθήκη')}</div>`)}`
+}
+
+/* Activity 6 */
+let a6range=false,a6bold=false,a6borders=false;
+function r6(){const data={A1:'Προορισμός εκδρομής',B1:'Απαντήσεις',A2:'Αρχαιολογικό Μουσείο',B2:12,A3:'Πινακοθήκη',B3:10};const ids=a6range?['A2','A3','B2','B3']:[];const tools=a6range?`<button class="real-tool ${a6bold?'active':''}" id="fmtBold" title="Έντονα"><b>B</b></button><button class="real-tool ${a6borders?'active':''}" id="fmtBorders" title="Περιγράμματα">▦</button>`:'';activity.innerHTML=`<div class="task-strip">${!a6range?'Πάτησε στο A2 και, κρατώντας πατημένο το ποντίκι, σύρε μέχρι το B3.':'Χρησιμοποίησε τα εργαλεία της γραμμής εργαλείων για έντονα γράμματα και περιγράμματα.'}</div>${praxis(`${toolbar(a6range?'A2:B3':'','',tools)}<div class="sheet-area">${baseGrid(data,{range:ids,bold:a6bold?ids:[],borders:a6borders?ids:[]})}</div><div class="check-strip"><span class="check-chip ${a6range?'done':''}">A2:B3 ${a6range?'✓':''}</span><span class="check-chip ${a6bold&&a6borders?'done':''}">Μορφοποίηση ${a6bold&&a6borders?'✓':''}</span></div>`)}`;
+ if(!a6range){setupRangeDrag('A2','B3',ids=>{a6range=true;setFeedback('✓ Επιλέχθηκε η περιοχή A2:B3 με σύρσιμο.','good');later(r6,600)});return}
+ q('#fmtBold').onclick=()=>{a6bold=true;setFeedback('✓ Εφαρμόστηκαν έντονα γράμματα στην περιοχή.','good');r6();if(a6bold&&a6borders)later(()=>advance(0),1200)};q('#fmtBorders').onclick=()=>{a6borders=true;setFeedback('✓ Εφαρμόστηκαν περιγράμματα στην περιοχή.','good');r6();if(a6bold&&a6borders)later(()=>advance(0),1200)}
+}
+
+/* Activity 7 */
+let a7phase=0,a7menu=null,a7range=false;
+function finalProgress(){return `<div class="final-progress"><span class="final-chip ${a7phase>0?'done':''}">Κελί ${a7phase>0?'✓':''}</span><span class="final-chip ${a7phase>1?'done':''}">Γραμμή ${a7phase>1?'✓':''}</span><span class="final-chip ${a7phase>2?'done':''}">Περιοχή ${a7phase>2?'✓':''}</span></div>`}
+function r7(){
+ if(a7phase===0){activity.innerHTML=`<div class="task-strip">1ο μέρος: Επίλεξε το κελί C3.</div><div class="final-card">${praxis(`${toolbar()}<div class="sheet-area">${baseGrid()}</div>`)}${finalProgress()}</div>`;qa('[data-cell]').forEach(b=>b.onclick=()=>{if(b.dataset.cell!=='C3')return wrong(b,'Βρες τη στήλη C και τη γραμμή 3.');paintSelection('cell','C3');a7phase=1;setFeedback('✓ Ενεργοποίησες το C3.','good');later(r7,800)});return}
+ if(a7phase===1){const menu=a7menu?`<div class="context-menu" style="left:${a7menu.x}px;top:${a7menu.y}px"><button id="a7Insert">➕ Εισαγωγή γραμμής</button></div>`:'';activity.innerHTML=`<div class="task-strip">2ο μέρος: Πρόσθεσε νέα γραμμή πάνω από τη γραμμή 2 χρησιμοποιώντας <b>δεξί κλικ</b>.</div><div class="final-card">${praxis(`${toolbar()}<div class="sheet-area" id="a7area" style="position:relative">${baseGrid({A1:'Προορισμός',B1:'Απαντήσεις',A2:'Μουσείο',B2:12,A3:'Πινακοθήκη',B3:10})}${menu}</div>`)}${finalProgress()}</div>`;const rh=q('[data-row="2"]');rh.oncontextmenu=e=>{e.preventDefault();const rect=q('#a7area').getBoundingClientRect();a7menu={x:Math.max(8,e.clientX-rect.left),y:Math.max(8,e.clientY-rect.top)};r7()};rh.onclick=()=>setFeedback('Χρησιμοποίησε δεξί κλικ στη γραμμή 2.','info');const ins=q('#a7Insert');if(ins)ins.onclick=()=>{a7menu=null;a7phase=2;setFeedback('✓ Η νέα γραμμή προστέθηκε με το μενού δεξιού κλικ.','good');later(r7,800)};return}
+ if(a7phase===2){const ids=a7range?['A2','A3','B2','B3']:[];const tools=a7range?'<button class="real-tool" id="a7Borders" title="Περιγράμματα">▦</button>':'';activity.innerHTML=`<div class="task-strip">3ο μέρος: Σύρε από A2 μέχρι B3 και βάλε περιγράμματα στην περιοχή.</div><div class="final-card">${praxis(`${toolbar(a7range?'A2:B3':'','',tools)}<div class="sheet-area">${baseGrid({A1:'Προορισμός',B1:'Απαντήσεις',A2:'Μουσείο',B2:12,A3:'Πινακοθήκη',B3:10},{range:ids})}</div>`)}${finalProgress()}</div>`;if(!a7range){setupRangeDrag('A2','B3',()=>{a7range=true;setFeedback('✓ Η περιοχή επιλέχθηκε με σύρσιμο.','good');later(r7,550)});return}q('#a7Borders').onclick=()=>{a7phase=3;setFeedback('✓ Ολοκλήρωσες τη συνολική δοκιμή χρησιμοποιώντας πραγματικές ενέργειες υπολογιστικού φύλλου.','good');later(()=>advance(0),1300)};return}
+}
+
+/* Activity 8 */
+const levels=['Έχω καταλάβει και μπορώ να εξηγήσω','Έχω καταλάβει αρκετά καλά','Έχω καταλάβει αλλά έχω απορίες','Χρειάζομαι βοήθεια'];
+const objectives=['Να αναγνωρίζω τα βασικά στοιχεία του υπολογιστικού φύλλου.','Να μορφοποιώ τα δεδομένα στο υπολογιστικό φύλλο.','Να οργανώνω τα δεδομένα σε πίνακες στο υπολογιστικό φύλλο.'];let selfSel=[null,null,null];
+function r8(){activity.innerHTML=`<div class="self-wrap"><div class="self-table"><div class="self-head">Αξιολογώ πόσο καλά έμαθα</div>${levels.map(x=>`<div class="self-head">${x}</div>`).join('')}${objectives.map((o,r)=>`<div class="self-objective">✓ ${o}</div>${levels.map((l,c)=>`<button class="self-cell ${selfSel[r]===c?'selected':''}" data-self="${r}:${c}">${l}</button>`).join('')}`).join('')}</div></div><div class="self-note">Διάλεξε ένα επίπεδο για κάθε στόχο.</div><div class="finish-actions"><button class="finish-btn" id="finishBtn" ${selfSel.some(x=>x===null)?'disabled':''}>Ολοκλήρωση</button></div>`;qa('[data-self]').forEach(b=>b.onclick=()=>{const [r,c]=b.dataset.self.split(':').map(Number);selfSel[r]=c;r8()});q('#finishBtn').onclick=()=>{if(selfSel.some(x=>x===null))return;completed.add(stage);finished=true;render()}}
+
+const renderers=[r1,r2,r3,r4,r5,r6,r7,r8];
+function renderCompletion(){kicker.textContent='ΟΛΟΚΛΗΡΩΣΗ';stageTitle.textContent='Μάθημα 17 ολοκληρώθηκε';instruction.textContent='Ολοκλήρωσες την οργάνωση δεδομένων σε πίνακα στο Praxis.';activity.innerHTML=`<div class="completion"><span class="badge">Ενότητα 3 · Μάθημα 17</span><h2>Ο πίνακας είναι έτοιμος!</h2><p>Δούλεψες με πραγματικές ενέργειες υπολογιστικού φύλλου: επιλογές, πληκτρολόγηση, Enter, δεξί κλικ, αλλαγή πλάτους, σύρσιμο περιοχής και μορφοποίηση.</p><button class="secondary-btn" id="restartComplete">↻ Επανάληψη μαθήματος</button></div>`;q('#restartComplete').onclick=()=>location.reload();clearFeedback()}
+function render(){clearTimers();transitionLocked=false;renderEpoch++;clearFeedback();updateProgress();if(finished){renderCompletion();window.scrollTo({top:0,behavior:'smooth'});return}const s=ACTIVITIES[stage];kicker.textContent=`Δραστηριότητα ${stage+1}`;stageTitle.textContent=s.t;instruction.textContent=s.i;renderers[stage]();window.scrollTo({top:0,behavior:'smooth'})}
+q('#helpBtn').onclick=()=>{q('#helpText').textContent=HELP[stage]||'';q('#helpModal').classList.add('open')};q('#closeHelp').onclick=q('#understoodBtn').onclick=()=>q('#helpModal').classList.remove('open');q('#helpModal').onclick=e=>{if(e.target===q('#helpModal'))q('#helpModal').classList.remove('open')};q('#speakHelp').onclick=()=>{if(!('speechSynthesis'in window))return;window.speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(HELP[stage]||'');u.lang='el-GR';window.speechSynthesis.speak(u)};
+render();
+
+</script>
+<footer class="nk-license" aria-label="Πληροφορίες δημιουργού και άδειας χρήσης">
+  <div><strong>Created by Nikos Kalakos · © 2026</strong></div>
+  <div>Original educational content and simulation design licensed under <a class="cc-badge" href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank" rel="license noopener noreferrer">CC BY-NC 4.0</a>.</div>
+  <div>Source code © 2026 Nikos Kalakos.</div>
+  <div>Third-party and textbook materials remain subject to the rights and licences of their respective copyright holders.</div>
+</footer>
+</body>
+</html>

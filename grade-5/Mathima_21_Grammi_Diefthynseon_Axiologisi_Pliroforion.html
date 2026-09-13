@@ -1,0 +1,165 @@
+<!--
+ICT Educational Simulation
+Created by Nikos Kalakos
+Copyright © 2026 Nikos Kalakos
+
+Original educational content and simulation design licensed under CC BY-NC 4.0.
+Source code © 2026 Nikos Kalakos.
+Third-party and textbook materials remain subject to the rights and licences of their respective copyright holders.
+-->
+<!DOCTYPE html>
+<html lang="el">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="author" content="Nikos Kalakos">
+<meta name="copyright" content="© 2026 Nikos Kalakos">
+<meta name="license" content="Original educational content and simulation design: CC BY-NC 4.0; source code © 2026 Nikos Kalakos; third-party and textbook materials excluded.">
+<title>Μάθημα 21 – Γραμμή διευθύνσεων – Κριτήρια αξιολόγησης πληροφοριών</title>
+<style>
+:root{
+  --unit:#EA922C;--unit-dark:#B86610;--unit-soft:#FFF4E6;
+  --secondary:#545F99;--secondary-dark:#3D477C;--secondary-soft:#EEF0F8;
+  --ink:#25324A;--muted:#68758A;--line:#D8DEEA;--bg:#F5F7FB;
+  --good:#23845A;--good-soft:#E9F7F0;--bad:#B64242;--bad-soft:#FDEEEE;
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:Inter,"Segoe UI",Arial,sans-serif;color:var(--ink);background:radial-gradient(circle at 8% 5%,rgba(234,146,44,.12),transparent 28%),radial-gradient(circle at 92% 16%,rgba(84,95,153,.13),transparent 30%),#F4F6FA;font-size:16px}
+button,input{font:inherit}button{cursor:pointer}.shell-page{max-width:1280px;margin:0 auto;padding:18px}
+.hero{background:#fff;border:1px solid #E3E7EE;border-top:9px solid var(--unit);border-radius:18px;box-shadow:0 14px 35px rgba(45,55,86,.11);padding:20px 24px 18px;display:grid;grid-template-columns:1fr auto;gap:18px;align-items:center}.eyebrow{font-size:13px;font-weight:900;letter-spacing:.075em;text-transform:uppercase;color:var(--secondary)}.hero h1{margin:5px 0 0;font-size:29px;line-height:1.14;color:var(--secondary-dark);max-width:990px}.hero p{margin:8px 0 0;color:var(--muted);font-weight:700;line-height:1.45}.lesson-mark{min-width:118px;height:72px;border-radius:16px;background:linear-gradient(135deg,var(--secondary),var(--secondary-dark));color:#fff;display:grid;place-items:center;text-align:center;box-shadow:0 9px 22px rgba(84,95,153,.23)}.lesson-mark b{font-size:27px;line-height:1}.lesson-mark span{font-size:11px;font-weight:850;letter-spacing:.08em;text-transform:uppercase}
+.progress{margin:13px 0;background:#fff;border:1px solid #E1E5EC;border-radius:15px;padding:12px 15px;box-shadow:0 7px 20px rgba(48,58,87,.06)}.progress-top{display:flex;justify-content:space-between;gap:12px;align-items:center;color:#59667B;font-size:13px;font-weight:850}.bar{height:8px;background:#ECEFF4;border-radius:999px;overflow:hidden;margin:8px 0 10px}.fill{height:100%;width:0;background:linear-gradient(90deg,var(--unit),var(--secondary));transition:.3s ease}.steps{display:flex;gap:8px;flex-wrap:wrap;justify-content:center}.step-dot{width:29px;height:29px;border-radius:9px;border:1px solid #CDD3DE;background:#fff;color:#758197;display:grid;place-items:center;font-size:12px;font-weight:900}.step-dot.current{border:2px solid var(--unit);color:var(--unit-dark);background:var(--unit-soft)}.step-dot.done{border-color:var(--secondary);background:var(--secondary);color:#fff}
+.stage{background:#fff;border:1px solid #E0E5EF;border-radius:18px;box-shadow:0 10px 28px #27364b12;overflow:hidden}.stage-head{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;padding:18px 20px;border-bottom:1px solid #E8ECF3}.stage-kicker{font-size:12px;font-weight:950;color:var(--unit-dark);text-transform:uppercase}.stage-title{font-size:24px;margin:4px 0}.instruction{margin:0;color:#5C687C;font-weight:650;line-height:1.5}.help-btn{border:1px solid #C9D1E0;background:#fff;border-radius:11px;padding:9px 13px;font-weight:850;color:var(--secondary-dark);white-space:nowrap}.help-btn:hover{background:var(--secondary-soft)}.workspace{padding:16px 18px 20px}.task-strip{border-left:5px solid var(--unit);background:#FFF9F1;padding:12px 14px;border-radius:11px;margin-bottom:14px;font-weight:800;line-height:1.45}.feedback{min-height:0;margin-top:12px;border-radius:11px;font-weight:800;line-height:1.45}.feedback.show{padding:11px 13px;border:1px solid}.feedback.info{background:#F2F6FF;border-color:#C8D5EF;color:#46577C}.feedback.good{background:var(--good-soft);border-color:#AADBC5;color:#176943}.feedback.bad{background:var(--bad-soft);border-color:#F0BABA;color:#9B3030}@keyframes shake{25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}.wrong{animation:shake .28s;background:var(--bad-soft)!important;border-color:#E49A9A!important}.correct{background:var(--good-soft)!important;border-color:#7DC7A4!important}.choice-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:11px}.choice{border:1px solid #C8D1DF;background:#fff;border-radius:13px;padding:14px;text-align:left;color:#34415B;font-weight:800;line-height:1.35;min-height:64px}.choice:hover{border-color:var(--secondary);background:var(--secondary-soft)}.choice:disabled{cursor:default}
+.scene-card{border:1px solid #D4DAE5;background:#fff;border-radius:16px;padding:16px;box-shadow:0 7px 18px #27364b0e}.scene-title{font-weight:950;color:var(--secondary-dark);font-size:18px;margin-bottom:7px}.scene-sub{color:var(--muted);font-weight:700;line-height:1.45}.tag{display:inline-flex;align-items:center;gap:6px;border:1px solid #CBD4E1;background:#fff;border-radius:999px;padding:5px 9px;font-size:12px;font-weight:900;color:#5C6A82}.practice{background:var(--unit-soft);border-color:#F0C889;color:var(--unit-dark)}
+/* Ploigos */
+.browser{max-width:1080px;margin:0 auto;border:1px solid #C8D0DC;border-radius:17px;overflow:hidden;background:#fff;box-shadow:0 10px 26px #2f3f5817}.browser-top{height:44px;background:linear-gradient(120deg,var(--secondary-dark),var(--secondary));color:#fff;display:flex;align-items:center;padding:0 13px;gap:10px}.ploigos-mark{width:29px;height:29px;border-radius:9px;background:var(--unit);display:grid;place-items:center;font-weight:950}.browser-name{font-weight:950}.browser-dots{margin-left:auto;display:flex;gap:7px}.browser-dots span{width:10px;height:10px;border-radius:50%;background:#ffffffa3}.tabs{height:34px;background:#F3F5F9;border-bottom:1px solid #D4DAE5;display:flex;align-items:end;padding-left:12px}.tab{background:#fff;border:1px solid #D4DAE5;border-bottom:0;border-radius:9px 9px 0 0;padding:7px 13px;font-size:12px;font-weight:850;color:#5A677C;min-width:190px}.navrow{display:grid;grid-template-columns:auto 1fr;gap:9px;align-items:center;padding:9px 11px;border-bottom:1px solid #D8DEE8;background:#FAFBFD}.navicons{display:flex;gap:5px;color:#6E7B91;font-weight:900}.navicon{width:31px;height:31px;border-radius:8px;display:grid;place-items:center;border:1px solid transparent}.address{height:38px;border:2px solid #C5CEDC;border-radius:10px;padding:0 12px;font-weight:780;color:#34425A;width:100%;outline:none;background:#fff}.address:focus{border-color:var(--secondary);box-shadow:0 0 0 3px rgba(84,95,153,.12)}.webpage{min-height:310px;background:#fff;padding:24px}.page-hero{border:1px solid #D7DEE8;border-radius:16px;padding:24px;background:linear-gradient(135deg,#fff,var(--secondary-soft));display:flex;gap:17px;align-items:center}.page-icon{width:64px;height:64px;border-radius:18px;background:var(--unit);color:#fff;display:grid;place-items:center;font-size:30px}.page-title{font-size:24px;font-weight:950;color:var(--secondary-dark)}.page-url{margin-top:5px;color:#69768A;font-weight:750}.page-lines{display:grid;gap:10px;margin-top:18px}.linebar{height:13px;border-radius:99px;background:#E8ECF3}.linebar:nth-child(2){width:88%}.linebar:nth-child(3){width:72%}
+/* URL anatomy */
+.url-board{border:1px solid #CCD5E2;border-radius:16px;padding:18px;background:#F8FAFD;display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:4px;min-height:130px}.url-part{border:2px solid #C7D0DE;background:#fff;border-radius:11px;padding:13px 14px;font-family:Consolas,"Courier New",monospace;font-size:20px;font-weight:900;color:#43516A}.url-part:hover{border-color:var(--secondary);background:var(--secondary-soft)}.url-part.correct{background:var(--good-soft)!important;border-color:#70B895!important;color:#176943}.url-slash{font-family:Consolas,monospace;font-size:21px;font-weight:900;color:#788499}.hint-row{display:flex;gap:9px;flex-wrap:wrap;justify-content:center;margin-top:12px}.hint-card{border:1px solid #CBD4E1;border-radius:11px;padding:8px 11px;background:#fff;font-weight:850;color:#5F6D84;font-size:13px}.hint-card.active{background:var(--secondary-soft);border-color:var(--secondary);color:var(--secondary-dark)}
+/* evaluation */
+.clue-card{border:1px solid #CFD7E3;background:#fff;border-radius:14px;padding:15px;font-weight:800;line-height:1.45;color:#44526A}.clue-icon{font-size:27px;display:block;margin-bottom:6px}.criterion-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}.criterion{border:1px solid #CED7E4;border-radius:15px;padding:15px;background:#FBFCFE}.criterion h4{margin:0 0 7px;color:var(--secondary-dark);font-size:17px}.criterion p{margin:0;color:#657188;font-weight:720;line-height:1.4}.site-preview{border:1px solid #CED6E3;border-radius:15px;overflow:hidden;background:#fff}.site-head{padding:14px 16px;background:var(--secondary-soft);border-bottom:1px solid #D6DDE8}.site-head b{color:var(--secondary-dark);font-size:18px}.site-body{padding:15px;display:grid;gap:10px}.meta-row{border:1px solid #D8DEE8;border-radius:11px;padding:11px;background:#FAFBFD;font-weight:780;color:#536178}.meta-row strong{color:#2F3D57}.evidence-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:10px;margin-top:12px}.evidence{border:1px solid #C9D2DF;background:#fff;border-radius:12px;padding:12px;text-align:left;font-weight:800;color:#46546B}.evidence:hover{border-color:var(--unit);background:var(--unit-soft)}
+/* self assessment */
+.assess{display:grid;gap:13px}.assess-row{border:1px solid #D3DAE5;border-radius:15px;padding:14px;background:#FBFCFE}.assess-q{font-weight:900;color:#34425B;margin-bottom:10px}.level-row{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}.level-btn{border:1px solid #CBD4E1;background:#fff;border-radius:10px;padding:9px;font-size:12px;font-weight:850;color:#59677E}.level-btn.selected{background:var(--secondary);color:#fff;border-color:var(--secondary)}
+.modal-backdrop{position:fixed;inset:0;background:#1f2937a8;display:none;align-items:center;justify-content:center;padding:18px;z-index:50}.modal-backdrop.open{display:flex}.modal{width:min(610px,100%);background:#fff;border-radius:17px;box-shadow:0 24px 70px #0004;overflow:hidden}.modal-head{padding:14px 16px;background:var(--secondary);color:#fff;display:flex;align-items:center;justify-content:space-between;font-weight:950}.modal-close{border:0;background:transparent;color:#fff;font-size:24px}.modal-body{padding:18px;line-height:1.55;font-weight:720;color:#43516A}.modal-actions{padding:12px 16px 16px;display:flex;justify-content:flex-end;gap:9px}.small-btn{border:1px solid #C9D2DF;background:#fff;border-radius:10px;padding:8px 12px;font-weight:850;color:#526079}.secondary-btn{border:1px solid #C9D2DF;background:#fff;border-radius:11px;padding:10px 14px;font-weight:900;color:var(--secondary-dark);margin-top:10px}.secondary-btn:hover{background:var(--secondary-soft);border-color:var(--secondary)}.complete{padding:30px;text-align:center}.complete .big{font-size:50px}.complete h3{font-size:25px;color:var(--secondary-dark);margin:8px 0}.complete p{color:#667389;font-weight:750}
+@media(max-width:760px){.hero{grid-template-columns:1fr}.lesson-mark{display:none}.stage-head{display:block}.help-btn{margin-top:12px}.criterion-grid,.level-row{grid-template-columns:1fr}.browser{border-radius:12px}.url-part{font-size:16px;padding:10px}.shell-page{padding:10px}.workspace{padding:12px}.webpage{padding:14px}}
+</style>
+
+<style id="nk-license-style">
+.nk-license{max-width:1100px;margin:14px auto 24px;padding:10px 16px;text-align:center;font:13px/1.45 Arial,"Noto Sans",sans-serif;color:#4e657c}
+.nk-license a{color:inherit;text-decoration:underline;text-underline-offset:2px}
+.nk-license .cc-badge{display:inline-block;margin:0 4px;padding:2px 7px;border:1px solid #8aa0b8;border-radius:6px;background:#fff;font-weight:700;white-space:nowrap}
+</style>
+</head>
+<body>
+<div class="shell-page">
+<header class="hero"><div><div class="eyebrow">Ενότητα 4 · Ψηφιακός γραμματισμός</div><h1>Γραμμή διευθύνσεων – Κριτήρια αξιολόγησης πληροφοριών</h1><p>Χρησιμοποίησε τον Ploigos για να μεταβαίνεις σε δικτυακούς τόπους και έλεγχε τις πληροφορίες πριν τις εμπιστευτείς.</p></div><div class="lesson-mark"><div><b>21</b><br><span>Μάθημα</span></div></div></header>
+<section class="progress"><div class="progress-top"><span id="progressText"></span><span id="progressPct"></span></div><div class="bar"><div class="fill" id="fill"></div></div><div class="steps" id="steps"></div></section>
+<main class="stage"><div class="stage-head"><div><div class="stage-kicker" id="kicker"></div><h2 class="stage-title" id="stageTitle"></h2><p class="instruction" id="instruction"></p></div><button class="help-btn" id="helpBtn">❔ Βοήθεια</button></div><div class="workspace"><div id="activity"></div><div class="feedback" id="feedback"></div></div></main>
+</div>
+<div class="modal-backdrop" id="helpModal"><div class="modal"><div class="modal-head"><span>Βοήθεια</span><button class="modal-close" id="closeHelp">×</button></div><div class="modal-body" id="helpText"></div><div class="modal-actions"><button class="small-btn" id="speakHelp">🔊 Άκουσε</button><button class="small-btn" id="understoodBtn">Το κατάλαβα</button></div></div></div>
+<script>
+const ACTIVITIES=[
+ {t:'Πήγαινε απευθείας σε έναν δικτυακό τόπο',i:'Χρησιμοποίησε τη γραμμή διευθύνσεων του Ploigos όπως σε έναν πραγματικό φυλλομετρητή.'},
+ {t:'Διάβασε τα μέρη μιας διεύθυνσης',i:'Εντόπισε τον τρόπο σύνδεσης, το όνομα του δικτυακού τόπου και την κατάληξή του.'},
+ {t:'Τι μας λέει η κατάληξη;',i:'Κρίνε τις σκέψεις του Ήρωνα με βάση τις καταλήξεις των διευθύνσεων.'},
+ {t:'Τρεις πρώτες ερωτήσεις',i:'Σύνδεσε κάθε στοιχείο μιας ιστοσελίδας με την κατάλληλη ερώτηση αξιολόγησης.'},
+ {t:'Έλεγχος διαδικτυακού περιεχομένου',i:'Χρησιμοποίησε τα τέσσερα κριτήρια: δημιουργός, ενημέρωση, καταλληλότητα και συνάφεια.'},
+ {t:'Συνολική δοκιμή',i:'Μετάβαση με τη γραμμή διευθύνσεων και έλεγχος πληροφοριών στην ίδια αποστολή.'},
+ {t:'Τι έμαθα;',i:'Αξιολόγησε πόσο καλά μπορείς να εφαρμόζεις τους στόχους του μαθήματος.'}
+];
+const HELP=[
+ 'Κάνε κλικ μέσα στη γραμμή διευθύνσεων, γράψε https://copyrightschool.gr/ και πάτησε το πραγματικό πλήκτρο Enter του πληκτρολογίου.',
+ 'Η διεύθυνση αρχίζει με https://. Στη συνέχεια υπάρχει το όνομα του δικτυακού τόπου και στο τέλος η κατάληξη, εδώ .gr.',
+ 'Οι καταλήξεις δίνουν χρήσιμες ενδείξεις. Το .gr σχετίζεται με την Ελλάδα, ενώ .com, .org, .edu και .gov μπορεί να συνδέονται αντίστοιχα με εταιρεία, οργανισμό, εκπαίδευση και κυβέρνηση. Είναι ένδειξη, όχι από μόνη της απόδειξη αξιοπιστίας.',
+ 'Σκέψου τι ακριβώς σε προβληματίζει: αν καταλαβαίνεις το περιεχόμενο, αν σε βοηθά σε αυτό που ψάχνεις ή αν μπορείς να εμπιστευτείς την πηγή.',
+ 'Έλεγξε ποιος είναι ο δημιουργός, αν υπάρχει ημερομηνία ή άλλη ένδειξη ενημέρωσης, αν η γλώσσα είναι κατάλληλη και αν το περιεχόμενο είναι σχετικό με αυτό που ψάχνεις.',
+ 'Πρώτα χρησιμοποίησε τη γραμμή διευθύνσεων και το Enter. Μετά εξέτασε τη διεύθυνση και τα στοιχεία της πηγής πριν αποφασίσεις αν είναι χρήσιμη και αξιόπιστη.',
+ 'Διάλεξε ένα επίπεδο για κάθε στόχο. Δεν υπάρχουν σωστές ή λάθος επιλογές στην αυτοαξιολόγηση.'
+];
+let stage=0,finished=false,renderEpoch=0,pending=[];
+const q=s=>document.querySelector(s),qa=s=>[...document.querySelectorAll(s)];
+const activity=q('#activity'),feedback=q('#feedback'),kicker=q('#kicker'),stageTitle=q('#stageTitle'),instruction=q('#instruction');
+function clearTimers(){pending.forEach(clearTimeout);pending=[]}
+function later(fn,ms){const s=stage,e=renderEpoch;const id=setTimeout(()=>{if(stage===s&&renderEpoch===e)fn()},ms);pending.push(id)}
+function setFeedback(t,type='info'){feedback.className='feedback show '+type;feedback.textContent=t}
+function clearFeedback(){feedback.className='feedback';feedback.textContent=''}
+function wrong(el,msg){el.classList.remove('wrong');void el.offsetWidth;el.classList.add('wrong');setFeedback(msg,'bad');setTimeout(()=>{if(el&&el.isConnected)el.classList.remove('wrong')},560)}
+function lock(sel){qa(sel).forEach(x=>x.disabled=true)}
+function updateProgress(){const n=ACTIVITIES.length,p=finished?100:Math.round(stage/n*100);q('#progressText').textContent=finished?'Ολοκληρώθηκε':`Δραστηριότητα ${stage+1} από ${n}`;q('#progressPct').textContent=p+'%';q('#fill').style.width=p+'%';q('#steps').innerHTML=ACTIVITIES.map((_,i)=>`<span class="step-dot ${finished||i<stage?'done':i===stage?'current':''}">${i+1}</span>`).join('')}
+function advance(delay=0){later(()=>{stage++;if(stage>=ACTIVITIES.length)finished=true;render()},delay)}
+function render(){clearTimers();renderEpoch++;clearFeedback();updateProgress();if(finished)return renderComplete();const s=ACTIVITIES[stage];kicker.textContent=`Δραστηριότητα ${stage+1}`;stageTitle.textContent=s.t;instruction.textContent=s.i;renderers[stage]();window.scrollTo({top:0,behavior:'smooth'})}
+function renderComplete(){kicker.textContent='ΟΛΟΚΛΗΡΩΣΗ';stageTitle.textContent='Μάθημα 21 ολοκληρώθηκε';instruction.textContent='Ολοκλήρωσες τις δραστηριότητες της γραμμής διευθύνσεων και της αξιολόγησης πληροφοριών.';activity.innerHTML=`<div class="complete"><div class="big">✓</div><h3>Μπράβο!</h3><p>Χρησιμοποίησες τη γραμμή διευθύνσεων και έλεγξες διαδικτυακές πληροφορίες με συγκεκριμένα κριτήρια.</p><button class="secondary-btn" id="restartComplete">↻ Επανάληψη μαθήματος</button></div>`;q('#restartComplete').onclick=()=>location.reload();clearFeedback();updateProgress()}
+function browserShell(value='',loaded=false,id='addr'){
+ const isEme=loaded&&value.toLowerCase().includes('e-me.edu.gr');
+ const tabTitle=isEme?'e-me.edu.gr':(loaded?'copyrightschool.gr':'Νέα καρτέλα');
+ const pageTitle=isEme?'Εκπαιδευτική πλατφόρμα e-me':'copyrightschool.gr';
+ const pageSubtitle=isEme?'Καλώς ήρθες στην εκπαιδευτική πλατφόρμα e-me.':'Η διεύθυνση πληκτρολογήθηκε σωστά στη γραμμή διευθύνσεων.';
+ return `<div class="browser"><div class="browser-top"><div class="ploigos-mark">Π</div><div class="browser-name">Ploigos</div><div class="browser-dots"><span></span><span></span><span></span></div></div><div class="tabs"><div class="tab">${tabTitle}</div></div><div class="navrow"><div class="navicons"><span class="navicon">←</span><span class="navicon">→</span><span class="navicon">↻</span></div><input class="address" id="${id}" autocomplete="off" spellcheck="false" value="${value.replace(/"/g,'&quot;')}" aria-label="Γραμμή διευθύνσεων"></div><div class="webpage">${loaded?`<div class="page-hero"><div class="page-icon">${isEme?'🎓':'🔗'}</div><div><div class="page-title">${pageTitle}</div><div class="page-url">${pageSubtitle}</div></div></div><div class="page-lines"><div class="linebar"></div><div class="linebar"></div><div class="linebar"></div></div>`:`<div style="height:260px;display:grid;place-items:center;color:#8A95A7;font-weight:850">Πληκτρολόγησε μια διεύθυνση στη γραμμή διευθύνσεων.</div>`}</div></div>`
+}
+
+/* Activity 1 */
+let a1done=false;
+function r1(){activity.innerHTML=`<div class="task-strip">Γράψε <b>https://copyrightschool.gr/</b> στη γραμμή διευθύνσεων και πάτησε <b>Enter</b> στο πληκτρολόγιο.</div>${browserShell(a1done?'https://copyrightschool.gr/':'',a1done,'a1addr')}`;if(a1done){setFeedback('✓ Ο δικτυακός τόπος φορτώθηκε από τη διεύθυνση που πληκτρολόγησες.','good');later(()=>advance(0),1200);return}const inp=q('#a1addr');inp.focus();inp.onkeydown=e=>{if(e.key!=='Enter')return;const v=inp.value.trim().toLowerCase().replace(/\/$/,'');if(v!=='https://copyrightschool.gr'){setFeedback('Έλεγξε ότι έγραψες ολόκληρη τη διεύθυνση: https://copyrightschool.gr/','bad');inp.classList.add('wrong');setTimeout(()=>inp.classList.remove('wrong'),560);return}a1done=true;r1()}}
+
+/* Activity 2 */
+let a2phase=0;
+function r2(){const done=[a2phase>0,a2phase>1,a2phase>2];const prompt=['Επίλεξε το τμήμα που δείχνει τον τρόπο σύνδεσης.','Τώρα επίλεξε το όνομα του δικτυακού τόπου.','Τέλος, επίλεξε την κατάληξη.'][Math.min(a2phase,2)];activity.innerHTML=`<div class="task-strip">${prompt}</div><div class="url-board"><button class="url-part ${done[0]?'correct':''}" data-part="scheme">https://</button><button class="url-part ${done[1]?'correct':''}" data-part="name">copyrightschool</button><button class="url-part ${done[2]?'correct':''}" data-part="ending">.gr</button><span class="url-slash">/</span></div><div class="hint-row"><span class="hint-card ${a2phase===0?'active':''}">Τρόπος σύνδεσης</span><span class="hint-card ${a2phase===1?'active':''}">Όνομα</span><span class="hint-card ${a2phase===2?'active':''}">Κατάληξη</span></div>`;const expected=['scheme','name','ending'][a2phase];qa('[data-part]').forEach(b=>{if(b.classList.contains('correct')){b.disabled=true;return}b.onclick=()=>{if(b.dataset.part!==expected)return wrong(b,'Επίλεξε το τμήμα που ζητά η οδηγία.');b.classList.add('correct');setFeedback('✓ Σωστά.','good');if(a2phase===2)return later(()=>advance(0),1050);later(()=>{a2phase++;r2()},650)}})}
+
+/* Activity 3 */
+let a3round=0;
+const a3qs=[
+ {text:'www.wikipedia.org: είναι ο ιστότοπος ενός οργανισμού.',ans:'true',why:'Η κατάληξη .org μπορεί να δείχνει οργανισμό.'},
+ {text:'www.gov.gr: είναι ο ιστότοπος της ελληνικής κυβέρνησης.',ans:'true',why:'Η κατάληξη .gov σχετίζεται με κυβέρνηση και .gr με την Ελλάδα.'},
+ {text:'www.youtube.com: είναι ένας εκπαιδευτικός ιστότοπος.',ans:'false',why:'Η κατάληξη .com δεν σημαίνει «εκπαίδευση». Για εκπαιδευτικό χαρακτήρα μπορεί να συναντήσεις .edu.'},
+ {text:'www.Netflix.com: είναι ο ιστότοπος μιας εταιρείας.',ans:'true',why:'Η κατάληξη .com μπορεί να συνδέεται με εταιρεία.'}
+];
+function r3(){const x=a3qs[a3round];activity.innerHTML=`<div class="task-strip">Με βάση την κατάληξη, είναι σωστή ή λάθος η σκέψη;</div><div class="scene-card"><div class="scene-title">${x.text}</div><div class="scene-sub">Θυμήσου: οι καταλήξεις δίνουν ενδείξεις για τον δικτυακό τόπο.</div></div><div class="choice-grid" style="margin-top:12px"><button class="choice" data-a3="true">Σωστό</button><button class="choice" data-a3="false">Λάθος</button></div>`;qa('[data-a3]').forEach(b=>b.onclick=()=>{if(b.dataset.a3!==x.ans)return wrong(b,'Ξανασκέψου τι μπορεί να σημαίνει η κατάληξη της διεύθυνσης.');lock('[data-a3]');b.classList.add('correct');setFeedback('✓ '+x.why,'good');if(a3round===a3qs.length-1)return later(()=>advance(0),1100);later(()=>{a3round++;r3()},850)})}
+
+/* Activity 4 */
+let a4round=0;
+const a4qs=[
+ {clue:'Το κείμενο έχει πολλές δύσκολες λέξεις και δεν καταλαβαίνω τι εξηγεί.',ans:'understand'},
+ {clue:'Ψάχνω πληροφορίες για ανακύκλωση, αλλά η σελίδα μιλά κυρίως για ποδόσφαιρο.',ans:'help'},
+ {clue:'Δεν αναφέρεται ποιος έγραψε το κείμενο και δεν υπάρχουν στοιχεία επικοινωνίας.',ans:'trust'}
+];
+const a4opts=[['understand','Μπορώ να καταλάβω τι λέει;'],['help','Είναι κάτι που με βοηθάει;'],['trust','Μπορώ να τον εμπιστευτώ;']];
+function r4(){const x=a4qs[a4round];activity.innerHTML=`<div class="task-strip">Ποια από τις τρεις ερωτήσεις ταιριάζει περισσότερο στο στοιχείο που παρατηρείς;</div><div class="clue-card"><span class="clue-icon">🔎</span>${x.clue}</div><div class="choice-grid" style="margin-top:12px">${a4opts.map(o=>`<button class="choice" data-a4="${o[0]}">${o[1]}</button>`).join('')}</div>`;qa('[data-a4]').forEach(b=>b.onclick=()=>{if(b.dataset.a4!==x.ans)return wrong(b,'Διάβασε ξανά ποιο ακριβώς πρόβλημα περιγράφει το στοιχείο.');lock('[data-a4]');b.classList.add('correct');setFeedback('✓ Σωστή ερώτηση αξιολόγησης.','good');if(a4round===2)return later(()=>advance(0),1000);later(()=>{a4round++;r4()},760)})}
+
+/* Activity 5 */
+let a5round=0;
+const a5criteria=[
+ {title:'Δημιουργός',question:'Ποιο στοιχείο σε βοηθά περισσότερο να ελέγξεις τον δημιουργό;',ans:'creator',opts:[['creator','Αναφέρεται ο φορέας, ο συγγραφέας και στοιχεία επικοινωνίας.'],['date','Υπάρχει μόνο μια μεγάλη φωτογραφία.'],['topic','Ο τίτλος έχει πολλά θαυμαστικά.']]},
+ {title:'Ενημερωμένη πληροφορία',question:'Ποιο στοιχείο σε βοηθά να ελέγξεις αν η πληροφορία είναι ενημερωμένη;',ans:'date',opts:[['date','Αναγράφεται πότε γράφτηκε ή ενημερώθηκε η πληροφορία.'],['font','Το κείμενο έχει μεγάλα γράμματα.'],['logo','Υπάρχει πολύχρωμο λογότυπο.']]},
+ {title:'Κατάλληλος ιστότοπος',question:'Ποιο στοιχείο δείχνει ότι το περιεχόμενο είναι πιο κατάλληλο για σένα;',ans:'suitable',opts:[['suitable','Η γλώσσα είναι κατανοητή και δεν έχει πολλά ορθογραφικά ή συντακτικά λάθη.'],['ads','Υπάρχουν πολλές αναδυόμενες διαφημίσεις.'],['caps','Όλο το κείμενο είναι γραμμένο με ΚΕΦΑΛΑΙΑ.']]},
+ {title:'Σχετικό περιεχόμενο',question:'Ψάχνεις «ανακύκλωση χαρτιού στο σχολείο». Ποιο αποτέλεσμα είναι πιο σχετικό;',ans:'relevant',opts:[['sports','«Τα νέα της σχολικής ομάδας ποδοσφαίρου»'],['relevant','«Πώς ανακυκλώνουμε χαρτί στο σχολείο»'],['games','«Δημοφιλή ηλεκτρονικά παιχνίδια»']]}
+];
+function r5(){const x=a5criteria[a5round];activity.innerHTML=`<div class="task-strip"><b>${x.title}</b> · ${x.question}</div><div class="site-preview"><div class="site-head"><span class="tag practice">Παράδειγμα εξάσκησης</span><div style="margin-top:8px"><b>Έλεγχος μιας διαδικτυακής πηγής</b></div></div><div class="site-body"><div class="meta-row"><strong>Στόχος:</strong> να αποφασίσεις ποια στοιχεία χρειάζεται να ελέγξεις πριν εμπιστευτείς ή χρησιμοποιήσεις μια πληροφορία.</div></div></div><div class="evidence-grid">${x.opts.map(o=>`<button class="evidence" data-a5="${o[0]}">${o[1]}</button>`).join('')}</div>`;qa('[data-a5]').forEach(b=>b.onclick=()=>{if(b.dataset.a5!==x.ans)return wrong(b,'Αυτό το στοιχείο δεν απαντά στο συγκεκριμένο κριτήριο.');lock('[data-a5]');b.classList.add('correct');setFeedback(`✓ Έλεγξες σωστά το κριτήριο «${x.title}».`,'good');if(a5round===a5criteria.length-1)return later(()=>advance(0),1100);later(()=>{a5round++;r5()},820)})}
+
+/* Activity 6 */
+let a6phase=0,a6sub=0,a6loaded=false;
+const a6eval=[
+ {q:'Ποιο στοιχείο υποστηρίζει καλύτερα ότι γνωρίζουμε τον δημιουργό;',ans:'creator',opts:[['creator','Φορέας: Εκπαιδευτικός Οργανισμός · Υπεύθυνος συντάκτης και στοιχεία επικοινωνίας'],['color','Μπλε φόντο και μεγάλο λογότυπο'],['pop','Πολλά κουμπιά κοινοποίησης']]},
+ {q:'Ποιο στοιχείο ελέγχει αν η πληροφορία είναι ενημερωμένη;',ans:'updated',opts:[['updated','Τελευταία ενημέρωση: 12/06/2026'],['font','Γραμματοσειρά 18 pt'],['menu','Μενού με πέντε επιλογές']]},
+ {q:'Ψάχνεις πληροφορίες για ασφαλή χρήση του διαδικτύου. Ποιος τίτλος είναι σχετικός;',ans:'relevant',opts:[['shop','Νέες προσφορές υπολογιστών'],['relevant','Ασφαλής χρήση του διαδικτύου για μαθητές'],['travel','Ταξίδια στην Ευρώπη']]}
+];
+function r6(){if(a6phase===0){activity.innerHTML=`<div class="task-strip">Πληκτρολόγησε <b>https://e-me.edu.gr/</b> στη γραμμή διευθύνσεων και πάτησε <b>Enter</b>.</div>${browserShell(a6loaded?'https://e-me.edu.gr/':'',a6loaded,'a6addr')}`;if(a6loaded){setFeedback('✓ Η μετάβαση με τη γραμμή διευθύνσεων ολοκληρώθηκε.','good');return later(()=>{a6phase=1;r6()},1300)}const inp=q('#a6addr');inp.focus();inp.onkeydown=e=>{if(e.key!=='Enter')return;const v=inp.value.trim().toLowerCase().replace(/\/$/,'');if(v!=='https://e-me.edu.gr'){setFeedback('Έλεγξε ότι έγραψες https://e-me.edu.gr/','bad');inp.classList.add('wrong');setTimeout(()=>inp.classList.remove('wrong'),560);return}a6loaded=true;r6()};return}
+ if(a6phase===1){activity.innerHTML=`<div class="task-strip">Στη διεύθυνση <b>https://e-me.edu.gr/</b>, ποια είναι η κατάληξη που δείχνει σχέση με την Ελλάδα;</div><div class="choice-grid"><button class="choice" data-a6end="edu">.edu</button><button class="choice" data-a6end="gr">.gr</button><button class="choice" data-a6end="https">https://</button></div>`;qa('[data-a6end]').forEach(b=>b.onclick=()=>{if(b.dataset.a6end!=='gr')return wrong(b,'Η κατάληξη που σχετίζεται με την Ελλάδα είναι .gr.');lock('[data-a6end]');b.classList.add('correct');setFeedback('✓ Σωστά: .gr.','good');later(()=>{a6phase=2;r6()},780)});return}
+ const x=a6eval[a6sub];activity.innerHTML=`<div class="task-strip">${x.q}</div><div class="site-preview"><div class="site-head"><span class="tag practice">Παράδειγμα εξάσκησης</span><div style="margin-top:8px"><b>Πηγή για αξιολόγηση</b></div></div><div class="site-body"><div class="meta-row"><strong>Θυμήσου:</strong> δεν αρκεί να σου αρέσει η εμφάνιση μιας σελίδας. Έλεγξε συγκεκριμένα στοιχεία.</div></div></div><div class="choice-grid" style="margin-top:12px">${x.opts.map(o=>`<button class="choice" data-a6="${o[0]}">${o[1]}</button>`).join('')}</div>`;qa('[data-a6]').forEach(b=>b.onclick=()=>{if(b.dataset.a6!==x.ans)return wrong(b,'Επίλεξε το στοιχείο που απαντά ακριβώς στο κριτήριο της ερώτησης.');lock('[data-a6]');b.classList.add('correct');setFeedback('✓ Σωστά.','good');if(a6sub===a6eval.length-1){setFeedback('✓ Ολοκλήρωσες τη συνολική δοκιμή: μετάβαση, ανάγνωση διεύθυνσης και αξιολόγηση πηγής.','good');return later(()=>advance(0),1300)}later(()=>{a6sub++;r6()},820)})}
+
+/* Activity 7 */
+const levels=['Έχω καταλάβει και μπορώ να εξηγήσω','Έχω καταλάβει αρκετά καλά','Έχω καταλάβει αλλά έχω απορίες','Χρειάζομαι βοήθεια'];
+const goals=['Να χρησιμοποιώ τη γραμμή διευθύνσεων για μετάβαση σε δικτυακό τόπο.','Να αναφέρω κριτήρια αξιολόγησης της εγκυρότητας/αξιοπιστίας πληροφοριών.'];
+let a7sel=[null,null];
+function r7(){activity.innerHTML=`<div class="task-strip">Διάλεξε ένα επίπεδο για κάθε στόχο.</div><div class="assess">${goals.map((g,gi)=>`<div class="assess-row"><div class="assess-q">✓ ${g}</div><div class="level-row">${levels.map((l,li)=>`<button class="level-btn ${a7sel[gi]===li?'selected':''}" data-goal="${gi}" data-level="${li}">${l}</button>`).join('')}</div></div>`).join('')}</div>`;qa('[data-goal]').forEach(b=>b.onclick=()=>{a7sel[Number(b.dataset.goal)]=Number(b.dataset.level);r7();if(a7sel.every(v=>v!==null)){setFeedback('✓ Ολοκλήρωσες την αυτοαξιολόγηση.','good');later(()=>advance(0),1100)}})}
+
+const renderers=[r1,r2,r3,r4,r5,r6,r7];
+q('#helpBtn').onclick=()=>{q('#helpText').textContent=HELP[stage]||'';q('#helpModal').classList.add('open')};q('#closeHelp').onclick=q('#understoodBtn').onclick=()=>q('#helpModal').classList.remove('open');q('#helpModal').onclick=e=>{if(e.target===q('#helpModal'))q('#helpModal').classList.remove('open')};q('#speakHelp').onclick=()=>{if(!('speechSynthesis'in window))return;window.speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(HELP[stage]||'');u.lang='el-GR';window.speechSynthesis.speak(u)};
+render();
+</script>
+
+<footer class="nk-license" aria-label="Πληροφορίες δημιουργού και άδειας χρήσης">
+  <div><strong>Created by Nikos Kalakos · © 2026</strong></div>
+  <div>Original educational content and simulation design licensed under <a class="cc-badge" href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank" rel="license noopener noreferrer">CC BY-NC 4.0</a>.</div>
+  <div>Source code © 2026 Nikos Kalakos.</div>
+  <div>Third-party and textbook materials remain subject to the rights and licences of their respective copyright holders.</div>
+</footer>
+</body>
+</html>

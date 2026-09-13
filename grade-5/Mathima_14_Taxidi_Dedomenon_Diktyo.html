@@ -1,0 +1,658 @@
+<!--
+ICT Educational Simulation
+Created by Nikos Kalakos
+Copyright © 2026 Nikos Kalakos
+
+Original educational content and simulation design licensed under CC BY-NC 4.0.
+Source code © 2026 Nikos Kalakos.
+Third-party and textbook materials remain subject to the rights and licences of their respective copyright holders.
+-->
+<!DOCTYPE html>
+<html lang="el">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="author" content="Nikos Kalakos">
+<meta name="copyright" content="© 2026 Nikos Kalakos">
+<meta name="license" content="Original educational content and simulation design: CC BY-NC 4.0; source code © 2026 Nikos Kalakos; third-party and textbook materials excluded.">
+<title>Μάθημα 14 – Το ταξίδι των δεδομένων σε ένα δίκτυο</title>
+<style>
+:root{
+  --unit:#EA922C;
+  --unit-dark:#B86610;
+  --unit-soft:#FFF4E6;
+  --secondary:#545F99;
+  --secondary-dark:#3D477C;
+  --secondary-soft:#EEF0F8;
+  --ink:#25324A;
+  --muted:#68758A;
+  --line:#D8DEEA;
+  --bg:#F5F7FB;
+  --good:#23845A;
+  --good-soft:#E9F7F0;
+  --bad:#B64242;
+  --bad-soft:#FDEEEE;
+  --router:#4E6E91;
+  --packet:#F0A23B;
+}
+*{box-sizing:border-box}
+body{
+  margin:0;
+  font-family:Inter,"Segoe UI",Arial,sans-serif;
+  color:var(--ink);
+  background:
+    radial-gradient(circle at 10% 7%,rgba(234,146,44,.11),transparent 28%),
+    radial-gradient(circle at 90% 18%,rgba(84,95,153,.12),transparent 30%),
+    #F4F6FA;
+  font-size:16px;
+}
+button{font:inherit;cursor:pointer}
+.shell-page{max-width:1280px;margin:0 auto;padding:18px}
+.hero{background:#fff;border:1px solid #E3E7EE;border-top:9px solid var(--unit);border-radius:18px;box-shadow:0 14px 35px rgba(45,55,86,.11);padding:20px 24px 18px;display:grid;grid-template-columns:1fr auto;gap:18px;align-items:center}
+.eyebrow{font-size:13px;font-weight:900;letter-spacing:.075em;text-transform:uppercase;color:var(--secondary)}
+.hero h1{margin:5px 0 0;font-size:31px;line-height:1.12;color:var(--secondary-dark)}
+.hero p{margin:8px 0 0;color:var(--muted);font-weight:700;line-height:1.45}
+.lesson-mark{min-width:118px;height:72px;border-radius:16px;background:linear-gradient(135deg,var(--secondary),var(--secondary-dark));color:#fff;display:grid;place-items:center;text-align:center;box-shadow:0 9px 22px rgba(84,95,153,.23)}
+.lesson-mark b{font-size:27px;line-height:1}.lesson-mark span{font-size:11px;font-weight:850;letter-spacing:.08em;text-transform:uppercase}
+.progress{margin:13px 0;background:#fff;border:1px solid #E1E5EC;border-radius:15px;padding:12px 15px;box-shadow:0 7px 20px rgba(48,58,87,.06)}
+.progress-top{display:flex;justify-content:space-between;gap:12px;align-items:center;color:#59667B;font-size:13px;font-weight:850}
+.bar{height:8px;background:#ECEFF4;border-radius:999px;overflow:hidden;margin:8px 0 10px}
+.fill{height:100%;width:0;background:linear-gradient(90deg,var(--unit),var(--secondary));transition:.3s ease}
+.steps{display:flex;gap:8px;flex-wrap:wrap;justify-content:center}
+.step-dot{width:29px;height:29px;border-radius:9px;border:1px solid #CDD3DE;background:#fff;color:#758197;display:grid;place-items:center;font-size:12px;font-weight:900}
+.step-dot.current{border:2px solid var(--unit);color:var(--unit-dark);background:var(--unit-soft)}
+.step-dot.done{border-color:var(--secondary);background:var(--secondary);color:#fff}
+.stage{background:#fff;border:1px solid #E0E5EF;border-radius:18px;box-shadow:0 10px 28px #27364b12;overflow:hidden}
+.stage-head{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;padding:18px 20px;border-bottom:1px solid #E8ECF3}
+.stage-kicker{font-size:12px;font-weight:950;color:var(--unit-dark);text-transform:uppercase}
+.stage-title{font-size:24px;margin:4px 0}
+.instruction{margin:0;color:#5C687C;font-weight:650;line-height:1.5}
+.help-btn{border:1px solid #C9D1E0;background:#fff;border-radius:11px;padding:9px 13px;font-weight:850;color:var(--secondary-dark);white-space:nowrap}
+.help-btn:hover{background:var(--secondary-soft)}
+.workspace{padding:16px 18px 20px}
+.task-strip{border-left:5px solid var(--unit);background:#FFF9F1;padding:12px 14px;border-radius:11px;margin-bottom:14px;font-weight:800;line-height:1.45}
+.feedback{min-height:0;margin-top:12px;border-radius:11px;font-weight:800;line-height:1.45}
+.feedback.show{padding:11px 13px;border:1px solid}
+.feedback.info{background:#F2F6FF;border-color:#C8D5EF;color:#46577C}
+.feedback.good{background:var(--good-soft);border-color:#AADBC5;color:#176943}
+.feedback.bad{background:var(--bad-soft);border-color:#F0BABA;color:#9B3030}
+.choice-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;max-width:900px;margin:12px auto}
+.choice{min-height:62px;border:1.5px solid #C9D2E2;background:#fff;border-radius:12px;padding:12px 14px;text-align:left;font-weight:850;color:#283650;transition:.15s;line-height:1.4}
+.choice:hover{border-color:#8897B3;transform:translateY(-1px)}
+.choice.correct{background:var(--good-soft);border-color:#7DC7A4}
+.choice.wrong{animation:shake .28s;background:var(--bad-soft);border-color:#E49A9A}
+@keyframes shake{25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
+.check-strip{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px;justify-content:center}
+.check-chip{border:1px solid #CCD4E2;background:#fff;border-radius:99px;padding:8px 11px;font-size:13px;font-weight:900;color:#637087}
+.check-chip.done{background:var(--good-soft);border-color:#91CDB0;color:#1F724E}
+
+/* Network lab */
+.net-shell{border:1px solid #C9D2E2;border-radius:17px;overflow:hidden;background:#fff;box-shadow:0 9px 24px #33435d12}
+.net-top{background:linear-gradient(110deg,var(--secondary-dark),var(--secondary));color:#fff;padding:13px 16px;display:flex;align-items:center;gap:11px}
+.net-logo{width:40px;height:40px;border-radius:11px;background:var(--unit);display:grid;place-items:center;font-size:22px;font-weight:950;box-shadow:inset 0 0 0 2px #ffffff35}
+.net-title{font-weight:950}.net-sub{font-size:12px;opacity:.9;font-weight:700;margin-top:2px}
+.net-body{padding:18px;background:linear-gradient(#fff,#FCFDFF)}
+.role-scene{display:grid;grid-template-columns:1fr 150px 1fr;gap:14px;align-items:center;max-width:900px;margin:0 auto}
+.node{border:1px solid #CDD5E2;border-radius:17px;background:#fff;padding:17px;text-align:center;min-height:190px;box-shadow:0 7px 18px #35445d0d;position:relative}
+button.node:hover{border-color:var(--secondary);transform:translateY(-1px)}
+.node.hit{background:var(--good-soft);border-color:#7DC7A4}.node.wrong{animation:shake .28s;background:var(--bad-soft);border-color:#E49A9A}
+.node-icon{width:86px;height:86px;border-radius:22px;margin:0 auto 10px;display:grid;place-items:center;font-size:45px;background:linear-gradient(145deg,var(--secondary-soft),#fff);border:2px solid #C8D0E2}
+.node.server .node-icon{background:linear-gradient(145deg,#FFF0DD,#fff);border-color:#E7B97D}
+.node strong{display:block;color:var(--secondary-dark);font-size:19px}.node small{display:block;color:#748096;font-weight:750;margin-top:5px;line-height:1.35}
+.link-column{text-align:center;color:#68758A;font-weight:900}.link-line{height:5px;border-radius:99px;background:linear-gradient(90deg,var(--secondary),var(--unit));margin:8px 0;position:relative}.link-line:after{content:'➤';position:absolute;right:-5px;top:-13px;color:var(--unit-dark);font-size:20px}
+.question-card{max-width:780px;margin:14px auto 0;border:1px solid #D5DDE9;border-radius:14px;background:#F8FAFD;padding:14px;text-align:center;font-weight:850;color:#465570;line-height:1.45}
+
+/* Server roles */
+.server-role-card{max-width:850px;margin:0 auto;border:1px solid #D5DDE9;border-radius:16px;background:#FBFCFE;padding:18px}
+.server-role-scenario{display:flex;gap:14px;align-items:center;justify-content:center;text-align:center;margin-bottom:15px}
+.server-rack{width:82px;height:98px;border-radius:16px;background:linear-gradient(145deg,#3E4A69,#566483);padding:12px;box-shadow:0 8px 18px #27364b25;display:flex;flex-direction:column;gap:8px}
+.server-rack span{height:18px;border-radius:5px;background:#fff2;border:1px solid #ffffff30;position:relative}.server-rack span:after{content:'';position:absolute;right:7px;top:6px;width:6px;height:6px;border-radius:50%;background:#F6B14E}
+.scenario-text{max-width:620px;font-size:19px;font-weight:900;color:var(--secondary-dark);line-height:1.4}
+.role-options{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.role-option{border:1.5px solid #C9D2E2;background:#fff;border-radius:12px;padding:13px;font-weight:900;color:#34435F;text-align:center;min-height:68px}.role-option:hover{border-color:var(--secondary);background:var(--secondary-soft)}.role-option.wrong{animation:shake .28s;background:var(--bad-soft);border-color:#E49A9A}
+
+/* Request response */
+.request-board{max-width:980px;margin:0 auto;border:1px solid #D2DAE7;border-radius:17px;background:linear-gradient(160deg,#F6F8FC,#FFF8EF);padding:18px}
+.rr-track{display:grid;grid-template-columns:1fr 150px 1fr;gap:12px;align-items:center}
+.rr-device{border:1px solid #D0D8E4;border-radius:15px;background:#fff;padding:15px;text-align:center;min-height:180px}.rr-device .big{font-size:55px}.rr-device b{display:block;margin-top:7px;color:var(--secondary-dark);font-size:18px}.rr-device small{display:block;margin-top:4px;color:#738096;font-weight:750}
+.rr-middle{text-align:center}.rr-arrow{font-size:34px;color:var(--secondary);margin:7px 0}.rr-label{font-size:12px;font-weight:950;color:#6C788C;text-transform:uppercase;letter-spacing:.05em}
+.action-row{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin-top:16px}.action-btn{border:1.5px solid #C8D1DF;background:#fff;border-radius:12px;padding:11px 14px;font-weight:900;color:#3F4F6B}.action-btn:hover{border-color:var(--secondary);background:var(--secondary-soft)}.action-btn.good-action{border-color:#89C9AA;background:var(--good-soft)}.action-btn.wrong{animation:shake .28s;background:var(--bad-soft);border-color:#E49A9A}
+
+
+/* Activity 3 - automatic packet routing lab */
+.route-lab{max-width:1000px;margin:0 auto;border:1px solid #D3DBE8;border-radius:17px;background:#FBFCFE;padding:14px}
+.route-map{position:relative;border:1px solid #D8E0EC;border-radius:16px;background:linear-gradient(180deg,#F8FAFE,#FFF8EF);overflow:hidden}
+.route-map svg{display:block;width:100%;height:auto;min-height:330px}
+.route-edge{stroke:#9EABBD;stroke-width:5;stroke-linecap:round;fill:none}
+.route-edge.busy{stroke:#D69A42;stroke-width:6;stroke-dasharray:13 10}
+.route-edge.down{stroke:#C74A4A;stroke-width:6}
+.route-node circle{fill:#fff;stroke:#8292A9;stroke-width:4}
+.route-node text.label{font:900 15px Inter,"Segoe UI",Arial,sans-serif;fill:#34435F;text-anchor:middle;dominant-baseline:middle}
+.route-node.offline circle{fill:#FDEEEE;stroke:#C74A4A}
+.route-node .node-x{font:950 34px Inter,"Segoe UI",Arial,sans-serif;fill:#B53131;text-anchor:middle;dominant-baseline:middle}
+.link-x{font:950 28px Inter,"Segoe UI",Arial,sans-serif;fill:#B53131;text-anchor:middle;dominant-baseline:middle;paint-order:stroke;stroke:#fff;stroke-width:6px}
+.endpoint{fill:#fff;stroke:#BEC9DA;stroke-width:3}.endpoint-title{font:900 16px Inter,"Segoe UI",Arial,sans-serif;fill:#3D477C;text-anchor:middle}.endpoint-icon{font:37px "Segoe UI Emoji","Apple Color Emoji",sans-serif;text-anchor:middle}
+.svg-packet rect{fill:#EEF2FB;stroke:#545F99;stroke-width:3}.svg-packet.answer rect{fill:#FFF0DA;stroke:#EA922C}.svg-packet text{font:950 13px Inter,"Segoe UI",Arial,sans-serif;fill:#34435F;text-anchor:middle;dominant-baseline:middle}
+.packet-dock{display:flex;align-items:center;justify-content:center;gap:8px;min-height:54px;margin:10px 0 4px;flex-wrap:wrap}.dock-packet{width:52px;height:40px;border-radius:10px;border:2px solid var(--secondary);background:var(--secondary-soft);display:grid;place-items:center;font-weight:950;color:var(--secondary-dark)}.dock-packet.answer{border-color:var(--unit);background:var(--unit-soft);color:var(--unit-dark)}
+.route-controls{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin-top:12px}.route-main{border:1.5px solid #C7D0DE;background:#fff;border-radius:12px;padding:10px 16px;min-height:46px;font-weight:900;color:#3E4D68}.route-main:hover{border-color:var(--secondary);background:var(--secondary-soft)}.route-main.answer{border-color:#E2B16B;background:#FFF9F1;color:#80561F}
+.route-key{display:flex;justify-content:center;gap:8px;flex-wrap:wrap;margin-top:12px}.route-key span{display:flex;align-items:center;gap:7px;border:1px solid #D4DCE8;background:#fff;border-radius:999px;padding:6px 9px;font-size:12px;font-weight:900;color:#637087}.legend-line{display:inline-block;width:34px;height:0;border-top:4px solid #9EABBD;border-radius:99px}.legend-line.busy{border-top:4px dashed #D69A42}.legend-line.down{border-top:4px solid #C74A4A;position:relative}.legend-line.down:after{content:'X';position:absolute;left:12px;top:-12px;color:#B53131;font-size:14px;font-weight:950;background:#fff;line-height:15px}
+.a3-arrival{max-width:760px;margin:12px auto 0;border:1px solid #D5DDE9;border-radius:14px;background:#fff;padding:11px;text-align:center}.a3-arrival-title{font-size:12px;font-weight:950;color:#68758A;text-transform:uppercase;letter-spacing:.04em}.a3-arrival-row{display:flex;justify-content:center;gap:8px;flex-wrap:wrap;min-height:48px;align-items:center;margin-top:7px}.arrival-packet{min-width:52px;height:40px;border-radius:10px;border:2px solid var(--secondary);background:var(--secondary-soft);color:var(--secondary-dark);display:grid;place-items:center;font-weight:950}.arrival-packet.answer{border-color:var(--unit);background:var(--unit-soft);color:var(--unit-dark)}
+.a3-order-wrap{max-width:850px;margin:12px auto 0}.a3-order-pool{display:flex;justify-content:center;gap:9px;flex-wrap:wrap;margin-bottom:11px}.a3-order-btn{border:2px solid var(--secondary);background:var(--secondary-soft);color:var(--secondary-dark);border-radius:12px;padding:9px 12px;min-width:96px;min-height:55px;font-weight:950}.a3-order-btn.answer{border-color:var(--unit);background:var(--unit-soft);color:var(--unit-dark)}.a3-order-btn.used{opacity:.4;pointer-events:none}.a3-order-btn.wrong{animation:shake .28s;background:var(--bad-soft);border-color:#E49A9A}
+.a3-order-slots{display:grid;grid-template-columns:repeat(4,1fr);gap:9px}.a3-order-slot{border:2px dashed #C6CFDC;border-radius:12px;min-height:72px;background:#fff;display:grid;place-items:center;text-align:center;padding:7px;font-weight:900;color:#718096}.a3-order-slot.filled{border-style:solid;border-color:#8FCDB0;background:var(--good-soft);color:#315C49}.order-complete-banner{max-width:440px;margin:12px auto 0;border:2px solid #79BE9B;background:var(--good-soft);color:#176943;border-radius:12px;padding:10px 14px;text-align:center;font-weight:950;font-size:17px;animation:orderConfirm .35s ease-out}.a3-order-wrap.complete .a3-order-slot.filled{box-shadow:0 0 0 3px #d9f1e5 inset;animation:slotConfirm .42s ease-out}@keyframes orderConfirm{0%{transform:scale(.96);opacity:.3}100%{transform:scale(1);opacity:1}}@keyframes slotConfirm{0%{transform:scale(.96)}100%{transform:scale(1)}}
+.server-process{max-width:560px;margin:12px auto 0;border:1px solid #D4DCE8;background:#fff;border-radius:14px;padding:12px;display:flex;align-items:center;gap:12px;justify-content:center;flex-wrap:wrap}.server-process .gear{font-size:31px}.server-process.working .gear{animation:gearSpin .8s linear infinite}.server-result{font-weight:950;color:var(--secondary-dark);font-size:18px;text-align:center}@keyframes gearSpin{to{transform:rotate(360deg)}}
+.a3-mini-note{margin:10px auto 0;max-width:720px;text-align:center;font-size:13px;font-weight:850;color:#68758A}
+@media(max-width:680px){.route-lab{padding:9px}.route-map svg{min-height:270px}.route-main{width:100%}.route-node text.label{font-size:13px}.endpoint-title{font-size:14px}.a3-order-slots{grid-template-columns:repeat(2,1fr)}}
+
+/* Packets */
+.packet-board{max-width:980px;margin:0 auto;border:1px solid #D2DAE7;border-radius:17px;background:#FAFBFD;padding:18px}
+.packet-route{display:grid;grid-template-columns:120px 1fr 80px 1fr 120px;gap:8px;align-items:center;margin-bottom:16px}
+.route-end,.router{border:1px solid #CBD4E2;background:#fff;border-radius:14px;min-height:105px;display:grid;place-items:center;text-align:center;padding:10px;font-weight:900;color:var(--secondary-dark)}
+.router{min-height:78px;background:linear-gradient(145deg,#EDF2F8,#fff);font-size:30px}.route-line{height:5px;background:linear-gradient(90deg,var(--secondary),var(--unit));border-radius:99px;position:relative}.route-line:after{content:'➤';position:absolute;right:-4px;top:-13px;color:var(--unit-dark);font-size:20px}
+.packet-pool{display:flex;gap:9px;flex-wrap:wrap;justify-content:center;margin:15px 0}.packet{border:2px solid #DEA154;background:#FFF4E6;border-radius:12px;padding:10px 12px;font-weight:950;color:#76501F;min-width:120px;box-shadow:0 5px 12px #c47c2015}.packet small{display:block;color:#8A6A42;font-weight:800;margin-top:3px}.packet:hover{transform:translateY(-1px);border-color:var(--unit-dark)}.packet.wrong{animation:shake .28s;background:var(--bad-soft);border-color:#E49A9A}.packet.used{opacity:.45;pointer-events:none}
+.rebuild{display:grid;grid-template-columns:repeat(4,1fr);gap:9px;max-width:850px;margin:0 auto}.rebuild-slot{border:2px dashed #C6CFDC;border-radius:12px;min-height:85px;background:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:8px}.rebuild-slot.filled{border-style:solid;border-color:#8FCDB0;background:var(--good-soft)}.rebuild-slot .slot-num{font-size:12px;font-weight:950;color:#8290A4}.rebuild-slot b{margin-top:3px;color:#315C49}
+.send-btn{display:block;margin:12px auto 0;border:0;background:var(--secondary);color:#fff;border-radius:11px;padding:11px 17px;font-weight:950}.send-btn:disabled{opacity:.5;cursor:not-allowed}
+
+/* LAN/WAN */
+.network-type-card{max-width:900px;margin:0 auto;border:1px solid #D3DBE7;border-radius:17px;background:#FBFCFE;padding:18px;text-align:center}.scenario-visual{min-height:170px;display:flex;align-items:center;justify-content:center;gap:14px;flex-wrap:wrap}.building{width:145px;min-height:120px;border:1px solid #CDD5E2;background:#fff;border-radius:16px;padding:12px;display:grid;place-items:center;box-shadow:0 6px 14px #35445d0d}.building .ico{font-size:45px}.building b{color:var(--secondary-dark)}.net-connector{font-size:34px;color:var(--unit-dark);font-weight:950}.type-buttons{display:grid;grid-template-columns:1fr 1fr;gap:12px;max-width:560px;margin:14px auto 0}.type-btn{border:2px solid #C4CCDA;background:#fff;border-radius:14px;padding:15px;font-weight:950;color:#394965;font-size:18px}.type-btn:hover{border-color:var(--secondary);background:var(--secondary-soft)}.type-btn.wrong{animation:shake .28s;background:var(--bad-soft);border-color:#E49A9A}
+
+/* True false */
+.tf-card{max-width:860px;margin:0 auto;border:1px solid #D4DCE8;border-radius:17px;background:#FBFCFE;padding:18px}.tf-question{font-size:20px;font-weight:900;color:var(--secondary-dark);line-height:1.45;text-align:center;min-height:70px;display:grid;place-items:center}.tf-actions{display:grid;grid-template-columns:1fr 1fr;gap:12px;max-width:540px;margin:14px auto 0}.tf-btn{border:2px solid #C7CFDD;background:#fff;border-radius:14px;padding:15px;font-weight:950;color:#3D4C67}.tf-btn:hover{border-color:var(--secondary);background:var(--secondary-soft)}.tf-btn.wrong{animation:shake .28s;background:var(--bad-soft);border-color:#E49A9A}
+
+/* Final */
+.final-card{max-width:940px;margin:0 auto;border:1px solid #D4DCE8;border-radius:17px;background:#FBFCFE;padding:18px}.final-title{text-align:center;font-size:21px;font-weight:950;color:var(--secondary-dark);margin-bottom:12px}.mini-flow{display:grid;grid-template-columns:repeat(4,1fr);gap:9px;margin-top:13px}.mini-step{border:2px dashed #C5CEDC;border-radius:12px;min-height:105px;background:#fff;padding:10px;text-align:center;display:flex;flex-direction:column;align-items:center;justify-content:center}.mini-step.filled{border-style:solid;border-color:#8FCDB0;background:var(--good-soft)}.mini-num{width:27px;height:27px;border-radius:50%;display:grid;place-items:center;background:var(--unit);color:#fff;font-weight:950;margin-bottom:6px}.mini-pool{display:flex;gap:9px;flex-wrap:wrap;justify-content:center;margin-top:14px}.mini-token{border:1.5px solid #C6CFDC;background:#fff;border-radius:11px;padding:10px 12px;font-weight:900;color:#3F4E6A}.mini-token:hover{border-color:var(--secondary);background:var(--secondary-soft)}.mini-token.wrong{animation:shake .28s;background:var(--bad-soft);border-color:#E49A9A}
+
+/* Self assessment */
+.self-wrap{overflow:auto}.self-table{display:grid;grid-template-columns:minmax(260px,1.5fr) repeat(4,minmax(145px,1fr));min-width:900px;border:1px solid #D7DEEA;border-radius:13px;overflow:hidden}.self-head,.self-objective,.self-cell{padding:12px;border-right:1px solid #D7DEEA;border-bottom:1px solid #D7DEEA}.self-head{background:#FFF7EC;color:#6B4C20;font-size:15px;font-weight:900;text-align:center}.self-objective{font-size:15px;font-weight:850;background:#fff}.self-cell{font-size:14px;background:#fff;border-top:0;border-left:0;text-align:center;color:#42506B;font-weight:800}.self-cell.selected{background:var(--secondary-soft);box-shadow:inset 0 0 0 2px var(--secondary);color:var(--secondary-dark)}.self-note{margin-top:9px;color:#6C788C;font-weight:750}.finish-actions{display:flex;justify-content:center;margin-top:16px}.primary{border:0;background:var(--secondary);color:#fff;border-radius:10px;padding:11px 18px;font-weight:900}.primary:disabled{opacity:.45;cursor:not-allowed}.completion{text-align:center;padding:36px 20px}.badge{display:inline-block;background:var(--unit-soft);color:var(--unit-dark);border-radius:99px;padding:7px 11px;font-size:12px;font-weight:900}.completion h2{font-size:28px;margin:12px 0 8px}.secondary-btn{border:1px solid #BCC6D8;background:#fff;border-radius:10px;padding:10px 14px;font-weight:900;color:#3D4A66}
+
+.modal-backdrop{position:fixed;inset:0;background:#11182788;display:none;align-items:center;justify-content:center;padding:18px;z-index:50}.modal-backdrop.open{display:flex}.modal{width:min(560px,100%);background:#fff;border-radius:16px;box-shadow:0 18px 60px #0004;overflow:hidden}.modal-head{padding:14px 16px;background:var(--secondary);color:#fff;font-weight:900;display:flex;justify-content:space-between;align-items:center}.modal-close{border:0;background:#ffffff1f;color:#fff;width:32px;height:32px;border-radius:8px;font-size:20px}.modal-body{padding:17px;line-height:1.55;color:#3F4D68;font-weight:700}.modal-actions{display:flex;justify-content:flex-end;gap:8px;padding:0 17px 17px}.small-btn{border:1px solid #C5CDDC;background:#fff;border-radius:9px;padding:8px 11px;font-weight:850}
+
+@media(max-width:900px){.role-scene,.rr-track,.journey-grid{grid-template-columns:1fr}.link-column,.rr-middle{transform:rotate(90deg);margin:8px auto}.role-options,.choice-grid{grid-template-columns:1fr}.packet-route{grid-template-columns:1fr}.route-line{height:45px;width:5px;margin:auto}.route-line:after{content:'▼';right:-8px;top:22px}.rebuild,.mini-flow,.packet-note{grid-template-columns:repeat(2,1fr)}.journey-lane{height:116px}}
+@media(max-width:680px){.shell-page{padding:9px}.hero{padding:16px}.hero h1{font-size:25px}.lesson-mark{min-width:96px;height:64px}.stage-head{flex-direction:column}.type-buttons,.tf-actions{grid-template-columns:1fr}.rebuild,.mini-flow,.packet-note{grid-template-columns:1fr}}
+</style>
+<style id="nk-license-style">
+.nk-license{max-width:1100px;margin:14px auto 24px;padding:10px 16px;text-align:center;font:13px/1.45 Arial,"Noto Sans",sans-serif;color:#4e657c}
+.nk-license a{color:inherit;text-decoration:underline;text-underline-offset:2px}
+.nk-license .cc-badge{display:inline-block;margin:0 4px;padding:2px 7px;border:1px solid #8aa0b8;border-radius:6px;background:#fff;font-weight:700;white-space:nowrap}
+</style>
+</head>
+<body>
+<div class="shell-page">
+  <header class="hero">
+    <div>
+      <div class="eyebrow">Ενότητα 2 · Υπολογιστικά συστήματα – Ψηφιακές συσκευές – Δίκτυα</div>
+      <h1>Το ταξίδι των δεδομένων σε ένα δίκτυο</h1>
+      <p>Γίνε εξερευνητής δικτύων: ανακάλυψε τον ρόλο πελάτη και εξυπηρετητή, ακολούθησε τα πακέτα δεδομένων και ξεχώρισε τα LAN από τα WAN.</p>
+    </div>
+    <div class="lesson-mark"><div><b>14</b><br><span>Μάθημα</span></div></div>
+  </header>
+
+  <section class="progress">
+    <div class="progress-top"><span id="progressText"></span><span id="progressPct"></span></div>
+    <div class="bar"><div class="fill" id="fill"></div></div>
+    <div class="steps" id="steps"></div>
+  </section>
+
+  <main class="stage">
+    <div class="stage-head">
+      <div>
+        <div class="stage-kicker" id="kicker"></div>
+        <h2 class="stage-title" id="stageTitle"></h2>
+        <p class="instruction" id="instruction"></p>
+      </div>
+      <button class="help-btn" id="helpBtn">❔ Βοήθεια</button>
+    </div>
+    <div class="workspace">
+      <div id="activity"></div>
+      <div class="feedback" id="feedback"></div>
+    </div>
+  </main>
+</div>
+
+<div class="modal-backdrop" id="helpModal">
+  <div class="modal">
+    <div class="modal-head"><span>Βοήθεια</span><button class="modal-close" id="closeHelp">×</button></div>
+    <div class="modal-body" id="helpText"></div>
+    <div class="modal-actions"><button class="small-btn" id="speakHelp">🔊 Άκουσε</button><button class="small-btn" id="understoodBtn">Το κατάλαβα</button></div>
+  </div>
+</div>
+
+<script>
+const ACTIVITIES=[
+ {t:'Πελάτης και εξυπηρετητής',i:'Αναγνώρισε ποια συσκευή ζητά την πληροφορία και ποια την παρέχει.'},
+ {t:'Τι κάνει ένας εξυπηρετητής;',i:'Σύνδεσε διαφορετικές εργασίες ενός εξυπηρετητή με τον σωστό ρόλο.'},
+ {t:'Αίτημα και απάντηση',i:'Παρακολούθησε τα πακέτα του αιτήματος και της απάντησης και βάλε τα στη σωστή σειρά.'},
+ {t:'LAN ή WAN;',i:'Ξεχώρισε τα τοπικά δίκτυα από τα δίκτυα μεγαλύτερης γεωγραφικής εμβέλειας.'},
+ {t:'Σωστό ή λάθος;',i:'Έλεγξε όσα έμαθες για τα LAN και τα WAN.'},
+ {t:'Συνολική δοκιμή',i:'Ολοκλήρωσε μόνος σου ένα πλήρες ταξίδι αιτήματος και απάντησης μέσα στο δίκτυο.'},
+ {t:'Τι έμαθα;',i:'Αξιολόγησε πόσο καλά μπορείς να εξηγήσεις όσα δούλεψες στο μάθημα.'}
+];
+
+const HELP=[
+ 'Ο πελάτης είναι η συσκευή ή η εφαρμογή που ζητά μια υπηρεσία ή πληροφορία. Ο εξυπηρετητής είναι ο υπολογιστής που παρέχει την υπηρεσία, τον πόρο ή την πληροφορία που ζητήθηκε.',
+ 'Ο εξυπηρετητής μπορεί να παρέχει υπηρεσίες, να διαχειρίζεται πόρους, να αποθηκεύει δεδομένα και να βοηθά στην ασφάλεια με έλεγχο πρόσβασης και προστασία δεδομένων.',
+ 'Τα πακέτα μπορεί να ακολουθήσουν διαφορετικές διαδρομές. Η διακεκομμένη γραμμή δείχνει μεγάλη κίνηση, ενώ το X μη διαθέσιμη σύνδεση ή δρομολογητή. Αν φτάσουν ανακατεμένα, η αρίθμηση βοηθά να ξαναμπούν στη σωστή σειρά.',
+ 'LAN είναι ένα τοπικό δίκτυο που καλύπτει μικρό χώρο, όπως ένα σπίτι, ένα γραφείο ή ένα κτίριο. WAN είναι ένα δίκτυο που καλύπτει μεγάλες γεωγραφικές περιοχές και μπορεί να συνδέει διαφορετικά LAN.',
+ 'Διάβασε προσεκτικά κάθε πρόταση. Θυμήσου ότι LAN σημαίνει τοπικό δίκτυο και WAN δίκτυο μεγαλύτερης γεωγραφικής εμβέλειας.',
+ 'Στη συνολική δοκιμή ισχύει η ίδια λογική με τη δραστηριότητα 3: τα πακέτα διαλέγουν αυτόματα διαθέσιμες διαδρομές, καθυστερούν όταν υπάρχει μεγάλη κίνηση και μπορεί να φτάσουν ανακατεμένα. Βάλε τα στη σειρά από τον αριθμό τους πριν συνεχίσεις.',
+ 'Διάλεξε ένα επίπεδο για κάθε στόχο. Δεν υπάρχουν σωστές ή λάθος επιλογές εδώ· είναι αυτοαξιολόγηση.'
+];
+
+let stage=0,finished=false,renderEpoch=0,pendingTimers=[],transitionLocked=false;
+const completed=new Set();
+const q=s=>document.querySelector(s),qa=s=>[...document.querySelectorAll(s)];
+const activity=q('#activity'),feedback=q('#feedback'),kicker=q('#kicker'),stageTitle=q('#stageTitle'),instruction=q('#instruction');
+function clearTimers(){pendingTimers.forEach(clearTimeout);pendingTimers=[]}
+function later(fn,ms){const s=stage,e=renderEpoch;const id=setTimeout(()=>{if(stage===s&&renderEpoch===e)fn()},ms);pendingTimers.push(id);return id}
+function setFeedback(txt,type='info'){feedback.className='feedback show '+type;feedback.innerHTML=txt}
+function clearFeedback(){feedback.className='feedback';feedback.textContent=''}
+function wrong(el,msg){el.classList.remove('wrong');void el.offsetWidth;el.classList.add('wrong');setFeedback(msg,'bad')}
+function lockGroup(selector){qa(selector).forEach(el=>el.disabled=true)}
+function updateProgress(){const n=ACTIVITIES.length;const pct=finished?100:Math.round(stage/(n-1)*100);q('#progressText').textContent=finished?'Ολοκληρώθηκε':`Δραστηριότητα ${stage+1} από ${n}`;q('#progressPct').textContent=pct+'%';q('#fill').style.width=pct+'%';q('#steps').innerHTML=ACTIVITIES.map((_,i)=>`<span class="step-dot ${completed.has(i)?'done':''} ${i===stage&&!finished?'current':''}">${i+1}</span>`).join('')}
+function advance(delay=0){if(transitionLocked)return;transitionLocked=true;later(()=>{completed.add(stage);stage++;transitionLocked=false;render()},delay)}
+const shuffleCache={};
+function shuffleCopy(arr){const a=[...arr];for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
+function shuffleOnce(key,arr){if(!shuffleCache[key])shuffleCache[key]=shuffleCopy(arr);return shuffleCache[key]}
+function netShell(inner,sub='Πελάτης · Εξυπηρετητής · Πακέτα · LAN/WAN'){return `<div class="net-shell"><div class="net-top"><div class="net-logo">⌁</div><div><div class="net-title">Εργαστήριο δικτύων</div><div class="net-sub">${sub}</div></div></div><div class="net-body">${inner}</div></div>`}
+
+/* Activity 1 */
+const A1_STEPS=[
+ {prompt:'Η ταμπλέτα ανοίγει μια ιστοσελίδα και ζητά τις πληροφορίες της. Ποιος είναι ο πελάτης;',answer:'client'},
+ {prompt:'Ο υπολογιστής που έχει την ιστοσελίδα λαμβάνει το αίτημα και στέλνει την πληροφορία. Ποιος είναι ο εξυπηρετητής;',answer:'server'}
+];
+let a1pos=0;
+function roleScene(){return `<div class="role-scene"><button class="node client" data-role="client"><div class="node-icon">📱</div><strong>Ταμπλέτα</strong><small>Ζητά να ανοίξει μια ιστοσελίδα.</small></button><div class="link-column"><div>αίτημα</div><div class="link-line"></div><div>πληροφορία</div></div><button class="node server" data-role="server"><div class="node-icon">🗄️</div><strong>Υπολογιστής με την ιστοσελίδα</strong><small>Έχει τα δεδομένα και απαντά στο αίτημα.</small></button></div>`}
+function r1(){
+ const s=A1_STEPS[a1pos];
+ activity.innerHTML=`<div class="task-strip">${s.prompt}</div>${netShell(`${roleScene()}<div class="check-strip"><span class="check-chip ${a1pos>0?'done':''}">Πελάτης ${a1pos>0?'✓':''}</span><span class="check-chip ${a1pos>1?'done':''}">Εξυπηρετητής ${a1pos>1?'✓':''}</span></div>`)}`;
+ qa('[data-role]').forEach(b=>b.onclick=()=>{
+  if(b.dataset.role!==s.answer)return wrong(b,'Σκέψου ποιος ζητά την πληροφορία και ποιος την έχει και την παρέχει.');
+  lockGroup('[data-role]');b.classList.add('hit');a1pos++;setFeedback(a1pos===1?'✓ Η ταμπλέτα είναι ο πελάτης γιατί ζητά την πληροφορία.':'✓ Ο υπολογιστής που παρέχει την ιστοσελίδα είναι ο εξυπηρετητής.','good');
+  if(a1pos<A1_STEPS.length)later(r1,750);else later(()=>advance(0),1100);
+ });
+}
+
+/* Activity 2 */
+const A2_TASKS=[
+ {text:'Ένας σχολικός εξυπηρετητής δίνει στους υπολογιστές πρόσβαση σε μια κοινή ιστοσελίδα.',answer:'services'},
+ {text:'Ένας εξυπηρετητής οργανώνει την κοινή χρήση ενός εκτυπωτή και του αποθηκευτικού χώρου.',answer:'resources'},
+ {text:'Ένας εξυπηρετητής κρατά αρχεία μαθητών ώστε να μπορούν να ζητηθούν αργότερα.',answer:'storage'},
+ {text:'Ένας εξυπηρετητής ελέγχει ποιος επιτρέπεται να ανοίξει ένα αρχείο και προστατεύει τα δεδομένα.',answer:'security'}
+];
+const A2_OPTIONS=[['services','Παροχή υπηρεσιών'],['resources','Διαχείριση πόρων'],['storage','Αποθήκευση δεδομένων'],['security','Ασφάλεια']];
+let a2pos=0;
+function r2(){
+ const t=A2_TASKS[a2pos],opts=shuffleOnce('a2-'+a2pos,A2_OPTIONS);
+ activity.innerHTML=`<div class="task-strip">Ποιος ρόλος του εξυπηρετητή περιγράφεται;</div>${netShell(`<div class="server-role-card"><div class="server-role-scenario"><div class="server-rack"><span></span><span></span><span></span></div><div class="scenario-text">${t.text}</div></div><div class="role-options">${opts.map(o=>`<button class="role-option" data-a2="${o[0]}">${o[1]}</button>`).join('')}</div><div class="check-strip">${A2_TASKS.map((_,i)=>`<span class="check-chip ${i<a2pos?'done':''}">Ρόλος ${i+1} ${i<a2pos?'✓':''}</span>`).join('')}</div></div>`)}`;
+ qa('[data-a2]').forEach(b=>b.onclick=()=>{
+  if(b.dataset.a2!==t.answer)return wrong(b,'Η επιλογή δεν ταιριάζει με την εργασία που περιγράφεται. Δοκίμασε ξανά.');
+  lockGroup('[data-a2]');a2pos++;setFeedback('✓ Σωστά. Αυτός είναι ένας από τους βασικούς ρόλους ενός εξυπηρετητή.','good');
+  if(a2pos<A2_TASKS.length)later(r2,650);else later(()=>advance(0),1100);
+ });
+}
+
+/* Activity 3 */
+let a3phase=0,a3Lab=null,a3ReqOrder=[],a3AnsOrder=[];
+const A3_POS={
+ C:[65,200],R1:[205,70],R2:[205,200],R3:[205,330],R4:[410,70],R5:[410,200],R6:[410,330],R7:[620,70],R8:[620,200],R9:[620,330],S:[835,200]
+};
+const A3_EDGES=[
+ ['C','R1'],['C','R2'],['C','R3'],
+ ['R1','R4'],['R1','R5'],['R2','R4'],['R2','R5'],['R2','R6'],['R3','R5'],['R3','R6'],
+ ['R4','R7'],['R4','R8'],['R5','R7'],['R5','R8'],['R5','R9'],['R6','R8'],['R6','R9'],
+ ['R7','S'],['R8','S'],['R9','S']
+];
+const A3_NEXT={C:['R1','R2','R3'],R1:['R4','R5'],R2:['R4','R5','R6'],R3:['R5','R6'],R4:['R7','R8'],R5:['R7','R8','R9'],R6:['R8','R9'],R7:['S'],R8:['S'],R9:['S'],S:[]};
+const A3_REQ=[{id:1,text:'&#928;&#929;&#927;&#915;&#925;&#937;&#931;&#919;'},{id:2,text:'&#913;&#920;&#919;&#925;&#913;'},{id:3,text:'&#931;&#919;&#924;&#917;&#929;&#913;'}];
+const A3_ANS=[{id:1,text:'&#913;&#920;&#919;&#925;&#913;'},{id:2,text:'&#931;&#919;&#924;&#917;&#929;&#913;'},{id:3,text:'22&deg;C'},{id:4,text:'&#9728;&#65039;'}];
+function a3EdgeKey(a,b){return [a,b].sort().join('-')}
+function a3AllPaths(offline){
+ const out=[];
+ function walk(node,path){
+  if(node==='S'){out.push(path.slice());return}
+  for(const n of A3_NEXT[node]||[]){if(n===offline||node===offline)continue;walk(n,path.concat(n))}
+ }
+ walk('C',['C']);return out;
+}
+function a3PathCost(path,heavy){
+ let total=0;for(let i=0;i<path.length-1;i++)total+=heavy.has(a3EdgeKey(path[i],path[i+1]))?1320:520;return total;
+}
+function a3InitLab(){
+ const routers=['R1','R2','R3','R4','R5','R6','R7','R8','R9'];
+ for(let attempt=0;attempt<120;attempt++){
+  const offline=Math.random()<.72?routers[Math.floor(Math.random()*routers.length)]:null;
+  const paths=a3AllPaths(offline);if(paths.length<6)continue;
+  const available=A3_EDGES.filter(e=>e[0]!==offline&&e[1]!==offline).map(e=>a3EdgeKey(e[0],e[1]));
+  const shuffled=shuffleCopy(available);const heavy=new Set(shuffled.slice(0,4+Math.floor(Math.random()*3)));
+  const costs=paths.map(p=>a3PathCost(p,heavy));
+  if(Math.max(...costs)-Math.min(...costs)<700)continue;
+  a3Lab={offline,heavy,paths,reqPlan:null,ansPlan:null,reqArrival:[],ansArrival:[]};return;
+ }
+ a3Lab={offline:null,heavy:new Set(['C-R1','R1-R4','R5-R8','R9-S']),paths:a3AllPaths(null),reqPlan:null,ansPlan:null,reqArrival:[],ansArrival:[]};
+}
+function a3ChoosePlan(count,direction){
+ const scored=a3Lab.paths.map(p=>({path:p,cost:a3PathCost(p,a3Lab.heavy)}));
+ const max=Math.max(...scored.map(x=>x.cost)),min=Math.min(...scored.map(x=>x.cost));
+ const maxP=shuffleCopy(scored.filter(x=>x.cost===max))[0];
+ const minP=shuffleCopy(scored.filter(x=>x.cost===min&&x.path.join('|')!==maxP.path.join('|')))[0]||shuffleCopy(scored.filter(x=>x.path.join('|')!==maxP.path.join('|')))[0];
+ const picked=[maxP,minP];
+ const used=new Set(picked.map(x=>x.path.join('|')));
+ const rest=shuffleCopy(scored.filter(x=>!used.has(x.path.join('|'))));
+ while(picked.length<count&&rest.length)picked.push(rest.shift());
+ return picked.slice(0,count).map((x,i)=>{
+  const base=direction==='answer'?[...x.path].reverse():[...x.path];
+  const durations=[];
+  for(let j=0;j<base.length-1;j++)durations.push(a3Lab.heavy.has(a3EdgeKey(base[j],base[j+1]))?1320:520);
+  return {id:i+1,path:base,durations,depart:i*260,total:durations.reduce((a,b)=>a+b,0)+i*260};
+ });
+}
+function a3NetworkSvg(kind='request',movingCount=0){
+ const edgeSvg=A3_EDGES.map(([a,b])=>{
+  const [x1,y1]=A3_POS[a],[x2,y2]=A3_POS[b],key=a3EdgeKey(a,b),down=a3Lab.offline&&(a===a3Lab.offline||b===a3Lab.offline),busy=!down&&a3Lab.heavy.has(key),cls=down?'down':busy?'busy':'';
+  const mx=(x1+x2)/2,my=(y1+y2)/2;
+  return `<line class="route-edge ${cls}" x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}"></line>${down?`<text class="link-x" x="${mx}" y="${my}">X</text>`:''}`;
+ }).join('');
+ const nodeSvg=['R1','R2','R3','R4','R5','R6','R7','R8','R9'].map(id=>{const [x,y]=A3_POS[id],off=id===a3Lab.offline;return `<g class="route-node ${off?'offline':''}" transform="translate(${x} ${y})"><circle r="24"></circle><text class="label" y="1">${id}</text>${off?'<text class="node-x" y="1">X</text>':''}</g>`}).join('');
+ const packets=Array.from({length:movingCount},(_,i)=>`<g id="a3Move-${kind}-${i+1}" class="svg-packet ${kind==='answer'?'answer':''}" visibility="hidden"><rect x="-21" y="-15" width="42" height="30" rx="8"></rect><text y="1">${i+1}</text></g>`).join('');
+ return `<div class="route-map"><svg viewBox="0 0 900 400" role="img" aria-label="Network with client, routers, server, traffic and unavailable links">${edgeSvg}${nodeSvg}<rect class="endpoint" x="10" y="140" width="110" height="120" rx="19"></rect><text class="endpoint-icon" x="65" y="183">&#128187;</text><text class="endpoint-title" x="65" y="232">&#928;&#949;&#955;&#940;&#964;&#951;&#962;</text><rect class="endpoint" x="780" y="140" width="110" height="120" rx="19"></rect><text class="endpoint-icon" x="835" y="183">&#128452;</text><text class="endpoint-title" x="835" y="232">Server</text>${packets}</svg></div>`;
+}
+function a3Legend(){return `<div class="route-key"><span><i class="legend-line"></i>&#922;&#945;&#957;&#959;&#957;&#953;&#954;&#942;</span><span><i class="legend-line busy"></i>&#922;&#943;&#957;&#951;&#963;&#951; &#183; &#945;&#961;&#947;&#940;</span><span><i class="legend-line down"></i>&#924;&#951; &#948;&#953;&#945;&#952;&#941;&#963;&#953;&#956;&#951;</span></div>`}
+function a3Checks(){return `<div class="check-strip"><span class="check-chip ${a3phase>=3?'done':''}">&#913;&#943;&#964;&#951;&#956;&#945; ${a3phase>=3?'&#10003;':''}</span><span class="check-chip ${a3phase>=5?'done':''}">&#917;&#960;&#949;&#958;&#949;&#961;&#947;&#945;&#963;&#943;&#945; ${a3phase>=5?'&#10003;':''}</span><span class="check-chip ${a3phase>=8?'done':''}">&#913;&#960;&#940;&#957;&#964;&#951;&#963;&#951; ${a3phase>=8?'&#10003;':''}</span></div>`}
+function a3PacketDock(list,kind){return `<div class="packet-dock">${list.map(p=>`<div class="dock-packet ${kind==='answer'?'answer':''}" title="${p.text}">&#128230; ${p.id}</div>`).join('')}</div>`}
+function a3RenderArrival(ids,kind){return `<div class="a3-arrival"><div class="a3-arrival-title">&#931;&#949;&#953;&#961;&#940; &#940;&#966;&#953;&#958;&#951;&#962;</div><div class="a3-arrival-row" id="a3Arrivals">${ids.map(id=>`<div class="arrival-packet ${kind==='answer'?'answer':''}">&#128230; ${id}</div>`).join('')}</div></div>`}
+function a3AnimateSegment(el,from,to,dur,epoch,done){
+ const reduce=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;dur=reduce?Math.max(90,Math.round(dur/9)):dur;
+ const start=performance.now();
+ function frame(now){
+  if(stage!==2||renderEpoch!==epoch)return;
+  const t=Math.min(1,(now-start)/dur),x=from[0]+(to[0]-from[0])*t,y=from[1]+(to[1]-from[1])*t;el.setAttribute('transform',`translate(${x} ${y})`);
+  if(t<1)requestAnimationFrame(frame);else done();
+ }
+ requestAnimationFrame(frame);
+}
+function a3AnimatePacket(el,pkt,idx,epoch,done){
+ if(idx>=pkt.path.length-1){done();return}
+ const a=pkt.path[idx],b=pkt.path[idx+1];a3AnimateSegment(el,A3_POS[a],A3_POS[b],pkt.durations[idx],epoch,()=>a3AnimatePacket(el,pkt,idx+1,epoch,done));
+}
+function a3StartTrip(plan,kind,finish){
+ const epoch=renderEpoch,arr=[];let complete=0;
+ plan.forEach(pkt=>{
+  const el=q(`#a3Move-${kind}-${pkt.id}`),start=A3_POS[pkt.path[0]];el.setAttribute('visibility','visible');el.setAttribute('transform',`translate(${start[0]} ${start[1]})`);
+  later(()=>a3AnimatePacket(el,pkt,0,epoch,()=>{arr.push(pkt.id);const dock=q('#a3Arrivals');if(dock)dock.insertAdjacentHTML('beforeend',`<div class="arrival-packet ${kind==='answer'?'answer':''}">&#128230; ${pkt.id}</div>`);complete++;if(complete===plan.length)finish(arr)}),pkt.depart);
+ });
+}
+function a3OrderActivity(kind,arrival,selected,data){
+ const count=data.length,complete=selected.length===count;
+ return `<div class="a3-order-wrap ${complete?'complete':''}"><div class="a3-order-pool">${arrival.map(id=>{const p=data.find(x=>x.id===id);return `<button class="a3-order-btn ${kind==='answer'?'answer':''} ${selected.includes(id)?'used':''}" data-a3order="${id}">&#128230; ${id}<small style="display:block;margin-top:3px">${p.text}</small></button>`}).join('')}</div><div class="a3-order-slots">${Array.from({length:count},(_,i)=>{const id=selected[i],p=data.find(x=>x.id===id);return `<div class="a3-order-slot ${id?'filled':''}">${id?`&#128230; ${id}<br><small>${p.text}</small>`:`${i+1}`}</div>`}).join('')}</div>${complete?'<div class="order-complete-banner">&#10003; &#931;&#969;&#963;&#964;&#942; &#963;&#949;&#953;&#961;&#940;!</div>':''}</div>`;
+}
+function a3BindOrder(kind){
+ const selected=kind==='request'?a3ReqOrder:a3AnsOrder,data=kind==='request'?A3_REQ:A3_ANS;
+ qa('[data-a3order]').forEach(b=>b.onclick=()=>{
+  const id=Number(b.dataset.a3order),expected=selected.length+1;
+  if(id!==expected)return wrong(b,`&#928;&#961;&#974;&#964;&#945; &#964;&#959; &#960;&#945;&#954;&#941;&#964;&#959; ${expected}.`);
+  selected.push(id);
+  if(selected.length<data.length){
+   setFeedback(`&#10003; &#928;&#945;&#954;&#941;&#964;&#959; ${id}.`,'good');
+   r3();
+  }else{
+   r3();
+   setFeedback(kind==='request'?'&#10003; &#932;&#959; &#964;&#949;&#955;&#949;&#965;&#964;&#945;&#943;&#959; &#960;&#945;&#954;&#941;&#964;&#959; &#956;&#960;&#942;&#954;&#949; &#963;&#964;&#951; &#963;&#969;&#963;&#964;&#942; &#952;&#941;&#963;&#951;. &#932;&#959; &#945;&#943;&#964;&#951;&#956;&#945; &#949;&#943;&#957;&#945;&#953; &#964;&#974;&#961;&#945; &#963;&#949; &#963;&#969;&#963;&#964;&#942; &#963;&#949;&#953;&#961;&#940;!':'&#10003; &#932;&#959; &#964;&#949;&#955;&#949;&#965;&#964;&#945;&#943;&#959; &#960;&#945;&#954;&#941;&#964;&#959; &#956;&#960;&#942;&#954;&#949; &#963;&#964;&#951; &#963;&#969;&#963;&#964;&#942; &#952;&#941;&#963;&#951;. &#919; &#945;&#960;&#940;&#957;&#964;&#951;&#963;&#951; &#949;&#943;&#957;&#945;&#953; &#964;&#974;&#961;&#945; &#963;&#949; &#963;&#969;&#963;&#964;&#942; &#963;&#949;&#953;&#961;&#940;!','good');
+   later(()=>{if(kind==='request')a3phase=3;else a3phase=8;r3()},1900);
+  }
+ });
+}
+function r3(){
+ if(!a3Lab)a3InitLab();
+ if(a3phase===0){
+  activity.innerHTML=`<div class="task-strip">&#931;&#964;&#949;&#943;&#955;&#949; &#964;&#959; &#945;&#943;&#964;&#951;&#956;&#945;.</div>${netShell(`<div class="route-lab">${a3NetworkSvg('request',0)}${a3PacketDock(A3_REQ,'request')}<div class="route-controls"><button class="route-main" id="a3SendReq">&#9654; &#913;&#943;&#964;&#951;&#956;&#945;</button></div>${a3Legend()}${a3Checks()}</div>`)}`;
+  q('#a3SendReq').onclick=()=>{a3Lab.reqPlan=a3ChoosePlan(3,'request');a3phase=1;r3()};return;
+ }
+ if(a3phase===1){
+  activity.innerHTML=`<div class="task-strip">&#128230; &#932;&#945; &#960;&#945;&#954;&#941;&#964;&#945; &#964;&#945;&#958;&#953;&#948;&#949;&#973;&#959;&#965;&#957;...</div>${netShell(`<div class="route-lab">${a3NetworkSvg('request',3)}${a3RenderArrival([],'request')}${a3Legend()}${a3Checks()}</div>`)}`;
+  a3StartTrip(a3Lab.reqPlan,'request',arr=>{a3Lab.reqArrival=arr;a3phase=2;later(r3,700)});return;
+ }
+ if(a3phase===2){
+  const complete=a3ReqOrder.length===A3_REQ.length;
+  activity.innerHTML=`<div class="task-strip">${complete?'&#10003; &#932;&#959; &#945;&#943;&#964;&#951;&#956;&#945; &#956;&#960;&#942;&#954;&#949; &#963;&#964;&#951; &#963;&#969;&#963;&#964;&#942; &#963;&#949;&#953;&#961;&#940;.':'&#932;&#945; &#960;&#945;&#954;&#941;&#964;&#945; &#941;&#966;&#964;&#945;&#963;&#945;&#957; &#945;&#957;&#945;&#954;&#945;&#964;&#949;&#956;&#941;&#957;&#945;. &#914;&#940;&#955;&#949; &#964;&#945; &#963;&#964;&#951; &#963;&#949;&#953;&#961;&#940;.'}</div>${netShell(`<div class="route-lab">${a3NetworkSvg('request',0)}${a3RenderArrival(a3Lab.reqArrival,'request')}${a3OrderActivity('request',a3Lab.reqArrival,a3ReqOrder,A3_REQ)}${a3Legend()}${a3Checks()}</div>`)}`;if(!complete)a3BindOrder('request');return;
+ }
+ if(a3phase===3){
+  activity.innerHTML=`<div class="task-strip">Server: &#949;&#960;&#949;&#958;&#949;&#961;&#947;&#945;&#963;&#943;&#945;.</div>${netShell(`<div class="route-lab">${a3NetworkSvg('request',0)}<div class="server-process"><div class="server-result">&#128230;1 + &#128230;2 + &#128230;3 &#8594; &#128233;</div></div><div class="route-controls"><button class="route-main" id="a3ProcessBtn">&#9881; &#917;&#960;&#949;&#958;&#949;&#961;&#947;&#945;&#963;&#943;&#945;</button></div>${a3Legend()}${a3Checks()}</div>`)}`;
+  q('#a3ProcessBtn').onclick=()=>{a3phase=4;r3();later(()=>{a3phase=5;r3()},1200)};return;
+ }
+ if(a3phase===4){
+  activity.innerHTML=`<div class="task-strip">&#9881; Server</div>${netShell(`<div class="route-lab">${a3NetworkSvg('request',0)}<div class="server-process working"><div class="gear">&#9881;</div><b>&#917;&#960;&#949;&#958;&#949;&#961;&#947;&#945;&#963;&#943;&#945;...</b></div>${a3Legend()}${a3Checks()}</div>`)}`;return;
+ }
+ if(a3phase===5){
+  activity.innerHTML=`<div class="task-strip">&#919; &#945;&#960;&#940;&#957;&#964;&#951;&#963;&#951; &#967;&#969;&#961;&#943;&#950;&#949;&#964;&#945;&#953; &#963;&#949; &#960;&#945;&#954;&#941;&#964;&#945;.</div>${netShell(`<div class="route-lab">${a3NetworkSvg('answer',0)}<div class="server-process"><div class="server-result">&#9728;&#65039; 22&deg;C &#8594; &#128230;1 &#128230;2 &#128230;3 &#128230;4</div></div>${a3PacketDock(A3_ANS,'answer')}<div class="route-controls"><button class="route-main answer" id="a3SendAns">&#9654; &#913;&#960;&#940;&#957;&#964;&#951;&#963;&#951;</button></div>${a3Legend()}${a3Checks()}</div>`)}`;
+  q('#a3SendAns').onclick=()=>{a3Lab.ansPlan=a3ChoosePlan(4,'answer');a3phase=6;r3()};return;
+ }
+ if(a3phase===6){
+  activity.innerHTML=`<div class="task-strip">&#128230; &#919; &#945;&#960;&#940;&#957;&#964;&#951;&#963;&#951; &#964;&#945;&#958;&#953;&#948;&#949;&#973;&#949;&#953;...</div>${netShell(`<div class="route-lab">${a3NetworkSvg('answer',4)}${a3RenderArrival([],'answer')}${a3Legend()}${a3Checks()}</div>`)}`;
+  a3StartTrip(a3Lab.ansPlan,'answer',arr=>{a3Lab.ansArrival=arr;a3phase=7;later(r3,700)});return;
+ }
+ if(a3phase===7){
+  const complete=a3AnsOrder.length===A3_ANS.length;
+  activity.innerHTML=`<div class="task-strip">${complete?'&#10003; &#919; &#945;&#960;&#940;&#957;&#964;&#951;&#963;&#951; &#956;&#960;&#942;&#954;&#949; &#963;&#964;&#951; &#963;&#969;&#963;&#964;&#942; &#963;&#949;&#953;&#961;&#940;.':'&#932;&#945; &#960;&#945;&#954;&#941;&#964;&#945; &#941;&#966;&#964;&#945;&#963;&#945;&#957; &#945;&#957;&#945;&#954;&#945;&#964;&#949;&#956;&#941;&#957;&#945;. &#914;&#940;&#955;&#949; &#964;&#945; &#963;&#964;&#951; &#963;&#949;&#953;&#961;&#940;.'}</div>${netShell(`<div class="route-lab">${a3NetworkSvg('answer',0)}${a3RenderArrival(a3Lab.ansArrival,'answer')}${a3OrderActivity('answer',a3Lab.ansArrival,a3AnsOrder,A3_ANS)}${a3Legend()}${a3Checks()}</div>`)}`;if(!complete)a3BindOrder('answer');return;
+ }
+ activity.innerHTML=`<div class="task-strip">&#10003; &#927;&#955;&#959;&#954;&#955;&#951;&#961;&#974;&#952;&#951;&#954;&#949;.</div>${netShell(`<div class="route-lab">${a3NetworkSvg('answer',0)}<div class="server-process"><div class="server-result">&#128230; &#8594; &#9881; Server &#8594; &#128230; &#8594; &#128187;</div></div>${a3Legend()}${a3Checks()}</div>`)}`;
+ setFeedback('&#10003; &#932;&#945; &#960;&#945;&#954;&#941;&#964;&#945; &#956;&#960;&#959;&#961;&#949;&#943; &#957;&#945; &#945;&#954;&#959;&#955;&#959;&#965;&#952;&#959;&#973;&#957; &#948;&#953;&#945;&#966;&#959;&#961;&#949;&#964;&#953;&#954;&#941;&#962; &#948;&#953;&#945;&#948;&#961;&#959;&#956;&#941;&#962; &#954;&#945;&#953; &#957;&#945; &#966;&#964;&#940;&#963;&#959;&#965;&#957; &#956;&#949; &#948;&#953;&#945;&#966;&#959;&#961;&#949;&#964;&#953;&#954;&#942; &#963;&#949;&#953;&#961;&#940;.','good');later(()=>advance(0),1500);
+}
+
+/* Activity 4 */
+const A5_SCENARIOS=[
+ {type:'lan',text:'Οι υπολογιστές, ο εκτυπωτής και ο δρομολογητής μέσα στο ίδιο σχολικό κτίριο είναι συνδεδεμένοι.',visual:'school'},
+ {type:'wan',text:'Το δίκτυο ενός σχολείου στην Αθήνα συνδέεται με το δίκτυο ενός σχολείου στη Θεσσαλονίκη.',visual:'cities'},
+ {type:'lan',text:'Ένας φορητός υπολογιστής, μια ταμπλέτα και ένας εκτυπωτής συνδέονται στο ίδιο σπίτι.',visual:'home'},
+ {type:'wan',text:'Πολλά τοπικά δίκτυα σε διαφορετικές πόλεις συνδέονται μεταξύ τους.',visual:'many'}
+];
+let a5order=shuffleCopy(A5_SCENARIOS),a5pos=0;
+function scenarioVisual(kind){
+ if(kind==='school')return `<div class="building"><div class="ico">🏫</div><b>Σχολείο</b><small>💻 🖨️ 📡</small></div>`;
+ if(kind==='home')return `<div class="building"><div class="ico">🏠</div><b>Σπίτι</b><small>💻 📱 🖨️</small></div>`;
+ if(kind==='cities')return `<div class="building"><div class="ico">🏫</div><b>Αθήνα</b></div><div class="net-connector">⟷</div><div class="building"><div class="ico">🏫</div><b>Θεσσαλονίκη</b></div>`;
+ return `<div class="building"><div class="ico">🏢</div><b>LAN 1</b></div><div class="net-connector">⟷</div><div class="building"><div class="ico">🏫</div><b>LAN 2</b></div><div class="net-connector">⟷</div><div class="building"><div class="ico">🏠</div><b>LAN 3</b></div>`;
+}
+function r5(){
+ const s=a5order[a5pos];
+ activity.innerHTML=`<div class="task-strip">${s.text}</div>${netShell(`<div class="network-type-card"><div class="scenario-visual">${scenarioVisual(s.visual)}</div><div class="type-buttons"><button class="type-btn" data-a5="lan">LAN · Τοπικό δίκτυο</button><button class="type-btn" data-a5="wan">WAN · Μεγάλη γεωγραφική εμβέλεια</button></div><div class="check-strip"><span class="check-chip ${a5pos>0?'done':''}">${a5pos} / ${A5_SCENARIOS.length} ολοκληρώθηκαν ${a5pos>0?'✓':''}</span></div></div>`)}`;
+ qa('[data-a5]').forEach(b=>b.onclick=()=>{
+  if(b.dataset.a5!==s.type)return wrong(b,'Σκέψου κυρίως τον χώρο που καλύπτει το δίκτυο: έναν μικρό τοπικό χώρο ή μεγάλες αποστάσεις;');
+  lockGroup('[data-a5]');a5pos++;setFeedback(`✓ Αυτό είναι ${s.type==='lan'?'LAN, δηλαδή τοπικό δίκτυο':'WAN, δηλαδή δίκτυο μεγαλύτερης γεωγραφικής εμβέλειας'}.`,'good');
+  if(a5pos<A5_SCENARIOS.length)later(r5,600);else later(()=>advance(0),1100);
+ });
+}
+
+/* Activity 5 */
+const A6_TF=[
+ {text:'Το LAN σημαίνει «Δίκτυο Ευρείας Περιοχής».',ans:false},
+ {text:'Ένα τοπικό δίκτυο συνδέει υπολογιστές σε μεγάλες αποστάσεις.',ans:false},
+ {text:'Τα LAN χρησιμοποιούνται συνήθως για να συνδέσουν συσκευές μέσα στον ίδιο χώρο ή κτίριο.',ans:true},
+ {text:'Τα WAN είναι δίκτυα που εκτείνονται σε μεγάλες γεωγραφικές περιοχές.',ans:true},
+ {text:'Τα WAN μπορούν να συνδέσουν τοπικά δίκτυα που βρίσκονται σε διαφορετικές τοποθεσίες.',ans:true},
+ {text:'Τα LAN είναι κατάλληλα για μικρές ομάδες συσκευών που βρίσκονται στο ίδιο κτίριο.',ans:true}
+];
+let a6pos=0;
+function r6(){
+ const t=A6_TF[a6pos];
+ activity.innerHTML=`<div class="task-strip">Διάβασε την πρόταση και αποφάσισε αν είναι σωστή ή λάθος.</div>${netShell(`<div class="tf-card"><div class="tf-question">${a6pos+1}. ${t.text}</div><div class="tf-actions"><button class="tf-btn" data-a6="false">✗ Λάθος</button><button class="tf-btn" data-a6="true">✓ Σωστό</button></div><div class="check-strip"><span class="check-chip ${a6pos>0?'done':''}">${a6pos} / ${A6_TF.length} απαντήθηκαν ${a6pos>0?'✓':''}</span></div></div>`)}`;
+ qa('[data-a6]').forEach(b=>b.onclick=()=>{
+  const v=b.dataset.a6==='true';if(v!==t.ans)return wrong(b,'Ξανασκέψου τη γεωγραφική κάλυψη του LAN και του WAN.');
+  lockGroup('[data-a6]');a6pos++;setFeedback('✓ Σωστά.','good');
+  if(a6pos<A6_TF.length)later(r6,450);else later(()=>advance(0),1000);
+ });
+}
+
+/* Activity 6: total test, same packet-travel logic as Activity 3 */
+let a7phase=0,a7Lab=null,a7ReqOrder=[],a7AnsOrder=[];
+const A7_REQ=[
+ {id:1,text:'ΜΟΥΣΕΙΟ'},
+ {id:2,text:'ΩΡΑΡΙΟ'},
+ {id:3,text:'ΣΗΜΕΡΑ'}
+];
+const A7_ANS=[
+ {id:1,text:'ΑΝΟΙΧΤΟ'},
+ {id:2,text:'10:00'},
+ {id:3,text:'–'},
+ {id:4,text:'18:00'}
+];
+function a7InitLab(){
+ const routers=['R1','R2','R3','R4','R5','R6','R7','R8','R9'];
+ for(let attempt=0;attempt<120;attempt++){
+  const offline=Math.random()<.72?routers[Math.floor(Math.random()*routers.length)]:null;
+  const paths=a3AllPaths(offline);if(paths.length<6)continue;
+  const available=A3_EDGES.filter(e=>e[0]!==offline&&e[1]!==offline).map(e=>a3EdgeKey(e[0],e[1]));
+  const shuffled=shuffleCopy(available),heavy=new Set(shuffled.slice(0,4+Math.floor(Math.random()*3)));
+  const costs=paths.map(p=>{let total=0;for(let i=0;i<p.length-1;i++)total+=heavy.has(a3EdgeKey(p[i],p[i+1]))?1320:520;return total});
+  if(Math.max(...costs)-Math.min(...costs)<700)continue;
+  a7Lab={offline,heavy,paths,reqPlan:null,ansPlan:null,reqArrival:[],ansArrival:[]};return;
+ }
+ a7Lab={offline:null,heavy:new Set(['C-R1','R1-R4','R5-R8','R9-S']),paths:a3AllPaths(null),reqPlan:null,ansPlan:null,reqArrival:[],ansArrival:[]};
+}
+function a7PathCost(path){let total=0;for(let i=0;i<path.length-1;i++)total+=a7Lab.heavy.has(a3EdgeKey(path[i],path[i+1]))?1320:520;return total}
+function a7ChoosePlan(count,direction){
+ const scored=a7Lab.paths.map(p=>({path:p,cost:a7PathCost(p)}));
+ const max=Math.max(...scored.map(x=>x.cost)),min=Math.min(...scored.map(x=>x.cost));
+ const slow=shuffleCopy(scored.filter(x=>x.cost===max))[0];
+ const fast=shuffleCopy(scored.filter(x=>x.cost===min&&x.path.join('|')!==slow.path.join('|')))[0]||shuffleCopy(scored.filter(x=>x.path.join('|')!==slow.path.join('|')))[0];
+ const picked=[slow,fast],used=new Set(picked.map(x=>x.path.join('|'))),rest=shuffleCopy(scored.filter(x=>!used.has(x.path.join('|'))));
+ while(picked.length<count&&rest.length)picked.push(rest.shift());
+ return picked.slice(0,count).map((x,i)=>{
+  const base=direction==='answer'?[...x.path].reverse():[...x.path],durations=[];
+  for(let j=0;j<base.length-1;j++)durations.push(a7Lab.heavy.has(a3EdgeKey(base[j],base[j+1]))?1320:520);
+  return {id:i+1,path:base,durations,depart:i*260,total:durations.reduce((a,b)=>a+b,0)+i*260};
+ });
+}
+function a7NetworkSvg(kind='request',movingCount=0){
+ const edgeSvg=A3_EDGES.map(([a,b])=>{
+  const [x1,y1]=A3_POS[a],[x2,y2]=A3_POS[b],key=a3EdgeKey(a,b),down=a7Lab.offline&&(a===a7Lab.offline||b===a7Lab.offline),busy=!down&&a7Lab.heavy.has(key),cls=down?'down':busy?'busy':'';
+  const mx=(x1+x2)/2,my=(y1+y2)/2;
+  return `<line class="route-edge ${cls}" x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}"></line>${down?`<text class="link-x" x="${mx}" y="${my}">X</text>`:''}`;
+ }).join('');
+ const nodeSvg=['R1','R2','R3','R4','R5','R6','R7','R8','R9'].map(id=>{const [x,y]=A3_POS[id],off=id===a7Lab.offline;return `<g class="route-node ${off?'offline':''}" transform="translate(${x} ${y})"><circle r="24"></circle><text class="label" y="1">${id}</text>${off?'<text class="node-x" y="1">X</text>':''}</g>`}).join('');
+ const packets=Array.from({length:movingCount},(_,i)=>`<g id="a7Move-${kind}-${i+1}" class="svg-packet ${kind==='answer'?'answer':''}" visibility="hidden"><rect x="-21" y="-15" width="42" height="30" rx="8"></rect><text y="1">${i+1}</text></g>`).join('');
+ return `<div class="route-map"><svg viewBox="0 0 900 400" role="img" aria-label="Δίκτυο με πελάτη, δρομολογητές, εξυπηρετητή, κίνηση και μη διαθέσιμες συνδέσεις">${edgeSvg}${nodeSvg}<rect class="endpoint" x="10" y="140" width="110" height="120" rx="19"></rect><text class="endpoint-icon" x="65" y="183">&#128187;</text><text class="endpoint-title" x="65" y="232">Πελάτης</text><rect class="endpoint" x="780" y="140" width="110" height="120" rx="19"></rect><text class="endpoint-icon" x="835" y="183">&#128452;</text><text class="endpoint-title" x="835" y="232">Server</text>${packets}</svg></div>`;
+}
+function a7Legend(){return `<div class="route-key"><span><i class="legend-line"></i>Κανονική</span><span><i class="legend-line busy"></i>Κίνηση · αργά</span><span><i class="legend-line down"></i>Μη διαθέσιμη</span></div>`}
+function a7Checks(){return `<div class="check-strip"><span class="check-chip ${a7phase>=3?'done':''}">Αίτημα ${a7phase>=3?'✓':''}</span><span class="check-chip ${a7phase>=5?'done':''}">Server ${a7phase>=5?'✓':''}</span><span class="check-chip ${a7phase>=8?'done':''}">Απάντηση ${a7phase>=8?'✓':''}</span><span class="check-chip ${a7phase>=9?'done':''}">LAN/WAN ${a7phase>=9?'✓':''}</span></div>`}
+function a7PacketDock(list,kind){return `<div class="packet-dock">${list.map(p=>`<div class="dock-packet ${kind==='answer'?'answer':''}" title="${p.text}">&#128230; ${p.id}</div>`).join('')}</div>`}
+function a7RenderArrival(ids,kind){return `<div class="a3-arrival"><div class="a3-arrival-title">Σειρά άφιξης</div><div class="a3-arrival-row" id="a7Arrivals">${ids.map(id=>`<div class="arrival-packet ${kind==='answer'?'answer':''}">&#128230; ${id}</div>`).join('')}</div></div>`}
+function a7AnimateSegment(el,from,to,dur,epoch,done){
+ const reduce=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;dur=reduce?Math.max(90,Math.round(dur/9)):dur;
+ const start=performance.now();
+ function frame(now){
+  if(stage!==5||renderEpoch!==epoch)return;
+  const t=Math.min(1,(now-start)/dur),x=from[0]+(to[0]-from[0])*t,y=from[1]+(to[1]-from[1])*t;el.setAttribute('transform',`translate(${x} ${y})`);
+  if(t<1)requestAnimationFrame(frame);else done();
+ }
+ requestAnimationFrame(frame);
+}
+function a7AnimatePacket(el,pkt,idx,epoch,done){
+ if(idx>=pkt.path.length-1){done();return}
+ const a=pkt.path[idx],b=pkt.path[idx+1];a7AnimateSegment(el,A3_POS[a],A3_POS[b],pkt.durations[idx],epoch,()=>a7AnimatePacket(el,pkt,idx+1,epoch,done));
+}
+function a7StartTrip(plan,kind,finish){
+ const epoch=renderEpoch,arr=[];let complete=0;
+ plan.forEach(pkt=>{
+  const el=q(`#a7Move-${kind}-${pkt.id}`),start=A3_POS[pkt.path[0]];el.setAttribute('visibility','visible');el.setAttribute('transform',`translate(${start[0]} ${start[1]})`);
+  later(()=>a7AnimatePacket(el,pkt,0,epoch,()=>{arr.push(pkt.id);const dock=q('#a7Arrivals');if(dock)dock.insertAdjacentHTML('beforeend',`<div class="arrival-packet ${kind==='answer'?'answer':''}">&#128230; ${pkt.id}</div>`);complete++;if(complete===plan.length)finish(arr)}),pkt.depart);
+ });
+}
+function a7OrderActivity(kind,arrival,selected,data){
+ const complete=selected.length===data.length;
+ return `<div class="a3-order-wrap ${complete?'complete':''}"><div class="a3-order-pool">${arrival.map(id=>{const p=data.find(x=>x.id===id);return `<button class="a3-order-btn ${kind==='answer'?'answer':''} ${selected.includes(id)?'used':''}" data-a7order="${id}">&#128230; ${id}<small style="display:block;margin-top:3px">${p.text}</small></button>`}).join('')}</div><div class="a3-order-slots">${Array.from({length:data.length},(_,i)=>{const id=selected[i],p=data.find(x=>x.id===id);return `<div class="a3-order-slot ${id?'filled':''}">${id?`&#128230; ${id}<br><small>${p.text}</small>`:`${i+1}`}</div>`}).join('')}</div>${complete?'<div class="order-complete-banner">✓ Σωστή σειρά!</div>':''}</div>`;
+}
+function a7BindOrder(kind){
+ const selected=kind==='request'?a7ReqOrder:a7AnsOrder,data=kind==='request'?A7_REQ:A7_ANS;
+ qa('[data-a7order]').forEach(b=>b.onclick=()=>{
+  const id=Number(b.dataset.a7order),expected=selected.length+1;
+  if(id!==expected)return wrong(b,`Πρώτα το πακέτο ${expected}.`);
+  selected.push(id);
+  if(selected.length<data.length){
+   setFeedback(`✓ Πακέτο ${id}.`,'good');
+   r7();
+  }else{
+   r7();
+   setFeedback(kind==='request'?'✓ Το τελευταίο πακέτο μπήκε στη σωστή θέση. Το αίτημα είναι τώρα στη σωστή σειρά!':'✓ Το τελευταίο πακέτο μπήκε στη σωστή θέση. Η απάντηση είναι τώρα στη σωστή σειρά!','good');
+   later(()=>{if(kind==='request')a7phase=3;else a7phase=8;r7()},1900);
+  }
+ });
+}
+function r7(){
+ if(!a7Lab)a7InitLab();
+ if(a7phase===0){
+  activity.innerHTML=`<div class="task-strip">Τελική αποστολή: ζήτησε το σημερινό ωράριο ενός μουσείου.</div>${netShell(`<div class="route-lab">${a7NetworkSvg('request',0)}${a7PacketDock(A7_REQ,'request')}<div class="route-controls"><button class="route-main" id="a7SendReq">▶ Στείλε αίτημα</button></div>${a7Legend()}${a7Checks()}</div>`)}`;
+  q('#a7SendReq').onclick=()=>{a7Lab.reqPlan=a7ChoosePlan(3,'request');a7phase=1;r7()};return;
+ }
+ if(a7phase===1){
+  activity.innerHTML=`<div class="task-strip">📦 Τα πακέτα ταξιδεύουν...</div>${netShell(`<div class="route-lab">${a7NetworkSvg('request',3)}${a7RenderArrival([],'request')}${a7Legend()}${a7Checks()}</div>`)}`;
+  a7StartTrip(a7Lab.reqPlan,'request',arr=>{a7Lab.reqArrival=arr;a7phase=2;later(r7,650)});return;
+ }
+ if(a7phase===2){
+  const complete=a7ReqOrder.length===A7_REQ.length;
+  activity.innerHTML=`<div class="task-strip">${complete?'✓ Το αίτημα μπήκε στη σωστή σειρά.':'Τα πακέτα έφτασαν ανακατεμένα. Βάλε τα στη σειρά.'}</div>${netShell(`<div class="route-lab">${a7NetworkSvg('request',0)}${a7RenderArrival(a7Lab.reqArrival,'request')}${a7OrderActivity('request',a7Lab.reqArrival,a7ReqOrder,A7_REQ)}${a7Legend()}${a7Checks()}</div>`)}`;if(!complete)a7BindOrder('request');return;
+ }
+ if(a7phase===3){
+  activity.innerHTML=`<div class="task-strip">Το αίτημα είναι έτοιμο. Τι πρέπει να κάνει τώρα ο server;</div>${netShell(`<div class="route-lab">${a7NetworkSvg('request',0)}<div class="server-process"><div class="server-result">📦1 + 📦2 + 📦3 → 📨</div></div><div class="choice-grid" style="max-width:720px"><button class="choice" data-a7proc="process">⚙ Επεξεργασία αιτήματος</button><button class="choice" data-a7proc="resend">↩ Στέλνει αμέσως τα ίδια πακέτα πίσω</button></div>${a7Legend()}${a7Checks()}</div>`)}`;
+  qa('[data-a7proc]').forEach(b=>b.onclick=()=>{if(b.dataset.a7proc!=='process')return wrong(b,'Ο server πρέπει πρώτα να επεξεργαστεί το αίτημα.');lockGroup('[data-a7proc]');a7phase=4;setFeedback('✓ Ο server επεξεργάζεται το αίτημα.','good');r7();later(()=>{a7phase=5;r7()},1100)});return;
+ }
+ if(a7phase===4){
+  activity.innerHTML=`<div class="task-strip">⚙ Server</div>${netShell(`<div class="route-lab">${a7NetworkSvg('request',0)}<div class="server-process working"><div class="gear">⚙</div><b>Επεξεργασία...</b></div>${a7Legend()}${a7Checks()}</div>`)}`;return;
+ }
+ if(a7phase===5){
+  activity.innerHTML=`<div class="task-strip">Η απάντηση χωρίστηκε σε πακέτα.</div>${netShell(`<div class="route-lab">${a7NetworkSvg('answer',0)}<div class="server-process"><div class="server-result">ΑΝΟΙΧΤΟ 10:00–18:00 → 📦1 📦2 📦3 📦4</div></div>${a7PacketDock(A7_ANS,'answer')}<div class="route-controls"><button class="route-main answer" id="a7SendAns">▶ Στείλε απάντηση</button></div>${a7Legend()}${a7Checks()}</div>`)}`;
+  q('#a7SendAns').onclick=()=>{a7Lab.ansPlan=a7ChoosePlan(4,'answer');a7phase=6;r7()};return;
+ }
+ if(a7phase===6){
+  activity.innerHTML=`<div class="task-strip">📦 Η απάντηση ταξιδεύει...</div>${netShell(`<div class="route-lab">${a7NetworkSvg('answer',4)}${a7RenderArrival([],'answer')}${a7Legend()}${a7Checks()}</div>`)}`;
+  a7StartTrip(a7Lab.ansPlan,'answer',arr=>{a7Lab.ansArrival=arr;a7phase=7;later(r7,650)});return;
+ }
+ if(a7phase===7){
+  const complete=a7AnsOrder.length===A7_ANS.length;
+  activity.innerHTML=`<div class="task-strip">${complete?'✓ Η απάντηση μπήκε στη σωστή σειρά.':'Τα πακέτα έφτασαν ανακατεμένα. Βάλε τα στη σειρά.'}</div>${netShell(`<div class="route-lab">${a7NetworkSvg('answer',0)}${a7RenderArrival(a7Lab.ansArrival,'answer')}${a7OrderActivity('answer',a7Lab.ansArrival,a7AnsOrder,A7_ANS)}${a7Legend()}${a7Checks()}</div>`)}`;if(!complete)a7BindOrder('answer');return;
+ }
+ if(a7phase===8){
+  const opts=shuffleOnce('a7net-v5',[['lan','LAN'],['wan','WAN']]);
+  activity.innerHTML=`<div class="task-strip">Ο πελάτης και ο server βρίσκονται σε διαφορετικές πόλεις. LAN ή WAN;</div><div class="final-card"><div class="scenario-visual"><div class="building"><div class="ico">💻</div><b>Πόλη Α</b></div><div class="net-connector">⟷</div><div class="building"><div class="ico">🗄️</div><b>Πόλη Β</b></div></div><div class="type-buttons">${opts.map(o=>`<button class="type-btn" data-a7net="${o[0]}">${o[1]}</button>`).join('')}</div>${a7Checks()}</div>`;
+  qa('[data-a7net]').forEach(b=>b.onclick=()=>{
+   if(b.dataset.a7net!=='wan')return wrong(b,'Οι δύο συσκευές βρίσκονται σε διαφορετικές πόλεις.');
+   lockGroup('[data-a7net]');
+   b.classList.add('correct');
+   setFeedback('✓ WAN. Ολοκλήρωσες τη συνολική δοκιμή.','good');
+   advance(0);
+  });return;
+ }
+}
+
+/* Activity 7 */
+const levels=['Έχω καταλάβει και μπορώ να εξηγήσω','Έχω καταλάβει αρκετά καλά','Έχω καταλάβει αλλά έχω απορίες','Χρειάζομαι βοήθεια'];
+const objectives=['Να αναγνωρίζω τον ρόλο των εξυπηρετητών στη λειτουργία των δικτύων.','Να διακρίνω τη διαφορά του τοπικού δικτύου με δίκτυα μεγαλύτερης γεωγραφικής εμβέλειας.','Να περιγράφω με απλό τρόπο τη διαδικασία αποστολής/λήψης της πληροφορίας στα δίκτυα.'];
+let selfSel=[null,null,null];
+function r8(){
+ activity.innerHTML=`<div class="self-wrap"><div class="self-table"><div class="self-head">Αξιολογώ πόσο καλά έμαθα</div>${levels.map(x=>`<div class="self-head">${x}</div>`).join('')}${objectives.map((o,row)=>`<div class="self-objective">✓ ${o}</div>${levels.map((l,col)=>`<button class="self-cell ${selfSel[row]===col?'selected':''}" data-self="${row}:${col}">${l}</button>`).join('')}`).join('')}</div></div><div class="self-note">Διάλεξε ένα επίπεδο για κάθε στόχο.</div><div class="finish-actions"><button class="primary" id="finishBtn" ${selfSel.some(x=>x===null)?'disabled':''}>Ολοκλήρωση</button></div>`;
+ qa('[data-self]').forEach(b=>b.onclick=()=>{const [r,c]=b.dataset.self.split(':').map(Number);selfSel[r]=c;r8()});
+ q('#finishBtn').onclick=()=>{if(selfSel.some(x=>x===null))return;completed.add(stage);finished=true;render()};
+}
+
+const renderers=[r1,r2,r3,r5,r6,r7,r8];
+function renderCompletion(){
+ kicker.textContent='ΟΛΟΚΛΗΡΩΣΗ';stageTitle.textContent='Μάθημα 14 ολοκληρώθηκε';instruction.textContent='Ολοκλήρωσες την εξερεύνηση του ταξιδιού των δεδομένων σε ένα δίκτυο.';
+ activity.innerHTML=`<div class="completion"><span class="badge">Ενότητα 2 · Μάθημα 14</span><h2>Η αποστολή των δεδομένων ολοκληρώθηκε!</h2><p>Αναγνώρισες πελάτες και εξυπηρετητές, έβαλες πακέτα δεδομένων στη σωστή σειρά και ξεχώρισες τα τοπικά δίκτυα LAN από τα δίκτυα WAN.</p><button class="secondary-btn" id="restartComplete">↻ Επανάληψη μαθήματος</button></div>`;
+ q('#restartComplete').onclick=()=>location.reload();clearFeedback();
+}
+function render(){
+ clearTimers();transitionLocked=false;renderEpoch++;clearFeedback();updateProgress();
+ if(finished){renderCompletion();window.scrollTo({top:0,behavior:'smooth'});return}
+ const s=ACTIVITIES[stage];kicker.textContent=`Δραστηριότητα ${stage+1}`;stageTitle.textContent=s.t;instruction.textContent=s.i;renderers[stage]();window.scrollTo({top:0,behavior:'smooth'});
+}
+q('#helpBtn').onclick=()=>{q('#helpText').textContent=HELP[stage]||'';q('#helpModal').classList.add('open')};
+q('#closeHelp').onclick=q('#understoodBtn').onclick=()=>q('#helpModal').classList.remove('open');
+q('#helpModal').onclick=e=>{if(e.target===q('#helpModal'))q('#helpModal').classList.remove('open')};
+q('#speakHelp').onclick=()=>{if(!('speechSynthesis'in window))return;window.speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(HELP[stage]||'');u.lang='el-GR';window.speechSynthesis.speak(u)};
+render();
+</script>
+<footer class="nk-license" aria-label="Πληροφορίες δημιουργού και άδειας χρήσης">
+  <div><strong>Created by Nikos Kalakos · © 2026</strong></div>
+  <div>Original educational content and simulation design licensed under <a class="cc-badge" href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank" rel="license noopener noreferrer">CC BY-NC 4.0</a>.</div>
+  <div>Source code © 2026 Nikos Kalakos.</div>
+  <div>Third-party and textbook materials remain subject to the rights and licences of their respective copyright holders.</div>
+</footer>
+</body>
+</html>
