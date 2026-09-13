@@ -1,0 +1,198 @@
+<!--
+ICT Educational Simulation
+Created by Nikos Kalakos
+Copyright © 2026 Nikos Kalakos
+
+Original educational content and simulation design licensed under CC BY-NC 4.0.
+Source code © 2026 Nikos Kalakos.
+Third-party and textbook materials remain subject to the rights and licences of their respective copyright holders.
+-->
+<!doctype html>
+<html lang="el">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="author" content="Nikos Kalakos">
+<meta name="copyright" content="© 2026 Nikos Kalakos">
+<meta name="license" content="Original educational content and simulation design: CC BY-NC 4.0; source code © 2026 Nikos Kalakos; third-party and textbook materials excluded.">
+<title>Μάθημα 28 - Πνευματικά δικαιώματα στο διαδίκτυο και υπεύθυνη ψηφιακή συμπεριφορά</title>
+<style>
+:root{
+  --unit:#84648F;
+  --unit-dark:#684F72;
+  --unit-soft:#F4EEF6;
+  --secondary:#545F99;
+  --secondary-dark:#3E477A;
+  --secondary-soft:#EEF0FA;
+  --ink:#263246;
+  --muted:#657184;
+  --line:#D8DEE8;
+  --ok:#2E8B63;
+  --ok-soft:#ECF8F2;
+  --bad:#B94D61;
+  --bad-soft:#FFF0F3;
+  --shadow:0 10px 30px rgba(43,49,73,.13);
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:Arial,"Noto Sans",sans-serif;background:linear-gradient(180deg,#F4F1F5,#F6F7FB 36%,#EEF0F7);color:var(--ink)}
+button,input{font:inherit}
+button{cursor:pointer}
+.app{max-width:1220px;margin:0 auto;padding:20px}
+.top{display:grid;grid-template-columns:1fr auto;gap:18px;align-items:center;background:#fff;border:1px solid #E3E6ED;border-top:8px solid var(--unit);border-radius:24px;padding:21px 24px;box-shadow:var(--shadow)}
+.top h1{margin:0;font-size:31px;line-height:1.15;color:var(--unit-dark)}
+.subtitle{margin:7px 0 0;font-weight:900;color:var(--secondary)}
+.athena-brand-mini{display:flex;align-items:center;gap:9px;font-weight:950;color:var(--secondary-dark);white-space:nowrap}.owl-logo{width:46px;height:42px}.owl-logo svg{width:100%;height:100%}
+.progress-card{margin:15px 0;background:#fff;border:1px solid #E0E4EB;border-radius:19px;padding:14px 17px;box-shadow:0 6px 20px rgba(43,49,73,.08)}
+.progress-top{display:flex;justify-content:space-between;font-weight:900;color:#566276;font-size:14px}.progress-track{height:11px;border-radius:999px;background:#ECEFF4;overflow:hidden;margin:8px 0 11px}.progress-fill{height:100%;width:0;background:linear-gradient(90deg,var(--unit),var(--secondary));transition:.35s}.dots{display:flex;justify-content:center;gap:7px;flex-wrap:wrap}.dot{width:31px;height:31px;border-radius:50%;display:grid;place-items:center;border:2px solid #CBD2DD;background:#fff;color:#738095;font-weight:900;font-size:13px}.dot.active{border-color:var(--unit);color:var(--unit-dark);box-shadow:0 0 0 4px var(--unit-soft)}.dot.done{background:var(--unit);border-color:var(--unit);color:#fff}
+.panel{background:#fff;border:1px solid #E0E4EB;border-radius:23px;padding:22px;box-shadow:var(--shadow);min-height:600px}.stage-head{display:flex;justify-content:space-between;gap:16px;align-items:flex-start}.kicker{font-size:13px;font-weight:950;letter-spacing:.08em;color:var(--unit);text-transform:uppercase}.stage-title{margin:5px 0 0;font-size:28px;line-height:1.15}.instruction{margin:10px 0 15px;color:#5E6A7C;font-size:18px;line-height:1.45;font-weight:700}.help{border:2px solid var(--unit);background:#fff;color:var(--unit-dark);border-radius:12px;padding:9px 13px;font-weight:950;white-space:nowrap}.help:hover{background:var(--unit-soft)}
+.feedback{min-height:54px;margin-top:16px;border-radius:14px;padding:0 15px;display:flex;align-items:center;font-weight:900;line-height:1.35}.feedback:empty{display:none}.feedback.good{background:var(--ok-soft);border:2px solid #9AD3BB;color:#25694E}.feedback.bad{background:var(--bad-soft);border:2px solid #E3A0AE;color:#8A3143}.feedback.info{background:var(--secondary-soft);border:2px solid #B8C0DE;color:var(--secondary-dark)}
+.task-note,.prompt-card{max-width:960px;margin:8px auto 16px;border:2px solid #D9D3DD;background:#FBF9FC;border-radius:16px;padding:12px 16px;text-align:center;font-weight:900;font-size:18px;line-height:1.4}.task-note strong,.prompt-card strong{color:var(--unit-dark)}.stage-counter{display:inline-grid;place-items:center;min-width:48px;height:29px;border-radius:999px;background:var(--unit);color:#fff;margin-right:7px;font-size:13px}
+
+/* AthenaOS / Ploigos */
+.aos{border:4px solid #343B5E;border-radius:18px;overflow:hidden;background:#2E3456;box-shadow:0 12px 24px rgba(27,33,56,.22);max-width:1100px;margin:10px auto}.aos-top{height:40px;background:#292F50;color:#fff;display:flex;align-items:center;justify-content:space-between;padding:0 13px;font-size:13px}.aos-brand{display:flex;align-items:center;gap:7px;font-weight:950}.owl-mini{width:31px;height:28px}.aos-status{display:flex;gap:13px;align-items:center;font-weight:850}.desktop{min-height:490px;background:linear-gradient(135deg,#D9D8EB,#EDE9F0 55%,#DCE0F0);padding:22px}.window{max-width:1040px;margin:auto;border:1px solid #929CB0;border-radius:12px;overflow:hidden;background:#fff;box-shadow:0 12px 28px rgba(25,30,48,.24)}.win-title{height:38px;background:#F2F4F8;border-bottom:1px solid #CCD3DE;display:flex;align-items:center;justify-content:space-between;padding:0 8px 0 11px}.win-title-left{display:flex;align-items:center;gap:8px;font-weight:900;color:#455168}.title-icon{width:22px;height:22px}.win-controls{display:flex;gap:5px}.win-control{width:28px;height:24px;border:0;border-radius:6px;background:#E2E6ED;color:#4C5870;font-weight:900}.browser-toolbar{height:48px;background:#F8F9FB;border-bottom:1px solid #D8DEE8;display:flex;align-items:center;gap:7px;padding:6px 8px}.nav-btn,.reload-btn{height:34px;min-width:36px;border:1px solid #C5CEDC;background:#fff;border-radius:9px;font-weight:950;color:#48566D}.address{flex:1;min-width:120px;height:36px;border:1px solid #BAC5D4;background:#fff;border-radius:10px;padding:0 12px;color:#45526A}.browser-page{min-height:410px;background:#fff;position:relative;overflow:auto}
+.web-page{padding:24px 28px}.web-head{display:flex;align-items:flex-start;justify-content:space-between;gap:14px;border-bottom:2px solid #ECEEF3;padding-bottom:15px;margin-bottom:18px}.web-head h2{margin:0;color:var(--secondary-dark)}.site-badge{background:var(--unit-soft);border:2px solid #CFBFD4;color:var(--unit-dark);border-radius:999px;padding:7px 12px;font-weight:900;font-size:13px}.web-work{display:grid;grid-template-columns:180px 1fr;gap:20px;align-items:center;border:2px solid #D9DEE8;border-radius:18px;padding:18px;background:#FCFCFE}.web-work-art{height:135px;border-radius:14px;overflow:hidden;border:1px solid #D9DEE8;background:#fff}.web-work-art svg{width:100%;height:100%;display:block}.work-meta{display:grid;gap:8px}.meta-row{display:grid;grid-template-columns:125px 1fr;gap:10px}.meta-row b{color:var(--secondary-dark)}
+
+/* Activity 1 */
+.sort-wrap{max-width:1060px;margin:12px auto}.sort-zones{display:grid;grid-template-columns:1fr 1fr;gap:16px}.sort-zone{min-height:235px;border:3px dashed #B9C0CD;border-radius:20px;background:#FAFBFD;padding:14px}.sort-zone.over{border-color:var(--unit);background:var(--unit-soft)}.sort-zone h3{text-align:center;margin:2px 0 11px;font-size:20px}.sort-content{display:grid;gap:8px}.placed{border:2px solid #CDD4DF;background:#fff;border-radius:12px;padding:9px 11px;font-weight:900;text-align:center}.item-pool{display:flex;justify-content:center;gap:12px;flex-wrap:wrap;margin-top:15px}.drag-card{width:225px;min-height:132px;border:3px solid #D1D7E1;background:#fff;border-radius:18px;padding:12px;font-weight:900;text-align:center}.drag-card:hover{border-color:#AAB4C4;transform:translateY(-1px)}.drag-card svg{width:90px;height:72px;display:block;margin:0 auto 6px}
+
+/* Choices */
+.choice-grid{max-width:920px;margin:14px auto;display:grid;grid-template-columns:repeat(2,1fr);gap:14px}.choice{position:relative;min-height:125px;border:3px solid #D4DAE4;background:#fff;border-radius:18px;padding:18px;text-align:left;font-weight:900;font-size:18px;line-height:1.35}.choice:hover{border-color:#ABB5C6;background:#FBFCFE}.choice.selected{border-color:var(--unit);background:var(--unit-soft);padding-bottom:42px}.choice.selected::after{content:"✓ Επιλεγμένο";position:absolute;left:18px;bottom:13px;color:var(--unit-dark);font-size:12px}.choice.correct-flash{border-color:#69B795;background:#EFFAF5}.choice.wrong-flash{border-color:#D68595;background:#FFF2F5}.choice .small{display:block;margin-top:6px;font-size:14px;color:#6D7888;font-weight:750}
+.story-card{max-width:900px;margin:10px auto 14px;border:2px solid #D8DEE7;border-radius:18px;background:linear-gradient(135deg,#fff,#FBF8FC);padding:18px;display:grid;grid-template-columns:150px 1fr;gap:18px;align-items:center}.story-art{height:125px;border-radius:14px;background:#F4EEF6;border:2px solid #D5C5DA;display:grid;place-items:center}.story-art svg{width:120px;height:105px}.story-card h3{margin:0 0 7px;color:var(--unit-dark);font-size:22px}.story-card p{margin:0;color:#5D6878;line-height:1.5;font-weight:750}
+
+/* Attribution */
+.credit-options{max-width:940px;margin:14px auto;display:grid;gap:11px}.credit-option{position:relative;border:3px solid #D4DAE4;border-radius:15px;background:#fff;padding:14px 16px;text-align:left;font-weight:900}.credit-option:hover{border-color:#AAB4C4}.credit-option.selected{border-color:var(--unit);background:var(--unit-soft);padding-right:135px}.credit-option.selected::after{content:"✓ Επιλεγμένο";position:absolute;right:14px;top:50%;transform:translateY(-50%);font-size:12px;color:var(--unit-dark)}
+
+/* Final */
+.final-wrap{max-width:1050px;margin:auto}.final-status{display:flex;justify-content:center;gap:8px;flex-wrap:wrap;margin:7px 0 14px}.final-chip{border:2px solid #CBD2DD;border-radius:999px;padding:7px 11px;background:#fff;color:#667387;font-size:12px;font-weight:950}.final-chip.done{background:var(--ok-soft);border-color:#8CCBB0;color:#25694E}.mission-card{border:2px solid #D8DEE8;border-radius:18px;background:#FCFCFE;padding:18px;max-width:900px;margin:10px auto}.mission-card h3{margin:0 0 8px;color:var(--secondary-dark)}.mission-card p{margin:0;color:#5D6878;line-height:1.45;font-weight:750}
+
+/* Self-assessment */
+.self-wrap{max-width:1120px;margin:12px auto}.self-table{display:grid;grid-template-columns:minmax(260px,1.3fr) repeat(4,minmax(135px,1fr));border:1px solid #D8DEE8;border-radius:15px;overflow:auto}.self-head{background:var(--secondary);color:#fff;padding:11px;font-weight:900;text-align:center;border-right:1px solid rgba(255,255,255,.2);min-width:135px}.self-objective{padding:13px;font-weight:900;background:#FBF9FC;border-top:1px solid #D8DEE8;min-width:260px}.self-cell{position:relative;border:0;border-left:1px solid #D8DEE8;border-top:1px solid #D8DEE8;background:#fff;padding:12px 8px;min-height:75px;font-size:12px;font-weight:800;color:#566276}.self-cell.selected{background:var(--unit-soft);box-shadow:inset 0 0 0 3px var(--unit);color:var(--unit-dark)}.self-cell.selected::after{content:"✓ Επιλεγμένο";display:block;margin-top:6px;font-size:10px}.self-note{text-align:center;color:#6A7586;margin:13px 0;font-weight:800}.finish-actions{display:flex;justify-content:center;gap:10px;flex-wrap:wrap}.primary,.secondary-btn{border:0;border-radius:11px;padding:11px 16px;font-weight:950}.primary{background:var(--unit);color:#fff}.primary:disabled{opacity:.45;cursor:not-allowed}.secondary-btn{background:#EEF0F5;color:#47546A}.completion{text-align:center;padding:48px 16px}.completion .badge{display:inline-block;background:var(--unit-soft);color:var(--unit-dark);border:2px solid #D2C2D7;border-radius:999px;padding:7px 12px;font-weight:950}.completion h2{font-size:34px;color:var(--unit-dark);margin:15px 0 10px}.completion p{max-width:820px;margin:0 auto 20px;font-size:19px;line-height:1.5;color:#5C6879}
+
+.modal{position:fixed;inset:0;background:rgba(20,29,45,.46);display:none;place-items:center;z-index:100;padding:20px}.modal.show{display:grid}.modal-box{max-width:700px;background:#fff;border:4px solid var(--unit);border-radius:23px;padding:23px;box-shadow:var(--shadow);text-align:center}.modal-box h3{margin:0 0 10px;font-size:29px}.modal-box p{font-size:21px;line-height:1.45}.modal-actions{display:flex;justify-content:center;gap:10px;flex-wrap:wrap}
+@media(max-width:900px){.top{grid-template-columns:1fr}.athena-brand-mini{display:none}.choice-grid,.sort-zones{grid-template-columns:1fr}.story-card,.web-work{grid-template-columns:1fr}.meta-row{grid-template-columns:1fr}.self-table{grid-template-columns:minmax(220px,1.2fr) repeat(4,minmax(120px,1fr));}.desktop{padding:10px}.drag-card{width:200px}}
+</style>
+
+<style id="nk-license-style">
+.nk-license{max-width:1100px;margin:14px auto 24px;padding:10px 16px;text-align:center;font:13px/1.45 Arial,"Noto Sans",sans-serif;color:#4e657c}
+.nk-license a{color:inherit;text-decoration:underline;text-underline-offset:2px}
+.nk-license .cc-badge{display:inline-block;margin:0 4px;padding:2px 7px;border:1px solid #8aa0b8;border-radius:6px;background:#fff;font-weight:700;white-space:nowrap}
+</style>
+</head>
+<body>
+<main class="app">
+<header class="top">
+  <div><h1>Πνευματικά δικαιώματα στο διαδίκτυο και υπεύθυνη ψηφιακή συμπεριφορά</h1><p class="subtitle">Μάθημα 28 · Ενότητα 5</p></div>
+  <div class="athena-brand-mini"><div class="owl-logo" id="topOwl"></div><span>AthenaOS</span></div>
+</header>
+<section class="progress-card"><div class="progress-top"><span id="progressLabel"></span><span id="counter"></span></div><div class="progress-track"><div class="progress-fill" id="progressFill"></div></div><div class="dots" id="dots"></div></section>
+<section class="panel">
+  <div class="stage-head"><div><div class="kicker" id="kicker"></div><h2 class="stage-title" id="stageTitle"></h2></div><button class="help" onclick="openHelp()">❔ Βοήθεια</button></div>
+  <p class="instruction" id="instruction"></p>
+  <div id="activity"></div>
+  <div class="feedback" id="feedback"></div>
+</section>
+</main>
+<div class="modal" id="helpModal"><div class="modal-box"><h3>Βοήθεια</h3><p id="helpText"></p><div class="modal-actions"><button class="secondary-btn" onclick="speakHelp()">🔊 Άκουσε</button><button class="primary" onclick="closeHelp()">Το κατάλαβα</button></div></div></div>
+<script>
+const ACTIVITIES=[
+ {t:'Μέσα και έξω από το διαδίκτυο',i:'Τοποθέτησε κάθε έργο εκεί όπου το συναντάς. Στο τέλος θα διαπιστώσεις πού υπάρχουν πνευματικά δικαιώματα.',h:'Στο μάθημα αναφέρεται ότι τα πνευματικά δικαιώματα υπάρχουν τόσο στο διαδίκτυο όσο και σε έργα της καθημερινής ζωής, όπως βιβλία, εφημερίδες και περιοδικά.'},
+ {t:'Ιδέα ή ολοκληρωμένο έργο;',i:'Διάκρινε μια απλή ιδέα από ένα έργο που έχει ήδη δημιουργηθεί.',h:'Η δραστηριότητα βασίζεται στο παράδειγμα του βιβλίου: μια ιδέα για παραμύθι δεν είναι το ίδιο με ένα διήγημα που έχει ήδη γραφτεί.'},
+ {t:'Όταν δημιουργώ το δικό μου έργο',i:'Δείξε ποια συμπεριφορά σέβεται τα δικαιώματα του δημιουργού ενός ψηφιακού έργου.',h:'Όταν δημιουργείς το δικό σου ψηφιακό έργο, έχεις δικαιώματα πάνω σε αυτό. Οι άλλοι δεν πρέπει να το χρησιμοποιούν σαν να μην υπάρχει δημιουργός.'},
+ {t:'Όταν χρησιμοποιώ έργο άλλου',i:'Στο Ploigos εξέτασε δύο περιπτώσεις και επίλεξε την υπεύθυνη ενέργεια.',h:'Με άδεια του δημιουργού μπορεί να γίνει χρήση του έργου όπως περιγράφεται στο παράδειγμα. Σε σχολικές εργασίες πρέπει να αναφέρονται η πηγή και ο δημιουργός.'},
+ {t:'Δεν αρκεί να το βρήκα στο διαδίκτυο',i:'Αποφάσισε τι πρέπει να γίνει όταν κάποιος θέλει να χρησιμοποιήσει έργα άλλων χωρίς άδεια για να τα πουλήσει.',h:'Το βιβλίο δίνει παράδειγμα με φωτογραφίες από παραμύθια: δεν είναι σωστό να τις χρησιμοποιήσεις χωρίς άδεια των δημιουργών και μετά να πουλήσεις το νέο έργο.'},
+ {t:'Συνολική δοκιμή',i:'Εφάρμοσε όσα έμαθες για δικαιώματα δημιουργού και υποχρεώσεις χρήστη σε τρεις σύντομες περιπτώσεις.',h:'Θυμήσου: τα πνευματικά δικαιώματα υπάρχουν μέσα και έξω από το διαδίκτυο. Ο δημιουργός έχει δικαιώματα στο έργο του και όταν χρησιμοποιούμε έργο άλλου οφείλουμε να σεβόμαστε την άδεια, την πηγή και τον δημιουργό.'},
+ {t:'Τι έμαθα;',i:'Για κάθε στόχο διάλεξε το επίπεδο που σε περιγράφει καλύτερα.',h:'Η αυτοαξιολόγηση δεν έχει σωστή ή λάθος απάντηση. Διάλεξε ένα επίπεδο για κάθε στόχο.'}
+];
+let stage=0,transitioning=false,finished=false,completed=new Set();
+const activity=document.getElementById('activity'),feedback=document.getElementById('feedback'),kicker=document.getElementById('kicker'),stageTitle=document.getElementById('stageTitle'),instruction=document.getElementById('instruction');
+function setFeedback(t,type){feedback.className='feedback '+(type===true?'good':type===false?'bad':'info');feedback.textContent=t}
+function clearFeedback(){feedback.className='feedback';feedback.textContent=''}
+function updateProgress(){const done=finished;document.getElementById('progressLabel').textContent=done?'Ολοκληρώθηκε':`Δραστηριότητα ${stage+1} από ${ACTIVITIES.length}`;document.getElementById('counter').textContent=done?'100%':`${Math.round((completed.size/ACTIVITIES.length)*100)}%`;document.getElementById('progressFill').style.width=`${done?100:(completed.size/ACTIVITIES.length)*100}%`;document.getElementById('dots').innerHTML=ACTIVITIES.map((_,i)=>`<div class="dot ${done||completed.has(i)?'done':i===stage?'active':''}">${i+1}</div>`).join('')}
+function advance(ms=1100){if(transitioning)return;transitioning=true;completed.add(stage);updateProgress();setTimeout(()=>{stage++;transitioning=false;render()},ms)}
+function openHelp(){document.getElementById('helpText').textContent=ACTIVITIES[Math.min(stage,ACTIVITIES.length-1)].h;document.getElementById('helpModal').classList.add('show')}
+function closeHelp(){document.getElementById('helpModal').classList.remove('show')}
+function speakHelp(){if(!('speechSynthesis'in window))return;speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(document.getElementById('helpText').textContent);u.lang='el-GR';u.rate=.86;speechSynthesis.speak(u)}
+document.getElementById('helpModal').addEventListener('click',e=>{if(e.target.id==='helpModal')closeHelp()});
+
+function owlSvg(cls=''){return `<svg class="${cls}" viewBox="0 0 100 90" role="img" aria-label="AthenaOS"><path d="M14 28 7 6 31 18Q50 6 69 18L93 6 86 28Q94 39 91 55Q87 75 69 83Q50 91 31 83Q13 75 9 55Q6 39 14 28Z" fill="#342C7A" stroke="#D8DBFF" stroke-width="5"/><path d="M17 32Q28 20 44 29Q50 33 50 43Q50 33 56 29Q72 20 83 32Q88 42 81 56Q73 69 58 65Q52 63 50 57Q48 63 42 65Q27 69 19 56Q12 42 17 32Z" fill="#A59AF6"/><circle cx="33" cy="43" r="14" fill="#fff"/><circle cx="67" cy="43" r="14" fill="#fff"/><circle cx="33" cy="43" r="5" fill="#1E1E2E"/><circle cx="67" cy="43" r="5" fill="#1E1E2E"/><path d="M44 55 50 66 56 55Z" fill="#FFC642"/></svg>`}
+function ploigosIcon(cls='title-icon'){return `<svg class="${cls}" viewBox="0 0 90 90" aria-label="Ploigos"><rect x="9" y="9" width="72" height="72" rx="18" fill="#fff" stroke="#545F99" stroke-width="5"/><circle cx="45" cy="45" r="24" fill="#EEF0FA" stroke="#545F99" stroke-width="4"/><path d="M45 22c10 10 10 36 0 46M45 22c-10 10-10 36 0 46M22 45h46" fill="none" stroke="#545F99" stroke-width="3"/><path d="M58 31 47 49 34 56 40 39Z" fill="#84648F" stroke="#684F72" stroke-width="2"/></svg>`}
+function aosTop(){return `<div class="aos-top"><div class="aos-brand">${owlSvg('owl-mini')}<span>AthenaOS</span></div><div class="aos-status"><span>Wi-Fi</span><span>🔊</span><span>10:30</span></div></div>`}
+function winFrame(title,icon,body){return `<div class="window"><div class="win-title"><div class="win-title-left">${icon}<span>${title}</span></div><div class="win-controls"><button class="win-control">—</button><button class="win-control">□</button><button class="win-control">×</button></div></div>${body}</div>`}
+function browserWindow(content,address='https://mathaino.example/dimiourgoi'){return winFrame('Ploigos · Φυλλομετρητής',ploigosIcon(),`<div class="browser-toolbar"><button class="nav-btn">←</button><button class="nav-btn">→</button><input class="address" value="${address}" readonly><button class="reload-btn">↻</button></div><div class="browser-page">${content}</div>`)}
+function bookSvg(){return `<svg viewBox="0 0 120 90"><path d="M14 22c18-8 34-7 46 1v55c-12-8-28-9-46-1z" fill="#fff" stroke="#545F99" stroke-width="4"/><path d="M106 22c-18-8-34-7-46 1v55c12-8 28-9 46-1z" fill="#F5EFF6" stroke="#545F99" stroke-width="4"/><path d="M60 23v55" stroke="#84648F" stroke-width="3"/><path d="M23 35h25M23 45h29M72 35h25M72 45h25" stroke="#84648F" stroke-width="3" stroke-linecap="round"/></svg>`}
+function photoSvg(){return `<svg viewBox="0 0 120 90"><rect x="12" y="12" width="96" height="66" rx="7" fill="#fff" stroke="#545F99" stroke-width="4"/><circle cx="38" cy="35" r="9" fill="#FFD26A"/><path d="M22 67 47 45 61 57 76 42 100 67Z" fill="#8DBD73" stroke="#545F99" stroke-width="3"/></svg>`}
+function videoSvg(){return `<svg viewBox="0 0 120 90"><rect x="12" y="17" width="96" height="58" rx="10" fill="#EEF0FA" stroke="#545F99" stroke-width="4"/><circle cx="60" cy="46" r="20" fill="#84648F"/><path d="M55 35 72 46 55 57Z" fill="#fff"/></svg>`}
+function magazineSvg(){return `<svg viewBox="0 0 120 90"><rect x="20" y="10" width="80" height="70" rx="5" fill="#fff" stroke="#545F99" stroke-width="4"/><rect x="29" y="20" width="62" height="17" rx="3" fill="#84648F"/><path d="M29 47h28M29 56h62M29 65h62" stroke="#545F99" stroke-width="3" stroke-linecap="round"/><rect x="64" y="43" width="27" height="10" rx="2" fill="#D9CBE0"/></svg>`}
+function storySvg(){return `<svg viewBox="0 0 140 115"><rect x="28" y="10" width="84" height="95" rx="8" fill="#fff" stroke="#545F99" stroke-width="4"/><path d="M40 30h60M40 43h55M40 56h60M40 69h42" stroke="#84648F" stroke-width="4" stroke-linecap="round"/><path d="M92 79l9 9 18-22" fill="none" stroke="#2E8B63" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/></svg>`}
+function drawingSvg(){return `<svg viewBox="0 0 150 115"><rect x="17" y="13" width="116" height="89" rx="9" fill="#fff" stroke="#545F99" stroke-width="4"/><circle cx="54" cy="42" r="15" fill="#FFD36E"/><path d="M29 87 58 59 76 75 94 52 121 87Z" fill="#88C47F" stroke="#545F99" stroke-width="3"/><path d="M117 18l20 20" stroke="#84648F" stroke-width="7" stroke-linecap="round"/><path d="M133 34l8 11-13-4z" fill="#F2C45B" stroke="#545F99" stroke-width="2"/></svg>`}
+function webPage(){return `<article class="web-page"><div class="web-head"><div><h2>Ιστορίες του δάσους</h2><p style="margin:6px 0 0;color:#667386;font-weight:750">Ένα παράδειγμα ψηφιακού έργου στο διαδίκτυο.</p></div><span class="site-badge">Εκπαιδευτική προσομοίωση</span></div><div class="web-work"><div class="web-work-art">${storySvg()}</div><div class="work-meta"><div class="meta-row"><b>Τίτλος</b><span>Τα ξωτικά του δάσους</span></div><div class="meta-row"><b>Δημιουργός</b><span>Άννα Δημητρίου</span></div><div class="meta-row"><b>Πηγή</b><span>mathaino.example/istories</span></div><div class="meta-row"><b>Σημείωση</b><span>Για επαναχρησιμοποίηση ζητείται άδεια από τη δημιουργό.</span></div></div></div></article>`}
+document.getElementById('topOwl').innerHTML=owlSvg();
+
+/* Activity 1 */
+const sortItems=[
+ {id:'photo',label:'Φωτογραφία σε ιστοσελίδα',place:'online',art:photoSvg()},
+ {id:'video',label:'Βίντεο στο διαδίκτυο',place:'online',art:videoSvg()},
+ {id:'book',label:'Έντυπο βιβλίο',place:'offline',art:bookSvg()},
+ {id:'mag',label:'Έντυπο περιοδικό',place:'offline',art:magazineSvg()}
+];
+let a1Placed={},a1Drag='';
+function r1(){activity.innerHTML=`<div class="task-note">Σύρε κάθε έργο στη σωστή περιοχή.</div><div class="sort-wrap"><div class="sort-zones"><div class="sort-zone" data-zone="online"><h3>🌐 Στο διαδίκτυο</h3><div class="sort-content">${Object.entries(a1Placed).filter(([,v])=>v==='online').map(([id])=>`<div class="placed">${sortItems.find(x=>x.id===id).label}</div>`).join('')}</div></div><div class="sort-zone" data-zone="offline"><h3>📚 Εκτός διαδικτύου</h3><div class="sort-content">${Object.entries(a1Placed).filter(([,v])=>v==='offline').map(([id])=>`<div class="placed">${sortItems.find(x=>x.id===id).label}</div>`).join('')}</div></div></div><div class="item-pool">${sortItems.filter(x=>!a1Placed[x.id]).map(x=>`<button class="drag-card" draggable="true" data-id="${x.id}">${x.art}<span>${x.label}</span></button>`).join('')}</div></div>`;bindA1()}
+function bindA1(){document.querySelectorAll('.drag-card').forEach(c=>{c.ondragstart=e=>{a1Drag=c.dataset.id;e.dataTransfer.setData('text/plain',a1Drag)}});document.querySelectorAll('.sort-zone').forEach(z=>{z.ondragover=e=>{e.preventDefault();z.classList.add('over')};z.ondragleave=()=>z.classList.remove('over');z.ondrop=e=>{e.preventDefault();z.classList.remove('over');const id=a1Drag||e.dataTransfer.getData('text/plain'),it=sortItems.find(x=>x.id===id);if(!it)return;if(it.place!==z.dataset.zone){setFeedback('Δοκίμασε την άλλη περιοχή.',false);return}a1Placed[id]=z.dataset.zone;a1Drag='';r1();if(Object.keys(a1Placed).length===sortItems.length){setFeedback('Σωστά! Τα πνευματικά δικαιώματα αφορούν έργα τόσο στο διαδίκτυο όσο και εκτός διαδικτύου.',true);advance(1350)}else setFeedback('Σωστά. Συνέχισε με το επόμενο έργο.','info')}})}
+
+/* Activity 2 */
+let a2Step=0;
+const a2Cases=[
+ {text:'«Έχω μια ιδέα για ένα παραμύθι με ένα μαγικό δάσος.»',correct:'idea',art:'💡'},
+ {text:'«Έγραψα ήδη το διήγημα “Τα ξωτικά του δάσους”.»',correct:'work',art:'📖'}
+];
+function r2(){const c=a2Cases[a2Step];activity.innerHTML=`<div class="prompt-card"><span class="stage-counter">${a2Step+1}/2</span> ${c.text}</div><div class="story-card"><div class="story-art" style="font-size:65px">${c.art}</div><div><h3>Τι περιγράφεται;</h3></div></div><div class="choice-grid"><button class="choice" data-v="idea">💡 Ιδέα<span class="small">Κάτι που σκέφτηκα, αλλά δεν έχει ακόμη αποτυπωθεί ως έργο.</span></button><button class="choice" data-v="work">📘 Δημιουργημένο έργο<span class="small">Κείμενο, εικόνα, μουσική ή άλλο έργο που έχει ήδη δημιουργηθεί.</span></button></div>`;document.querySelectorAll('.choice').forEach(b=>b.onclick=()=>{if(b.dataset.v!==c.correct){b.classList.add('wrong-flash');setTimeout(()=>b.classList.remove('wrong-flash'),600);return setFeedback('Διάβασε ξανά την περίπτωση και σκέψου αν υπάρχει ήδη δημιουργημένο έργο.',false)}b.classList.add('selected');a2Step++;if(a2Step===a2Cases.length){setFeedback('Σωστά! Ξεχώρισες την ιδέα από το έργο που έχει ήδη δημιουργηθεί.',true);advance(1250)}else{setFeedback('Σωστά. Συνέχισε με την επόμενη περίπτωση.','info');setTimeout(r2,650)}})}
+
+/* Activity 3 */
+function r3(){activity.innerHTML=`<div class="story-card"><div class="story-art">${drawingSvg()}</div><div><h3>Η ψηφιακή ζωγραφιά της Νεφέλης</h3><p>Η Νεφέλη δημιούργησε μόνη της αυτή την ψηφιακή ζωγραφιά και την ανάρτησε στο διαδίκτυο. Ένας άλλος μαθητής θέλει να τη χρησιμοποιήσει στη δική του ανάρτηση.</p></div></div><div class="choice-grid"><button class="choice" data-ok="1">Ζητά άδεια από τη Νεφέλη πριν τη χρησιμοποιήσει.</button><button class="choice" data-ok="0">Τη χρησιμοποιεί χωρίς να ρωτήσει, επειδή είναι ήδη στο διαδίκτυο.</button><button class="choice" data-ok="0">Αφαιρεί το όνομα της δημιουργού και βάζει το δικό του.</button><button class="choice" data-ok="0">Λέει ότι κάθε έργο στο διαδίκτυο ανήκει σε όλους.</button></div>`;bindSingleChoice('Η Νεφέλη είναι η δημιουργός του έργου και έχει δικαιώματα πάνω σε αυτό.')}
+function bindSingleChoice(success){document.querySelectorAll('.choice').forEach(b=>b.onclick=()=>{if(b.dataset.ok!=='1'){b.classList.add('wrong-flash');setTimeout(()=>b.classList.remove('wrong-flash'),600);return setFeedback('Η επιλογή αυτή δεν σέβεται τα δικαιώματα του δημιουργού.',false)}b.classList.add('selected');setFeedback('Σωστά! '+success,true);advance(1250)})}
+
+/* Activity 4 */
+let a4Step=0;
+function r4(){const prompt=a4Step===0?'Η Άννα έδωσε άδεια σε έναν συμμαθητή της να μεταφράσει το διήγημά της και να το αναρτήσει. Τι μπορεί να κάνει;':'Χρησιμοποιείς απόσπασμα από το έργο σε σχολική εργασία. Ποια αναφορά είναι η πιο υπεύθυνη;';activity.innerHTML=`<div class="task-note"><span class="stage-counter">${a4Step+1}/2</span> ${prompt}</div><div class="aos">${aosTop()}<div class="desktop">${browserWindow(webPage())}</div></div>${a4Step===0?`<div class="choice-grid"><button class="choice" data-ok="1">Μπορεί να το μεταφράσει και να το αναρτήσει, αφού έχει την άδεια της δημιουργού.</button><button class="choice" data-ok="0">Δεν χρειάζεται να υπολογίζει καθόλου τη δημιουργό επειδή το έργο είναι online.</button></div>`:`<div class="credit-options"><button class="credit-option" data-ok="0">Πηγή: «Το βρήκα στο διαδίκτυο»</button><button class="credit-option" data-ok="1"><b>Δημιουργός:</b> Άννα Δημητρίου · <b>Πηγή:</b> mathaino.example/istories</button><button class="credit-option" data-ok="0">Μόνο ο τίτλος: «Τα ξωτικά του δάσους»</button></div>`}`;if(a4Step===0)document.querySelectorAll('.choice').forEach(b=>b.onclick=()=>handleA4(b));else document.querySelectorAll('.credit-option').forEach(b=>b.onclick=()=>handleA4(b))}
+function handleA4(b){if(b.dataset.ok!=='1'){b.classList.add('wrong-flash');setTimeout(()=>b.classList.remove('wrong-flash'),600);return setFeedback(a4Step===0?'Η άδεια του δημιουργού είναι σημαντική.':'Στη σχολική εργασία πρέπει να φαίνονται η πηγή και ο δημιουργός.',false)}b.classList.add('selected');a4Step++;if(a4Step===2){setFeedback('Σωστά! Σεβάστηκες την άδεια και ανέφερες σωστά πηγή και δημιουργό.',true);advance(1300)}else{setFeedback('Σωστά. Τώρα έλεγξε πώς πρέπει να αναφέρεις το έργο σε σχολική εργασία.','info');setTimeout(r4,650)}}
+
+/* Activity 5 */
+function r5(){activity.innerHTML=`<div class="story-card"><div class="story-art" style="display:flex;gap:5px;align-items:center;justify-content:center">${photoSvg()}${bookSvg()}</div><div><h3>Νέο παραμύθι για πώληση</h3><p>Ένα παιδί θέλει να πάρει φωτογραφίες από διάφορα παραμύθια, να φτιάξει ένα νέο παραμύθι και να το πουλήσει, χωρίς να έχει ζητήσει άδεια από τους δημιουργούς.</p></div></div><div class="choice-grid"><button class="choice" data-ok="0">Μπορεί, επειδή οι φωτογραφίες βρίσκονται στο διαδίκτυο.</button><button class="choice" data-ok="1">Δεν πρέπει να το κάνει χωρίς άδεια από τους δημιουργούς.</button></div>`;bindSingleChoice('Το ότι ένα έργο βρίσκεται στο διαδίκτυο δεν σημαίνει ότι μπορούμε να το χρησιμοποιούμε χωρίς άδεια.')}
+
+/* Activity 6 final */
+let finalStep=0;
+const finalCases=[
+ {title:'Έντυπη εφημερίδα',text:'Μια φωτογραφία βρίσκεται σε έντυπη εφημερίδα και όχι σε ιστοσελίδα. Υπάρχουν πνευματικά δικαιώματα και εδώ;',choices:[['Ναι. Τα πνευματικά δικαιώματα δεν υπάρχουν μόνο στο διαδίκτυο.',1],['Όχι. Υπάρχουν μόνο για ψηφιακά έργα.',0]]},
+ {title:'Η δική σου ψηφιακή εικόνα',text:'Δημιούργησες μια ψηφιακή εικόνα και την ανάρτησες. Ποια πρόταση είναι σωστή;',choices:[['Παραμένεις ο δημιουργός του έργου σου και έχεις δικαιώματα πάνω σε αυτό.',1],['Μόλις την αναρτήσεις, παύεις να έχεις δικαιώματα.',0]]},
+ {title:'Εικόνα άλλου σε σχολική εργασία',text:'Θέλεις να χρησιμοποιήσεις μια εικόνα που δημιούργησε κάποιος άλλος. Ποια ενέργεια είναι υπεύθυνη;',choices:[['Ελέγχω αν επιτρέπεται η χρήση, ζητώ άδεια όπου χρειάζεται και αναφέρω δημιουργό και πηγή.',1],['Την αντιγράφω χωρίς να αναφέρω τίποτα, επειδή είναι για σχολείο.',0]]}
+];
+function finalStatus(){return `<div class="final-status">${finalCases.map((c,i)=>`<span class="final-chip ${i<finalStep?'done':''}">${i+1}. ${c.title}</span>`).join('')}</div>`}
+function r6(){const c=finalCases[finalStep];activity.innerHTML=`<div class="final-wrap">${finalStatus()}<div class="mission-card"><h3>${c.title}</h3><p>${c.text}</p></div><div class="choice-grid">${c.choices.map(([t,ok])=>`<button class="choice" data-ok="${ok}">${t}</button>`).join('')}</div></div>`;document.querySelectorAll('.choice').forEach(b=>b.onclick=()=>{if(b.dataset.ok!=='1'){b.classList.add('wrong-flash');setTimeout(()=>b.classList.remove('wrong-flash'),600);return setFeedback('Η επιλογή αυτή δεν συμφωνεί με όσα έμαθες στο μάθημα.',false)}b.classList.add('selected');finalStep++;if(finalStep===finalCases.length){setFeedback('Μπράβο! Ολοκλήρωσες σωστά τη συνολική δοκιμή.',true);advance(1450)}else{setFeedback('Σωστά. Συνέχισε με την επόμενη περίπτωση.','info');setTimeout(r6,650)}})}
+
+/* Activity 7 self assessment */
+const levels=['Χρειάζομαι βοήθεια','Έχω καταλάβει αλλά έχω απορίες','Έχω καταλάβει αρκετά καλά','Έχω καταλάβει και μπορώ να εξηγήσω'];
+const objectives=[
+ 'Τις βασικές έννοιες, αλλά και τα βασικά ζητήματα που αφορούν τα πνευματικά δικαιώματα στο διαδίκτυο.',
+ 'Τα δικαιώματά μου όταν δημιουργώ τα δικά μου ψηφιακά έργα στο διαδίκτυο.',
+ 'Τις υποχρεώσεις μου όταν χρησιμοποιώ ψηφιακά έργα που τα έχουν φτιάξει άλλοι.'
+];
+let selfSel=[null,null,null];
+function r7(){activity.innerHTML=`<div class="self-wrap"><div class="self-table"><div class="self-head">Τι έμαθα;</div>${levels.map(x=>`<div class="self-head">${x}</div>`).join('')}${objectives.map((o,row)=>`<div class="self-objective">${o}</div>${levels.map((l,col)=>`<button class="self-cell ${selfSel[row]===col?'selected':''}" onclick="pickSelf(${row},${col})">${l}</button>`).join('')}`).join('')}</div><div class="self-note">Διάλεξε ένα επίπεδο για κάθε στόχο.</div><div class="finish-actions"><button class="primary" id="finishBtn" onclick="finishLesson()" ${selfSel.some(x=>x===null)?'disabled':''}>Ολοκλήρωση</button><button class="secondary-btn" onclick="restart()">↻ Επανάληψη δραστηριότητας</button></div></div>`}
+function pickSelf(row,col){selfSel[row]=selfSel[row]===col?null:col;r7();if(!selfSel.some(x=>x===null)){completed.add(6);updateProgress();setFeedback('Η αυτοαξιολόγηση ολοκληρώθηκε. Μπορείς να ολοκληρώσεις το μάθημα.',true)}else clearFeedback()}
+function finishLesson(){if(selfSel.some(x=>x===null))return;completed.add(6);finished=true;updateProgress();setFeedback('Μπράβο! Ολοκλήρωσες το Μάθημα 28.',true);setTimeout(render,650)}
+function renderCompletion(){kicker.textContent='ΟΛΟΚΛΗΡΩΣΗ';stageTitle.textContent='Μπράβο!';instruction.textContent='Ολοκλήρωσες το Μάθημα 28: Πνευματικά δικαιώματα στο διαδίκτυο και υπεύθυνη ψηφιακή συμπεριφορά.';activity.innerHTML=`<div class="completion"><span class="badge">Ενότητα 5 · Μάθημα 28</span><h2>Χρησιμοποίησες ψηφιακό υλικό με υπευθυνότητα</h2><p>Ξεχώρισες βασικά ζητήματα πνευματικής ιδιοκτησίας, αναγνώρισες τα δικαιώματα του δημιουργού και εφάρμοσες τις υποχρεώσεις που έχουμε όταν χρησιμοποιούμε έργα άλλων.</p><button class="secondary-btn" onclick="restart()">↻ Επανάληψη δραστηριότητας</button></div>`;clearFeedback()}
+function initAll(){stage=0;transitioning=false;finished=false;completed=new Set();a1Placed={};a1Drag='';a2Step=0;a4Step=0;finalStep=0;selfSel=[null,null,null]}
+function restart(){initAll();render()}
+const renderers=[r1,r2,r3,r4,r5,r6,r7];
+function render(){clearFeedback();updateProgress();if(finished){renderCompletion();window.scrollTo({top:0,behavior:'smooth'});return}const s=ACTIVITIES[stage];kicker.textContent='Δραστηριότητα '+(stage+1);stageTitle.textContent=s.t;instruction.textContent=s.i;renderers[stage]();window.scrollTo({top:0,behavior:'smooth'})}
+initAll();render();
+</script>
+
+<footer class="nk-license" aria-label="Πληροφορίες δημιουργού και άδειας χρήσης">
+  <div><strong>Created by Nikos Kalakos · © 2026</strong></div>
+  <div>Original educational content and simulation design licensed under <a class="cc-badge" href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank" rel="license noopener noreferrer">CC BY-NC 4.0</a>.</div>
+  <div>Source code © 2026 Nikos Kalakos.</div>
+  <div>Third-party and textbook materials remain subject to the rights and licences of their respective copyright holders.</div>
+</footer>
+</body>
+</html>

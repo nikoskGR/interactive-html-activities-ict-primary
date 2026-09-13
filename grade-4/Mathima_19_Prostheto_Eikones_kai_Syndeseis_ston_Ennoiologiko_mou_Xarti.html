@@ -1,0 +1,333 @@
+<!--
+ICT Educational Simulation
+Created by Nikos Kalakos
+Copyright © 2026 Nikos Kalakos
+
+Original educational content and simulation design licensed under CC BY-NC 4.0.
+Source code © 2026 Nikos Kalakos.
+Third-party and textbook materials remain subject to the rights and licences of their respective copyright holders.
+-->
+<!doctype html>
+<html lang="el">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="author" content="Nikos Kalakos">
+<meta name="copyright" content="© 2026 Nikos Kalakos">
+<meta name="license" content="Original educational content and simulation design: CC BY-NC 4.0; source code © 2026 Nikos Kalakos; third-party and textbook materials excluded.">
+<title>Μάθημα 19 - Προσθέτω εικόνες και συνδέσεις στον εννοιολογικό μου χάρτη | Δ΄ Δημοτικού</title>
+<!-- Grade 4 · Unit 3 · Lesson 19 · v2 · AthenaOS / Ennoia / Ploigos simulations -->
+<style>
+:root{
+  --unit:#EA9221;--unit-dark:#A8610C;--unit-soft:#FFF3E3;
+  --secondary:#545F99;--secondary-dark:#3E4778;--secondary-soft:#EEF0F8;
+  --ink:#24313D;--muted:#687681;--line:#D6DDE2;
+  --good:#EDF7E7;--good-line:#7EA451;--bad:#FFF0ED;--bad-line:#D77B72;--info:#F0F2FA;
+  --shadow:0 12px 30px rgba(41,50,67,.10);
+}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:linear-gradient(180deg,#FBF4EA,#FBFCFD 55%,#F1F3F7);color:var(--ink);font-family:Arial,"Noto Sans",sans-serif}
+button,input{font:inherit}button:not(:disabled){cursor:pointer}button:disabled{opacity:.55;cursor:default}button:focus-visible,input:focus-visible{outline:4px solid rgba(84,95,153,.32);outline-offset:2px}
+.shell{max-width:1580px;margin:auto;padding:12px}.topbar{display:grid;grid-template-columns:1fr auto;gap:18px;align-items:center;background:var(--secondary);color:#fff;padding:13px 20px;border-radius:16px 16px 7px 7px;box-shadow:var(--shadow);border-bottom:6px solid var(--unit)}
+.crumb{font-size:13px;font-weight:900;opacity:.94}.lesson-title{font-size:clamp(23px,2.3vw,31px);font-weight:950;margin-top:3px}.lesson-badge{border:2px solid rgba(255,255,255,.78);background:var(--unit);color:#3E2909;padding:9px 14px;border-radius:10px;font-weight:950;white-space:nowrap}
+.progressbox{background:#fff;border:1px solid var(--line);border-top:0;border-radius:0 0 14px 14px;padding:10px 16px}.progressrow{display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:14px}.progress-label{font-size:13px;font-weight:900;color:var(--muted)}.track{height:8px;border-radius:99px;background:#E7E9E2;overflow:hidden}.fill{height:100%;background:var(--unit);width:0;transition:.3s}.counter{font-size:13px;font-weight:950;color:var(--secondary);min-width:58px;text-align:right}.dots{display:flex;flex-wrap:wrap;gap:7px;margin-top:9px}.dot{width:30px;height:30px;border:2px solid #B8C1C9;border-radius:8px;background:#fff;color:#6C7A84;display:grid;place-items:center;font-size:12px;font-weight:950}.dot.active{background:var(--unit);border-color:var(--unit-dark);color:#3E2909}.dot.done{background:var(--secondary);border-color:var(--secondary-dark);color:#fff}
+.main{margin-top:14px;background:#fff;border:1px solid var(--line);border-radius:18px;box-shadow:var(--shadow);padding:18px;min-height:820px}.stage-head{display:grid;grid-template-columns:1fr auto;gap:18px;align-items:start;padding-bottom:13px;border-bottom:1px solid #E2E7EB}.kicker{font-size:12px;font-weight:950;color:var(--secondary);letter-spacing:.8px;text-transform:uppercase}.stage-head h1{margin:5px 0 0;font-size:clamp(27px,2.8vw,36px);line-height:1.08}.help{border:2px solid var(--secondary);background:var(--secondary-soft);color:var(--secondary-dark);border-radius:10px;padding:9px 14px;font-weight:950}.instruction{max-width:1260px;margin:16px auto 10px;text-align:center;font-size:19px;line-height:1.48;font-weight:800}.feedback{display:none;max-width:1240px;margin:0 auto 10px;border-radius:10px;padding:10px 15px;text-align:center;font-weight:900;font-size:16px}.feedback.good{display:block;background:var(--good);border:2px solid var(--good-line)}.feedback.bad{display:block;background:var(--bad);border:2px solid var(--bad-line)}.feedback.info{display:block;background:var(--info);border:2px solid #9AA3C9}.activity{max-width:1480px;margin:auto;border:1px solid #D8DEE4;border-radius:14px;background:linear-gradient(#FEFEFE,#F8F9FA);padding:18px;min-height:620px}
+.primary,.secondary-btn{border-radius:9px;padding:10px 18px;font-weight:950;font-size:16px}.primary{border:0;background:var(--secondary);color:#fff;box-shadow:0 3px 0 var(--secondary-dark)}.secondary-btn{border:2px solid var(--secondary);background:#fff;color:var(--secondary-dark)}.center{display:block;margin:16px auto 0}.note{max-width:1120px;margin:12px auto;border-left:5px solid var(--unit);background:var(--unit-soft);padding:12px 16px;border-radius:8px;font-size:15px;line-height:1.45;font-weight:760;color:#4B5962}
+/* AthenaOS */
+.aos{max-width:1240px;margin:14px auto;border:4px solid var(--secondary-dark);border-radius:18px;overflow:hidden;background:#E8EDF5;box-shadow:0 18px 38px rgba(33,41,60,.18);position:relative}.aos-top{height:45px;background:linear-gradient(135deg,var(--secondary-dark),var(--secondary));color:#fff;display:flex;align-items:center;justify-content:space-between;padding:0 14px;font-weight:900}.aos-brand{display:flex;align-items:center;gap:9px}.owl{width:31px;height:31px}.aos-status{display:flex;align-items:center;gap:13px;font-size:13px}.desktop{min-height:535px;position:relative;padding:28px;background:radial-gradient(circle at 78% 20%,rgba(255,255,255,.9),transparent 22%),linear-gradient(135deg,#DCE5FF,#F6E9FF 58%,#EAF6FF)}
+.desktop-grid{display:grid;grid-template-columns:repeat(2,125px);gap:18px;width:max-content}.desktop-app{width:125px;border:2px solid transparent;background:transparent;border-radius:14px;padding:10px 8px;text-align:center;font-weight:900;color:#34405E;user-select:none}.desktop-app:hover,.desktop-app.selected{background:rgba(255,255,255,.65);border-color:#C7CEE4}.app-name{display:block;margin-top:7px;font-size:14px}.app-icon{width:72px;height:72px;display:block;margin:auto;filter:drop-shadow(0 5px 5px rgba(45,52,78,.17))}.desktop-hint{position:absolute;left:50%;bottom:34px;transform:translateX(-50%);padding:10px 16px;border:2px solid #C6CCE0;background:rgba(255,255,255,.9);border-radius:10px;font-weight:900;color:#4C5874;white-space:nowrap}
+/* shared window */
+.window{position:absolute;inset:36px 48px 34px;border:2px solid #909AB7;border-radius:13px;background:#fff;box-shadow:0 14px 32px rgba(33,41,60,.22);overflow:hidden;z-index:5}.win-title{height:42px;background:#EDF0F6;border-bottom:1px solid #CCD3E1;display:flex;align-items:center;justify-content:space-between;padding:0 11px;font-weight:950;color:#34405E}.title-left{display:flex;align-items:center;gap:8px}.title-icon{width:28px;height:28px}.win-controls{display:flex;gap:7px}.win-control{width:27px;height:27px;border:0;border-radius:50%;background:#DCE1EB;color:#39445F;font-weight:950}.win-control.close{background:#F0D0D0;color:#8D3232}
+/* Ennoia */
+.ennoia-toolbar{height:50px;border-bottom:1px solid #D7DCE5;background:#F8F9FB;display:flex;align-items:center;gap:7px;padding:7px 9px;flex-wrap:wrap}.tool-btn{border:1px solid #B9C2CF;background:#fff;border-radius:8px;padding:7px 10px;font-weight:850;color:#40505D}.tool-btn:hover{border-color:var(--secondary)}.tool-btn.active{background:var(--secondary-soft);border-color:var(--secondary);color:var(--secondary-dark)}.map-wrap{height:calc(100% - 92px);display:grid;grid-template-columns:minmax(0,1fr) 250px}.map-wrap.single{grid-template-columns:1fr}.map-canvas{position:relative;min-height:390px;background:linear-gradient(#FBFDFF,#fff);overflow:hidden}.map-side{border-left:1px solid #D7DCE5;background:#F8F9FB;padding:12px}.map-side h3{margin:0 0 10px;font-size:15px}.map-side .side-note{font-size:13px;line-height:1.4;color:var(--muted);font-weight:800}.concept-node{position:absolute;z-index:5;min-width:155px;min-height:74px;padding:10px 15px;border:3px solid #5D76A6;border-radius:17px;background:#F5F7FF;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;font-weight:950;color:#2F3A62;box-shadow:0 5px 12px rgba(48,59,91,.08);user-select:none;line-height:1.2}.concept-node.main-node{left:50%;top:38px;transform:translateX(-50%);min-width:210px;border-color:var(--unit-dark);background:#FFF9EF}.concept-node.left-node{left:12%;bottom:42px}.concept-node.right-node{right:12%;bottom:42px}.concept-node .node-title{display:block;position:relative;z-index:2;text-align:center;width:100%;margin:0}.node-img-wrap{display:none;width:130px;height:94px;margin:0 auto 8px;border-radius:12px;overflow:hidden;background:#FFF7DF;border:2px solid #D8A453;position:relative}.node-img-wrap.show{display:block}.node-img-wrap.selected{outline:4px solid rgba(84,95,153,.35);outline-offset:3px}.node-img-wrap.bg-mode{width:154px;height:104px}.node-img-wrap.fit-mode{padding:4px;background:#FFF9ED}.illustration-svg{width:100%;height:100%;display:block}.concept-node.align-image-top .node-title{margin-top:2px}.link-chip{margin-top:7px;border:2px solid var(--secondary);background:#fff;color:var(--secondary-dark);border-radius:999px;padding:5px 9px;font-size:12px;font-weight:950;display:inline-flex;align-items:center;gap:5px}.link-chip:hover{background:var(--secondary-soft)}.map-svg{position:absolute;inset:0;width:100%;height:100%;z-index:1;pointer-events:none;overflow:visible}.map-path{fill:none;stroke:#37445B;stroke-width:4;stroke-linecap:round;marker-end:url(#arrowHead);vector-effect:non-scaling-stroke}.map-label{position:absolute;z-index:3;padding:3px 8px;background:#fff;border:1px solid #D5DBE4;border-radius:8px;font-size:13px;font-weight:900;color:#43505B;pointer-events:none;transform:translate(-50%,-50%);white-space:nowrap}.style-palette{position:absolute;right:18px;top:18px;z-index:30;width:280px;border:3px solid var(--secondary);border-radius:14px;background:#fff;box-shadow:0 16px 34px rgba(38,46,74,.22);overflow:hidden}.style-palette-title{background:var(--secondary);color:#fff;padding:10px 12px;font-weight:950;display:flex;align-items:center;justify-content:space-between}.style-palette-body{padding:11px}.style-palette-note{font-size:12px;line-height:1.4;color:var(--muted);font-weight:800;margin-bottom:7px}.style-action{width:100%;border:2px solid #BAC2CF;background:#fff;border-radius:8px;padding:9px;text-align:left;font-weight:900;margin-top:7px}.style-action.done{border-color:var(--secondary);background:var(--secondary-soft);color:var(--secondary-dark)}.style-action.done:after{content:" ✓"}.style-action:disabled{background:#F2F3F5;color:#9AA1A8}.palette-close{border:0;background:rgba(255,255,255,.18);color:#fff;border-radius:7px;width:26px;height:26px;font-weight:950}
+/* Ploigos */
+.browser-toolbar{height:54px;border-bottom:1px solid #D7DCE5;background:#F8F9FB;display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:8px;align-items:center;padding:7px 9px}.nav-group{display:flex;gap:6px}.nav-btn{border:1px solid #BAC2CF;background:#fff;border-radius:8px;width:36px;height:36px;font-weight:950}.address{width:100%;height:36px;border:2px solid #B9C2CF;border-radius:9px;padding:6px 11px;background:#fff;color:#384650;font-weight:800}.browser-go{border:0;background:var(--unit);color:#3E2909;border-radius:8px;padding:8px 14px;font-weight:950}.browser-page{height:calc(100% - 96px);overflow:auto;background:#fff;padding:18px}.search-home{max-width:820px;margin:45px auto;text-align:center}.search-home h2{font-size:35px;margin:0 0 18px;color:var(--secondary-dark)}.search-row{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px}.search-input{height:48px;border:3px solid #BCC5D2;border-radius:12px;padding:8px 13px;font-size:19px}.results{max-width:920px;margin:auto}.results h3{margin:0 0 12px}.result-card{display:grid;grid-template-columns:210px 1fr;gap:16px;border:2px solid #D7DCE5;border-radius:13px;background:#fff;padding:12px;margin:12px 0;align-items:center}.web-image-wrap{height:150px;border-radius:12px;overflow:hidden;background:linear-gradient(180deg,#F6FAFF,#FFF6E5);display:grid;place-items:center;position:relative;border:2px solid #C8D0DB;padding:8px}.web-image{width:100%;height:100%;display:block}.web-image.earth{background:transparent}.img-fallback{display:none}.result-title{font-size:20px;font-weight:950;color:#314F93;margin-bottom:6px}.result-url{font-size:12px;color:#66805F;font-weight:800;overflow-wrap:anywhere}.result-text{font-size:14px;line-height:1.45;color:#4D5B65;font-weight:760;margin-top:7px}.source-credit{font-size:11px;color:#6E7881;margin-top:6px}.page-hero{max-width:900px;margin:auto;display:grid;grid-template-columns:280px 1fr;gap:18px;align-items:center}.page-hero .web-image-wrap{height:260px}.page-hero h2{font-size:30px;margin:0 0 8px;color:#2E3B63}.page-hero p{line-height:1.55;font-weight:760;color:#4B5963}.page-chip{display:inline-block;background:var(--secondary-soft);color:var(--secondary-dark);border:1px solid #BFC7DD;border-radius:999px;padding:6px 10px;font-size:12px;font-weight:950;margin-bottom:10px}
+/* context menu + dialog */
+.context-menu{position:absolute;z-index:80;min-width:230px;background:#fff;border:2px solid #AAB3C3;border-radius:10px;box-shadow:0 12px 26px rgba(32,39,58,.22);padding:6px;display:none}.context-menu.show{display:block}.context-menu button{width:100%;border:0;background:transparent;border-radius:7px;padding:9px 11px;text-align:left;font-weight:850;color:#394753}.context-menu button:hover{background:var(--secondary-soft)}.context-menu button:disabled{color:#99A1A8}.link-dialog{position:absolute;z-index:70;left:50%;top:50%;transform:translate(-50%,-50%);width:min(570px,88%);background:#fff;border:3px solid var(--secondary);border-radius:14px;box-shadow:0 18px 40px rgba(35,42,65,.25);overflow:hidden}.dialog-title{background:var(--secondary);color:#fff;padding:11px 14px;font-weight:950}.dialog-body{padding:15px}.field{margin-bottom:12px}.field label{display:block;font-size:13px;font-weight:950;margin-bottom:5px}.field input{width:100%;height:40px;border:2px solid #B9C2CF;border-radius:8px;padding:7px 10px;font-weight:800}.dialog-actions{display:flex;justify-content:flex-end;gap:8px}.dialog-tip{font-size:12px;color:var(--muted);font-weight:800;margin-top:4px}
+/* Final integrated mission */
+.mission-shell{max-width:1240px;margin:10px auto;border:4px solid var(--secondary-dark);border-radius:18px;overflow:hidden;background:#E8EDF5;box-shadow:0 18px 38px rgba(33,41,60,.18)}.mission-top{height:45px;background:linear-gradient(135deg,var(--secondary-dark),var(--secondary));color:#fff;display:flex;align-items:center;justify-content:space-between;padding:0 14px;font-weight:900}.mission-tabs{display:flex;background:#E9ECF3;border-bottom:1px solid #C9CFDB}.mission-tab{border:0;background:transparent;padding:10px 17px;font-weight:950;color:#4E5B72;border-bottom:4px solid transparent}.mission-tab.active{background:#fff;color:var(--secondary-dark);border-bottom-color:var(--unit)}.mission-body{position:relative;height:525px;background:#fff}.mission-checklist{position:absolute;right:14px;top:14px;z-index:50;width:240px;background:rgba(255,255,255,.96);border:2px solid #D5DBE4;border-radius:10px;padding:10px;box-shadow:0 6px 16px rgba(38,45,65,.12)}.mission-checklist h4{margin:0 0 7px}.mission-check{font-size:12px;font-weight:850;margin:6px 0;color:#59656F}.mission-check.done{color:#315D2B}.mission-check.done:before{content:"✓ ";font-weight:950}.mission-check:not(.done):before{content:"○ ";font-weight:950;color:#8B96A0}.mission-pane{height:100%;position:relative;overflow:hidden}.mission-pane .browser-page{height:429px;padding-right:275px}.mission-pane .map-wrap{height:483px;grid-template-columns:minmax(0,1fr) 250px;padding-right:0}.mission-pane .map-canvas{min-height:480px}.earth-node{left:45%;top:110px!important;transform:translateX(-50%)!important}.final-side-note{font-size:13px;line-height:1.45;font-weight:800;color:#596670}
+/* self assessment */
+.self-wrap{max-width:1250px;margin:20px auto}.self-table{display:grid;grid-template-columns:minmax(290px,1.35fr) repeat(4,minmax(145px,1fr));border:1px solid #CCD4DB;border-radius:12px;overflow:hidden;background:#fff}.self-head,.self-objective,.self-cell{border-right:1px solid #D9DFE4;border-bottom:1px solid #D9DFE4;min-height:78px;padding:10px;display:grid;place-items:center;text-align:center}.self-head{background:var(--secondary);color:#fff;font-size:12px;font-weight:950}.self-objective{font-weight:900;line-height:1.4;text-align:left;place-items:center start}.self-cell{position:relative;border-top:0;border-left:0;background:#fff;font-size:12px;font-weight:850;color:#4A5862;padding-bottom:28px}.self-cell:hover{background:#FAFAFC}.self-cell.selected{background:var(--secondary-soft);box-shadow:inset 0 0 0 3px var(--secondary)}.self-cell.selected:after{content:"✓ Επιλεγμένο";position:absolute;right:7px;bottom:6px;font-size:9px;font-weight:950;color:var(--secondary-dark)}.self-note{margin-top:12px;text-align:center;color:var(--muted);font-weight:800}.finish-actions{display:flex;justify-content:center;gap:10px;margin-top:16px}.completion{text-align:center;max-width:850px;margin:55px auto;border:3px solid var(--unit);border-radius:18px;background:var(--unit-soft);padding:28px}.completion .badge{display:inline-block;background:var(--secondary);color:#fff;border-radius:999px;padding:7px 12px;font-size:12px;font-weight:950}.completion h2{font-size:34px;margin:14px 0 8px}.completion p{font-size:18px;line-height:1.55;font-weight:800;color:#4D5962}
+/* help */
+.modal{position:fixed;inset:0;background:rgba(21,28,43,.55);display:none;align-items:center;justify-content:center;padding:18px;z-index:150}.modal.show{display:flex}.modal-box{max-width:680px;background:#fff;border:4px solid var(--unit);border-radius:18px;padding:22px;box-shadow:0 18px 50px rgba(20,27,42,.28);text-align:center}.modal-box h3{margin:0 0 10px;font-size:28px}.modal-box p{font-size:18px;line-height:1.5;font-weight:780}.modal-actions{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin-top:14px}
+@media(max-width:900px){.window{inset:36px 18px 25px}.map-wrap{grid-template-columns:1fr}.map-side{display:none}.style-palette{right:10px;left:10px;width:auto}.concept-node.left-node{left:5%}.concept-node.right-node{right:5%}.result-card,.page-hero{grid-template-columns:1fr}.mission-checklist{position:static;width:auto;margin:8px}.mission-pane .browser-page{padding-right:18px}.self-table{grid-template-columns:1fr}.self-head:first-child{display:none}.self-head{min-height:42px}.self-objective{min-height:60px;text-align:center;place-items:center}.mission-body{height:620px}}
+</style>
+
+<style id="nk-license-style">
+.nk-license{max-width:1100px;margin:14px auto 24px;padding:10px 16px;text-align:center;font:13px/1.45 Arial,"Noto Sans",sans-serif;color:#4e657c}
+.nk-license a{color:inherit;text-decoration:underline;text-underline-offset:2px}
+.nk-license .cc-badge{display:inline-block;margin:0 4px;padding:2px 7px;border:1px solid #8aa0b8;border-radius:6px;background:#fff;font-weight:700;white-space:nowrap}
+</style>
+</head>
+<body>
+<div class="shell">
+<header class="topbar"><div><div class="crumb">Ενότητα 3 · Δεδομένα και ανάλυση δεδομένων</div><div class="lesson-title">Προσθέτω εικόνες και συνδέσεις στον εννοιολογικό μου χάρτη</div></div><div class="lesson-badge">Μάθημα 19</div></header>
+<section class="progressbox"><div class="progressrow"><div class="progress-label" id="progressLabel">Δραστηριότητα 1</div><div class="track"><div class="fill" id="progressFill"></div></div><div class="counter" id="counter">0%</div></div><div class="dots" id="dots"></div></section>
+<main class="main"><div class="stage-head"><div><div class="kicker" id="kicker">ΔΡΑΣΤΗΡΙΟΤΗΤΑ 1</div><h1 id="stageTitle"></h1></div><button class="help" onclick="openHelp()">❔ Βοήθεια</button></div><p class="instruction" id="instruction"></p><div class="feedback" id="feedback"></div><section class="activity" id="activity"></section></main>
+</div>
+<div class="modal" id="helpModal"><div class="modal-box"><h3>Βοήθεια</h3><p id="helpText"></p><div class="modal-actions"><button class="secondary-btn" onclick="speakHelp()">🔊 Άκουσε</button><button class="primary" onclick="closeHelp()">Το κατάλαβα</button></div></div></div>
+<script>
+const SUN_IMG='sun-illustration';
+const EARTH_IMG='earth-illustration';
+const SUN_URL='https://science.nasa.gov/sun/';
+const EARTH_URL='https://science.nasa.gov/earth/';
+const ACTIVITIES=[
+ {t:'Άνοιξε το Ennoia',i:'Στο AthenaOS άνοιξε το Ennoia με διπλό κλικ.',h:'Όπως σε ένα συνηθισμένο λειτουργικό σύστημα, κάνε διπλό κλικ στο εικονίδιο Ennoia της επιφάνειας εργασίας.'},
+ {t:'Άνοιξε το Ploigos',i:'Χρειάζεσαι μια εικόνα για τον Ήλιο. Άνοιξε το Ploigos με διπλό κλικ.',h:'Το Ploigos είναι ο φυλλομετρητής του AthenaOS. Κάνε διπλό κλικ στο εικονίδιό του.'},
+ {t:'Βρες και αντέγραψε μια εικόνα',i:'Στο Ploigos αναζήτησε τη λέξη «ήλιος». Μετά κάνε δεξί κλικ στην εικόνα και επίλεξε «Αντιγραφή εικόνας».',h:'Γράψε ήλιος στο πεδίο αναζήτησης. Όταν εμφανιστεί το αποτέλεσμα, κάνε δεξί κλικ πάνω στην εικόνα και χρησιμοποίησε την εντολή αντιγραφής εικόνας.'},
+ {t:'Επικόλλησε την εικόνα στο Ennoia',i:'Στο Ennoia κάνε δεξί κλικ στην έννοια «Ο Ήλιος» και επίλεξε «Επικόλληση».',h:'Η εικόνα έχει αντιγραφεί. Κάνε δεξί κλικ στο πλαίσιο της έννοιας «Ο Ήλιος» και επίλεξε Επικόλληση.'},
+ {t:'Ρύθμισε την εικόνα',i:'Επίλεξε την εικόνα, πάτησε «Στιλ» στη γραμμή εργαλείων και χρησιμοποίησε την παλέτα που ανοίγει ώστε η εικόνα να γίνει φόντο, να προσαρμοστεί και να βρίσκεται πάνω από το κείμενο.',h:'Κάνε κλικ στην εικόνα και μετά πάτησε «Στιλ». Στην παλέτα «Στιλ εικόνας» χρησιμοποίησε διαδοχικά «Ορισμός ως φόντο», «Αλλαγή μεγέθους / Ξάκρισμα» και «Εικόνα πάνω από κείμενο».'},
+ {t:'Αντέγραψε μια διεύθυνση ιστού',i:'Στο Ploigos άνοιξε τη σελίδα για τον Ήλιο. Κάνε κλικ στη γραμμή διεύθυνσης και πάτησε Ctrl+C.',h:'Άνοιξε το αποτέλεσμα «Ο Ήλιος – NASA Science». Μετά κάνε κλικ στη γραμμή διεύθυνσης ώστε να επιλεγεί και πάτησε Ctrl+C.'},
+ {t:'Πρόσθεσε υπερσύνδεσμο',i:'Στο Ennoia κάνε δεξί κλικ στην έννοια «Ο Ήλιος», επίλεξε «Προσθήκη διεύθυνσης ιστού…», επικόλλησε τη διεύθυνση με Ctrl+V και γράψε έναν τίτλο.',h:'Στο παράθυρο υπερσυνδέσμου πάτησε Ctrl+V στο πεδίο «Διεύθυνση ιστού». Στο «Όνομα πηγής» γράψε έναν σύντομο τίτλο και αποθήκευσε.'},
+ {t:'Δοκίμασε τον υπερσύνδεσμο',i:'Κάνε κλικ στον υπερσύνδεσμο που πρόσθεσες στην έννοια «Ο Ήλιος».',h:'Ο σύνδεσμος εμφανίζεται ως μικρό κουμπί με σύμβολο αλυσίδας. Κάνε κλικ πάνω του και παρατήρησε ότι ανοίγει στο Ploigos.'},
+ {t:'Συνολική δοκιμή',i:'Εμπλούτισε την έννοια «Η Γη» με εικόνα και υπερσύνδεσμο. Χρησιμοποίησε Ploigos και Ennoia όπως σε ένα πραγματικό λειτουργικό σύστημα.',h:'Στο Ploigos αντέγραψε πρώτα την εικόνα της Γης. Άλλαξε στο Ennoia και επικόλλησέ την στην έννοια. Μετά γύρισε στο Ploigos, αντέγραψε τη διεύθυνση με Ctrl+C και πρόσθεσέ την στο Ennoia.'},
+ {t:'Τι έμαθα;',i:'Διάλεξε το επίπεδο που σε περιγράφει καλύτερα.',h:'Η αυτοαξιολόγηση δεν έχει σωστή ή λάθος απάντηση. Διάλεξε το επίπεδο που περιγράφει καλύτερα τι έχεις καταλάβει.'}
+];
+let stage=0,transitioning=false,finished=false,completed=new Set();
+const activity=document.getElementById('activity'),feedback=document.getElementById('feedback'),kicker=document.getElementById('kicker'),stageTitle=document.getElementById('stageTitle'),instruction=document.getElementById('instruction');
+let virtualClipboard={type:null,value:null};
+function setFeedback(t,type){feedback.className='feedback '+(type===true?'good':type===false?'bad':'info');feedback.textContent=t}
+function clearFeedback(){feedback.className='feedback';feedback.textContent=''}
+function updateProgress(){const done=finished;document.getElementById('progressLabel').textContent=done?'Ολοκληρώθηκε':`Δραστηριότητα ${stage+1} από ${ACTIVITIES.length}`;document.getElementById('counter').textContent=done?'100%':`${Math.round((completed.size/ACTIVITIES.length)*100)}%`;document.getElementById('progressFill').style.width=`${done?100:(completed.size/ACTIVITIES.length)*100}%`;document.getElementById('dots').innerHTML=ACTIVITIES.map((_,i)=>`<div class="dot ${done||completed.has(i)?'done':i===stage?'active':''}">${i+1}</div>`).join('')}
+function advance(ms=950){if(transitioning)return;transitioning=true;completed.add(stage);updateProgress();setTimeout(()=>{stage++;transitioning=false;render()},ms)}
+function openHelp(){document.getElementById('helpText').textContent=ACTIVITIES[Math.min(stage,ACTIVITIES.length-1)].h;document.getElementById('helpModal').classList.add('show')}
+function closeHelp(){document.getElementById('helpModal').classList.remove('show')}
+function speakHelp(){if(!('speechSynthesis'in window))return;window.speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(document.getElementById('helpText').textContent);u.lang='el-GR';u.rate=.86;window.speechSynthesis.speak(u)}
+document.getElementById('helpModal').addEventListener('click',e=>{if(e.target.id==='helpModal')closeHelp()});
+function owlLogo(){return `<svg class="owl" viewBox="0 0 100 90" aria-label="AthenaOS"><path d="M14 28 7 6 31 18Q50 6 69 18L93 6 86 28Q94 39 91 55Q87 75 69 83Q50 91 31 83Q13 75 9 55Q6 39 14 28Z" fill="#5B43D4" stroke="#D8DBFF" stroke-width="5"/><circle cx="33" cy="43" r="14" fill="#fff"/><circle cx="67" cy="43" r="14" fill="#fff"/><circle cx="33" cy="43" r="5" fill="#1E1E2E"/><circle cx="67" cy="43" r="5" fill="#1E1E2E"/><path d="M44 55 50 66 56 55Z" fill="#FFC642"/></svg>`}
+function ennoiaIcon(cls='app-icon'){return `<svg class="${cls}" viewBox="0 0 90 90" role="img" aria-label="Ennoia"><rect x="5" y="5" width="80" height="80" rx="18" fill="#fff" stroke="#545F99" stroke-width="5"/><path d="M45 34V45M45 45L24 61M45 45L66 61" stroke="#545F99" stroke-width="5" stroke-linecap="round"/><rect x="31" y="18" width="28" height="19" rx="7" fill="#EA9221" stroke="#A8610C" stroke-width="2"/><rect x="11" y="58" width="27" height="18" rx="7" fill="#EEF0F8" stroke="#545F99" stroke-width="3"/><rect x="52" y="58" width="27" height="18" rx="7" fill="#EEF0F8" stroke="#545F99" stroke-width="3"/></svg>`}
+function ploigosIcon(cls='app-icon'){return `<svg class="${cls}" viewBox="0 0 90 90" role="img" aria-label="Ploigos"><rect x="5" y="5" width="80" height="80" rx="18" fill="#fff" stroke="#545F99" stroke-width="5"/><circle cx="45" cy="45" r="27" fill="#EEF0F8" stroke="#545F99" stroke-width="4"/><path d="M58 28 50 50 29 59 38 37Z" fill="#EA9221" stroke="#A8610C" stroke-width="3"/><circle cx="44" cy="44" r="5" fill="#545F99"/></svg>`}
+function domiIcon(cls='app-icon'){return `<svg class="${cls}" viewBox="0 0 90 90"><rect x="5" y="5" width="80" height="80" rx="18" fill="#fff" stroke="#545F99" stroke-width="5"/><path d="M18 34h23l7 8h24v27H18Z" fill="#F7AE35" stroke="#A8610C" stroke-width="4"/><path d="M18 34v-8h26l6 8" fill="#6B75A8" stroke="#545F99" stroke-width="4"/></svg>`}
+function aosTop(){return `<div class="aos-top"><div class="aos-brand">${owlLogo()}<span>AthenaOS</span></div><div class="aos-status"><span>Wi‑Fi</span><span>🔊</span><span>10:30</span></div></div>`}
+function desktop(appToOpen){return `<div class="aos">${aosTop()}<div class="desktop"><div class="desktop-grid"><button class="desktop-app" id="ennoiaDesk">${ennoiaIcon()}<span class="app-name">Ennoia</span></button><button class="desktop-app" id="ploigosDesk">${ploigosIcon()}<span class="app-name">Ploigos</span></button><button class="desktop-app">${domiIcon()}<span class="app-name">Domi</span></button></div><div class="desktop-hint">Διπλό κλικ για άνοιγμα εφαρμογής</div></div></div>`}
+function winFrame(title,icon,body){return `<div class="window"><div class="win-title"><div class="title-left">${icon}<span>${title}</span></div><div class="win-controls"><button class="win-control">—</button><button class="win-control">□</button><button class="win-control close">×</button></div></div>${body}</div>`}
+function sunIllustration(cls='illustration-svg'){return `<svg class="${cls}" viewBox="0 0 180 130" role="img" aria-label="Εικονογράφηση του Ήλιου"><defs><radialGradient id="sunGlow" cx="50%" cy="48%" r="55%"><stop offset="0" stop-color="#FFF7A7"/><stop offset=".62" stop-color="#FFD34E"/><stop offset="1" stop-color="#F2A11C"/></radialGradient></defs><g stroke="#EA9221" stroke-width="8" stroke-linecap="round"><path d="M90 8v18M90 104v18M20 65h20M140 65h20M40 18l13 13M127 99l13 13M140 18l-13 13M53 99l-13 13"/></g><circle cx="90" cy="65" r="38" fill="url(#sunGlow)" stroke="#C97510" stroke-width="4"/><circle cx="77" cy="58" r="4" fill="#545F99"/><circle cx="103" cy="58" r="4" fill="#545F99"/><path d="M73 76Q90 90 107 76" fill="none" stroke="#545F99" stroke-width="4" stroke-linecap="round"/></svg>`}
+function earthIllustration(cls='illustration-svg'){return `<svg class="${cls}" viewBox="0 0 180 130" role="img" aria-label="Εικονογράφηση της Γης"><defs><linearGradient id="earthSea" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#66BCE8"/><stop offset="1" stop-color="#2D77B7"/></linearGradient></defs><circle cx="90" cy="65" r="49" fill="url(#earthSea)" stroke="#545F99" stroke-width="4"/><path d="M52 42c12-10 24-14 36-10l10 8-7 9-16 3-9 13-13-4-8-11zM104 37l17 4 12 13-6 8-12-2-8 9-8-8 2-11zM74 78l14-5 11 6 8 15-9 14-15-5-6-12-12-4z" fill="#76B852" stroke="#4E8C3D" stroke-width="2"/><path d="M42 65c11 3 19 3 29 0M110 84c11 2 20 0 28-4" fill="none" stroke="#DDF4FF" stroke-width="3" stroke-linecap="round" opacity=".85"/></svg>`}
+function illustrationMarkup(kind,cls='illustration-svg'){return kind==='earth'?earthIllustration(cls):sunIllustration(cls)}
+function imageTag(src,kind='sun',cls='web-image'){return `<div class="web-image-wrap">${illustrationMarkup(kind,`${cls} ${kind==='earth'?'earth':''}`)}</div>`}
+function arrowDefs(){return `<defs><marker id="arrowHead" markerWidth="13" markerHeight="13" refX="10.8" refY="5" orient="auto" markerUnits="strokeWidth"><path d="M0,0 L0,10 L10.8,5 z" fill="#37445B"></path></marker></defs>`}
+function ennoiaBody(opts={}){
+ const imageSelected=opts.styleMode&&sunImageSelected;
+ const img=opts.image?`<div class="node-img-wrap show ${opts.bg?'bg-mode':''} ${opts.fit?'fit-mode':''} ${imageSelected?'selected':''}" id="sunNodeImage" onclick="selectSunImage(event)">${illustrationMarkup('sun','node-illustration illustration-svg')}</div>`:'';
+ const link=opts.link?`<button class="link-chip" id="sunLinkChip" onclick="openSunLink(event)">🔗 ${escapeHtml(opts.linkName||'Ήλιος')}</button>`:'';
+ const palette=opts.styleMode&&opts.paletteOpen?`<div class="style-palette" id="stylePalette"><div class="style-palette-title"><span>Στιλ εικόνας</span><button class="palette-close" id="paletteClose" aria-label="Κλείσιμο">×</button></div><div class="style-palette-body"><div class="style-palette-note">Εφάρμοσε τις ρυθμίσεις με τη σειρά.</div><button class="style-action ${bgSet?'done':''}" id="bgAction" ${!sunImageSelected?'disabled':''}>Ορισμός ως φόντο</button><button class="style-action ${fitSet?'done':''}" id="fitAction" ${!sunImageSelected||!bgSet?'disabled':''}>Αλλαγή μεγέθους / Ξάκρισμα</button><button class="style-action ${alignSet?'done':''}" id="alignAction" ${!sunImageSelected||!fitSet?'disabled':''}>Εικόνα πάνω από κείμενο</button></div></div>`:'';
+ const toolbar=`<div class="ennoia-toolbar"><button class="tool-btn">Αρχείο</button><button class="tool-btn">Επεξεργασία</button><button class="tool-btn">▭ Έννοια</button><button class="tool-btn">➜ Σύνδεση</button><button class="tool-btn ${opts.paletteOpen?'active':''}" id="stylesBtn">Στιλ</button></div>`;
+ const map=`<div class="map-canvas" id="sunMap"><svg class="map-svg" id="sunSvg">${arrowDefs()}</svg><div class="concept-node main-node ${opts.align?'align-image-top':''}" id="sunNode">${img}<span class="node-title">Ο Ήλιος</span>${link}</div><div class="concept-node left-node" id="starNode">Άστρο</div><div class="concept-node right-node" id="earthNode">Γη</div><div class="map-label" id="lblStar">είναι ένα</div><div class="map-label" id="lblEarth">η Γη κινείται γύρω από</div><div class="context-menu" id="ctx"></div>${opts.dialog?linkDialogHtml('sun'):''}${palette}</div>`;
+ if(opts.styleMode)return `${toolbar}<div class="map-wrap single">${map}</div>`;
+ return `${toolbar}<div class="map-wrap">${map}<aside class="map-side"><h3>Ennoia</h3><div class="side-note">Εννοιολογικός χάρτης με έννοιες, συνδέσεις, εικόνες και υπερσυνδέσμους.</div></aside></div>`;
+}
+function ennoiaWindow(opts={}){return winFrame('Ennoia · Εννοιολογικός χάρτης',ennoiaIcon('title-icon'),ennoiaBody(opts))}
+function ploigosBody(content,address='Νέα καρτέλα',withAddress=true){return `<div class="browser-toolbar"><div class="nav-group"><button class="nav-btn">←</button><button class="nav-btn">→</button></div>${withAddress?`<input class="address" id="addressBar" value="${escapeAttr(address)}" readonly aria-label="Γραμμή διεύθυνσης">`:'<div></div>'}<button class="browser-go">↻</button></div><div class="browser-page">${content}</div>`}
+function ploigosWindow(content,address='Νέα καρτέλα'){return winFrame('Ploigos · Φυλλομετρητής',ploigosIcon('title-icon'),ploigosBody(content,address,true))}
+function escapeHtml(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+function escapeAttr(s){return escapeHtml(s)}
+function disableClipboardInput(el,allowVirtualPaste=false){if(!el)return;['paste','copy','cut','drop'].forEach(ev=>el.addEventListener(ev,e=>e.preventDefault()));el.addEventListener('contextmenu',e=>e.preventDefault());if(!allowVirtualPaste)el.setAttribute('autocomplete','off')}
+function showContext(menu,html,x,y){menu.innerHTML=html;menu.style.left=Math.max(8,Math.min(x,820))+'px';menu.style.top=Math.max(8,Math.min(y,390))+'px';menu.classList.add('show')}
+function hideContexts(){document.querySelectorAll('.context-menu.show').forEach(m=>m.classList.remove('show'))}
+document.addEventListener('click',e=>{if(!e.target.closest('.context-menu'))hideContexts()});
+function boxData(el,rootRect){const r=el.getBoundingClientRect();return{cx:r.left-rootRect.left+r.width/2,cy:r.top-rootRect.top+r.height/2,w:r.width,h:r.height}}
+function edgePoint(a,b){const dx=b.cx-a.cx,dy=b.cy-a.cy;const tx=Math.abs(dx)<.001?Infinity:(a.w/2)/Math.abs(dx);const ty=Math.abs(dy)<.001?Infinity:(a.h/2)/Math.abs(dy);const t=Math.min(tx,ty);return{x:a.cx+dx*t,y:a.cy+dy*t}}
+function drawConnection(svg,root,from,to,label){if(!svg||!root||!from||!to)return;const rr=root.getBoundingClientRect(),a=boxData(from,rr),b=boxData(to,rr),p1=edgePoint(a,b),p2=edgePoint(b,a);const path=document.createElementNS('http://www.w3.org/2000/svg','path');path.setAttribute('class','map-path');path.setAttribute('d',`M ${p1.x.toFixed(1)} ${p1.y.toFixed(1)} L ${p2.x.toFixed(1)} ${p2.y.toFixed(1)}`);svg.appendChild(path);if(label){label.style.left=((p1.x+p2.x)/2)+'px';label.style.top=((p1.y+p2.y)/2)+'px'}}
+function drawSunMap(){requestAnimationFrame(()=>{const root=document.getElementById('sunMap'),svg=document.getElementById('sunSvg');if(!root||!svg)return;svg.querySelectorAll('.map-path').forEach(x=>x.remove());drawConnection(svg,root,document.getElementById('sunNode'),document.getElementById('starNode'),document.getElementById('lblStar'));drawConnection(svg,root,document.getElementById('earthNode'),document.getElementById('sunNode'),document.getElementById('lblEarth'))})}
+window.addEventListener('resize',()=>{drawSunMap();drawEarthMap()});
+/* Activity 1 */
+function r1(){activity.innerHTML=desktop('ennoia');const b=document.getElementById('ennoiaDesk');b.addEventListener('dblclick',()=>{activity.innerHTML=`<div class="aos">${aosTop()}<div class="desktop">${ennoiaWindow({})}</div></div>`;drawSunMap();setFeedback('Σωστά! Το Ennoia άνοιξε και εμφανίζει τον εννοιολογικό χάρτη.',true);advance(1400)})}
+/* Activity 2 */
+function r2(){activity.innerHTML=desktop('ploigos');const b=document.getElementById('ploigosDesk');b.addEventListener('dblclick',()=>{const blank='<div class="search-home"><h2>Ploigos</h2><p style="font-weight:850;color:#687681">Έτοιμο για αναζήτηση στον ιστό.</p></div>';activity.innerHTML=`<div class="aos">${aosTop()}<div class="desktop">${ploigosWindow(blank,'Νέα καρτέλα')}</div></div>`;setFeedback('Το Ploigos άνοιξε. Τώρα μπορείς να αναζητήσεις μια εικόνα.',true);advance(1250)})}
+/* Activity 3 */
+let sunSearchDone=false;
+function r3(){
+ const content=sunSearchDone?`<div class="results"><h3>Αποτελέσματα εικόνων για «ήλιος»</h3><div class="result-card"><div id="sunResultImage">${imageTag(SUN_IMG,'sun')}</div><div><div class="result-title">Ο Ήλιος</div><div class="result-url">Εικονογραφημένο αποτέλεσμα</div><div class="result-text">Εικονογράφηση του Ήλιου κατάλληλη για τον εννοιολογικό χάρτη.</div></div></div></div>`:`<div class="search-home"><h2>Ploigos</h2><div class="search-row"><input class="search-input" id="sunSearch" placeholder="Λέξη-κλειδί"><button class="primary" id="searchBtn">Αναζήτηση</button></div><div class="note">Η πληκτρολόγηση γίνεται από εσένα. Η αντιγραφή και επικόλληση στο πεδίο αναζήτησης είναι απενεργοποιημένη.</div></div>`;
+ activity.innerHTML=`<div class="aos">${aosTop()}<div class="desktop">${ploigosWindow(content,sunSearchDone?'Αποτελέσματα αναζήτησης':'Νέα καρτέλα')}<div class="context-menu" id="ctx"></div></div></div>`;
+ if(!sunSearchDone){const inp=document.getElementById('sunSearch');disableClipboardInput(inp);document.getElementById('searchBtn').onclick=()=>{if(inp.value.trim().toLocaleLowerCase('el-GR')!=='ήλιος')return setFeedback('Χρησιμοποίησε τη λέξη-κλειδί «ήλιος».',false);sunSearchDone=true;r3();setFeedback('Η αναζήτηση ολοκληρώθηκε. Τώρα κάνε δεξί κλικ στην εικόνα.', 'info')}}
+ else{const img=document.getElementById('sunResultImage'),ctx=document.getElementById('ctx');img.addEventListener('contextmenu',e=>{e.preventDefault();const host=ctx.parentElement.getBoundingClientRect();showContext(ctx,'<button id="copyImg">▣ Αντιγραφή εικόνας</button>',e.clientX-host.left,e.clientY-host.top);document.getElementById('copyImg').onclick=ev=>{ev.stopPropagation();virtualClipboard={type:'image',value:SUN_IMG};hideContexts();setFeedback('Η εικόνα αντιγράφηκε. Θα την επικολλήσεις τώρα στην έννοια «Ο Ήλιος».',true);advance(1300)}})}
+}
+/* Activity 4 */
+let sunPasted=false;
+function r4(){activity.innerHTML=`<div class="aos">${aosTop()}<div class="desktop">${ennoiaWindow({image:sunPasted?SUN_IMG:null})}</div></div>`;drawSunMap();if(!sunPasted){const node=document.getElementById('sunNode'),ctx=document.getElementById('ctx');node.addEventListener('contextmenu',e=>{e.preventDefault();const host=ctx.parentElement.getBoundingClientRect();const can=virtualClipboard.type==='image';showContext(ctx,`<button id="pasteImg" ${can?'':'disabled'}>▣ Επικόλληση</button><button disabled>Προσθήκη διεύθυνσης ιστού…</button>`,e.clientX-host.left,e.clientY-host.top);const p=document.getElementById('pasteImg');if(p)p.onclick=ev=>{ev.stopPropagation();if(!can)return;sunPasted=true;hideContexts();r4();setFeedback('Η εικόνα προστέθηκε στην έννοια «Ο Ήλιος».',true);advance(1450)}})}}
+/* Activity 5 */
+let sunImageSelected=false,bgSet=false,fitSet=false,alignSet=false,stylePaletteOpen=false;
+function selectSunImage(e){if(stage!==4)return;e.stopPropagation();sunImageSelected=true;r5();setFeedback('Η εικόνα επιλέχθηκε. Πάτησε τώρα «Στιλ» στη γραμμή εργαλείων.','info')}
+function r5(){activity.innerHTML=`<div class="aos">${aosTop()}<div class="desktop">${ennoiaWindow({image:SUN_IMG,bg:bgSet,fit:fitSet,align:alignSet,styleMode:true,paletteOpen:stylePaletteOpen})}</div></div>`;drawSunMap();const styles=document.getElementById('stylesBtn');if(styles)styles.onclick=()=>{stylePaletteOpen=!stylePaletteOpen;r5();setFeedback(stylePaletteOpen?'Η παλέτα «Στιλ εικόνας» άνοιξε.':'Η παλέτα έκλεισε.','info')};const close=document.getElementById('paletteClose');if(close)close.onclick=()=>{stylePaletteOpen=false;r5()};const bg=document.getElementById('bgAction'),fit=document.getElementById('fitAction'),al=document.getElementById('alignAction');if(bg)bg.onclick=()=>{bgSet=true;r5();setFeedback('Ορισμός ως φόντο: ολοκληρώθηκε.','info')};if(fit)fit.onclick=()=>{fitSet=true;r5();setFeedback('Η εικόνα προσαρμόστηκε σωστά μέσα στο πλαίσιο.','info')};if(al)al.onclick=()=>{alignSet=true;r5();setFeedback('Σωστά! Η εικόνα βρίσκεται πάνω από το κείμενο μέσα στην έννοια.',true);advance(1500)}}
+/* Activity 6 */
+let sunPageOpen=false,sunUrlCopied=false;
+function r6(){
+ const listing=`<div class="results"><h3>Αποτελέσματα για τον Ήλιο</h3><button class="result-card" id="sunPageResult" style="width:100%;text-align:left"><div>${imageTag(SUN_IMG,'sun')}</div><div><div class="result-title">Ο Ήλιος – NASA Science</div><div class="result-url">science.nasa.gov/sun/</div><div class="result-text">Εκπαιδευτική σελίδα με πληροφορίες για τον Ήλιο.</div></div></button></div>`;
+ const page=`<div class="page-hero"><div>${imageTag(SUN_IMG,'sun')}</div><div><span class="page-chip">NASA Science</span><h2>Ο Ήλιος</h2><p>Ο Ήλιος είναι το άστρο στο κέντρο του ηλιακού μας συστήματος. Σε αυτή την προσομοίωση η σελίδα χρησιμοποιείται ως εξωτερική πηγή για τον εννοιολογικό χάρτη.</p></div></div>`;
+ activity.innerHTML=`<div class="aos">${aosTop()}<div class="desktop">${ploigosWindow(sunPageOpen?page:listing,sunPageOpen?SUN_URL:'Αποτελέσματα αναζήτησης')}</div></div>`;
+ if(!sunPageOpen){document.getElementById('sunPageResult').onclick=()=>{sunPageOpen=true;r6();setFeedback('Η σελίδα άνοιξε. Κάνε κλικ στη γραμμή διεύθυνσης και πάτησε Ctrl+C.','info')}}else{const bar=document.getElementById('addressBar');bar.addEventListener('click',()=>bar.select());bar.addEventListener('focus',()=>bar.select());bar.addEventListener('keydown',e=>{if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='c'){e.preventDefault();virtualClipboard={type:'url',value:SUN_URL};sunUrlCopied=true;setFeedback('Η διεύθυνση αντιγράφηκε.',true);advance(1200)}})}
+}
+/* Activity 7 */
+let sunDialog=false,sunUrlPasted=false,sunLinkName='',sunLinkSaved=false;
+function linkDialogHtml(kind){const isEarth=kind==='earth';const p=isEarth?finalEarthUrlPasted:sunUrlPasted;const n=isEarth?finalEarthName:sunLinkName;return `<div class="link-dialog" id="linkDialog"><div class="dialog-title">Προσθήκη διεύθυνσης ιστού</div><div class="dialog-body"><div class="field"><label>Διεύθυνση ιστού</label><input id="urlField" value="${p?escapeAttr(isEarth?EARTH_URL:SUN_URL):''}" readonly placeholder="Πάτησε Ctrl+V"><div class="dialog-tip">Χρησιμοποίησε Ctrl+V για επικόλληση της αντιγραμμένης διεύθυνσης.</div></div><div class="field"><label>Όνομα πηγής</label><input id="nameField" value="${escapeAttr(n)}" placeholder="Γράψε έναν τίτλο" maxlength="28"><div class="dialog-tip">Η αντιγραφή/επικόλληση στο πεδίο τίτλου είναι απενεργοποιημένη.</div></div><div class="dialog-actions"><button class="secondary-btn" id="cancelLink">Άκυρο</button><button class="primary" id="saveLink">Αποθήκευση</button></div></div></div>`}
+function bindSunLinkDialog(){const u=document.getElementById('urlField'),n=document.getElementById('nameField');if(!u||!n)return;disableClipboardInput(n);u.addEventListener('keydown',e=>{if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='v'){e.preventDefault();if(virtualClipboard.type==='url'){sunUrlPasted=true;r7();setFeedback('Η διεύθυνση επικολλήθηκε. Γράψε τώρα έναν τίτλο πηγής.','info')}}});n.addEventListener('input',()=>sunLinkName=n.value);document.getElementById('cancelLink').onclick=()=>{sunDialog=false;r7()};document.getElementById('saveLink').onclick=()=>{sunLinkName=document.getElementById('nameField').value.trim();if(!sunUrlPasted)return setFeedback('Επικόλλησε πρώτα τη διεύθυνση ιστού με Ctrl+V.',false);if(!sunLinkName)return setFeedback('Γράψε έναν σύντομο τίτλο για την πηγή.',false);sunLinkSaved=true;sunDialog=false;r7();setFeedback('Σωστά! Η έννοια «Ο Ήλιος» έχει τώρα εικόνα και υπερσύνδεσμο.',true);advance(1500)}}
+function r7(){activity.innerHTML=`<div class="aos">${aosTop()}<div class="desktop">${ennoiaWindow({image:SUN_IMG,bg:true,fit:true,align:true,link:sunLinkSaved,linkName:sunLinkName,dialog:sunDialog})}</div></div>`;drawSunMap();if(sunDialog){bindSunLinkDialog();return}const node=document.getElementById('sunNode'),ctx=document.getElementById('ctx');node.addEventListener('contextmenu',e=>{e.preventDefault();const host=ctx.parentElement.getBoundingClientRect();showContext(ctx,'<button disabled>▣ Επικόλληση</button><button id="addUrl">🔗 Προσθήκη διεύθυνσης ιστού…</button>',e.clientX-host.left,e.clientY-host.top);document.getElementById('addUrl').onclick=ev=>{ev.stopPropagation();sunDialog=true;hideContexts();r7()}})}
+/* Activity 8 */
+function openSunLink(e){if(stage!==7)return;e.stopPropagation();const page=`<div class="page-hero"><div>${imageTag(SUN_IMG,'sun')}</div><div><span class="page-chip">Άνοιγμα από υπερσύνδεσμο Ennoia</span><h2>${escapeHtml(sunLinkName||'Ήλιος')}</h2><p>Ο υπερσύνδεσμος άνοιξε στο Ploigos, όπως συμβαίνει όταν μια έννοια συνδέεται με εξωτερική ιστοσελίδα.</p><div class="source-credit">Διεύθυνση: ${SUN_URL}</div></div></div>`;activity.innerHTML=`<div class="aos">${aosTop()}<div class="desktop">${ploigosWindow(page,SUN_URL)}</div></div>`;setFeedback('Ο υπερσύνδεσμος λειτουργεί και άνοιξε στο Ploigos.',true);advance(1800)}
+function r8(){activity.innerHTML=`<div class="aos">${aosTop()}<div class="desktop">${ennoiaWindow({image:SUN_IMG,bg:true,fit:true,align:true,link:true,linkName:sunLinkName||'Ήλιος'})}</div></div>`;drawSunMap()}
+/* Activity 9 final mission */
+let missionTab='ploigos',finalEarthImgCopied=false,finalEarthPasted=false,finalEarthUrlCopied=false,finalEarthDialog=false,finalEarthUrlPasted=false,finalEarthName='',finalEarthLinked=false;
+function missionChecklist(){return `<div class="mission-checklist"><h4>Συνολική δοκιμή</h4><div class="mission-check ${finalEarthImgCopied?'done':''}">Αντιγραφή εικόνας</div><div class="mission-check ${finalEarthPasted?'done':''}">Επικόλληση στο Ennoia</div><div class="mission-check ${finalEarthUrlCopied?'done':''}">Αντιγραφή διεύθυνσης</div><div class="mission-check ${finalEarthLinked?'done':''}">Προσθήκη υπερσυνδέσμου</div></div>`}
+function earthMapBody(){const link=finalEarthLinked?`<button class="link-chip">🔗 ${escapeHtml(finalEarthName||'Γη')}</button>`:'';return `<div class="ennoia-toolbar"><button class="tool-btn">Αρχείο</button><button class="tool-btn">Επεξεργασία</button><button class="tool-btn">▭ Έννοια</button><button class="tool-btn">➜ Σύνδεση</button><button class="tool-btn">Στιλ</button></div><div class="map-wrap"><div class="map-canvas" id="earthMap"><svg class="map-svg" id="earthSvg">${arrowDefs()}</svg><div class="concept-node main-node earth-node" id="earthMain">${finalEarthPasted?`<div class="node-img-wrap show fit-mode">${illustrationMarkup('earth','node-illustration illustration-svg')}</div>`:''}<span class="node-title">Η Γη</span>${link}</div><div class="concept-node left-node" id="planetNode">Πλανήτης</div><div class="concept-node right-node" id="sunFinalNode">Ήλιος</div><div class="map-label" id="earthLbl1">είναι ένας</div><div class="map-label" id="earthLbl2">κινείται γύρω από</div><div class="context-menu" id="finalCtx"></div>${finalEarthDialog?linkDialogHtml('earth'):''}</div><aside class="map-side"><h3>Ennoia</h3><div class="final-side-note">Χρησιμοποίησε δεξί κλικ στην έννοια «Η Γη» για επικόλληση ή για προσθήκη διεύθυνσης ιστού.</div></aside></div>`}
+function drawEarthMap(){requestAnimationFrame(()=>{const root=document.getElementById('earthMap'),svg=document.getElementById('earthSvg');if(!root||!svg)return;svg.querySelectorAll('.map-path').forEach(x=>x.remove());drawConnection(svg,root,document.getElementById('earthMain'),document.getElementById('planetNode'),document.getElementById('earthLbl1'));drawConnection(svg,root,document.getElementById('earthMain'),document.getElementById('sunFinalNode'),document.getElementById('earthLbl2'))})}
+function finalPloigosPane(){const page=`<div class="results"><h3>Πηγή για τη Γη</h3><div class="result-card"><div id="earthResultImage">${imageTag(EARTH_IMG,'earth')}</div><div><div class="result-title">Η Γη – NASA Science</div><div class="result-url">science.nasa.gov/earth/</div><div class="result-text">Χρησιμοποίησε την εικονογραφημένη προεπισκόπηση για την έννοια «Η Γη».</div></div></div><div class="note">Αφού επικολλήσεις την εικόνα στο Ennoia, γύρισε εδώ, κάνε κλικ στη γραμμή διεύθυνσης και πάτησε Ctrl+C.</div></div>`;return ploigosBody(page,EARTH_URL,true)}
+function bindFinalPloigos(){
+  const img=document.getElementById('earthResultImage'),ctx=document.getElementById('missionCtx');
+  if(img){
+    img.addEventListener('contextmenu',e=>{
+      e.preventDefault();
+      const host=document.querySelector('.mission-body').getBoundingClientRect();
+      showContext(ctx,'<button id="copyEarthImg">▣ Αντιγραφή εικόνας</button>',e.clientX-host.left,e.clientY-host.top);
+      document.getElementById('copyEarthImg').onclick=ev=>{
+        ev.stopPropagation();
+        virtualClipboard={type:'image',value:EARTH_IMG};
+        finalEarthImgCopied=true;
+        hideContexts();
+        r9();
+        setFeedback('Η εικόνα της Γης αντιγράφηκε. Άλλαξε τώρα στο Ennoia και επικόλλησέ την.','info');
+      };
+    });
+  }
+
+  const bar=document.getElementById('addressBar');
+  if(!bar)return;
+
+  const selectAddress=()=>{
+    bar.focus();
+    bar.select();
+    bar.dataset.copyReady='true';
+  };
+
+  const copyEarthAddress=e=>{
+    if(e){
+      e.preventDefault();
+      e.stopPropagation();
+    }
+    if(!finalEarthPasted){
+      setFeedback('Πρώτα επικόλλησε την εικόνα στο Ennoia και μετά αντέγραψε τη διεύθυνση.',false);
+      return;
+    }
+    virtualClipboard={type:'url',value:EARTH_URL};
+    finalEarthUrlCopied=true;
+    try{
+      if(e&&e.clipboardData)e.clipboardData.setData('text/plain',EARTH_URL);
+    }catch(_){ }
+    bar.dataset.copyReady='false';
+    setFeedback('Η διεύθυνση της σελίδας αντιγράφηκε. Άλλαξε στο Ennoia για να την προσθέσεις.','info');
+  };
+
+  bar.addEventListener('click',selectAddress);
+  bar.addEventListener('focus',()=>{bar.select();bar.dataset.copyReady='true'});
+  bar.addEventListener('copy',copyEarthAddress);
+  bar.addEventListener('keydown',e=>{
+    if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='c')copyEarthAddress(e);
+  });
+
+  const missionShell=bar.closest('.mission-shell');
+  if(missionShell){
+    missionShell.addEventListener('keydown',e=>{
+      if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='c' && (document.activeElement===bar||bar.dataset.copyReady==='true')){
+        copyEarthAddress(e);
+      }
+    },true);
+  }
+}
+function bindFinalEnnoia(){
+  drawEarthMap();
+
+  if(finalEarthDialog){
+    const u=document.getElementById('urlField');
+    const n=document.getElementById('nameField');
+    if(!u||!n)return;
+    disableClipboardInput(n);
+
+    u.addEventListener('keydown',e=>{
+      if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='v'){
+        e.preventDefault();
+        if(virtualClipboard.type==='url'){
+          finalEarthUrlPasted=true;
+          r9();
+          setFeedback('Η διεύθυνση επικολλήθηκε. Γράψε έναν τίτλο πηγής.','info');
+        }
+      }
+    });
+
+    n.addEventListener('input',()=>{finalEarthName=n.value});
+
+    document.getElementById('cancelLink').onclick=()=>{
+      finalEarthDialog=false;
+      r9();
+    };
+
+    document.getElementById('saveLink').onclick=()=>{
+      finalEarthName=document.getElementById('nameField').value.trim();
+      if(!finalEarthUrlPasted)return setFeedback('Επικόλλησε τη διεύθυνση με Ctrl+V.',false);
+      if(!finalEarthName)return setFeedback('Γράψε έναν σύντομο τίτλο πηγής.',false);
+      finalEarthLinked=true;
+      finalEarthDialog=false;
+      r9();
+      setFeedback('Μπράβο! Εμπλούτισες την έννοια «Η Γη» με εικόνα και υπερσύνδεσμο.',true);
+      advance(1600);
+    };
+    return;
+  }
+
+  const node=document.getElementById('earthMain');
+  const ctx=document.getElementById('finalCtx');
+  if(!node||!ctx)return;
+
+  node.addEventListener('contextmenu',e=>{
+    e.preventDefault();
+    const host=ctx.parentElement.getBoundingClientRect();
+    const canPaste=virtualClipboard.type==='image'&&!finalEarthPasted;
+    const canLink=virtualClipboard.type==='url'&&finalEarthPasted;
+
+    showContext(
+      ctx,
+      `<button id="pasteEarth" ${canPaste?'':'disabled'}>▣ Επικόλληση</button><button id="addEarthUrl" ${canLink?'':'disabled'}>🔗 Προσθήκη διεύθυνσης ιστού…</button>`,
+      e.clientX-host.left,
+      e.clientY-host.top
+    );
+
+    const paste=document.getElementById('pasteEarth');
+    if(paste)paste.onclick=ev=>{
+      ev.stopPropagation();
+      if(!canPaste)return;
+      finalEarthPasted=true;
+      hideContexts();
+      r9();
+      setFeedback('Η εικόνα επικολλήθηκε. Γύρισε στο Ploigos και αντέγραψε τώρα τη διεύθυνση της σελίδας.','info');
+    };
+
+    const addUrl=document.getElementById('addEarthUrl');
+    if(addUrl)addUrl.onclick=ev=>{
+      ev.stopPropagation();
+      if(!canLink)return;
+      finalEarthDialog=true;
+      hideContexts();
+      r9();
+    };
+  });
+}
+function r9(){const pane=missionTab==='ploigos'?`<div class="mission-pane">${finalPloigosPane()}</div>`:`<div class="mission-pane">${earthMapBody()}</div>`;activity.innerHTML=`<div class="mission-shell"><div class="mission-top"><span>AthenaOS · Εργασία εφαρμογών</span><span>Ennoia + Ploigos</span></div><div class="mission-tabs"><button class="mission-tab ${missionTab==='ploigos'?'active':''}" id="tabPloigos">${ploigosIcon('title-icon')} Ploigos</button><button class="mission-tab ${missionTab==='ennoia'?'active':''}" id="tabEnnoia">${ennoiaIcon('title-icon')} Ennoia</button></div><div class="mission-body">${pane}${missionChecklist()}<div class="context-menu" id="missionCtx"></div></div></div>`;document.getElementById('tabPloigos').onclick=()=>{missionTab='ploigos';r9()};document.getElementById('tabEnnoia').onclick=()=>{missionTab='ennoia';r9()};if(missionTab==='ploigos')bindFinalPloigos();else bindFinalEnnoia()}
+/* Activity 10 self assessment */
+const selfObjective='Να εμπλουτίζω έναν εννοιολογικό χάρτη με εικόνες και υπερσυνδέσμους.';
+const levels=['Χρειάζομαι βοήθεια','Έχω καταλάβει αλλά έχω απορίες','Έχω καταλάβει αρκετά καλά','Έχω καταλάβει και μπορώ να εξηγήσω'];let selfSel=null;
+function r10(){activity.innerHTML=`<div class="self-wrap"><div class="self-table"><div class="self-head">Τι έμαθα;</div>${levels.map(x=>`<div class="self-head">${x}</div>`).join('')}<div class="self-objective">${selfObjective}</div>${levels.map((l,col)=>`<button class="self-cell ${selfSel===col?'selected':''}" onclick="pickSelf(${col},this)">${l}</button>`).join('')}</div><div class="self-note">Επίλεξε το επίπεδο που σε περιγράφει καλύτερα. Η αυτοαξιολόγηση δεν έχει σωστή ή λάθος απάντηση.</div><div class="finish-actions"><button class="primary" id="finishBtn" onclick="finishLesson()" ${selfSel===null?'disabled':''}>Ολοκλήρωση</button><button class="secondary-btn" onclick="restart()">↻ Επανάληψη δραστηριότητας</button></div></div>`}
+function pickSelf(col,el){selfSel=selfSel===col?null:col;document.querySelectorAll('.self-cell').forEach(x=>x.classList.remove('selected'));if(selfSel!==null)el.classList.add('selected');document.getElementById('finishBtn').disabled=selfSel===null;if(selfSel!==null){completed.add(9);updateProgress();setFeedback('Η αυτοαξιολόγηση ολοκληρώθηκε. Μπορείς να ολοκληρώσεις το μάθημα.',true)}else clearFeedback()}
+function finishLesson(){if(selfSel===null)return setFeedback('Διάλεξε ένα επίπεδο αυτοαξιολόγησης.',false);completed.add(9);finished=true;updateProgress();setFeedback('Μπράβο! Ολοκλήρωσες το Μάθημα 19.',true);setTimeout(render,650)}
+function renderCompletion(){kicker.textContent='ΟΛΟΚΛΗΡΩΣΗ';stageTitle.textContent='Μπράβο!';instruction.textContent='Ολοκλήρωσες το Μάθημα 19: Προσθέτω εικόνες και συνδέσεις στον εννοιολογικό μου χάρτη.';activity.innerHTML=`<div class="completion"><span class="badge">Ενότητα 3 · Μάθημα 19</span><h2>Εικόνες και υπερσύνδεσμοι στο Ennoia</h2><p>Χρησιμοποίησες το Ploigos για να βρεις εικόνες και διευθύνσεις ιστού και το Ennoia για να εμπλουτίσεις έννοιες με εικόνες και υπερσυνδέσμους.</p><button class="secondary-btn" onclick="restart()">↻ Επανάληψη δραστηριότητας</button></div>`;clearFeedback()}
+function initAll(){stage=0;transitioning=false;finished=false;completed=new Set();virtualClipboard={type:null,value:null};sunSearchDone=false;sunPasted=false;sunImageSelected=false;bgSet=false;fitSet=false;alignSet=false;stylePaletteOpen=false;sunPageOpen=false;sunUrlCopied=false;sunDialog=false;sunUrlPasted=false;sunLinkName='';sunLinkSaved=false;missionTab='ploigos';finalEarthImgCopied=false;finalEarthPasted=false;finalEarthUrlCopied=false;finalEarthDialog=false;finalEarthUrlPasted=false;finalEarthName='';finalEarthLinked=false;selfSel=null}
+function restart(){initAll();render()}
+const renderers=[r1,r2,r3,r4,r5,r6,r7,r8,r9,r10];
+function render(){clearFeedback();updateProgress();if(finished){renderCompletion();window.scrollTo({top:0,behavior:'smooth'});return}const s=ACTIVITIES[stage];kicker.textContent='Δραστηριότητα '+(stage+1);stageTitle.textContent=s.t;instruction.textContent=s.i;renderers[stage]();window.scrollTo({top:0,behavior:'smooth'});if(stage===3||stage===4||stage===6||stage===7)drawSunMap();if(stage===8&&missionTab==='ennoia')drawEarthMap()}
+initAll();render();
+</script>
+
+<footer class="nk-license" aria-label="Πληροφορίες δημιουργού και άδειας χρήσης">
+  <div><strong>Created by Nikos Kalakos · © 2026</strong></div>
+  <div>Original educational content and simulation design licensed under <a class="cc-badge" href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank" rel="license noopener noreferrer">CC BY-NC 4.0</a>.</div>
+  <div>Source code © 2026 Nikos Kalakos.</div>
+  <div>Third-party and textbook materials remain subject to the rights and licences of their respective copyright holders.</div>
+</footer>
+</body>
+</html>

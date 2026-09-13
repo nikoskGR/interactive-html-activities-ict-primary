@@ -1,0 +1,326 @@
+<!--
+ICT Educational Simulation
+Created by Nikos Kalakos
+Copyright © 2026 Nikos Kalakos
+
+Original educational content and simulation design licensed under CC BY-NC 4.0.
+Source code © 2026 Nikos Kalakos.
+Third-party and textbook materials remain subject to the rights and licences of their respective copyright holders.
+-->
+<!doctype html>
+<html lang="el">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="author" content="Nikos Kalakos">
+<meta name="copyright" content="© 2026 Nikos Kalakos">
+<meta name="license" content="Original educational content and simulation design: CC BY-NC 4.0; source code © 2026 Nikos Kalakos; third-party and textbook materials excluded.">
+<title>Μάθημα 21 - Διάκριση αποτελεσμάτων αναζήτησης και αξιολόγηση διαδικτυακού περιεχομένου</title>
+<style>
+:root{
+  --unit:#BC1930;--unit-dark:#921226;--unit-soft:#FFF0F3;
+  --secondary:#545F99;--secondary-dark:#3E487C;--secondary-soft:#EEF0FA;
+  --ink:#24334A;--muted:#687487;--line:#D4DBE6;--panel:#FFFFFF;
+  --ok:#147A54;--ok-soft:#E9F8F2;--bad:#B7505F;--bad-soft:#FFF0F2;
+  --info:#355B87;--info-soft:#EEF5FC;--shadow:0 12px 30px rgba(31,43,68,.14);
+  --aos-bg:#E9ECFA;--aos-bar:#3F497E;--browser-bg:#F7F8FB;--gold:#E99A27;
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{font-family:Arial,"Noto Sans",sans-serif;background:#F7F8FB;color:var(--ink)}
+button,input{font:inherit}button{cursor:pointer}button:disabled{cursor:not-allowed;opacity:.56}
+.app{max-width:1300px;margin:auto;padding:16px}
+.top{display:grid;grid-template-columns:1fr auto;gap:16px;align-items:center;background:#fff;border:2px solid #E0E4ED;border-radius:22px;padding:16px 20px;box-shadow:var(--shadow)}
+.top h1{margin:0;font-size:clamp(25px,3.4vw,39px);line-height:1.12}.subtitle{margin:7px 0 0;font-weight:900;color:var(--unit);font-size:18px}
+.athena-brand-mini{display:flex;align-items:center;gap:9px;font-weight:950;color:var(--secondary-dark);font-size:18px}.owl-logo{width:64px;height:58px}.owl-logo svg{width:100%;height:100%;display:block}
+.progress-card{margin:14px 0;background:#fff;border:2px solid #E0E4ED;border-radius:20px;padding:12px 14px;box-shadow:0 7px 20px rgba(39,48,74,.08)}
+.progress-top{display:flex;justify-content:space-between;gap:10px;font-weight:900;color:#596579}.progress-track{height:11px;background:#E8EBF2;border-radius:20px;overflow:hidden;margin:9px 0 11px}.progress-fill{height:100%;background:var(--unit);width:0;transition:.3s}
+.dots{display:flex;justify-content:center;gap:8px;flex-wrap:wrap}.dot{width:36px;height:36px;border-radius:50%;border:2px solid #ADB6C5;background:#fff;color:#697487;display:grid;place-items:center;font-weight:950;line-height:1}.dot.active{background:var(--secondary);border-color:var(--secondary);color:#fff;transform:scale(1.08)}.dot.done{background:var(--unit);border-color:var(--unit-dark);color:#fff}
+.panel{background:#fff;border:2px solid #E0E4ED;border-radius:24px;padding:clamp(16px,2.6vw,28px);min-height:690px;box-shadow:var(--shadow)}
+.stage-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;flex-wrap:wrap}.kicker{font-size:14px;font-weight:950;letter-spacing:.06em;color:var(--unit);text-transform:uppercase}.stage-title{margin:4px 0 0;font-size:clamp(26px,3.4vw,39px)}
+.help{border:2px solid #D9B5BC;background:#FFF5F7;color:#7A2533;border-radius:14px;padding:10px 16px;font-weight:950}.instruction{max-width:1040px;margin:14px auto 18px;text-align:center;font-size:clamp(18px,2vw,23px);line-height:1.42;font-weight:850}
+.feedback{display:none;max-width:900px;margin:16px auto 0;border-radius:16px;padding:13px 17px;text-align:center;font-weight:900;font-size:18px}.feedback.good{display:block;background:var(--ok-soft);color:#0C6243;border:2px solid #79C9AB}.feedback.bad{display:block;background:var(--bad-soft);color:#853846;border:2px solid #E2A4AE}.feedback.info{display:block;background:var(--info-soft);color:#2F587E;border:2px solid #ABC5DF}
+.primary,.secondary-btn{border:0;border-radius:13px;padding:11px 18px;font-weight:950}.primary{background:var(--unit);color:#fff}.secondary-btn{background:#EFF2F7;color:#3D4A60;border:2px solid #CBD3DF}.center{display:block;margin:15px auto 0}
+/* AthenaOS */
+.aos{max-width:1180px;margin:12px auto;border:4px solid var(--secondary-dark);border-radius:18px;overflow:hidden;background:var(--aos-bg);box-shadow:0 18px 38px rgba(33,41,60,.18);position:relative}.aos-top{height:45px;background:linear-gradient(135deg,var(--secondary-dark),var(--secondary));color:#fff;display:flex;align-items:center;justify-content:space-between;padding:0 14px;font-weight:950}.aos-brand{display:flex;align-items:center;gap:9px}.aos-status{display:flex;gap:12px;font-size:13px;align-items:center}.owl-mini{width:31px;height:31px;display:block}
+.desktop{position:relative;min-height:560px;padding:30px;background:radial-gradient(circle at 78% 18%,rgba(255,255,255,.72),transparent 27%),linear-gradient(135deg,#E7EAFB,#F6F0F6 65%,#EEF3FA)}.desktop-grid{display:grid;grid-template-columns:repeat(2,110px);gap:18px;width:max-content}.desktop-app{min-height:104px;border:2px solid transparent;border-radius:13px;background:transparent;color:var(--ink);display:grid;place-items:center;text-align:center;font-weight:900;padding:8px}.desktop-app:hover,.desktop-app.selected{background:rgba(255,255,255,.64);border-color:#BEC6D8}.app-icon{width:54px;height:54px}.app-name{font-size:14px}.desktop-note{position:absolute;left:190px;right:190px;bottom:34px;border:2px solid #D4DAE7;background:rgba(255,255,255,.9);border-radius:13px;padding:12px;text-align:center;font-weight:850;color:#596579}
+/* browser */
+.window{position:relative;margin:8px;border:2px solid #A8B2C7;border-radius:14px;background:#fff;overflow:hidden;box-shadow:0 11px 25px rgba(34,43,66,.18)}.win-title{height:42px;background:#EDF0F6;border-bottom:1px solid #D4DAE5;display:flex;align-items:center;justify-content:space-between;padding:0 11px 0 13px;font-weight:950;color:#36425D}.win-title-left{display:flex;align-items:center;gap:8px}.title-icon{width:28px;height:28px}.win-controls{display:flex;gap:7px}.win-control{width:27px;height:27px;border:0;border-radius:50%;background:#DDE2EC;color:#3F4960;font-weight:900}.win-control.close{background:#F1D3D8;color:#8F2D3A}
+.browser-toolbar{min-height:48px;border-bottom:1px solid #D6DCE6;background:#F8F9FB;display:flex;align-items:center;gap:7px;padding:6px 8px;position:relative}.nav-btn,.reload-btn{height:34px;min-width:36px;border:1px solid #C5CEDC;background:#fff;border-radius:9px;font-weight:950;color:#48566D}.address{flex:1;min-width:120px;height:36px;border:1px solid #BAC5D4;background:#fff;border-radius:10px;padding:0 12px;color:#45526A}.browser-page{min-height:445px;background:#fff;position:relative;overflow:auto}.page-inner{padding:20px 24px}
+.search-home{max-width:880px;margin:0 auto;padding:42px 22px;text-align:center}.search-logo{font-size:40px;font-weight:950;color:var(--secondary);margin-bottom:17px}.search-row{display:flex;gap:8px;max-width:720px;margin:auto}.search-input{flex:1;height:46px;border:2px solid #BBC6D5;border-radius:13px;padding:0 14px;font-size:18px}.search-note{max-width:740px;margin:14px auto 0;border:2px solid #D8DEE7;border-radius:12px;background:#FAFBFD;padding:10px 12px;font-weight:800;color:#5C687A}
+.results{max-width:930px;margin:auto;padding:18px 24px}.results h3{margin:0 0 12px}.result-card{position:relative;border:2px solid #DCE2EA;border-radius:15px;padding:13px 15px;margin:10px 0;background:#fff;text-align:left;width:100%;color:inherit}.result-card.selectable{cursor:pointer}.result-card.selectable:hover{border-color:#AEB8CC}.result-card.selected{background:var(--unit-soft);border-color:var(--unit);padding-bottom:36px;box-shadow:inset 0 0 0 1px var(--unit)}.result-card.selected::after{content:"✓ Επιλεγμένο";position:absolute;left:15px;bottom:9px;font-size:11px;color:var(--unit-dark);font-weight:950}.result-card.correct-flash{border-color:#65B693;background:#F0FBF6}.result-card.wrong-flash{border-color:#DC8B98;background:#FFF3F5}.result-label{display:inline-flex;align-items:center;gap:6px;border-radius:999px;padding:4px 8px;font-size:12px;font-weight:950;margin-bottom:6px}.result-label.sponsored{background:#FFF0D7;color:#73470A;border:1px solid #E8BE78}.result-label.organic{background:#EDF2F8;color:#45566E;border:1px solid #CBD5E0}.result-title{font-size:18px;font-weight:950;color:#2F5388;margin-bottom:4px}.result-url{font-size:13px;color:#56705D;margin-bottom:4px}.result-text{font-size:14px;color:#596678;line-height:1.4}.result-row{display:flex;align-items:flex-start;gap:12px}.result-icon{width:48px;height:48px;border-radius:12px;background:var(--secondary-soft);display:grid;place-items:center;border:1px solid #CDD4E6;flex:0 0 auto}.result-icon svg{width:34px;height:34px}
+.choice-grid{max-width:960px;margin:16px auto;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.choice{position:relative;min-height:95px;border:3px solid #D1D8E2;background:#fff;border-radius:16px;padding:14px;font-weight:900;font-size:17px}.choice.selected{background:var(--unit-soft);border-color:var(--unit);padding-bottom:35px}.choice.selected::after{content:"✓ Επιλεγμένο";position:absolute;left:50%;bottom:8px;transform:translateX(-50%);white-space:nowrap;font-size:11px;color:var(--unit-dark);font-weight:950}
+.tag-task{max-width:960px;margin:14px auto;display:grid;gap:10px}.tag-row{border:2px solid #DCE2EA;border-radius:14px;background:#fff;padding:12px;display:grid;grid-template-columns:1fr auto;gap:12px;align-items:center}.tag-actions{display:flex;gap:7px;flex-wrap:wrap}.tag-btn{border:2px solid #C7D0DD;background:#fff;border-radius:10px;padding:8px 11px;font-weight:900;color:#45536A}.tag-btn.selected{background:var(--secondary-soft);border-color:var(--secondary);color:var(--secondary-dark);box-shadow:inset 0 -22px 0 rgba(84,95,153,.04)}.tag-btn.selected::before{content:"✓ ";font-weight:950}
+/* page evaluation */
+.eval-layout{max-width:1080px;margin:14px auto;display:grid;grid-template-columns:1.6fr .8fr;gap:15px}.site{border:2px solid #C9D2DF;border-radius:16px;overflow:hidden;background:#fff;box-shadow:0 8px 20px rgba(34,43,66,.08)}.site-head{background:linear-gradient(135deg,var(--secondary-dark),var(--secondary));color:#fff;padding:15px 17px;display:flex;align-items:center;justify-content:space-between;gap:12px}.site-brand{display:flex;align-items:center;gap:10px;font-weight:950;font-size:18px}.site-mark{width:48px;height:48px;border-radius:12px;background:#fff;display:grid;place-items:center}.site-mark svg{width:38px;height:38px}.site-nav{display:flex;gap:8px;flex-wrap:wrap;background:#F3F5F9;border-bottom:1px solid #D8DEE8;padding:8px 12px}.site-nav button{border:1px solid #C7D0DD;background:#fff;border-radius:8px;padding:7px 10px;font-weight:850}.site-content{padding:18px}.site-hero{border:2px solid #E0E4EB;border-radius:14px;background:#FAFBFD;padding:16px}.site-hero h3{margin:0 0 7px}.contact-card{margin-top:13px;border:2px solid #D9DFE8;border-radius:13px;padding:12px;background:#fff}.contact-card strong{display:block;margin-bottom:6px}.criterion-panel{border:2px solid #D8DEE8;border-radius:16px;background:#FBFCFE;padding:13px}.criterion-panel h3{margin:0 0 10px}.criterion{position:relative;width:100%;border:2px solid #C9D1DE;border-radius:12px;background:#fff;padding:11px 12px;margin:8px 0;text-align:left;font-weight:900;color:#3E4D65}.criterion.done{background:var(--ok-soft);border-color:#76BFA4;color:#135F45;padding-left:38px}.criterion.done::before{content:"✓";position:absolute;left:13px;top:50%;transform:translateY(-50%);font-weight:950}.criterion-detail{display:none;margin:5px 0 10px;border-radius:10px;padding:10px;background:#F0F3F8;color:#526177;font-weight:800;line-height:1.4}.criterion-detail.show{display:block}
+.compare-sites{max-width:1080px;margin:15px auto;display:grid;grid-template-columns:1fr 1fr;gap:14px}.site-card{position:relative;border:3px solid #D2D9E3;border-radius:17px;background:#fff;padding:15px;min-height:275px}.site-card.selectable{cursor:pointer}.site-card.selected{border-color:var(--unit);background:var(--unit-soft);padding-bottom:39px}.site-card.selected::after{content:"✓ Επιλεγμένο";position:absolute;left:50%;bottom:10px;transform:translateX(-50%);font-size:11px;font-weight:950;color:var(--unit-dark)}.site-mini-head{font-weight:950;font-size:19px;color:var(--secondary-dark);margin-bottom:10px}.mini-nav{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px}.mini-nav span{border:1px solid #CFD6E0;border-radius:7px;padding:5px 7px;background:#F8F9FB;font-size:12px;font-weight:850}.mini-section{border:1px solid #DCE1E8;border-radius:10px;padding:10px;margin-top:8px;font-size:14px}.ad-clutter{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin:10px 0}.ad-box{border:2px dashed #D89858;background:#FFF5E7;border-radius:9px;padding:8px;text-align:center;font-weight:850;font-size:12px}
+
+/* evidence identification inside webpages */
+.evidence-task{max-width:1080px;margin:14px auto 12px;border:3px solid var(--unit);border-radius:16px;background:var(--unit-soft);padding:12px 15px;display:flex;align-items:center;gap:11px;flex-wrap:wrap;box-shadow:0 6px 15px rgba(76,35,48,.08)}
+.evidence-task strong{font-size:17px}.evidence-task .task-note{color:#657087;font-weight:800;font-size:14px}.criterion-pill{display:inline-flex;align-items:center;border-radius:999px;background:var(--unit);color:#fff;padding:6px 11px;font-size:13px;font-weight:950;white-space:nowrap}
+.evidence-zone{position:relative;cursor:pointer;transition:border-color .16s,box-shadow .16s,background .16s;outline:none}
+.evidence-zone:hover,.evidence-zone:focus-visible{box-shadow:inset 0 0 0 3px rgba(188,25,48,.24);z-index:3}
+.evidence-zone.evidence-found{box-shadow:inset 0 0 0 3px var(--ok);background:#F0FBF6}
+.evidence-badge{position:absolute;right:8px;top:8px;z-index:6;border-radius:999px;background:var(--ok);color:#fff;padding:4px 8px;font-size:11px;font-weight:950;box-shadow:0 3px 8px rgba(20,122,84,.2)}
+.site-head.evidence-zone,.site-nav.evidence-zone{position:relative}.site-hero.evidence-zone,.contact-card.evidence-zone{position:relative}
+.webpage-task-shell{max-width:1080px;margin:14px auto}.webpage-task-shell .site{width:100%}
+.evidence-hint{max-width:1080px;margin:10px auto 0;text-align:center;color:#647083;font-weight:800;font-size:14px}
+
+/* final */
+.mission{max-width:1140px;margin:0 auto;border:3px solid var(--secondary-dark);border-radius:18px;overflow:hidden;background:#fff}.mission-top{background:var(--secondary-dark);color:#fff;padding:10px 13px;font-weight:950;display:flex;justify-content:space-between}.mission-checks{display:flex;gap:8px;flex-wrap:wrap;padding:10px;background:#F4F5F9;border-bottom:1px solid #D8DEE8}.mission-chip{border:2px solid #C8D0DD;background:#fff;border-radius:999px;padding:6px 10px;font-weight:850;font-size:13px}.mission-chip.done{background:var(--ok-soft);border-color:#7FC8AC;color:#136244}.mission-body{padding:0 0 10px}.final-criteria{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin:12px 18px}.final-crit{border:2px solid #D0D7E1;border-radius:11px;background:#fff;padding:9px;text-align:center;font-weight:900}.final-crit.done{background:var(--ok-soft);border-color:#7FC8AC;color:#136244}
+/* self */
+.self-wrap{max-width:1180px;margin:10px auto}.self-table{display:grid;grid-template-columns:minmax(260px,1.5fr) repeat(4,minmax(150px,1fr));border:2px solid #D7DDE7;border-radius:16px;overflow:hidden}.self-head{background:#F1F3F8;padding:12px 9px;font-size:13px;font-weight:950;text-align:center;border-right:1px solid #D7DDE7;border-bottom:1px solid #D7DDE7}.self-objective{padding:13px;font-weight:900;border-right:1px solid #D7DDE7;border-bottom:1px solid #D7DDE7}.self-cell{position:relative;min-height:78px;border:0;border-right:1px solid #D7DDE7;border-bottom:1px solid #D7DDE7;background:#fff;padding:10px;font-weight:800;color:#4B586B}.self-cell.selected{background:var(--unit-soft);box-shadow:inset 0 0 0 3px var(--unit);color:var(--unit-dark);padding-bottom:27px}.self-cell.selected::after{content:"✓";position:absolute;bottom:5px;left:50%;transform:translateX(-50%);font-weight:950}.self-note{text-align:center;margin:13px 0;color:#687487;font-weight:800}.finish-actions{display:flex;justify-content:center;gap:10px;flex-wrap:wrap}.completion{max-width:830px;margin:40px auto;text-align:center;padding:28px;border:4px solid var(--unit);border-radius:24px;background:var(--unit-soft)}.badge{display:inline-block;background:var(--secondary);color:#fff;border-radius:999px;padding:7px 11px;font-weight:950}.completion h2{font-size:34px;margin:15px 0 9px}
+/* modal */
+.modal{position:fixed;inset:0;background:rgba(22,31,50,.58);display:none;align-items:center;justify-content:center;padding:18px;z-index:100}.modal.show{display:flex}.modal-box{max-width:700px;background:#fff;border:4px solid var(--unit);border-radius:23px;padding:23px;box-shadow:var(--shadow);text-align:center}.modal-box h3{margin:0 0 10px;font-size:29px}.modal-box p{font-size:21px;line-height:1.45}.modal-actions{display:flex;justify-content:center;gap:10px;flex-wrap:wrap}
+@media(max-width:900px){.top{grid-template-columns:1fr}.athena-brand-mini{display:none}.desktop-note{left:35px;right:35px}.choice-grid,.eval-layout,.compare-sites{grid-template-columns:1fr}.tag-row{grid-template-columns:1fr}.final-criteria{grid-template-columns:1fr}.self-table{grid-template-columns:minmax(220px,1.2fr) repeat(4,minmax(120px,1fr));overflow:auto}}
+</style>
+
+<style id="nk-license-style">
+.nk-license{max-width:1100px;margin:14px auto 24px;padding:10px 16px;text-align:center;font:13px/1.45 Arial,"Noto Sans",sans-serif;color:#4e657c}
+.nk-license a{color:inherit;text-decoration:underline;text-underline-offset:2px}
+.nk-license .cc-badge{display:inline-block;margin:0 4px;padding:2px 7px;border:1px solid #8aa0b8;border-radius:6px;background:#fff;font-weight:700;white-space:nowrap}
+</style>
+</head>
+<body>
+<main class="app">
+<header class="top"><div><h1>Διάκριση αποτελεσμάτων αναζήτησης<br>Εφαρμογή κριτηρίων αξιολόγησης διαδικτυακού περιεχομένου</h1><p class="subtitle">Μάθημα 21</p></div><div class="athena-brand-mini"><div class="owl-logo" id="topOwl"></div><span>AthenaOS</span></div></header>
+<section class="progress-card"><div class="progress-top"><span id="progressLabel"></span><span id="counter"></span></div><div class="progress-track"><div class="progress-fill" id="progressFill"></div></div><div class="dots" id="dots"></div></section>
+<section class="panel"><div class="stage-head"><div><div class="kicker" id="kicker"></div><h2 class="stage-title" id="stageTitle"></h2></div><button class="help" onclick="openHelp()">❔ Βοήθεια</button></div><p class="instruction" id="instruction"></p><div id="activity"></div><div class="feedback" id="feedback"></div></section>
+</main>
+<div class="modal" id="helpModal"><div class="modal-box"><h3>Βοήθεια</h3><p id="helpText"></p><div class="modal-actions"><button class="secondary-btn" onclick="speakHelp()">🔊 Άκουσε</button><button class="primary" onclick="closeHelp()">Το κατάλαβα</button></div></div></div>
+<script>
+const ACTIVITIES=[
+ {t:'Άνοιξε το Ploigos',i:'Στο AthenaOS άνοιξε τον φυλλομετρητή Ploigos όπως σε έναν συνηθισμένο υπολογιστή.',h:'Κάνε διπλό κλικ στο εικονίδιο Ploigos στην επιφάνεια εργασίας.'},
+ {t:'Κάνε μια αναζήτηση',i:'Στο Ploigos αναζήτησε «δημητριακά πρωινού» και παρατήρησε τη σειρά των αποτελεσμάτων.',h:'Γράψε δημητριακά πρωινού στο πεδίο αναζήτησης και πάτησε Enter ή Αναζήτηση.'},
+ {t:'Ξεχώρισε τα διαφημιζόμενα αποτελέσματα',i:'Κάνε κλικ στα αποτελέσματα που αναγνωρίζεις ως διαφημίσεις.',h:'Πρόσεξε τις λέξεις «Χορηγούμενο» ή «Διαφήμιση» δίπλα σε ένα αποτέλεσμα. Αυτές δείχνουν ότι πρόκειται για διαφημιζόμενο αποτέλεσμα.'},
+ {t:'Sponsored ή Ad',i:'Σε αγγλικό περιβάλλον, διάλεξε ποια αποτελέσματα είναι διαφημίσεις.',h:'Σε αγγλικό φυλλομετρητή μπορεί να συναντήσεις τις ενδείξεις «Sponsored» ή «Ad».'},
+ {t:'Είναι κατάλληλο για αυτό που ψάχνω;',i:'Ψάχνεις πληροφορίες για το πώς να φροντίζεις ένα κατοικίδιο. Επίλεξε το αποτέλεσμα που είναι κατάλληλο για την αναζήτησή σου.',h:'Η καταλληλότητα απαντά στην ερώτηση: οι πληροφορίες ταιριάζουν πραγματικά με αυτό που ψάχνω;'},
+ {t:'Πού φαίνεται η αξιοπιστία;',i:'Στην ιστοσελίδα κάνε κλικ στο σημείο που δείχνει στοιχεία τα οποία βοηθούν να ελέγξεις την αξιοπιστία της.',h:'Το μάθημα προτείνει να προσέχεις αν υπάρχουν στοιχεία όπως διεύθυνση, τηλέφωνο ή email. Εντόπισέ τα πάνω στην ίδια την ιστοσελίδα.'},
+ {t:'Βρες τα στοιχεία αξιολόγησης στη σελίδα',i:'Για κάθε κριτήριο που εμφανίζεται, κάνε κλικ στο σημείο της ιστοσελίδας που το δικαιολογεί.',h:'Για τον Σκοπό βρες τι πληροφορίες προσφέρει η σελίδα. Για τον Σχεδιασμό βρες το σημείο που βοηθά στην πλοήγηση. Για την Αξιοπιστία εντόπισε στοιχεία επικοινωνίας ή ταυτότητας του φορέα.'},
+ {t:'Ποια σελίδα θα επέλεγες;',i:'Εφάρμοσε μαζί τα κριτήρια καταλληλότητας και αξιοπιστίας και επίλεξε την καλύτερη σελίδα για μια σχολική εργασία.',h:'Μια κατάλληλη και αξιόπιστη σελίδα σχετίζεται με το θέμα, έχει καθαρό σκοπό και δίνει στοιχεία για τον φορέα ή την επικοινωνία.'},
+ {t:'Συνολική δοκιμή',i:'Στο Ploigos εντόπισε το μη διαφημιζόμενο αποτέλεσμα. Στη σελίδα που ανοίγει, εντόπισε πάνω στη σελίδα τα στοιχεία που δικαιολογούν τα κριτήρια αξιολόγησης.',h:'Πρώτα ξεχώρισε ποιο αποτέλεσμα δεν είναι διαφήμιση. Μετά, για κάθε κριτήριο που εμφανίζεται, κάνε κλικ στο συγκεκριμένο σημείο της ιστοσελίδας που το δικαιολογεί.'},
+ {t:'Τι έμαθα;',i:'Για κάθε στόχο του μαθήματος διάλεξε το επίπεδο που σε περιγράφει καλύτερα.',h:'Η αυτοαξιολόγηση δεν έχει σωστή ή λάθος απάντηση. Διάλεξε το επίπεδο που περιγράφει καλύτερα τι έχεις καταλάβει.'}
+];
+let stage=0,completed=new Set(),transitioning=false,finished=false;
+const activity=document.getElementById('activity'),feedback=document.getElementById('feedback'),kicker=document.getElementById('kicker'),stageTitle=document.getElementById('stageTitle'),instruction=document.getElementById('instruction');
+function owlLogo(cls=''){return `<svg class="${cls}" viewBox="0 0 100 90" aria-label="AthenaOS"><path d="M14 28 7 6 31 18Q50 6 69 18L93 6 86 28Q94 39 91 55Q87 75 69 83Q50 91 31 83Q13 75 9 55Q6 39 14 28Z" fill="#4D5492" stroke="#323A70" stroke-width="4"/><path d="M11 11Q25 16 39 29L24 27Q15 24 11 11ZM89 11Q75 16 61 29L76 27Q85 24 89 11Z" fill="#7A82C2"/><path d="M18 32Q29 21 44 29Q50 33 50 43Q50 33 56 29Q71 21 82 32Q87 42 81 55Q73 68 58 65Q52 63 50 57Q48 63 42 65Q27 68 19 55Q13 42 18 32Z" fill="#B2B7E6"/><circle cx="33" cy="43" r="14" fill="#fff"/><circle cx="67" cy="43" r="14" fill="#fff"/><circle cx="33" cy="43" r="6" fill="#26314B"/><circle cx="67" cy="43" r="6" fill="#26314B"/><path d="M43 55 50 68 57 55Z" fill="#EA9A21"/><path d="M40 20 50 8 60 20M42 20H58" fill="none" stroke="#fff" stroke-width="5" stroke-linecap="round"/></svg>`}
+function ploigosIcon(cls='app-icon'){return `<svg class="${cls}" viewBox="0 0 90 90" aria-label="Ploigos"><rect x="7" y="7" width="76" height="76" rx="19" fill="#fff" stroke="#545F99" stroke-width="5"/><circle cx="45" cy="45" r="25" fill="#EEF0FA" stroke="#545F99" stroke-width="4"/><path d="M45 22 56 47 45 68 34 47Z" fill="#BC1930" stroke="#8F1224" stroke-width="3"/><circle cx="45" cy="45" r="5" fill="#545F99"/><path d="M45 17V27M45 63V73M17 45H27M63 45H73" stroke="#545F99" stroke-width="3" stroke-linecap="round"/></svg>`}
+function domiIcon(cls='app-icon'){return `<svg class="${cls}" viewBox="0 0 90 90"><path d="M12 25h27l7 8h32v39H12z" fill="#F2A228" stroke="#545F99" stroke-width="5" stroke-linejoin="round"/><path d="M12 36h66" stroke="#B66A12" stroke-width="4"/></svg>`}
+function ennoiaIcon(cls='app-icon'){return `<svg class="${cls}" viewBox="0 0 90 90"><rect x="9" y="9" width="72" height="72" rx="17" fill="#fff" stroke="#545F99" stroke-width="5"/><circle cx="45" cy="28" r="9" fill="#BC1930"/><circle cx="27" cy="59" r="8" fill="#545F99"/><circle cx="63" cy="59" r="8" fill="#545F99"/><path d="M41 35 31 51M49 35 59 51M35 59H55" fill="none" stroke="#545F99" stroke-width="4" stroke-linecap="round"/></svg>`}
+function museumMark(){return `<svg viewBox="0 0 80 80"><path d="M11 29 40 11 69 29Z" fill="#BC1930"/><path d="M17 31h46v7H17zM21 40h8v23h-8zm15 0h8v23h-8zm15 0h8v23h-8zM15 65h50v6H15z" fill="#545F99"/></svg>`}
+function infoIcon(type){if(type==='pet')return `<svg viewBox="0 0 80 80"><circle cx="28" cy="28" r="10" fill="#BC1930"/><circle cx="52" cy="28" r="10" fill="#545F99"/><path d="M22 47q18-18 36 0v18H22z" fill="#F3B148"/><circle cx="34" cy="47" r="3" fill="#fff"/><circle cx="47" cy="47" r="3" fill="#fff"/></svg>`;if(type==='shop')return `<svg viewBox="0 0 80 80"><path d="M15 29h50l-5 38H20z" fill="#F3B148" stroke="#545F99" stroke-width="4"/><path d="M27 29q0-15 13-15t13 15" fill="none" stroke="#BC1930" stroke-width="5"/></svg>`;return `<svg viewBox="0 0 80 80"><rect x="14" y="16" width="52" height="50" rx="10" fill="#EEF0FA" stroke="#545F99" stroke-width="4"/><path d="M25 31h30M25 42h25M25 53h20" stroke="#BC1930" stroke-width="4" stroke-linecap="round"/></svg>`}
+document.getElementById('topOwl').innerHTML=owlLogo();
+function aosTop(){return `<div class="aos-top"><div class="aos-brand">${owlLogo('owl-mini')}<span>AthenaOS</span></div><div class="aos-status"><span>Wi‑Fi</span><span>🔊</span><span>10:30</span></div></div>`}
+function desktop(){return `<div class="aos">${aosTop()}<div class="desktop"><div class="desktop-grid"><button class="desktop-app" id="ploigosDesk">${ploigosIcon()}<span class="app-name">Ploigos</span></button><button class="desktop-app">${domiIcon()}<span class="app-name">Domi</span></button><button class="desktop-app">${ennoiaIcon()}<span class="app-name">Ennoia</span></button></div><div class="desktop-note">Άνοιξε το Ploigos με <b>διπλό κλικ</b>.</div></div></div>`}
+function browserWindow(content,address='Νέα καρτέλα'){return `<div class="window"><div class="win-title"><div class="win-title-left">${ploigosIcon('title-icon')}<span>Ploigos · Φυλλομετρητής</span></div><div class="win-controls"><button class="win-control">—</button><button class="win-control">□</button><button class="win-control close">×</button></div></div><div class="browser-toolbar"><button class="nav-btn">←</button><button class="nav-btn">→</button><button class="reload-btn">↻</button><input class="address" value="${escapeAttr(address)}" readonly aria-label="Γραμμή διεύθυνσης"></div><div class="browser-page">${content}</div></div>`}
+function searchHome(value='',id='searchInput',button='searchBtn'){return `<div class="search-home"><div class="search-logo">Ploigos Search</div><div class="search-row"><input class="search-input" id="${id}" value="${escapeAttr(value)}" placeholder="Λέξεις-κλειδιά"><button class="primary" id="${button}">Αναζήτηση</button></div><div class="search-note">Γράψε τις λέξεις-κλειδιά μόνος/η σου. Η αντιγραφή και επικόλληση είναι απενεργοποιημένες στο πεδίο.</div></div>`}
+function escapeHtml(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+function escapeAttr(s){return escapeHtml(s)}
+function normalize(s){return String(s).toLocaleLowerCase('el-GR').normalize('NFD').replace(/[\u0300-\u036f]/g,'').trim().replace(/\s+/g,' ')}
+function disableClipboardInput(el){if(!el)return;['paste','copy','cut','drop'].forEach(ev=>el.addEventListener(ev,e=>e.preventDefault()));el.addEventListener('contextmenu',e=>e.preventDefault());el.setAttribute('autocomplete','off')}
+function setFeedback(t,type){feedback.className='feedback '+(type===true?'good':type===false?'bad':'info');feedback.textContent=t}
+function clearFeedback(){feedback.className='feedback';feedback.textContent=''}
+function updateProgress(){const done=finished;document.getElementById('progressLabel').textContent=done?'Ολοκληρώθηκε':`Δραστηριότητα ${stage+1} από ${ACTIVITIES.length}`;document.getElementById('counter').textContent=done?'100%':`${Math.round((completed.size/ACTIVITIES.length)*100)}%`;document.getElementById('progressFill').style.width=`${done?100:(completed.size/ACTIVITIES.length)*100}%`;document.getElementById('dots').innerHTML=ACTIVITIES.map((_,i)=>`<div class="dot ${done||completed.has(i)?'done':i===stage?'active':''}">${i+1}</div>`).join('')}
+function advance(ms=1100){if(transitioning)return;transitioning=true;completed.add(stage);updateProgress();setTimeout(()=>{stage++;transitioning=false;render()},ms)}
+function openHelp(){document.getElementById('helpText').textContent=ACTIVITIES[Math.min(stage,ACTIVITIES.length-1)].h;document.getElementById('helpModal').classList.add('show')}
+function closeHelp(){document.getElementById('helpModal').classList.remove('show')}
+function speakHelp(){if(!('speechSynthesis' in window))return;window.speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(document.getElementById('helpText').textContent);u.lang='el-GR';u.rate=.86;window.speechSynthesis.speak(u)}
+document.getElementById('helpModal').addEventListener('click',e=>{if(e.target.id==='helpModal')closeHelp()});
+function cerealResults(selectable=false,english=false){const items=english?[
+ {id:'e1',label:'Sponsored',ad:true,title:'Healthy Morning Shop',url:'healthy-morning.example',text:'Buy breakfast cereal online.'},
+ {id:'e2',label:'',ad:false,title:'What makes a balanced breakfast?',url:'nutrition.example/guide',text:'Information about breakfast choices.'},
+ {id:'e3',label:'Ad',ad:true,title:'Crunchy Cereal Store',url:'crunchy.example',text:'Special offers on cereal.'}
+]:[
+ {id:'c1',label:'Χορηγούμενο',ad:true,title:'Τραγανά Δημητριακά - Κατάστημα',url:'shop.example/cereals',text:'Αγόρασε δημητριακά πρωινού και δες τις προσφορές.'},
+ {id:'c2',label:'Διαφήμιση',ad:true,title:'Πρωινό στο σπίτι - ηλεκτρονικό κατάστημα',url:'breakfast-shop.example',text:'Προϊόντα πρωινού με παράδοση.'},
+ {id:'c3',label:'',ad:false,title:'Τι περιλαμβάνει ένα ισορροπημένο πρωινό;',url:'school-health.example/breakfast',text:'Ενημερωτικό άρθρο για το πρωινό και τις ομάδες τροφίμων.'},
+ {id:'c4',label:'',ad:false,title:'Δημητριακά: από το χωράφι στο μπολ',url:'education.example/cereals',text:'Εκπαιδευτικό υλικό για τα δημητριακά.'}
+];
+ return `<div class="results"><h3>Αποτελέσματα αναζήτησης</h3>${items.map(o=>`<button class="result-card ${selectable?'selectable':''} ${selectedResults.has(o.id)?'selected':''}" ${selectable?`data-id="${o.id}"`:''}><div class="result-row"><div class="result-icon">${infoIcon(o.ad?'shop':'page')}</div><div>${o.label?`<div class="result-label sponsored">${o.label}</div>`:''}<div class="result-title">${o.title}</div><div class="result-url">${o.url}</div><div class="result-text">${o.text}</div></div></div></button>`).join('')}</div>`}
+/* 1 */
+function r1(){activity.innerHTML=desktop();const b=document.getElementById('ploigosDesk');b.onclick=()=>b.classList.add('selected');b.ondblclick=()=>{activity.innerHTML=`<div class="aos">${aosTop()}<div class="desktop">${browserWindow(searchHome(),'Νέα καρτέλα')}</div></div>`;setFeedback('Σωστά! Το Ploigos άνοιξε.',true);advance(1200)}}
+/* 2 */
+let search21Done=false,search21Value='';
+function r2(){const content=search21Done?cerealResults(false,false):searchHome(search21Value);activity.innerHTML=`<div class="aos">${aosTop()}<div class="desktop">${browserWindow(content,search21Done?'Αποτελέσματα για: δημητριακά πρωινού':'Νέα καρτέλα')}</div></div>`;if(search21Done)return;const inp=document.getElementById('searchInput');disableClipboardInput(inp);inp.addEventListener('input',()=>search21Value=inp.value);const run=()=>{search21Value=inp.value;if(normalize(search21Value)!=='δημητριακα πρωινου')return setFeedback('Γράψε τις λέξεις-κλειδιά «δημητριακά πρωινού».',false);search21Done=true;r2();setFeedback('Η αναζήτηση ολοκληρώθηκε. Παρατήρησε ότι κάποια αποτελέσματα έχουν ειδική ένδειξη.',true);advance(1800)};document.getElementById('searchBtn').onclick=run;inp.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();run()}})}
+/* 3 */
+let selectedResults=new Set();
+function r3(){
+ activity.innerHTML=`<div class="aos">${aosTop()}<div class="desktop">${browserWindow(cerealResults(true,false),'Αποτελέσματα για: δημητριακά πρωινού')}</div></div>`;
+ const correct=new Set(['c1','c2']);
+ document.querySelectorAll('.result-card.selectable').forEach(b=>b.onclick=()=>{
+   if(transitioning)return;
+   const id=b.dataset.id;
+   if(!correct.has(id)){
+     b.classList.add('wrong-flash');setTimeout(()=>b.classList.remove('wrong-flash'),650);
+     return setFeedback('Αυτό το αποτέλεσμα δεν έχει ένδειξη «Χορηγούμενο» ή «Διαφήμιση». Πρόσεξε την ένδειξη δίπλα στο αποτέλεσμα.',false);
+   }
+   if(selectedResults.has(id)){selectedResults.delete(id);b.classList.remove('selected');return clearFeedback()}
+   selectedResults.add(id);b.classList.add('selected');
+   if([...correct].every(x=>selectedResults.has(x))){
+     document.querySelectorAll('.result-card.selectable').forEach(x=>x.disabled=true);
+     setFeedback('Σωστά! Οι ενδείξεις «Χορηγούμενο» και «Διαφήμιση» σε βοήθησαν να ξεχωρίσεις τα διαφημιζόμενα αποτελέσματα.',true);advance(1500)
+   }else setFeedback('Σωστά. Συνέχισε να εξετάζεις τις ενδείξεις των αποτελεσμάτων.','info');
+ })
+}
+/* 4 */
+let englishSel=new Set();
+function r4(){
+ selectedResults=englishSel;
+ activity.innerHTML=`<div class="aos">${aosTop()}<div class="desktop">${browserWindow(cerealResults(true,true),'Search results')}</div></div>`;
+ const correct=new Set(['e1','e3']);
+ document.querySelectorAll('.result-card.selectable').forEach(b=>b.onclick=()=>{
+   if(transitioning)return;
+   const id=b.dataset.id;
+   if(!correct.has(id)){
+     b.classList.add('wrong-flash');setTimeout(()=>b.classList.remove('wrong-flash'),650);
+     return setFeedback('Αυτό το αποτέλεσμα δεν έχει ένδειξη «Sponsored» ή «Ad».',false);
+   }
+   if(englishSel.has(id)){englishSel.delete(id);b.classList.remove('selected');return clearFeedback()}
+   englishSel.add(id);b.classList.add('selected');
+   if([...correct].every(x=>englishSel.has(x))){
+     document.querySelectorAll('.result-card.selectable').forEach(x=>x.disabled=true);
+     setFeedback('Σωστά! Οι ενδείξεις «Sponsored» και «Ad» χρησιμοποιούνται για διαφημίσεις.',true);advance(1400)
+   }else setFeedback('Σωστά. Συνέχισε να εξετάζεις τις αγγλικές ενδείξεις.','info');
+ })
+}
+/* 5 */
+let suitability=null;
+function suitableResults(){const items=[
+ {id:'guide',title:'Φροντίδα κατοικιδίων - οδηγός για παιδιά',url:'animal-care.example/guide',text:'Πληροφορίες για τροφή, νερό, καθαριότητα και ασφαλή φροντίδα.',icon:'pet'},
+ {id:'shop',title:'Κατάστημα παιχνιδιών για κατοικίδια',url:'pet-shop.example',text:'Προσφορές σε παιχνίδια και αξεσουάρ.',icon:'shop'},
+ {id:'sport',title:'Αποτελέσματα ποδοσφαίρου',url:'sports.example',text:'Αθλητικά νέα και βαθμολογίες.',icon:'page'}];return `<div class="results"><h3>Αναζήτηση: πώς φροντίζω ένα κατοικίδιο</h3>${items.map(o=>`<button class="result-card selectable ${suitability===o.id?'selected':''}" data-id="${o.id}"><div class="result-row"><div class="result-icon">${infoIcon(o.icon)}</div><div><div class="result-title">${o.title}</div><div class="result-url">${o.url}</div><div class="result-text">${o.text}</div></div></div></button>`).join('')}</div>`}
+function r5(){
+ activity.innerHTML=`<div class="aos">${aosTop()}<div class="desktop">${browserWindow(suitableResults(),'Αποτελέσματα αναζήτησης')}</div></div>`;
+ document.querySelectorAll('.result-card.selectable').forEach(b=>b.onclick=()=>{
+   if(transitioning)return;
+   if(b.dataset.id==='guide'){
+     suitability='guide';b.classList.add('selected');document.querySelectorAll('.result-card.selectable').forEach(x=>x.disabled=true);
+     setFeedback('Σωστά! Το αποτέλεσμα απαντά άμεσα στο ερώτημα για τη φροντίδα ενός κατοικιδίου.',true);advance(1400)
+   }else{
+     b.classList.add('wrong-flash');setTimeout(()=>b.classList.remove('wrong-flash'),650);
+     setFeedback('Αυτό το αποτέλεσμα δεν απαντά άμεσα στην πληροφορία που αναζητάς.',false)
+   }
+ })
+}
+/* 6 */
+let reliability=null;
+function reliabilityPage(){
+ return `<div class="webpage-task-shell"><div class="site">
+   <div class="site-head evidence-zone" data-evidence="identity" tabindex="0"><div class="site-brand"><div class="site-mark">${infoIcon('pet')}</div><span>Ζώα στο σπίτι · Οδηγός φροντίδας</span></div><span>animal-care.example</span></div>
+   <div class="site-nav evidence-zone" data-evidence="design" tabindex="0"><button>Αρχική</button><button>Οδηγοί</button><button>Φροντίδα</button><button>Επικοινωνία</button></div>
+   <div class="site-content">
+     <div class="site-hero evidence-zone" data-evidence="purpose" tabindex="0"><h3>Φροντίζω σωστά το κατοικίδιό μου</h3><p>Οδηγίες για τροφή, νερό, καθαριότητα, άσκηση και ασφαλή καθημερινή φροντίδα.</p></div>
+     <div class="contact-card evidence-zone" data-evidence="trust" tabindex="0"><strong>Επικοινωνία</strong><span>Οδός Παραδείγματος 12 · 210 1234567 · info@animal-care.example</span></div>
+   </div>
+ </div></div>`
+}
+function r6(){
+ activity.innerHTML=`<div class="evidence-task"><span class="criterion-pill">Αξιοπιστία</span><strong>Κάνε κλικ στο σημείο της ιστοσελίδας που δίνει στοιχεία επικοινωνίας.</strong><span class="task-note">Η απάντηση βρίσκεται πάνω στην ίδια τη σελίδα.</span></div>${reliabilityPage()}`;
+ const activate=el=>{
+   if(el.dataset.evidence==='trust'){
+     reliability='trust';el.classList.add('evidence-found');el.insertAdjacentHTML('beforeend','<span class="evidence-badge">✓ Αξιοπιστία</span>');
+     document.querySelectorAll('.evidence-zone').forEach(x=>{x.style.pointerEvents='none';x.removeAttribute('tabindex')});
+     setFeedback('Σωστά! Η διεύθυνση, το τηλέφωνο και το email είναι συγκεκριμένα στοιχεία που βοηθούν να ελέγξεις την αξιοπιστία.',true);advance(1500)
+   }else setFeedback('Αυτό το σημείο δίνει άλλου είδους πληροφορία. Εντόπισε τα στοιχεία επικοινωνίας της ιστοσελίδας.',false)
+ };
+ document.querySelectorAll('.evidence-zone').forEach(el=>{el.onclick=()=>activate(el);el.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();activate(el)}}})
+}
+/* 7 */
+let critDone=new Set(),critOpen=null;
+const criterionOrder=['purpose','design','trust'];
+const criterionLabels={purpose:'Σκοπός',design:'Σχεδιασμός',trust:'Αξιοπιστία'};
+const criterionQuestions={purpose:'Πού φαίνεται τι πληροφορίες προσφέρει και γιατί υπάρχει αυτή η σελίδα;',design:'Ποιο σημείο δείχνει ότι οι βασικές ενότητες βρίσκονται εύκολα;',trust:'Πού εμφανίζονται στοιχεία που βοηθούν να ελέγξεις ποιος βρίσκεται πίσω από τη σελίδα και πώς επικοινωνείς μαζί του;'};
+const criterionHints={purpose:'Εντόπισε το κύριο τμήμα που εξηγεί τι παρουσιάζει η ιστοσελίδα.',design:'Εντόπισε το μέρος που σε βοηθά να μετακινείσαι στις βασικές ενότητες.',trust:'Εντόπισε τα στοιχεία επικοινωνίας.'};
+function currentCriterion(done=critDone){return criterionOrder.find(k=>!done.has(k))||null}
+function evidencePrompt(done=critDone){const k=currentCriterion(done);if(!k)return '';return `<div class="evidence-task"><span class="criterion-pill">${criterionLabels[k]}</span><strong>${criterionQuestions[k]}</strong><span class="task-note">Κάνε κλικ πάνω στο κατάλληλο σημείο της ιστοσελίδας.</span></div>`}
+function museumSite(){return `<div class="site">
+ <div class="site-head evidence-zone ${critDone.has('identity')?'evidence-found':''}" data-evidence="identity" tabindex="0"><div class="site-brand"><div class="site-mark">${museumMark()}</div><span>Εθνικό Αρχαιολογικό Μουσείο Αθηνών</span></div><span>namuseum.gr</span></div>
+ <div class="site-nav evidence-zone ${critDone.has('design')?'evidence-found':''}" data-evidence="design" tabindex="0"><button>Αρχική</button><button>Επίσκεψη</button><button>Συλλογές</button><button>Εκπαίδευση</button><button>Επικοινωνία</button>${critDone.has('design')?'<span class="evidence-badge">✓ Σχεδιασμός</span>':''}</div>
+ <div class="site-content"><div class="site-hero evidence-zone ${critDone.has('purpose')?'evidence-found':''}" data-evidence="purpose" tabindex="0"><h3>Πληροφορίες για το μουσείο</h3><p>Η ιστοσελίδα παρουσιάζει τις συλλογές, τις εκθέσεις, τις ώρες λειτουργίας και πληροφορίες για την επίσκεψη.</p>${critDone.has('purpose')?'<span class="evidence-badge">✓ Σκοπός</span>':''}</div>
+ <div class="contact-card evidence-zone ${critDone.has('trust')?'evidence-found':''}" data-evidence="trust" tabindex="0"><strong>Επικοινωνία</strong><span>Πατησίων 44, Αθήνα · 213 214 4800 · email@namuseum.example</span>${critDone.has('trust')?'<span class="evidence-badge">✓ Αξιοπιστία</span>':''}</div></div></div>`}
+function r7(){
+ activity.innerHTML=`${evidencePrompt()}<div class="webpage-task-shell">${museumSite()}</div>`;
+ const expected=currentCriterion();
+ const activate=el=>{
+   if(!expected||transitioning)return;
+   const found=el.dataset.evidence;
+   if(found!==expected)return setFeedback(criterionHints[expected],false);
+   critDone.add(expected);r7();
+   if(!currentCriterion()){
+     setFeedback('Σωστά! Εντόπισες πάνω στην ιστοσελίδα τα σημεία που δικαιολογούν τον σκοπό, τον σχεδιασμό και την αξιοπιστία της.',true);advance(1800)
+   }else setFeedback(`Σωστά! Βρήκες το στοιχείο για το κριτήριο «${criterionLabels[expected]}». Συνέχισε με το επόμενο.`, 'info')
+ };
+ document.querySelectorAll('.evidence-zone').forEach(el=>{el.onclick=()=>activate(el);el.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();activate(el)}}})
+}
+/* 8 */
+let bestSite=null;
+function r8(){
+ activity.innerHTML=`<div class="compare-sites"><button class="site-card selectable ${bestSite==='museum'?'selected':''}" data-id="museum"><div class="site-mini-head">Μουσείο - εκπαιδευτική σελίδα</div><div class="mini-nav"><span>Αρχική</span><span>Συλλογές</span><span>Επίσκεψη</span><span>Επικοινωνία</span></div><div class="mini-section">Θέμα: αρχαία ελληνικά αγγεία και εκθέματα.</div><div class="mini-section">Φορέας, διεύθυνση, τηλέφωνο και email εμφανίζονται καθαρά.</div></button><button class="site-card selectable" data-id="random"><div class="site-mini-head">AncientStuffNOW</div><div class="ad-clutter"><div class="ad-box">ΚΕΡΔΙΣΕ ΤΩΡΑ!</div><div class="ad-box">ΜΗΝ ΤΟ ΧΑΣΕΙΣ!</div></div><div class="mini-section">Μικρό κείμενο για αγγεία χωρίς αναφορά συγγραφέα ή πηγής.</div><div class="mini-section">Δεν υπάρχουν στοιχεία επικοινωνίας.</div></button></div>`;
+ document.querySelectorAll('.site-card.selectable').forEach(b=>b.onclick=()=>{
+   if(transitioning)return;
+   if(b.dataset.id==='museum'){
+     bestSite='museum';b.classList.add('selected');document.querySelectorAll('.site-card.selectable').forEach(x=>x.disabled=true);
+     setFeedback('Σωστά! Η σελίδα είναι σχετική με το θέμα και δίνει καθαρά στοιχεία για τον φορέα και την επικοινωνία.',true);advance(1500)
+   }else{
+     b.classList.add('wrong-flash');setTimeout(()=>b.classList.remove('wrong-flash'),650);
+     setFeedback('Αυτή η σελίδα δεν δίνει καθαρά στοιχεία για τον φορέα ή την επικοινωνία. Εφάρμοσε μαζί καταλληλότητα και αξιοπιστία.',false)
+   }
+ })
+}
+/* 9 */
+let finalSel=null,finalOpened=false,finalCrit=new Set();
+function finalResults(){const items=[{id:'ad',label:'Χορηγούμενο',title:'SafeWeb Pro - αγορά υπηρεσίας',url:'safeweb-pro.example',text:'Εμπορική υπηρεσία προστασίας.'},{id:'edu',label:'',title:'Ασφαλής πλοήγηση στο διαδίκτυο',url:'learning.example/safe-web',text:'Εκπαιδευτικές πληροφορίες και πρακτικές ασφαλούς πλοήγησης.'}];return `<div class="results"><h3>Αποτελέσματα για «ασφαλής πλοήγηση στο διαδίκτυο»</h3>${items.map(o=>`<button class="result-card selectable ${finalSel===o.id?'selected':''}" data-id="${o.id}">${o.label?`<div class="result-label sponsored">${o.label}</div>`:''}<div class="result-title">${o.title}</div><div class="result-url">${o.url}</div><div class="result-text">${o.text}</div></button>`).join('')}</div>`}
+function finalPage(){return `<div class="site" style="border:0;border-radius:0;box-shadow:none">
+ <div class="site-head evidence-zone" data-evidence="identity" tabindex="0"><div class="site-brand"><div class="site-mark">${infoIcon('page')}</div><span>Μαθαίνω για ασφαλή πλοήγηση</span></div><span>learning.example</span></div>
+ <div class="site-nav evidence-zone ${finalCrit.has('design')?'evidence-found':''}" data-evidence="design" tabindex="0"><button>Αρχική</button><button>Οδηγοί</button><button>Για μαθητές</button><button>Επικοινωνία</button>${finalCrit.has('design')?'<span class="evidence-badge">✓ Σχεδιασμός</span>':''}</div>
+ <div class="site-content"><div class="site-hero evidence-zone ${finalCrit.has('purpose')?'evidence-found':''}" data-evidence="purpose" tabindex="0"><h3>Ασφαλής πλοήγηση στο διαδίκτυο</h3><p>Εκπαιδευτική σελίδα με οδηγίες και πρακτικές για ασφαλείς συνήθειες κατά την πλοήγηση.</p>${finalCrit.has('purpose')?'<span class="evidence-badge">✓ Σκοπός</span>':''}</div>
+ <div class="contact-card evidence-zone ${finalCrit.has('trust')?'evidence-found':''}" data-evidence="trust" tabindex="0"><strong>Φορέας και επικοινωνία</strong><span>Εκπαιδευτικό Κέντρο Ψηφιακής Ασφάλειας · info@learning.example · 210 1111111</span>${finalCrit.has('trust')?'<span class="evidence-badge">✓ Αξιοπιστία</span>':''}</div></div></div>`}
+function finalEvidencePrompt(){const k=currentCriterion(finalCrit);if(!k)return '';return `<div class="evidence-task" style="margin:12px 14px"><span class="criterion-pill">${criterionLabels[k]}</span><strong>${criterionQuestions[k]}</strong><span class="task-note">Κάνε κλικ πάνω στο στοιχείο της ανοιχτής ιστοσελίδας.</span></div>`}
+function r9(){
+ const chips=`<div class="mission-checks"><span class="mission-chip ${finalSel==='edu'?'done':''}">Μη διαφημιζόμενο αποτέλεσμα</span><span class="mission-chip ${finalOpened?'done':''}">Άνοιγμα σελίδας</span><span class="mission-chip ${finalCrit.has('purpose')?'done':''}">Σκοπός</span><span class="mission-chip ${finalCrit.has('design')?'done':''}">Σχεδιασμός</span><span class="mission-chip ${finalCrit.has('trust')?'done':''}">Αξιοπιστία</span></div>`;
+ const body=!finalOpened?finalResults():`${finalEvidencePrompt()}<div class="webpage-task-shell" style="padding:0 14px 14px">${finalPage()}</div>`;
+ activity.innerHTML=`<div class="mission"><div class="mission-top"><span>AthenaOS · Συνολική δοκιμή</span><span>Ploigos</span></div>${chips}<div class="mission-body">${browserWindow(body,finalOpened?'https://learning.example/safe-web':'Αποτελέσματα αναζήτησης')}</div></div>`;
+ if(!finalOpened){
+   document.querySelectorAll('.result-card.selectable').forEach(b=>b.onclick=()=>{
+     if(b.dataset.id!=='edu'){
+       b.classList.add('wrong-flash');setTimeout(()=>b.classList.remove('wrong-flash'),650);
+       return setFeedback('Αυτό το αποτέλεσμα είναι διαφημιζόμενο. Εντόπισε το μη διαφημιζόμενο εκπαιδευτικό αποτέλεσμα.',false)
+     }
+     finalSel='edu';b.classList.add('selected');document.querySelectorAll('.result-card.selectable').forEach(x=>x.disabled=true);
+     setFeedback('Σωστά! Εντόπισες το μη διαφημιζόμενο αποτέλεσμα. Η σελίδα ανοίγει τώρα.','info');
+     setTimeout(()=>{finalOpened=true;r9();setFeedback('Τώρα εντόπισε πάνω στη σελίδα το σημείο που δικαιολογεί το κριτήριο που εμφανίζεται.','info')},900)
+   });
+ }else{
+   const expected=currentCriterion(finalCrit);
+   const activate=el=>{
+     if(!expected||transitioning)return;
+     if(el.dataset.evidence!==expected)return setFeedback(criterionHints[expected],false);
+     finalCrit.add(expected);r9();
+     if(!currentCriterion(finalCrit)){
+       setFeedback('Μπράβο! Ξεχώρισες το μη διαφημιζόμενο αποτέλεσμα και εντόπισες μέσα στην ιστοσελίδα τα στοιχεία που δικαιολογούν τα κριτήρια αξιολόγησης.',true);advance(1800)
+     }else setFeedback(`Σωστά! Βρήκες το στοιχείο για το κριτήριο «${criterionLabels[expected]}». Συνέχισε με το επόμενο.`, 'info')
+   };
+   document.querySelectorAll('.evidence-zone').forEach(el=>{el.onclick=()=>activate(el);el.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();activate(el)}}})
+ }
+}
+/* 10 */
+const selfObjectives=['Να εφαρμόζω κριτήρια αξιολόγησης καταλληλότητας/αξιοπιστίας πληροφοριών/ψηφιακού περιεχομένου στο διαδίκτυο.','Να διακρίνω τα αποτελέσματα μιας αναζήτησης από τις διαφημίσεις.'];
+const levels=['Χρειάζομαι βοήθεια','Έχω καταλάβει αλλά έχω απορίες','Έχω καταλάβει αρκετά καλά','Έχω καταλάβει και μπορώ να εξηγήσω'];let selfSel=[null,null];
+function r10(){activity.innerHTML=`<div class="self-wrap"><div class="self-table"><div class="self-head">Τι έμαθα;</div>${levels.map(x=>`<div class="self-head">${x}</div>`).join('')}${selfObjectives.map((o,row)=>`<div class="self-objective">${o}</div>${levels.map((l,col)=>`<button class="self-cell ${selfSel[row]===col?'selected':''}" data-row="${row}" data-col="${col}">${l}</button>`).join('')}`).join('')}</div><div class="self-note">Επίλεξε ένα επίπεδο για κάθε στόχο. Η αυτοαξιολόγηση δεν έχει σωστή ή λάθος απάντηση.</div><div class="finish-actions"><button class="primary" id="finishBtn" ${selfSel.some(x=>x===null)?'disabled':''}>Ολοκλήρωση</button><button class="secondary-btn" id="restartBtn">↻ Επανάληψη δραστηριότητας</button></div></div>`;document.querySelectorAll('.self-cell').forEach(b=>b.onclick=()=>{const r=Number(b.dataset.row),c=Number(b.dataset.col);selfSel[r]=selfSel[r]===c?null:c;r10();if(selfSel.every(x=>x!==null)){completed.add(9);updateProgress();setFeedback('Ολοκλήρωσες την αυτοαξιολόγηση. Μπορείς να ολοκληρώσεις το μάθημα.',true)}});document.getElementById('restartBtn').onclick=restart;const fin=document.getElementById('finishBtn');if(fin)fin.onclick=finishLesson}
+function finishLesson(){if(selfSel.some(x=>x===null))return setFeedback('Διάλεξε ένα επίπεδο για κάθε στόχο του μαθήματος.',false);completed.add(9);finished=true;updateProgress();setFeedback('Μπράβο! Ολοκλήρωσες το Μάθημα 21.',true);setTimeout(render,650)}
+function renderCompletion(){kicker.textContent='ΟΛΟΚΛΗΡΩΣΗ';stageTitle.textContent='Μπράβο!';instruction.textContent='Ολοκλήρωσες το Μάθημα 21.';activity.innerHTML=`<div class="completion"><span class="badge">Ενότητα 4 · Μάθημα 21</span><h2>Αποτελέσματα αναζήτησης και αξιολόγηση περιεχομένου</h2><p>Ξεχώρισες διαφημιζόμενα από οργανικά αποτελέσματα και χρησιμοποίησες κριτήρια καταλληλότητας και αξιοπιστίας για να αξιολογήσεις διαδικτυακές πληροφορίες.</p><button class="secondary-btn" onclick="restart()">↻ Επανάληψη δραστηριότητας</button></div>`;clearFeedback()}
+function initAll(){stage=0;completed=new Set();transitioning=false;finished=false;search21Done=false;search21Value='';selectedResults=new Set();englishSel=new Set();suitability=null;reliability=null;critDone=new Set();critOpen=null;bestSite=null;finalSel=null;finalOpened=false;finalCrit=new Set();selfSel=[null,null]}
+function restart(){initAll();render()}
+const renderers=[r1,r2,r3,r4,r5,r6,r7,r8,r9,r10];
+function render(){clearFeedback();updateProgress();if(finished){renderCompletion();window.scrollTo({top:0,behavior:'smooth'});return}const s=ACTIVITIES[stage];kicker.textContent='Δραστηριότητα '+(stage+1);stageTitle.textContent=s.t;instruction.textContent=s.i;renderers[stage]();window.scrollTo({top:0,behavior:'smooth'})}
+initAll();render();
+</script>
+
+<footer class="nk-license" aria-label="Πληροφορίες δημιουργού και άδειας χρήσης">
+  <div><strong>Created by Nikos Kalakos · © 2026</strong></div>
+  <div>Original educational content and simulation design licensed under <a class="cc-badge" href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank" rel="license noopener noreferrer">CC BY-NC 4.0</a>.</div>
+  <div>Source code © 2026 Nikos Kalakos.</div>
+  <div>Third-party and textbook materials remain subject to the rights and licences of their respective copyright holders.</div>
+</footer>
+</body>
+</html>

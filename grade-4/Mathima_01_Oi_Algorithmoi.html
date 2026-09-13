@@ -1,0 +1,294 @@
+<!--
+ICT Educational Simulation
+Created by Nikos Kalakos
+Copyright © 2026 Nikos Kalakos
+
+Original educational content and simulation design licensed under CC BY-NC 4.0.
+Source code © 2026 Nikos Kalakos.
+Third-party and textbook materials remain subject to the rights and licences of their respective copyright holders.
+-->
+<!doctype html>
+<html lang="el">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="author" content="Nikos Kalakos">
+<meta name="copyright" content="© 2026 Nikos Kalakos">
+<meta name="license" content="Original educational content and simulation design: CC BY-NC 4.0; source code © 2026 Nikos Kalakos; third-party and textbook materials excluded.">
+<title>Μάθημα 1 - Οι αλγόριθμοι | Δ΄ Δημοτικού</title>
+<style>
+:root{
+  --unit:#00598A;
+  --unit-dark:#003D60;
+  --unit-mid:#0B709F;
+  --cream:#FCF0E1;
+  --cream-2:#FFF8EF;
+  --ink:#1F2E3A;
+  --muted:#667785;
+  --line:#D8E1E8;
+  --panel:#F7F9FB;
+  --good:#EAF7EF;
+  --good-line:#55A876;
+  --bad:#FFF0ED;
+  --bad-line:#D77C70;
+  --info:#EEF6FA;
+  --shadow:0 12px 30px rgba(31,46,58,.10);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:linear-gradient(180deg,#F2F6F9 0,#FAFBFC 55%,#F4F7F9 100%);color:var(--ink);font-family:Inter,Arial,"Noto Sans",sans-serif}
+button{font:inherit}
+button:not(:disabled){cursor:pointer}
+button:focus-visible{outline:4px solid #78BAD8;outline-offset:3px}
+.app{max-width:1540px;margin:auto;padding:12px}
+.topbar{display:grid;grid-template-columns:1fr auto;gap:18px;align-items:center;background:var(--unit);color:#fff;border-radius:16px 16px 7px 7px;padding:13px 20px;box-shadow:var(--shadow)}
+.crumb{font-size:13px;font-weight:800;opacity:.9;letter-spacing:.2px}.lesson-title{font-size:clamp(22px,2.2vw,30px);font-weight:900;margin-top:3px}.lesson-badge{border:2px solid rgba(255,255,255,.7);background:rgba(255,255,255,.12);border-radius:10px;padding:9px 14px;font-weight:900;white-space:nowrap}
+.progress{display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:14px;background:#fff;border:1px solid var(--line);border-top:0;border-radius:0 0 14px 14px;padding:10px 16px}.progress-label{font-size:13px;font-weight:900;color:var(--muted)}.track{height:8px;border-radius:99px;background:#E7EDF1;overflow:hidden}.fill{height:100%;width:0;background:var(--unit);transition:width .3s ease}.step-counter{font-size:13px;font-weight:900;color:var(--unit-dark);min-width:58px;text-align:right}
+.stage-tabs{display:flex;gap:6px;flex-wrap:wrap;margin:10px 0 0}.stage-dot{width:28px;height:28px;border:1px solid #B9C7D1;border-radius:8px;background:#fff;color:#6C7C88;display:grid;place-items:center;font-size:12px;font-weight:900}.stage-dot.active{background:var(--unit);border-color:var(--unit);color:#fff}.stage-dot.done{background:var(--cream);border-color:#D9B98B;color:var(--unit-dark)}
+.main{margin-top:14px;background:#fff;border:1px solid var(--line);border-radius:18px;box-shadow:var(--shadow);padding:18px;min-height:760px}.stage-head{display:grid;grid-template-columns:1fr auto;gap:18px;align-items:start;padding-bottom:13px;border-bottom:1px solid #E3E9ED}.stage-kicker{font-size:12px;font-weight:900;color:var(--unit);letter-spacing:.8px;text-transform:uppercase}.stage-head h1{margin:5px 0 0;font-size:clamp(27px,2.8vw,36px);line-height:1.08}.help{border:2px solid var(--unit);background:var(--cream-2);color:var(--unit-dark);border-radius:10px;padding:9px 14px;font-weight:900}.instruction{max-width:1210px;margin:16px auto 10px;text-align:center;font-size:19px;line-height:1.5;font-weight:780}.feedback{display:none;max-width:1220px;margin:0 auto 10px;border-radius:10px;padding:10px 15px;text-align:center;font-weight:900;font-size:16px}.feedback.good{display:block;background:var(--good);border:2px solid var(--good-line)}.feedback.bad{display:block;background:var(--bad);border:2px solid var(--bad-line)}.feedback.info{display:block;background:var(--info);border:2px solid #83B5CC;color:#244E64}
+.activity{max-width:1430px;margin:auto;border:1px solid #D8E1E8;border-radius:14px;background:linear-gradient(180deg,#FCFDFE,#F7F9FB);padding:18px;min-height:570px}.primary{border:0;border-radius:9px;background:var(--unit);color:#fff;padding:11px 24px;font-weight:900;font-size:17px;box-shadow:0 3px 0 var(--unit-dark)}.primary:hover{filter:brightness(1.05)}.secondary{border:2px solid var(--unit);border-radius:9px;background:#fff;color:var(--unit-dark);padding:9px 16px;font-weight:900}.center{display:block;margin:16px auto 0}.note{max-width:1080px;margin:12px auto;border-left:5px solid var(--unit);background:var(--cream-2);padding:12px 16px;border-radius:8px;font-size:15px;line-height:1.5;font-weight:750;color:#4B5D69}
+.panel{max-width:1120px;margin:15px auto;border:1px solid #CAD6DE;border-radius:13px;background:#fff;padding:18px}.panel-title{display:flex;align-items:center;gap:10px;margin-bottom:12px;font-weight:900;color:var(--unit-dark);font-size:18px}.panel-title .tag{font-size:11px;letter-spacing:.6px;text-transform:uppercase;background:var(--cream);padding:5px 8px;border-radius:7px;color:#725A3D}
+.choice-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(235px,1fr));gap:12px;max-width:1120px;margin:18px auto}.choice{position:relative;min-height:112px;border:2px solid #B9C6D0;border-radius:12px;background:#fff;padding:16px 15px 34px;text-align:left;font-weight:850;font-size:16px;line-height:1.42;color:var(--ink)}.choice:hover{border-color:#7FA9BE}.choice.selected{border-color:var(--unit);background:var(--cream-2)}.choice.selected:after,.line-card.selected:after,.answer.selected:after,.self-card.selected:after{content:"✓ Επιλεγμένο";position:absolute;right:9px;bottom:7px;font-size:11px;font-weight:900;color:var(--unit-dark)}.choice.good{border-color:var(--good-line);background:var(--good)}.choice.bad{border-color:var(--bad-line);background:var(--bad)}
+/* classification */
+.classify{max-width:1220px;margin:18px auto}.classify-bank{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin-bottom:18px}.concept-card{position:relative;max-width:330px;min-width:250px;border:2px solid #AEBEC9;border-radius:11px;background:#fff;padding:13px;font-weight:850;line-height:1.4;box-shadow:0 4px 10px rgba(31,46,58,.06)}.concept-card.active{outline:4px solid #87BED8}.concept-card.placed{opacity:.35;pointer-events:none}.concept-card.placed:after{content:"✓ Τοποθετήθηκε";position:absolute;inset:auto 8px 7px auto;font-size:11px;color:var(--unit-dark);font-weight:900}.zones{display:grid;grid-template-columns:repeat(3,1fr);gap:13px}.zone{min-height:170px;border:2px dashed #A8BAC5;border-radius:12px;background:#fff;padding:12px}.zone h3{margin:0 0 8px;font-size:17px;color:var(--unit-dark)}.zone small{display:block;color:var(--muted);font-weight:700;line-height:1.35}.zone.ready{border-style:solid;border-color:var(--unit);background:#fff}.zone-items{display:grid;gap:8px;margin-top:10px}.placed-chip{border:1px solid #AFC2CD;border-radius:8px;background:#F6FAFC;padding:9px;font-size:14px;font-weight:800;line-height:1.35}
+/* algorithm code */
+.algorithm{max-width:970px;margin:16px auto;border:1px solid #BCCAD3;border-radius:13px;overflow:hidden;background:#fff}.alg-head{display:flex;align-items:center;justify-content:space-between;background:#EAF2F6;padding:10px 14px;border-bottom:1px solid #C8D5DD;font-size:13px;font-weight:900;color:#3E5A69}.alg-body{padding:13px}.line-card{position:relative;width:100%;display:block;border:1px solid #C7D2D9;border-left:5px solid #9FB6C3;border-radius:8px;background:#fff;padding:11px 14px 30px;margin:7px 0;text-align:left;font-weight:850;color:var(--ink);line-height:1.35}.line-card.indent{margin-left:35px;width:calc(100% - 35px)}.line-card.selected{border-color:var(--unit);border-left-color:var(--unit);background:var(--cream-2)}.line-card.locked{cursor:default}.count-row{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin:18px auto}.count-btn{min-width:72px;border:2px solid #AFC0CA;background:#fff;border-radius:9px;padding:10px 16px;font-weight:900}.count-btn.selected{border-color:var(--unit);background:var(--cream)}
+/* sequence builder */
+.builder{display:grid;grid-template-columns:minmax(280px,.9fr) minmax(360px,1.2fr);gap:18px;max-width:1180px;margin:18px auto}.pool,.sequence{border:1px solid #CBD6DD;border-radius:12px;background:#fff;padding:14px}.pool h3,.sequence h3{margin:0 0 10px;font-size:17px}.step-option{position:relative;width:100%;border:2px solid #B7C4CD;border-radius:9px;background:#fff;padding:11px 12px 30px;text-align:left;font-weight:820;margin:8px 0;line-height:1.35}.step-option.used{border-color:var(--unit);background:var(--cream-2)}.step-option.used:after{content:"✓ Επιλεγμένο";position:absolute;right:8px;bottom:6px;font-size:11px;font-weight:900;color:var(--unit-dark)}.sequence-list{min-height:330px;display:grid;gap:8px}.seq-row{display:grid;grid-template-columns:34px 1fr auto;align-items:center;gap:8px;border:1px solid #C3D0D8;border-radius:9px;background:#F8FAFB;padding:8px}.seq-num{width:30px;height:30px;border-radius:7px;background:var(--unit);color:#fff;display:grid;place-items:center;font-weight:900}.seq-text{font-weight:820;line-height:1.35}.remove{border:1px solid #C7D1D8;background:#fff;border-radius:7px;width:32px;height:32px;font-weight:900;color:#7A4A4A}
+/* ferryman */
+.river-wrap{max-width:1220px;margin:16px auto}.river{position:relative;display:grid;grid-template-columns:1fr 1.3fr 1fr;gap:0;min-height:340px;border:1px solid #B8C9D3;border-radius:16px;overflow:hidden;background:#fff}.shore{padding:18px;background:linear-gradient(180deg,#F7EEDA,#EDE3C7);position:relative}.shore h3{margin:0;color:#5F523C}.water{position:relative;background:linear-gradient(180deg,#A9D8EC,#6EB7D7);display:flex;align-items:center;justify-content:center}.water:after{content:"";position:absolute;inset:0;background:repeating-linear-gradient(0deg,transparent 0 23px,rgba(255,255,255,.16) 24px 26px);pointer-events:none}.actors{display:flex;gap:10px;flex-wrap:wrap;margin-top:20px}.actor{border:2px solid #B7A980;border-radius:10px;background:#fff;padding:9px 11px;font-size:25px;display:flex;align-items:center;gap:7px;font-weight:900}.actor span{font-size:13px}.actor.selected{border-color:var(--unit);background:var(--cream)}.boat{position:relative;z-index:2;width:190px;min-height:95px;border-radius:50% 50% 42% 42%;background:#8D5B37;border:4px solid #623D23;color:#fff;padding:12px;text-align:center;transition:transform .35s ease}.boat.atA{transform:translateX(-30%)}.boat.atB{transform:translateX(30%)}.boat .person{font-size:32px}.boat .passenger{font-size:30px;margin-top:5px}.river-controls{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin:13px auto}.move-log{max-width:900px;margin:10px auto;border:1px solid #C9D4DA;border-radius:10px;background:#fff;padding:10px 12px;min-height:56px;font-size:14px;font-weight:750;color:#50616C}.statusline{text-align:center;font-weight:900;color:var(--unit-dark);margin-top:10px}
+/* trace */
+.trace{max-width:1050px;margin:16px auto;display:grid;gap:9px}.trace-row{display:grid;grid-template-columns:46px 1fr;gap:10px;align-items:center;border:1px solid #C8D4DB;border-radius:9px;background:#fff;padding:9px 12px}.trace-row.problem{border-color:var(--bad-line);background:var(--bad)}.trace-n{width:34px;height:34px;border-radius:8px;background:var(--unit);color:#fff;display:grid;place-items:center;font-weight:900}.trace-text{font-weight:820;line-height:1.35}.answers{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:10px;max-width:1100px;margin:16px auto}.answer{position:relative;border:2px solid #B7C4CD;border-radius:10px;background:#fff;padding:13px 13px 31px;text-align:left;font-weight:850;line-height:1.4}.answer.selected{border-color:var(--unit);background:var(--cream-2)}
+/* overall */
+.overall{max-width:1150px;margin:15px auto}.overall-scenario{border:2px solid var(--unit);border-radius:12px;background:var(--cream-2);padding:14px 16px;text-align:center;font-size:18px;font-weight:850;line-height:1.45}.overall-builder{margin-top:15px;border:1px solid #C6D2D9;border-radius:12px;background:#fff;padding:14px}.overall-row{display:grid;grid-template-columns:40px 1fr auto auto;gap:8px;align-items:center;border:1px solid #D1DAE0;border-radius:9px;padding:8px;margin:7px 0;background:#FAFBFC}.overall-row.loopbody{margin-left:34px}.movebtn{border:1px solid #AFC0CA;background:#fff;border-radius:7px;width:32px;height:32px;font-weight:900;color:var(--unit-dark)}
+/* self assessment */
+.summary-box{max-width:1120px;margin:18px auto;border:1px solid #C6D3DA;border-radius:13px;background:#fff;padding:16px}.summary-box h3{margin:0 0 8px;color:var(--unit-dark)}.summary-box ul{margin:0;padding-left:20px;line-height:1.55;font-weight:760;color:#4E5F6A}.self-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;max-width:1180px;margin:18px auto}.self-card{position:relative;border:2px solid #B8C6CF;border-radius:11px;background:#fff;padding:16px 13px 34px;text-align:center;font-weight:850;min-height:154px}.self-card .level{width:42px;height:42px;border-radius:10px;margin:0 auto 10px;display:grid;place-items:center;background:var(--cream);color:var(--unit-dark);font-size:20px;font-weight:900}.self-card.selected{border-color:var(--unit);background:var(--cream-2)}.repeat-all{display:block;margin:15px auto 0;border:2px solid var(--unit);background:#fff;color:var(--unit-dark);border-radius:9px;padding:10px 17px;font-weight:900}
+/* modal */
+.modal{position:fixed;inset:0;background:rgba(20,31,39,.58);display:none;align-items:center;justify-content:center;padding:18px;z-index:50}.modal.open{display:flex}.modal-box{width:min(680px,95vw);background:#fff;border-radius:15px;border-top:7px solid var(--unit);padding:20px;box-shadow:0 20px 60px rgba(0,0,0,.28)}.modal-box h3{margin:0 0 10px;font-size:24px}.modal-box p{font-size:17px;line-height:1.55}.modal-actions{display:flex;gap:10px;justify-content:flex-end;flex-wrap:wrap}
+@media(max-width:950px){.builder{grid-template-columns:1fr}.zones{grid-template-columns:1fr}.self-grid{grid-template-columns:repeat(2,1fr)}.river{grid-template-columns:1fr}.water{min-height:210px}.boat.atA,.boat.atB{transform:none}.shore{min-height:150px}}
+@media(max-width:620px){.app{padding:6px}.main{padding:11px}.activity{padding:10px}.topbar{grid-template-columns:1fr}.lesson-badge{justify-self:start}.progress{grid-template-columns:1fr auto}.progress-label{display:none}.stage-head h1{font-size:27px}.instruction{font-size:17px}.self-grid{grid-template-columns:1fr}.overall-row{grid-template-columns:34px 1fr auto}.overall-row .downbtn{display:none}}
+</style>
+<style id="nk-license-style">
+.nk-license{max-width:1100px;margin:14px auto 24px;padding:10px 16px;text-align:center;font:13px/1.45 Arial,"Noto Sans",sans-serif;color:#4e657c}
+.nk-license a{color:inherit;text-decoration:underline;text-underline-offset:2px}
+.nk-license .cc-badge{display:inline-block;margin:0 4px;padding:2px 7px;border:1px solid #8aa0b8;border-radius:6px;background:#fff;font-weight:700;white-space:nowrap}
+</style>
+</head>
+<body>
+<div class="app">
+  <header class="topbar">
+    <div>
+      <div class="crumb">ΕΝΟΤΗΤΑ 1 · ΑΛΓΟΡΙΘΜΙΚΗ – ΠΡΟΓΡΑΜΜΑΤΙΣΜΟΣ – ΡΟΜΠΟΤΙΚΗ</div>
+      <div class="lesson-title">Οι αλγόριθμοι</div>
+    </div>
+    <div class="lesson-badge">Μάθημα 1</div>
+  </header>
+  <section class="progress" aria-label="Πρόοδος μαθήματος">
+    <div class="progress-label">ΠΡΟΟΔΟΣ</div>
+    <div class="track"><div class="fill" id="progressFill"></div></div>
+    <div class="step-counter" id="stepCounter">1 / 11</div>
+  </section>
+  <div class="stage-tabs" id="stageTabs" aria-hidden="true"></div>
+
+  <main class="main">
+    <div class="stage-head">
+      <div><div class="stage-kicker" id="kicker">Δραστηριότητα 1</div><h1 id="title"></h1></div>
+      <button class="help" id="helpBtn">? Βοήθεια</button>
+    </div>
+    <div class="instruction" id="instruction"></div>
+    <div class="feedback" id="feedback" aria-live="polite"></div>
+    <section class="activity" id="activity"></section>
+  </main>
+</div>
+
+<div class="modal" id="helpModal" role="dialog" aria-modal="true" aria-labelledby="helpTitle">
+  <div class="modal-box">
+    <h3 id="helpTitle">Βοήθεια</h3>
+    <p id="helpText"></p>
+    <div class="modal-actions"><button class="secondary" id="speakHelp">🔊 Άκουσε</button><button class="primary" id="closeHelp">Το κατάλαβα</button></div>
+  </div>
+</div>
+
+<script>
+(()=>{
+const total=11;
+let stage=0,completed=new Set(),selfChoice=null;
+const activity=document.getElementById('activity');
+const feedback=document.getElementById('feedback');
+const stages=[
+ {title:'Τι κάνει έναν αλγόριθμο χρήσιμο;',instruction:'Επίλεξε τις προτάσεις που περιγράφουν σωστά έναν αλγόριθμο.',help:'Σκέψου τι χρειάζεται μια λύση για να μπορεί να ακολουθηθεί χωρίς να ξεχαστεί κάποιο βήμα.'},
+ {title:'Επανάληψη, επιλογή ή συμβάν;',instruction:'Τοποθέτησε κάθε παράδειγμα στην έννοια που ταιριάζει.',help:'Επανάληψη σημαίνει ότι κάτι γίνεται ξανά. Επιλογή σημαίνει ότι εξετάζεται μια συνθήκη. Συμβάν σημαίνει ότι κάτι ξεκινά όταν συμβεί ένα γεγονός.'},
+ {title:'Βρες την επανάληψη',instruction:'Στον πρωινό αλγόριθμο, εντόπισε πρώτα την εντολή επανάληψης.',help:'Η εντολή επανάληψης δηλώνει ότι κάποιες ενέργειες θα εκτελεστούν περισσότερες από μία φορές.'},
+ {title:'Βρες την επιλογή και τη συνθήκη',instruction:'Εντόπισε την εντολή επιλογής και μετά τη συνθήκη που εξετάζει.',help:'Η εντολή επιλογής έχει τη μορφή «Αν …, τότε …». Η συνθήκη είναι το μέρος που μπορεί να είναι αληθινό ή ψευδές.'},
+ {title:'Δημιούργησε έναν αλγόριθμο βραδιού',instruction:'Διάλεξε τα κατάλληλα βήματα και φτιάξε έναν λογικό αλγόριθμο πριν από τον ύπνο.',help:'Ένας αλγόριθμος πρέπει να περιέχει χρήσιμα βήματα και να τελειώνει σε σημείο που ολοκληρώνει τη διαδικασία.'},
+ {title:'100 φωτάκια',instruction:'Μελέτησε τον αλγόριθμο και εντόπισε την επανάληψη, την επιλογή και τη συνθήκη της.',help:'Η επανάληψη έχει γνωστό αριθμό επειδή γνωρίζουμε ότι η γιρλάντα έχει 100 φωτάκια. Η επιλογή ελέγχει τι θα γίνει όταν ένα φωτάκι δεν ανάβει.'},
+ {title:'Ο γρίφος του βαρκάρη',instruction:'Μετέφερε με ασφάλεια τον λύκο, την κατσίκα και το λάχανο στην όχθη Β.',help:'Η βάρκα χωρά τον βαρκάρη και μόνο έναν επιβάτη. Μην αφήσεις τον λύκο μόνο με την κατσίκα ούτε την κατσίκα μόνη με το λάχανο.'},
+ {title:'Όταν αλλάζει η σειρά',instruction:'Δες τι συμβαίνει αν ανταλλάξουμε τη θέση των βημάτων 6 και 8 του αλγόριθμου.',help:'Στους αλγόριθμους η σωστή σειρά έχει σημασία. Έλεγξε ποιοι μένουν μόνοι σε κάθε όχθη μετά από κάθε κίνηση.'},
+ {title:'Λείπει κάποιο βήμα;',instruction:'Εντόπισε το βήμα που λείπει ώστε ο αλγόριθμος να είναι ολοκληρωμένος.',help:'Ένας αλγόριθμος πρέπει να περιλαμβάνει όλα τα απαραίτητα βήματα. Σκέψου τι πρέπει να γίνει ανάμεσα στα δύο υπάρχοντα βήματα.'},
+ {title:'Συνολική δοκιμή',instruction:'Οργάνωσε τον αλγόριθμο για τον έλεγχο οκτώ φυτών. Χρησιμοποίησε σωστά επανάληψη, επιλογή και σειρά.',help:'Το επαναλαμβανόμενο μέρος πρέπει να περιλαμβάνει τον έλεγχο κάθε φυτού. Η τελευταία ενέργεια γίνεται αφού τελειώσει η επανάληψη.'},
+ {title:'Τι έμαθα;',instruction:'Διάλεξε το επίπεδο που περιγράφει καλύτερα πώς νιώθεις για το μάθημα.',help:'Δεν υπάρχει σωστή ή λάθος επιλογή εδώ. Διάλεξε αυτό που περιγράφει καλύτερα τι μπορείς να κάνεις τώρα.'}
+];
+function shuffle(a){a=[...a];for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
+function setFeedback(text,type=null){feedback.className='feedback '+(type===true?'good':type===false?'bad':'info');feedback.textContent=text}
+function clearFeedback(){feedback.className='feedback';feedback.textContent=''}
+function speak(text){if(!('speechSynthesis'in window))return;speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(text);u.lang='el-GR';u.rate=.9;speechSynthesis.speak(u)}
+function updateProgress(){document.getElementById('progressFill').style.width=((completed.size/total)*100)+'%';document.getElementById('stepCounter').textContent=(stage+1)+' / '+total;const host=document.getElementById('stageTabs');host.innerHTML='';for(let i=0;i<total;i++){const d=document.createElement('div');d.className='stage-dot'+(i===stage?' active':'')+(completed.has(i)?' done':'');d.textContent=completed.has(i)?'✓':i+1;host.appendChild(d)}}
+function advance(delay=800){completed.add(stage);updateProgress();setTimeout(()=>{if(stage<total-1){stage++;render()}},delay)}
+function selectOne(sel,el){document.querySelectorAll(sel).forEach(x=>x.classList.remove('selected'));el.classList.add('selected')}
+
+/* 1 */
+let selected1=new Set();
+function r1(){selected1=new Set();const opts=shuffle([
+ ['steps','Χωρίζει τη λύση σε απλά και μικρά βήματα.',true],
+ ['order','Τα βήματα ακολουθούν μια λογική σειρά.',true],
+ ['solve','Μπορεί να χρησιμοποιηθεί για να λύσει ή να οργανώσει ένα πρόβλημα.',true],
+ ['program','Είναι πάντα πρόγραμμα που εκτελείται από υπολογιστή.',false],
+ ['random','Τα βήματα μπορούν να μπουν σε οποιαδήποτε σειρά χωρίς να αλλάζει το αποτέλεσμα.',false]
+]);activity.innerHTML=`<div class="note">Οι αλγόριθμοι μπορούν να γραφτούν και σε φυσική γλώσσα, δηλαδή με λέξεις που χρησιμοποιούμε στην καθημερινή ζωή.</div><div class="choice-grid">${opts.map(o=>`<button class="choice" data-id="${o[0]}" data-ok="${o[2]}" onclick="toggle1(this)">${o[1]}</button>`).join('')}</div><button class="primary center" onclick="check1()">Έλεγχος</button>`}
+function toggle1(el){const id=el.dataset.id;if(selected1.has(id)){selected1.delete(id);el.classList.remove('selected')}else{selected1.add(id);el.classList.add('selected')}setFeedback('Η επιλογή ενημερώθηκε.',null)}
+function check1(){if(!selected1.size)return setFeedback('Κάνε πρώτα την επιλογή σου.',false);const cards=[...document.querySelectorAll('.choice')];const wrong=cards.some(c=>selected1.has(c.dataset.id)!==(c.dataset.ok==='true'));if(wrong)return setFeedback('Κάποια επιλογή δεν ταιριάζει με τον τρόπο που περιγράφεται ένας αλγόριθμος.',false);setFeedback('Σωστά! Ένας αλγόριθμος οργανώνει μια λύση σε σαφή βήματα και σειρά.',true);advance()}
+
+/* 2 */
+let activeConcept=null,placed2={};
+const examples2=[
+ {id:'rep',text:'«Επανάλαβε τρεις φορές: κάνε τον γύρο του γηπέδου.»',zone:'repeat'},
+ {id:'sel',text:'«Αν το φανάρι είναι πράσινο, τότε πέρνα τον δρόμο.»',zone:'choice'},
+ {id:'evt',text:'«Όταν χτυπήσει το κουδούνι, σταμάτα το παιχνίδι.»',zone:'event'}
+];
+function r2(){activeConcept=null;placed2={};const cards=shuffle(examples2);activity.innerHTML=`<div class="classify"><div class="classify-bank">${cards.map(c=>`<button class="concept-card" id="card-${c.id}" data-id="${c.id}" onclick="selectConcept('${c.id}')">${c.text}</button>`).join('')}</div><div class="zones"><button class="zone" data-zone="repeat" onclick="dropConcept('repeat')"><h3>Επανάληψη</h3><small>Κάτι εκτελείται ξανά.</small><div class="zone-items" id="zone-repeat"></div></button><button class="zone" data-zone="choice" onclick="dropConcept('choice')"><h3>Επιλογή</h3><small>Εξετάζεται μια συνθήκη.</small><div class="zone-items" id="zone-choice"></div></button><button class="zone" data-zone="event" onclick="dropConcept('event')"><h3>Συμβάν</h3><small>Κάτι ξεκινά όταν συμβεί ένα γεγονός.</small><div class="zone-items" id="zone-event"></div></button></div></div>`}
+function selectConcept(id){if(placed2[id])return;activeConcept=id;document.querySelectorAll('.concept-card').forEach(x=>x.classList.remove('active'));document.getElementById('card-'+id).classList.add('active');document.querySelectorAll('.zone').forEach(x=>x.classList.add('ready'));setFeedback('Τώρα επίλεξε την έννοια όπου ανήκει το παράδειγμα.',null)}
+function dropConcept(zone){if(!activeConcept)return setFeedback('Επίλεξε πρώτα ένα παράδειγμα.',false);const c=examples2.find(x=>x.id===activeConcept);if(c.zone!==zone)return setFeedback('Δεν ταιριάζει εκεί. Ξανασκέψου τι περιγράφει το παράδειγμα.',false);placed2[activeConcept]=zone;document.getElementById('card-'+activeConcept).classList.add('placed');document.getElementById('zone-'+zone).innerHTML+=`<div class="placed-chip">${c.text}</div>`;activeConcept=null;document.querySelectorAll('.concept-card').forEach(x=>x.classList.remove('active'));document.querySelectorAll('.zone').forEach(x=>x.classList.remove('ready'));if(Object.keys(placed2).length===examples2.length){setFeedback('Σωστά! Ξεχώρισες την επανάληψη, την επιλογή και το συμβάν.',true);advance()}else setFeedback('Σωστά. Συνέχισε με το επόμενο παράδειγμα.',true)}
+
+const morningLines=[
+ 'Όταν χτυπήσει το ξυπνητήρι,',
+ 'Επανάλαβε τρεις φορές',
+ 'Αγνόησε το ξυπνητήρι',
+ 'Περίμενε μέχρι να ξαναχτυπήσει το ξυπνητήρι',
+ 'Σήκω πάνω',
+ 'Διάλεξε ρούχα',
+ 'Ντύσου',
+ 'Φάε πρωινό',
+ 'Πάρε την τσάντα σου',
+ 'Αν βρέχει, τότε πάρε την ομπρέλα σου',
+ 'Ξεκίνα την ημέρα σου στο σχολείο'
+];
+function algorithmHTML(lines,clickFn,indentMap={}){return `<div class="algorithm"><div class="alg-head"><span>ΑΛΓΟΡΙΘΜΟΣ</span><span>φυσική γλώσσα</span></div><div class="alg-body">${lines.map((t,i)=>`<button class="line-card ${indentMap[i]?'indent':''}" data-i="${i}" onclick="${clickFn}(${i},this)">${t}</button>`).join('')}</div></div>`}
+
+/* 3 */
+let phase3=0,sel3=null,count3=null;
+function r3(){phase3=0;sel3=null;count3=null;activity.innerHTML=`${algorithmHTML(morningLines,'pick3',{2:1,3:1})}<div id="phase3Area"></div>`}
+function pick3(i,el){if(phase3!==0)return;sel3=i;selectOne('.line-card',el);setFeedback('Η γραμμή επιλέχθηκε. Πάτησε Έλεγχος.',null);document.getElementById('phase3Area').innerHTML=`<button class="primary center" onclick="check3Line()">Έλεγχος</button>`}
+function check3Line(){if(sel3===null)return setFeedback('Επίλεξε πρώτα μία γραμμή.',false);if(sel3!==1)return setFeedback('Αυτή δεν είναι η εντολή που δηλώνει ότι κάτι θα γίνει ξανά.',false);phase3=1;document.getElementById('instruction').textContent='Πόσες φορές εκτελείται η επανάληψη;';document.querySelectorAll('.line-card').forEach(x=>{x.disabled=true;x.classList.add('locked')});document.getElementById('phase3Area').innerHTML=`<div class="count-row">${shuffle([2,3,4,5]).map(n=>`<button class="count-btn" onclick="pick3Count(${n},this)">${n}</button>`).join('')}</div><button class="primary center" onclick="check3Count()">Έλεγχος</button>`;setFeedback('Σωστά! Τώρα εντόπισε τον αριθμό των επαναλήψεων.',true)}
+function pick3Count(n,el){count3=n;document.querySelectorAll('.count-btn').forEach(x=>x.classList.remove('selected'));el.classList.add('selected');setFeedback('Η επιλογή καταγράφηκε.',null)}
+function check3Count(){if(count3===null)return setFeedback('Διάλεξε έναν αριθμό.',false);if(count3!==3)return setFeedback('Ξαναδιάβασε την εντολή επανάληψης.',false);setFeedback('Σωστά! Η επανάληψη εκτελείται τρεις φορές.',true);advance()}
+
+/* 4 */
+let phase4=0,sel4=null,cond4=null;
+function r4(){phase4=0;sel4=null;cond4=null;activity.innerHTML=`${algorithmHTML(morningLines,'pick4',{2:1,3:1})}<div id="phase4Area"></div>`}
+function pick4(i,el){if(phase4!==0)return;sel4=i;selectOne('.line-card',el);document.getElementById('phase4Area').innerHTML=`<button class="primary center" onclick="check4Line()">Έλεγχος</button>`;setFeedback('Η γραμμή επιλέχθηκε.',null)}
+function check4Line(){if(sel4===null)return setFeedback('Επίλεξε πρώτα μία γραμμή.',false);if(sel4!==9)return setFeedback('Η εντολή επιλογής ξεκινά με «Αν…».',false);phase4=1;document.getElementById('instruction').textContent='Ποια είναι η συνθήκη της εντολής επιλογής;';document.querySelectorAll('.line-card').forEach(x=>{x.disabled=true;x.classList.add('locked')});const opts=shuffle([['rain','Βρέχει'],['umbrella','Πάρε την ομπρέλα σου'],['school','Ξεκίνα την ημέρα σου στο σχολείο']]);document.getElementById('phase4Area').innerHTML=`<div class="answers">${opts.map(o=>`<button class="answer" data-v="${o[0]}" onclick="pick4Cond(this)">${o[1]}</button>`).join('')}</div><button class="primary center" onclick="check4Cond()">Έλεγχος</button>`;setFeedback('Σωστά. Τώρα ξεχώρισε τη συνθήκη από την ενέργεια.',true)}
+function pick4Cond(el){cond4=el.dataset.v;selectOne('.answer',el);setFeedback('Η επιλογή καταγράφηκε.',null)}
+function check4Cond(){if(!cond4)return setFeedback('Διάλεξε πρώτα μία επιλογή.',false);if(cond4!=='rain')return setFeedback('Η συνθήκη είναι αυτό που εξετάζει το «Αν».',false);setFeedback('Σωστά! Η συνθήκη είναι αν βρέχει.',true);advance()}
+
+/* 5 */
+const eveningSteps=[
+ {id:'bag',text:'Ετοίμασε την τσάντα για το σχολείο.',ok:true},
+ {id:'pajamas',text:'Φόρεσε τις πιτζάμες σου.',ok:true},
+ {id:'teeth',text:'Πλύνε τα δόντια σου.',ok:true},
+ {id:'alarm',text:'Ρύθμισε το ξυπνητήρι.',ok:true},
+ {id:'sleep',text:'Ξάπλωσε για ύπνο.',ok:true},
+ {id:'school',text:'Ξεκίνα το μάθημα στο σχολείο.',ok:false}
+];
+let seq5=[];
+function r5(){seq5=[];const opts=shuffle(eveningSteps);activity.innerHTML=`<div class="builder"><div class="pool"><h3>Διαθέσιμα βήματα</h3><div id="pool5">${opts.map(s=>`<button class="step-option" id="step5-${s.id}" onclick="toggle5('${s.id}')">${s.text}</button>`).join('')}</div></div><div class="sequence"><h3>Ο αλγόριθμός σου</h3><div class="sequence-list" id="seq5"></div></div></div><button class="primary center" onclick="check5()">Έλεγχος</button>`;drawSeq5()}
+function toggle5(id){const i=seq5.indexOf(id);if(i>=0)seq5.splice(i,1);else seq5.push(id);drawSeq5();document.getElementById('step5-'+id).classList.toggle('used',seq5.includes(id));setFeedback('Ο αλγόριθμος ενημερώθηκε.',null)}
+function remove5(id){seq5=seq5.filter(x=>x!==id);drawSeq5();const b=document.getElementById('step5-'+id);if(b)b.classList.remove('used');setFeedback('Το βήμα αφαιρέθηκε.',null)}
+function drawSeq5(){const host=document.getElementById('seq5');if(!host)return;host.innerHTML=seq5.length?seq5.map((id,i)=>{const s=eveningSteps.find(x=>x.id===id);return `<div class="seq-row"><div class="seq-num">${i+1}</div><div class="seq-text">${s.text}</div><button class="remove" onclick="remove5('${id}')">×</button></div>`}).join(''):'<div class="note">Επίλεξε βήματα από την αριστερή πλευρά. Η σειρά καταγράφεται καθώς τα επιλέγεις.</div>'}
+function check5(){if(!seq5.length)return setFeedback('Πρόσθεσε πρώτα βήματα στον αλγόριθμο.',false);if(seq5.includes('school'))return setFeedback('Υπάρχει ένα βήμα που δεν ανήκει στη διαδικασία πριν από τον ύπνο.',false);const needed=['bag','pajamas','teeth','alarm','sleep'];if(!needed.every(x=>seq5.includes(x))||seq5.length!==needed.length)return setFeedback('Κάποιο απαραίτητο βήμα λείπει.',false);if(seq5[seq5.length-1]!=='sleep')return setFeedback('Ο αλγόριθμος πρέπει να ολοκληρώνεται όταν ξαπλώνεις για ύπνο. Άλλαξε τη σειρά επιλέγοντας ξανά τα βήματα.',false);setFeedback('Σωστά! Έφτιαξες έναν πλήρη και λογικό αλγόριθμο. Τα βήματα πριν από τον ύπνο μπορούν να έχουν περισσότερες από μία λογικές σειρές.',true);advance()}
+
+/* 6 */
+let phase6=0,sel6=null,cond6=null;
+const lightsLines=['Επανάλαβε 100 φορές','Έλεγξε αν ανάβει το επόμενο φωτάκι','Αν δεν ανάβει το φωτάκι, τότε επιδιόρθωσέ το'];
+function r6(){phase6=0;sel6=null;cond6=null;activity.innerHTML=`<div class="panel"><div class="panel-title"><span class="tag">Γιρλάντα</span> Έλεγχος 100 φωτακίων</div><p style="margin:0;font-weight:760;line-height:1.5">Γνωρίζουμε ακριβώς πόσα φωτάκια έχει η γιρλάντα. Γι’ αυτό η επανάληψη έχει γνωστό αριθμό επαναλήψεων.</p></div>${algorithmHTML(lightsLines,'pick6',{1:1,2:1})}<div id="phase6Area"></div>`}
+function pick6(i,el){if(phase6!==0)return;sel6=i;selectOne('.line-card',el);document.getElementById('phase6Area').innerHTML=`<button class="primary center" onclick="check6Repeat()">Έλεγχος</button>`;setFeedback('Η γραμμή επιλέχθηκε.',null)}
+function check6Repeat(){if(sel6===null)return setFeedback('Επίλεξε πρώτα μία γραμμή.',false);if(sel6!==0)return setFeedback('Βρες τη γραμμή που δηλώνει πόσες φορές θα γίνει ο έλεγχος.',false);phase6=1;document.getElementById('instruction').textContent='Τώρα επίλεξε τη γραμμή που περιέχει την εντολή επιλογής.';document.querySelectorAll('.line-card').forEach(x=>{x.disabled=false;x.classList.remove('selected','locked')});document.getElementById('phase6Area').innerHTML='';setFeedback('Σωστά! Η επανάληψη εκτελείται 100 φορές.',true)}
+function pick6Choice(i,el){}
+// Override click routing for phase 6 through delegated handler
+activity.addEventListener('click',e=>{});
+function phase6LineClick(i,el){ }
+// Replace pick6 behaviour dynamically below
+const originalPick6=pick6;
+pick6=function(i,el){
+ if(phase6===0){sel6=i;selectOne('.line-card',el);document.getElementById('phase6Area').innerHTML=`<button class="primary center" onclick="check6Repeat()">Έλεγχος</button>`;setFeedback('Η γραμμή επιλέχθηκε.',null);return}
+ if(phase6===1){sel6=i;selectOne('.line-card',el);document.getElementById('phase6Area').innerHTML=`<button class="primary center" onclick="check6Choice()">Έλεγχος</button>`;setFeedback('Η γραμμή επιλέχθηκε.',null)}
+};
+function check6Choice(){if(sel6!==2)return setFeedback('Η εντολή επιλογής ξεκινά με «Αν…».',false);phase6=2;document.getElementById('instruction').textContent='Ποια είναι η συνθήκη που εξετάζει η εντολή επιλογής;';document.querySelectorAll('.line-card').forEach(x=>{x.disabled=true;x.classList.add('locked')});const opts=shuffle([['off','Το φωτάκι δεν ανάβει'],['repair','Επιδιόρθωσε το φωτάκι'],['hundred','Υπάρχουν 100 φωτάκια']]);document.getElementById('phase6Area').innerHTML=`<div class="answers">${opts.map(o=>`<button class="answer" data-v="${o[0]}" onclick="pick6Cond(this)">${o[1]}</button>`).join('')}</div><button class="primary center" onclick="check6Cond()">Έλεγχος</button>`;setFeedback('Σωστά! Τώρα ξεχώρισε τη συνθήκη.',true)}
+function pick6Cond(el){cond6=el.dataset.v;selectOne('.answer',el);setFeedback('Η επιλογή καταγράφηκε.',null)}
+function check6Cond(){if(!cond6)return setFeedback('Διάλεξε πρώτα μία επιλογή.',false);if(cond6!=='off')return setFeedback('Η συνθήκη είναι αυτό που ελέγχει το «Αν».',false);setFeedback('Σωστά! Εντόπισες επανάληψη με γνωστό αριθμό, επιλογή και συνθήκη.',true);advance()}
+
+/* 7 ferryman */
+let boatSide='A',itemSide={},selectedPassenger=null,moves7=[];
+const items7=[{id:'wolf',icon:'🐺',name:'Λύκος'},{id:'goat',icon:'🐐',name:'Κατσίκα'},{id:'cabbage',icon:'🥬',name:'Λάχανο'}];
+function r7(){reset7(false)}
+function reset7(show=true){boatSide='A';itemSide={wolf:'A',goat:'A',cabbage:'A'};selectedPassenger=null;moves7=[];draw7();if(show)setFeedback('Ο γρίφος ξεκίνησε ξανά από την αρχή.',null)}
+function draw7(){activity.innerHTML=`<div class="river-wrap"><div class="river"><div class="shore"><h3>Όχθη Α</h3><div class="actors" id="shoreA"></div></div><div class="water"><div class="boat ${boatSide==='A'?'atA':'atB'}"><div class="person">🧑‍🌾</div><div class="passenger" id="boatPassenger">${selectedPassenger?items7.find(x=>x.id===selectedPassenger).icon:'—'}</div><div style="font-size:12px;font-weight:900;margin-top:4px">Βάρκα</div></div></div><div class="shore"><h3>Όχθη Β</h3><div class="actors" id="shoreB"></div></div></div><div class="statusline">Η βάρκα βρίσκεται στην όχθη ${boatSide}. · Κινήσεις: ${moves7.length}</div><div class="river-controls"><button class="primary" onclick="cross7()">${selectedPassenger?'Πέρασε απέναντι με '+items7.find(x=>x.id===selectedPassenger).name.toLowerCase():'Πέρασε απέναντι χωρίς επιβάτη'}</button><button class="secondary" onclick="reset7(true)">↻ Επαναφορά γρίφου</button></div><div class="move-log" id="moveLog7">${moves7.length?moves7.map((m,i)=>`${i+1}. ${m}`).join('<br>'):'Δεν έχει γίνει ακόμη κίνηση.'}</div></div>`;for(const side of ['A','B']){const host=document.getElementById('shore'+side);host.innerHTML=items7.filter(x=>itemSide[x.id]===side).map(x=>`<button class="actor ${selectedPassenger===x.id?'selected':''}" onclick="selectPassenger7('${x.id}')">${x.icon}<span>${x.name}</span></button>`).join('')}}
+function selectPassenger7(id){if(itemSide[id]!==boatSide)return;selectedPassenger=selectedPassenger===id?null:id;draw7();setFeedback(selectedPassenger?'Ο επιβάτης επιλέχθηκε. Πάτησε το κουμπί για να περάσει η βάρκα απέναντι.':'Η επιλογή αφαιρέθηκε. Η βάρκα μπορεί τώρα να περάσει απέναντι χωρίς επιβάτη.',null)}
+function danger7(unattended){const at=id=>itemSide[id]===unattended;if(at('wolf')&&at('goat'))return 'Ο λύκος έμεινε μόνος με την κατσίκα.';if(at('goat')&&at('cabbage'))return 'Η κατσίκα έμεινε μόνη με το λάχανο.';return null}
+function cross7(){if(selectedPassenger && itemSide[selectedPassenger]!==boatSide)return setFeedback('Ο επιβάτης πρέπει να βρίσκεται στην ίδια όχθη με τη βάρκα.',false);const from=boatSide,to=boatSide==='A'?'B':'A';const passenger=selectedPassenger;if(passenger)itemSide[passenger]=to;boatSide=to;const label=passenger?`Μετέφερε ${items7.find(x=>x.id===passenger).name.toLowerCase()} στην όχθη ${to}`:`Γύρισε με άδεια βάρκα στην όχθη ${to}`;moves7.push(label);selectedPassenger=null;const unattended=from;const danger=danger7(unattended);draw7();if(danger){setFeedback(danger+' Δοκίμασε ξανά.',false);setTimeout(()=>reset7(false),900);return}if(Object.values(itemSide).every(s=>s==='B')){setFeedback('Μπράβο! Μετέφερες όλους με ασφάλεια. Δημιούργησες μια σωστή σειρά βημάτων.',true);advance(1000)}else setFeedback('Η κίνηση είναι ασφαλής. Συνέχισε.',true)}
+
+/* 8 */
+let a8=null;
+function r8(){a8=null;const changed=[
+ 'Μετάφερε την κατσίκα στην όχθη Β',
+ 'Γύρνα πίσω με άδεια βάρκα στην όχθη Α',
+ 'Μετάφερε το λάχανο στην όχθη Β',
+ 'Γύρνα πίσω με την κατσίκα στην όχθη Α',
+ 'Άσε την κατσίκα στην όχθη Α',
+ 'Μετάφερε την κατσίκα στην όχθη Β',
+ 'Γύρνα πίσω με άδεια βάρκα στην όχθη Α',
+ 'Μετάφερε τον λύκο στην όχθη Β'
+];activity.innerHTML=`<div class="note">Στον σωστό αλγόριθμο, το βήμα 6 μεταφέρει τον λύκο και το βήμα 8 μεταφέρει την κατσίκα. Εδώ έχουν ανταλλάξει θέσεις.</div><div class="trace">${changed.map((t,i)=>`<div class="trace-row ${i===6?'problem':''}"><div class="trace-n">${i+1}</div><div class="trace-text">${t}${i===6?' <strong>← Έλεγξε τι μένει στην όχθη Β.</strong>':''}</div></div>`).join('')}</div><div class="answers">${shuffle([['cabbage','Η κατσίκα και το λάχανο μένουν μόνα στην όχθη Β.'],['wolf','Ο λύκος και η κατσίκα μένουν μόνοι στην όχθη Α.'],['safe','Δεν δημιουργείται κανένα πρόβλημα.']]).map(o=>`<button class="answer" data-v="${o[0]}" onclick="pick8(this)">${o[1]}</button>`).join('')}</div><button class="primary center" onclick="check8()">Έλεγχος</button>`}
+function pick8(el){a8=el.dataset.v;selectOne('.answer',el);setFeedback('Η επιλογή καταγράφηκε.',null)}
+function check8(){if(!a8)return setFeedback('Διάλεξε πρώτα μία απάντηση.',false);if(a8!=='cabbage')return setFeedback('Παρακολούθησε τι μένει χωρίς τον βαρκάρη στην όχθη Β μετά την επιστροφή της άδειας βάρκας.',false);setFeedback('Σωστά! Αν αλλάξει η σειρά, η κατσίκα μένει μόνη με το λάχανο και ο αλγόριθμος αποτυγχάνει.',true);advance()}
+
+/* 9 */
+let a9=null;
+function r9(){a9=null;activity.innerHTML=`<div class="algorithm"><div class="alg-head"><span>ΑΛΓΟΡΙΘΜΟΣ: ΠΙΝΩ ΝΕΡΟ</span><span>λείπει ένα βήμα</span></div><div class="alg-body"><div class="line-card locked">1. Πάρε ένα καθαρό ποτήρι.</div><div class="line-card locked" style="border-style:dashed;background:#FFFDF9">2. ?</div><div class="line-card locked">3. Πιες το νερό.</div></div></div><div class="answers">${shuffle([['fill','Γέμισε το ποτήρι με νερό.'],['wash','Βάλε το ποτήρι στο ντουλάπι.'],['sleep','Ξάπλωσε για ύπνο.']]).map(o=>`<button class="answer" data-v="${o[0]}" onclick="pick9(this)">${o[1]}</button>`).join('')}</div><button class="primary center" onclick="check9()">Έλεγχος</button>`}
+function pick9(el){a9=el.dataset.v;selectOne('.answer',el);setFeedback('Η επιλογή καταγράφηκε.',null)}
+function check9(){if(!a9)return setFeedback('Διάλεξε πρώτα ένα βήμα.',false);if(a9!=='fill')return setFeedback('Χωρίς αυτό το βήμα, θα μπορείς πράγματι να πιεις νερό;',false);setFeedback('Σωστά! Ένας αλγόριθμος πρέπει να περιλαμβάνει όλα τα απαραίτητα βήματα.',true);advance()}
+
+/* 10 overall */
+let order10=[];
+const steps10=[
+ {id:'repeat',text:'Επανάλαβε 8 φορές',indent:false},
+ {id:'check',text:'Έλεγξε το επόμενο φυτό',indent:true},
+ {id:'if',text:'Αν το χώμα είναι στεγνό, τότε πότισέ το',indent:true},
+ {id:'next',text:'Πήγαινε στο επόμενο φυτό',indent:true},
+ {id:'finish',text:'Βάλε το ποτιστήρι στη θέση του',indent:false}
+];
+function r10(){order10=shuffle(steps10.map(x=>x.id));draw10()}
+function draw10(){activity.innerHTML=`<div class="overall"><div class="overall-scenario">Η τάξη έχει <strong>8 φυτά</strong>. Θέλεις να ελέγξεις κάθε φυτό και να το ποτίσεις μόνο αν το χώμα του είναι στεγνό. Στο τέλος, το ποτιστήρι επιστρέφει στη θέση του.</div><div class="overall-builder"><div class="panel-title"><span class="tag">Αλγόριθμος</span> Βάλε τα βήματα στη σωστή σειρά</div>${order10.map((id,i)=>{const s=steps10.find(x=>x.id===id);return `<div class="overall-row ${s.indent?'loopbody':''}"><div class="seq-num">${i+1}</div><div class="seq-text">${s.text}</div><button class="movebtn" onclick="move10(${i},-1)" ${i===0?'disabled':''}>↑</button><button class="movebtn downbtn" onclick="move10(${i},1)" ${i===order10.length-1?'disabled':''}>↓</button></div>`}).join('')}</div><button class="primary center" onclick="check10()">Έλεγχος</button></div>`}
+function move10(i,d){const j=i+d;if(j<0||j>=order10.length)return;[order10[i],order10[j]]=[order10[j],order10[i]];draw10();setFeedback('Η σειρά ενημερώθηκε.',null)}
+function check10(){const target=['repeat','check','if','next','finish'];if(order10.join('|')!==target.join('|'))return setFeedback('Η σειρά χρειάζεται ακόμη διόρθωση. Η επανάληψη πρέπει να ξεκινά πριν από τον έλεγχο των φυτών και η τελική ενέργεια να γίνεται αφού ολοκληρωθούν όλα.',false);setFeedback('Εξαιρετικά! Συνδύασες σωστά σειρά, επανάληψη και επιλογή.',true);advance(1000)}
+
+/* 11 */
+function r11(){selfChoice=null;activity.innerHTML=`<div class="summary-box"><h3>Στο μάθημα εξασκήθηκες στο να:</h3><ul><li>εξηγείς τι είναι ένας αλγόριθμος,</li><li>χρησιμοποιείς αλγόριθμους για να λύνεις προβλήματα,</li><li>εντοπίζεις επανάληψη και επιλογή,</li><li>καταλαβαίνεις γιατί η σειρά και η πληρότητα των βημάτων έχουν σημασία.</li></ul></div><div class="self-grid"><button class="self-card" onclick="pickSelf(4,this)"><div class="level">4</div>Έχω καταλάβει και μπορώ να εξηγήσω</button><button class="self-card" onclick="pickSelf(3,this)"><div class="level">3</div>Έχω καταλάβει αρκετά καλά</button><button class="self-card" onclick="pickSelf(2,this)"><div class="level">2</div>Έχω καταλάβει αλλά έχω απορίες</button><button class="self-card" onclick="pickSelf(1,this)"><div class="level">1</div>Χρειάζομαι βοήθεια</button></div><button class="primary center" onclick="finish()">Ολοκλήρωση</button><button class="repeat-all" onclick="restart()">↻ Επανάληψη δραστηριότητας</button>`}
+function pickSelf(v,el){selfChoice=v;document.querySelectorAll('.self-card').forEach(x=>x.classList.remove('selected'));el.classList.add('selected');setFeedback('Η αυτοαξιολόγησή σου καταγράφηκε.',null)}
+function finish(){if(!selfChoice)return setFeedback('Διάλεξε πρώτα ένα επίπεδο αυτοαξιολόγησης.',false);completed.add(stage);updateProgress();setFeedback('Μπράβο! Ολοκλήρωσες το Μάθημα 1.',true)}
+function restart(){stage=0;completed=new Set();selfChoice=null;render()}
+
+const renderers=[r1,r2,r3,r4,r5,r6,r7,r8,r9,r10,r11];
+function render(){clearFeedback();updateProgress();const s=stages[stage];document.getElementById('kicker').textContent='Δραστηριότητα '+(stage+1);document.getElementById('title').textContent=s.title;document.getElementById('instruction').textContent=s.instruction;renderers[stage]();window.scrollTo({top:0,behavior:'smooth'})}
+Object.assign(window,{toggle1,check1,selectConcept,dropConcept,pick3,check3Line,pick3Count,check3Count,pick4,check4Line,pick4Cond,check4Cond,toggle5,remove5,check5,pick6,check6Repeat,check6Choice,pick6Cond,check6Cond,selectPassenger7,cross7,reset7,pick8,check8,pick9,check9,move10,check10,pickSelf,finish,restart});
+const modal=document.getElementById('helpModal'),helpText=document.getElementById('helpText');document.getElementById('helpBtn').onclick=()=>{helpText.textContent=stages[stage].help;modal.classList.add('open')};document.getElementById('closeHelp').onclick=()=>modal.classList.remove('open');document.getElementById('speakHelp').onclick=()=>speak(helpText.textContent);modal.onclick=e=>{if(e.target===modal)modal.classList.remove('open')};
+render();
+})();
+</script>
+<footer class="nk-license" aria-label="Πληροφορίες δημιουργού και άδειας χρήσης">
+  <div><strong>Created by Nikos Kalakos · © 2026</strong></div>
+  <div>Original educational content and simulation design licensed under <a class="cc-badge" href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank" rel="license noopener noreferrer">CC BY-NC 4.0</a>.</div>
+  <div>Source code © 2026 Nikos Kalakos.</div>
+  <div>Third-party and textbook materials remain subject to the rights and licences of their respective copyright holders.</div>
+</footer>
+</body>
+</html>

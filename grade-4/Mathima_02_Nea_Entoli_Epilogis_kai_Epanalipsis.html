@@ -1,0 +1,231 @@
+<!--
+ICT Educational Simulation
+Created by Nikos Kalakos
+Copyright © 2026 Nikos Kalakos
+
+Original educational content and simulation design licensed under CC BY-NC 4.0.
+Source code © 2026 Nikos Kalakos.
+Third-party and textbook materials remain subject to the rights and licences of their respective copyright holders.
+-->
+<!doctype html>
+<html lang="el">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="author" content="Nikos Kalakos">
+<meta name="copyright" content="© 2026 Nikos Kalakos">
+<meta name="license" content="Original educational content and simulation design: CC BY-NC 4.0; source code © 2026 Nikos Kalakos; third-party and textbook materials excluded.">
+<title>Μάθημα 2 - Μία νέα εντολή επιλογής και μία νέα εντολή επανάληψης | Δ΄ Δημοτικού</title>
+<style>
+:root{
+  --unit:#00598A;--unit-dark:#003D60;--unit-mid:#0B709F;
+  --cream:#FCF0E1;--cream-2:#FFF8EF;--ink:#1F2E3A;--muted:#667785;
+  --line:#D8E1E8;--panel:#F7F9FB;--good:#EAF7EF;--good-line:#55A876;
+  --bad:#FFF0ED;--bad-line:#D77C70;--info:#EEF6FA;--shadow:0 12px 30px rgba(31,46,58,.10)
+}
+*{box-sizing:border-box}html{scroll-behavior:smooth}
+body{margin:0;background:linear-gradient(180deg,#F2F6F9 0,#FAFBFC 55%,#F4F7F9 100%);color:var(--ink);font-family:Inter,Arial,"Noto Sans",sans-serif}
+button{font:inherit}button:not(:disabled){cursor:pointer}button:focus-visible{outline:4px solid #78BAD8;outline-offset:3px}
+.app{max-width:1540px;margin:auto;padding:12px}.topbar{display:grid;grid-template-columns:1fr auto;gap:18px;align-items:center;background:var(--unit);color:#fff;border-radius:16px 16px 7px 7px;padding:13px 20px;box-shadow:var(--shadow)}
+.crumb{font-size:13px;font-weight:800;opacity:.9;letter-spacing:.2px}.lesson-title{font-size:clamp(22px,2.2vw,30px);font-weight:900;margin-top:3px}.lesson-badge{border:2px solid rgba(255,255,255,.7);background:rgba(255,255,255,.12);border-radius:10px;padding:9px 14px;font-weight:900;white-space:nowrap}
+.progress{display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:14px;background:#fff;border:1px solid var(--line);border-top:0;border-radius:0 0 14px 14px;padding:10px 16px}.progress-label{font-size:13px;font-weight:900;color:var(--muted)}.track{height:8px;border-radius:99px;background:#E7EDF1;overflow:hidden}.fill{height:100%;width:0;background:var(--unit);transition:width .3s ease}.step-counter{font-size:13px;font-weight:900;color:var(--unit-dark);min-width:58px;text-align:right}.stage-tabs{display:flex;gap:6px;flex-wrap:wrap;margin:10px 0 0}.stage-dot{width:28px;height:28px;border:1px solid #B9C7D1;border-radius:8px;background:#fff;color:#6C7C88;display:grid;place-items:center;font-size:12px;font-weight:900}.stage-dot.active{background:var(--unit);border-color:var(--unit);color:#fff}.stage-dot.done{background:var(--cream);border-color:#D9B98B;color:var(--unit-dark)}
+.main{margin-top:14px;background:#fff;border:1px solid var(--line);border-radius:18px;box-shadow:var(--shadow);padding:18px;min-height:760px}.stage-head{display:grid;grid-template-columns:1fr auto;gap:18px;align-items:start;padding-bottom:13px;border-bottom:1px solid #E3E9ED}.stage-kicker{font-size:12px;font-weight:900;color:var(--unit);letter-spacing:.8px;text-transform:uppercase}.stage-head h1{margin:5px 0 0;font-size:clamp(27px,2.8vw,36px);line-height:1.08}.help{border:2px solid var(--unit);background:var(--cream-2);color:var(--unit-dark);border-radius:10px;padding:9px 14px;font-weight:900}
+.instruction{max-width:1210px;margin:16px auto 10px;text-align:center;font-size:19px;line-height:1.5;font-weight:780}.feedback{display:none;max-width:1220px;margin:0 auto 10px;border-radius:10px;padding:10px 15px;text-align:center;font-weight:900;font-size:16px}.feedback.good{display:block;background:var(--good);border:2px solid var(--good-line)}.feedback.bad{display:block;background:var(--bad);border:2px solid var(--bad-line)}.feedback.info{display:block;background:var(--info);border:2px solid #83B5CC;color:#244E64}
+.activity{max-width:1430px;margin:auto;border:1px solid #D8E1E8;border-radius:14px;background:linear-gradient(180deg,#FCFDFE,#F7F9FB);padding:18px;min-height:570px}.primary{border:0;border-radius:9px;background:var(--unit);color:#fff;padding:11px 24px;font-weight:900;font-size:17px;box-shadow:0 3px 0 var(--unit-dark)}.primary:hover{filter:brightness(1.05)}.secondary{border:2px solid var(--unit);border-radius:9px;background:#fff;color:var(--unit-dark);padding:9px 16px;font-weight:900}.center{display:block;margin:16px auto 0}.note{max-width:1080px;margin:12px auto;border-left:5px solid var(--unit);background:var(--cream-2);padding:12px 16px;border-radius:8px;font-size:15px;line-height:1.5;font-weight:750;color:#4B5D69}
+.panel{max-width:1120px;margin:15px auto;border:1px solid #CAD6DE;border-radius:13px;background:#fff;padding:18px}.panel-title{display:flex;align-items:center;gap:10px;margin-bottom:12px;font-weight:900;color:var(--unit-dark);font-size:18px}.tag{font-size:11px;letter-spacing:.6px;text-transform:uppercase;background:var(--cream);padding:5px 8px;border-radius:7px;color:#725A3D}
+.choice-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(235px,1fr));gap:12px;max-width:1120px;margin:18px auto}.choice,.answer,.self-card{position:relative;border:2px solid #B9C6D0;border-radius:12px;background:#fff;padding:16px 15px 34px;text-align:left;font-weight:850;font-size:16px;line-height:1.42;color:var(--ink)}.choice:hover,.answer:hover,.self-card:hover{border-color:#7FA9BE}.choice.selected,.answer.selected,.self-card.selected{border-color:var(--unit);background:var(--cream-2)}.choice.selected:after,.answer.selected:after,.self-card.selected:after,.alg-line.selected:after,.piece.selected:after{content:"✓ Επιλεγμένο";position:absolute;right:9px;bottom:7px;font-size:11px;font-weight:900;color:var(--unit-dark)}
+.answers{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px;max-width:1120px;margin:18px auto}.answer{min-height:90px;text-align:center}.choice.good,.answer.good{border-color:var(--good-line);background:var(--good)}.choice.bad,.answer.bad{border-color:var(--bad-line);background:var(--bad)}
+.algorithm{max-width:1040px;margin:16px auto;border:1px solid #BCCAD3;border-radius:13px;overflow:hidden;background:#fff}.alg-head{display:flex;align-items:center;justify-content:space-between;gap:10px;background:#EAF2F6;padding:10px 14px;border-bottom:1px solid #C8D5DD;font-size:13px;font-weight:900;color:#3E5A69}.alg-body{padding:13px}.alg-line{position:relative;width:100%;display:block;border:1px solid #C7D2D9;border-left:5px solid #9FB6C3;border-radius:8px;background:#fff;padding:11px 14px 30px;margin:7px 0;text-align:left;font-weight:850;color:var(--ink);line-height:1.35}.alg-line.indent1{margin-left:36px;width:calc(100% - 36px)}.alg-line.indent2{margin-left:72px;width:calc(100% - 72px)}.alg-line.selected{border-color:var(--unit);border-left-color:var(--unit);background:var(--cream-2)}.alg-line.comment{border-left-style:dashed;color:#50626E}.alg-line.static{cursor:default;padding-bottom:12px}
+/* stage 2 – guided, student-friendly IF / ELSE structure */
+.ifelse-guide{max-width:980px;margin:18px auto;display:grid;gap:12px}.ifelse-row{display:grid;grid-template-columns:165px 1fr;gap:12px;align-items:stretch}.ifelse-label{border:2px solid var(--unit);border-radius:11px;background:#fff;color:var(--unit-dark);display:flex;align-items:center;justify-content:center;padding:14px;font-weight:950;text-align:center}.ifelse-slot{min-height:74px;border:2px dashed #AABBC6;border-radius:11px;background:#fff;display:flex;align-items:center;padding:14px 16px;font-weight:850;line-height:1.45;color:#697A86}.ifelse-slot.filled{border-style:solid;border-color:#89AFC1;color:var(--ink);background:#fff}.ifelse-slot.current{border-color:var(--unit);box-shadow:0 0 0 3px rgba(0,89,138,.08)}.step2-card{max-width:980px;margin:18px auto 0;border:1px solid #C9D5DD;border-radius:13px;background:#fff;padding:16px}.step2-progress{font-size:12px;font-weight:950;color:var(--unit);letter-spacing:.6px;text-transform:uppercase;margin-bottom:6px}.step2-question{font-size:19px;font-weight:900;color:var(--unit-dark);margin-bottom:12px}.step2-options{display:grid;grid-template-columns:1fr;gap:9px}.step2-option{border:2px solid #B7C5CE;border-radius:10px;background:#fff;padding:13px 15px;text-align:left;font-weight:850;line-height:1.42;color:var(--ink)}.step2-option:hover{border-color:var(--unit)}.step2-option.bad{border-color:var(--bad-line);background:var(--bad)}.step2-option.good{border-color:var(--good-line);background:var(--good)}
+.branch-demo{display:grid;grid-template-columns:1fr 1fr;gap:16px;max-width:1060px;margin:18px auto}.branch{border:2px solid #B9C7D1;border-radius:13px;background:#fff;padding:16px}.branch h3{margin:0 0 10px;color:var(--unit-dark)}.branch.active{border-color:var(--unit);box-shadow:0 0 0 3px rgba(0,89,138,.08)}.traffic{display:grid;grid-template-columns:100px 1fr;gap:18px;align-items:center;max-width:900px;margin:20px auto;background:#fff;border:1px solid #CAD6DE;border-radius:14px;padding:18px}.traffic-light{width:72px;height:150px;background:#26323A;border-radius:18px;margin:auto;display:grid;place-items:center;gap:8px;padding:12px}.bulb{width:42px;height:42px;border-radius:50%;background:#AAB4BA;border:3px solid #111}.bulb.green.on{background:#45A861}.crosswalk{height:94px;background:repeating-linear-gradient(90deg,#424A50 0 48px,#fff 48px 70px);border:6px solid #424A50;border-radius:8px}
+/* stack simulation */
+.stack-layout{display:grid;grid-template-columns:minmax(260px,.9fr) minmax(420px,1.5fr);gap:18px;max-width:1150px;margin:18px auto}.desk{border:1px solid #C7D3DA;border-radius:13px;background:#fff;padding:16px}.stack{min-height:250px;display:flex;flex-direction:column-reverse;align-items:center;justify-content:flex-start;padding:14px}.stack-card{width:210px;height:66px;margin-top:-26px;border:2px solid #8BA2AF;border-radius:9px;background:#fff;box-shadow:0 4px 10px rgba(31,46,58,.12);display:grid;place-items:center;font-weight:900}.stack-card.top{transform:translateY(-8px);border-color:var(--unit);background:var(--cream-2)}.sort-actions{display:grid;grid-template-columns:1fr 1fr;gap:12px}.owner-btn{border:2px solid #AEBCC6;background:#fff;border-radius:10px;padding:14px;font-weight:900}.owner-btn:hover{border-color:var(--unit)}.current-card{min-height:115px;border:2px solid var(--unit);border-radius:12px;background:var(--cream-2);display:grid;place-items:center;text-align:center;padding:14px;font-size:19px;font-weight:900}.counter-strip{display:flex;justify-content:space-between;gap:10px;margin-top:12px;color:var(--muted);font-size:13px;font-weight:900}
+/* builder */
+.builder{max-width:1160px;margin:18px auto;display:grid;grid-template-columns:minmax(300px,.9fr) minmax(400px,1.2fr);gap:18px}.builder-col{border:1px solid #CAD6DE;border-radius:12px;background:#fff;padding:14px}.builder-col h3{margin:0 0 10px}.block{width:100%;border:2px solid #B7C4CD;border-radius:9px;background:#fff;padding:11px 12px;text-align:left;font-weight:850;margin:8px 0;line-height:1.35}.block.used{opacity:.42}.sequence-list{display:grid;gap:8px;min-height:360px}.seq-row{display:grid;grid-template-columns:34px 1fr auto auto;align-items:center;gap:8px;border:1px solid #C3D0D8;border-radius:9px;background:#F8FAFB;padding:8px}.seq-num{width:30px;height:30px;border-radius:7px;background:var(--unit);color:#fff;display:grid;place-items:center;font-weight:900}.seq-text{font-weight:820;line-height:1.35}.movebtn{border:1px solid #B9C7D0;background:#fff;border-radius:7px;width:34px;height:34px;font-weight:900}.movebtn:disabled{opacity:.3;cursor:default}
+/* faulty trace */
+.trace{max-width:1050px;margin:16px auto;border:1px solid #C5D2DA;border-radius:12px;background:#fff;padding:14px}.trace-row{display:grid;grid-template-columns:42px 1fr;gap:10px;align-items:center;padding:9px;border-bottom:1px solid #E2E8EC}.trace-row:last-child{border-bottom:0}.trace-n{width:34px;height:34px;border-radius:8px;background:#EEF4F7;color:var(--unit-dark);display:grid;place-items:center;font-weight:900}.trace-row.problem{outline:2px solid #D7A091;background:#FFF9F7}.sim-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;max-width:1050px;margin:16px auto}.sim-box{border:1px solid #C6D2D9;border-radius:12px;background:#fff;min-height:130px;padding:13px}.sim-box h4{margin:0 0 10px;color:var(--unit-dark)}.mini-card{border:1px solid #AABAC4;border-radius:8px;background:#F8FAFB;padding:8px;margin:6px 0;font-weight:850}
+/* overall */
+.overall{max-width:1120px;margin:18px auto}.overall-scenario{border:1px solid #BFCED7;border-radius:12px;background:var(--cream-2);padding:14px 16px;font-weight:800;line-height:1.5}.form-grid{display:grid;grid-template-columns:1fr;gap:12px;margin-top:15px}.form-row{border:1px solid #C7D3DB;border-radius:10px;background:#fff;padding:12px}.form-row label{display:block;font-size:13px;font-weight:900;color:#5B6C78;margin-bottom:7px}.form-row select{width:100%;border:2px solid #AFC0CA;border-radius:8px;padding:10px;background:#fff;font:inherit;font-weight:800;color:var(--ink)}
+.summary-box{max-width:1020px;margin:20px auto;border:1px solid #C9D6DE;border-radius:14px;background:#fff;padding:18px}.summary-box h3{margin-top:0;color:var(--unit-dark)}.summary-box li{margin:8px 0;line-height:1.4}.self-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;max-width:1180px;margin:20px auto}.self-card{min-height:150px;text-align:center;padding-top:18px}.self-card .level{width:38px;height:38px;border-radius:50%;background:var(--unit);color:#fff;display:grid;place-items:center;margin:0 auto 10px;font-size:18px}.repeat-all{display:block;margin:12px auto;border:2px solid #AAB8C2;background:#fff;border-radius:9px;padding:10px 16px;font-weight:900;color:#536875}
+.modal{position:fixed;inset:0;background:rgba(16,28,36,.58);display:none;align-items:center;justify-content:center;padding:20px;z-index:50}.modal.open{display:flex}.modal-card{width:min(620px,95vw);background:#fff;border-radius:16px;box-shadow:0 24px 70px rgba(0,0,0,.25);overflow:hidden}.modal-head{display:flex;justify-content:space-between;align-items:center;background:var(--unit);color:#fff;padding:13px 16px;font-weight:900}.modal-close{border:0;background:transparent;color:#fff;font-size:25px}.modal-body{padding:18px;font-size:17px;line-height:1.5}.modal-actions{display:flex;justify-content:flex-end;gap:10px;padding:0 18px 18px}
+@media(max-width:900px){.sort-zones,.branch-demo,.stack-layout,.builder,.self-grid{grid-template-columns:1fr}.form-grid{grid-template-columns:1fr}.topbar{grid-template-columns:1fr}.lesson-badge{justify-self:start}.sim-grid{grid-template-columns:1fr}.traffic{grid-template-columns:1fr}.main{padding:12px}.activity{padding:12px}.alg-line.indent2{margin-left:42px;width:calc(100% - 42px)}}
+</style>
+<style id="nk-license-style">
+.nk-license{max-width:1100px;margin:14px auto 24px;padding:10px 16px;text-align:center;font:13px/1.45 Arial,"Noto Sans",sans-serif;color:#4e657c}
+.nk-license a{color:inherit;text-decoration:underline;text-underline-offset:2px}
+.nk-license .cc-badge{display:inline-block;margin:0 4px;padding:2px 7px;border:1px solid #8aa0b8;border-radius:6px;background:#fff;font-weight:700;white-space:nowrap}
+</style>
+</head>
+<body>
+<div class="app">
+  <header class="topbar">
+    <div><div class="crumb">ΕΝΟΤΗΤΑ 1 · ΑΛΓΟΡΙΘΜΙΚΗ – ΠΡΟΓΡΑΜΜΑΤΙΣΜΟΣ – ΡΟΜΠΟΤΙΚΗ</div><div class="lesson-title">Μάθημα 2 · Μία νέα εντολή επιλογής και μία νέα εντολή επανάληψης</div></div>
+    <div class="lesson-badge">Δ΄ Δημοτικού</div>
+  </header>
+  <div class="progress"><div class="progress-label">Πρόοδος μαθήματος</div><div class="track"><div class="fill" id="fill"></div></div><div class="step-counter" id="counter"></div></div>
+  <div class="stage-tabs" id="tabs"></div>
+  <main class="main">
+    <div class="stage-head"><div><div class="stage-kicker" id="kicker"></div><h1 id="title"></h1></div><button class="help" id="helpBtn">❔ Βοήθεια</button></div>
+    <p class="instruction" id="instruction"></p>
+    <div class="feedback" id="feedback"></div>
+    <section class="activity" id="activity"></section>
+  </main>
+</div>
+<div class="modal" id="helpModal" role="dialog" aria-modal="true" aria-labelledby="helpTitle"><div class="modal-card"><div class="modal-head"><span id="helpTitle">Βοήθεια</span><button class="modal-close" id="closeHelp" aria-label="Κλείσιμο">×</button></div><div class="modal-body" id="helpText"></div><div class="modal-actions"><button class="secondary" id="speakHelp">🔊 Άκουσε</button><button class="primary" id="gotIt">Το κατάλαβα</button></div></div></div>
+<script>
+(()=>{
+const activity=document.getElementById('activity'),feedback=document.getElementById('feedback');
+let stage=0,completed=new Set(),selfChoice=null;
+const stages=[
+ {title:'Το σύμβολο //',instruction:'Ξεχώρισε ποια γραμμή είναι σχόλιο και όχι εντολή που εκτελείται.',help:'Το σύμβολο // δείχνει ότι ακολουθεί σχόλιο. Το σχόλιο εξηγεί κάτι στον αναγνώστη και δεν εκτελείται ως εντολή.'},
+ {title:'Η δομή «Αν… Αλλιώς»',instruction:'Τοποθέτησε κάθε τμήμα του αλγόριθμου στη σωστή θέση.',help:'Συμπλήρωσε τη δομή βήμα-βήμα. Κάθε φορά διάβασε την ερώτηση και διάλεξε το σωστό τμήμα του αλγόριθμου. Η σωστή επιλογή θα τοποθετηθεί αυτόματα στη θέση της.'},
+ {title:'Όταν υπάρχει φανάρι',instruction:'Επίλεξε ό,τι εκτελείται όταν η συνθήκη «υπάρχει φανάρι» είναι αληθής.',help:'Σκέψου ποιο κλαδί της επιλογής εκτελείται όταν η συνθήκη ισχύει.'},
+ {title:'Όταν δεν υπάρχει φανάρι',instruction:'Επίλεξε ό,τι εκτελείται όταν η συνθήκη «υπάρχει φανάρι» είναι ψευδής.',help:'Όταν η συνθήκη δεν ισχύει, εκτελούνται οι εντολές του «Αλλιώς».'},
+ {title:'Πρόβλεψε το αποτέλεσμα',instruction:'Διάβασε την κατάσταση και πρόβλεψε ποια πορεία θα ακολουθήσει ο αλγόριθμος.',help:'Μην κοιτάς μόνο την πρώτη εντολή. Έλεγξε πρώτα αν η συνθήκη είναι αληθής ή ψευδής.'},
+ {title:'Η «Επανάλαβε ώσπου»',instruction:'Διάλεξε πότε είναι κατάλληλη η νέα επανάληψη.',help:'Η «Επανάλαβε ώσπου» χρησιμοποιείται όταν δεν γνωρίζουμε από πριν πόσες επαναλήψεις θα χρειαστούν. Σταματά όταν η συνθήκη της γίνει αληθής.'},
+ {title:'Ταξινόμησε τη στοίβα καρτών',instruction:'Εκτέλεσε τον αλγόριθμο μέχρι να μην υπάρχουν άλλες κάρτες στη στοίβα.',help:'Πάρε την επόμενη κάρτα και δώσε την στον σωστό ιδιοκτήτη. Συνέχισε ώσπου η στοίβα να αδειάσει.'},
+ {title:'Τι επαναλαμβάνεται;',instruction:'Στον αλγόριθμο με τις κάρτες, επίλεξε τις εντολές που επαναλαμβάνονται.',help:'Οι εντολές μέσα στην «Επανάλαβε ώσπου» εκτελούνται ξανά και ξανά μέχρι να γίνει αληθής η συνθήκη.'},
+ {title:'Από δύο «Αν» σε «Αν… Αλλιώς»',instruction:'Βάλε τα βήματα στη σωστή σειρά ώστε οι δύο επιλογές να γίνουν μία εντολή «Αν… Αλλιώς».',help:'Αφού κάθε κάρτα ανήκει είτε στην Υπατία είτε στον Ήρωνα, αρκεί μία συνθήκη: αν ανήκει στην Υπατία, αλλιώς ανήκει στον Ήρωνα.'},
+ {title:'Εντόπισε το λάθος',instruction:'Εκτέλεσε νοερά τον λανθασμένο αλγόριθμο και βρες τι συμβαίνει με την τελευταία κάρτα.',help:'Πρόσεξε πότε ελέγχεται η συνθήκη της επανάληψης σε σχέση με το πότε παίρνουμε την επόμενη κάρτα.'},
+ {title:'Συνολική δοκιμή',instruction:'Συμπλήρωσε έναν ολοκληρωμένο αλγόριθμο που ταξινομεί τις κάρτες σωστά.',help:'Ο σωστός αλγόριθμος χρειάζεται: συνθήκη τερματισμού, λήψη της επόμενης κάρτας και μία επιλογή «Αν… Αλλιώς».'},
+ {title:'Τι έμαθα;',instruction:'Διάλεξε το επίπεδο που περιγράφει καλύτερα πώς νιώθεις για όσα έμαθες.',help:'Δεν υπάρχει σωστή ή λάθος επιλογή. Διάλεξε αυτό που σε εκφράζει καλύτερα.'}
+];
+function shuffle(a){a=[...a];for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
+function speak(t){if(!('speechSynthesis' in window))return; speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(t);u.lang='el-GR';u.rate=.9;speechSynthesis.speak(u)}
+function setFeedback(t,ok){feedback.className='feedback '+(ok===true?'good':ok===false?'bad':'info');feedback.textContent=t;feedback.style.display='block';if(ok!==null)speak(t)}
+function clearFeedback(){feedback.className='feedback';feedback.textContent='';feedback.style.display='none'}
+function updateProgress(){const p=(completed.size/stages.length)*100;document.getElementById('fill').style.width=p+'%';document.getElementById('counter').textContent=(stage+1)+' / '+stages.length;const tabs=document.getElementById('tabs');tabs.innerHTML='';stages.forEach((s,i)=>{const d=document.createElement('div');d.className='stage-dot'+(i===stage?' active':'')+(completed.has(i)?' done':'');d.textContent=completed.has(i)?'✓':i+1;tabs.appendChild(d)})}
+function advance(ms=850){completed.add(stage);updateProgress();setTimeout(()=>{if(stage<stages.length-1){stage++;render()}},ms)}
+function selectOne(sel,el){document.querySelectorAll(sel).forEach(x=>x.classList.remove('selected'));el.classList.add('selected')}
+function renderAlg(lines,clickName=''){return `<div class="algorithm"><div class="alg-head"><span>ΑΛΓΟΡΙΘΜΟΣ</span><span>φυσική γλώσσα</span></div><div class="alg-body">${lines.map((l,i)=>`<button class="alg-line ${l.indent||''} ${l.comment?'comment':''} ${clickName?'':'static'}" ${clickName?`onclick="${clickName}(${i},this)"`:'disabled'}>${l.text}</button>`).join('')}</div></div>`}
+
+/* 1 */
+let s1=null;
+function r1(){s1=null;const lines=[
+ {text:'Στάσου στο πεζοδρόμιο.'},{text:'Αν δεν υπάρχει φανάρι, τότε'},{text:'// Υπάρχει διάβαση πεζών',comment:true},{text:'Κοίτα αριστερά',indent:'indent1'}
+];activity.innerHTML=renderAlg(lines,'pick1')+'<button class="primary center" onclick="check1()">Έλεγχος</button>'}
+function pick1(i,el){s1=i;selectOne('.alg-line',el);setFeedback('Η γραμμή επιλέχθηκε.',null)}
+function check1(){if(s1===null)return setFeedback('Επίλεξε πρώτα μία γραμμή.',false);if(s1!==2)return setFeedback('Η γραμμή που ψάχνεις εξηγεί κάτι στον αναγνώστη και ξεκινά με ειδικό σύμβολο.',false);setFeedback('Σωστά! Το // δηλώνει σχόλιο και όχι εντολή που εκτελείται.',true);advance()}
+
+/* 2 */
+let step2=0,filled2={};
+const pieces2=[
+ {id:'cond',text:'υπάρχει φανάρι'},
+ {id:'true',text:'Περίμενε μέχρι να ανάψει το πράσινο · Πέρνα τον δρόμο'},
+ {id:'false',text:'Κοίτα αριστερά · Κοίτα δεξιά · Κοίτα αριστερά · Πέρνα τον δρόμο'}
+];
+const questions2=[
+ {slot:'cond',label:'Ποια είναι η συνθήκη της επιλογής;'},
+ {slot:'true',label:'Ποιες εντολές εκτελούνται όταν η συνθήκη ισχύει;'},
+ {slot:'false',label:'Ποιες εντολές εκτελούνται στο «Αλλιώς»;'}
+];
+function r2(){step2=0;filled2={};draw2()}
+function slot2(id,label){const p=pieces2.find(x=>x.id===filled2[id]);const current=step2<questions2.length&&questions2[step2].slot===id;return `<div class="ifelse-row"><div class="ifelse-label">${label}</div><div class="ifelse-slot ${p?'filled':''} ${current?'current':''}">${p?p.text:'Θα συμπληρωθεί εδώ'}</div></div>`}
+function draw2(){const q=questions2[step2];const opts=q?shuffle(pieces2):[];activity.innerHTML=`<div class="ifelse-guide">${slot2('cond','ΑΝ · συνθήκη')}${slot2('true','ΑΝ ΙΣΧΥΕΙ')}${slot2('false','ΑΛΛΙΩΣ')}</div>${q?`<div class="step2-card"><div class="step2-progress">Βήμα ${step2+1} από 3</div><div class="step2-question">${q.label}</div><div class="step2-options">${opts.map(p=>`<button class="step2-option" data-v="${p.id}" onclick="pick2(this)">${p.text}</button>`).join('')}</div></div>`:''}`}
+function pick2(el){const q=questions2[step2];if(!q)return;const v=el.dataset.v;if(v!==q.slot){el.classList.add('bad');setFeedback('Αυτό το τμήμα δεν ταιριάζει σε αυτή τη θέση. Δοκίμασε ξανά.',false);return}el.classList.add('good');filled2[q.slot]=v;setFeedback('Σωστά! Το τμήμα μπήκε στη θέση του.',true);step2++;if(step2===questions2.length){draw2();setTimeout(()=>{setFeedback('Μπράβο! Συμπλήρωσες σωστά τη δομή «Αν… Αλλιώς».',true);advance(900)},250)}else setTimeout(()=>{clearFeedback();draw2()},500)}
+
+/* 3 */
+let sel3=new Set();
+const lines3=[
+ ['wait','Περίμενε μέχρι να ανάψει το πράσινο'],['cross','Πέρνα τον δρόμο'],['left','Κοίτα αριστερά (δύο φορές)'],['right','Κοίτα δεξιά'],['comment','// Υπάρχει διάβαση πεζών']
+];
+function r3(){sel3=new Set();activity.innerHTML=`<div class="traffic"><div class="traffic-light"><div class="bulb"></div><div class="bulb"></div><div class="bulb green on"></div></div><div><div class="panel-title"><span class="tag">Συνθήκη</span> Υπάρχει φανάρι = ΑΛΗΘΕΙΑ</div><div class="crosswalk"></div></div></div><div class="choice-grid">${shuffle(lines3).map(x=>`<button class="choice" data-v="${x[0]}" onclick="toggle3(this)">${x[1]}</button>`).join('')}</div><button class="primary center" onclick="check3()">Έλεγχος</button>`}
+function toggle3(el){const v=el.dataset.v;if(sel3.has(v)){sel3.delete(v);el.classList.remove('selected')}else{sel3.add(v);el.classList.add('selected')}setFeedback('Η επιλογή ενημερώθηκε.',null)}
+function check3(){const target=['wait','cross'];const ok=sel3.size===target.length&&target.every(x=>sel3.has(x));if(!ok)return setFeedback('Επίλεξε μόνο τις εντολές του κλαδιού που εκτελείται όταν υπάρχει φανάρι.',false);setFeedback('Σωστά! Όταν η συνθήκη είναι αληθής, εκτελείται το πρώτο κλαδί.',true);advance()}
+
+/* 4 */
+let sel4=new Set();
+function r4(){sel4=new Set();activity.innerHTML=`<div class="panel"><div class="panel-title"><span class="tag">Συνθήκη</span> Υπάρχει φανάρι = ΨΕΥΔΗΣ</div><p style="margin:0;font-weight:780">Υπάρχει διάβαση πεζών. Ποιες εντολές εκτελούνται τώρα;</p></div><div class="choice-grid">${shuffle(lines3).map(x=>`<button class="choice" data-v="${x[0]}" onclick="toggle4(this)">${x[1]}</button>`).join('')}</div><button class="primary center" onclick="check4()">Έλεγχος</button>`}
+function toggle4(el){const v=el.dataset.v;if(sel4.has(v)){sel4.delete(v);el.classList.remove('selected')}else{sel4.add(v);el.classList.add('selected')}setFeedback('Η επιλογή ενημερώθηκε.',null)}
+function check4(){const target=['left','right','cross'];const ok=sel4.size===target.length&&target.every(x=>sel4.has(x));if(!ok)return setFeedback('Όταν η συνθήκη είναι ψευδής, εκτελούνται οι εντολές του «Αλλιώς». Το σχόλιο δεν είναι εκτελέσιμη εντολή.',false);setFeedback('Σωστά! Όταν δεν υπάρχει φανάρι, ακολουθούμε το κλαδί «Αλλιώς».',true);advance()}
+
+/* 5 */
+let a5=null;
+function r5(){a5=null;const opts=shuffle([['traffic','Περιμένει να ανάψει πράσινο και μετά περνά τον δρόμο.'],['zebra','Κοιτά αριστερά, δεξιά, αριστερά και μετά περνά τον δρόμο.'],['both','Εκτελεί και τις δύο πορείες.']]);activity.innerHTML=`<div class="panel"><div class="panel-title"><span class="tag">Κατάσταση</span> Η Υπατία φτάνει σε σημείο όπου ΔΕΝ υπάρχει φανάρι.</div><p style="margin:0;font-weight:780">Υπάρχει διάβαση πεζών. Τι θα κάνει ο αλγόριθμος;</p></div><div class="answers">${opts.map(o=>`<button class="answer" data-v="${o[0]}" onclick="pick5(this)">${o[1]}</button>`).join('')}</div><button class="primary center" onclick="check5()">Έλεγχος</button>`}
+function pick5(el){a5=el.dataset.v;selectOne('.answer',el);setFeedback('Η απάντηση καταγράφηκε.',null)}
+function check5(){if(!a5)return setFeedback('Διάλεξε πρώτα μία απάντηση.',false);if(a5!=='zebra')return setFeedback('Η συνθήκη «υπάρχει φανάρι» είναι ψευδής. Άρα ποιο κλαδί εκτελείται;',false);setFeedback('Σωστά! Προέβλεψες την πορεία της εντολής «Αν… Αλλιώς».',true);advance()}
+
+/* 6 */
+let a6=null;
+function r6(){a6=null;const opts=shuffle([['known','Ξέρω ότι πρέπει να κάνω ακριβώς 20 επαναλήψεις.'],['unknown','Συνεχίζω μέχρι να γίνει αληθής μια συνθήκη, χωρίς να ξέρω από πριν πόσες επαναλήψεις θα χρειαστούν.'],['once','Θέλω να εκτελεστεί μία εντολή μόνο μία φορά.']]);activity.innerHTML=`<div class="note">Η «Επανάλαβε ώσπου» σταματά όταν η συνθήκη της γίνει <strong>ΑΛΗΘΕΙΑ</strong>.</div><div class="answers">${opts.map(o=>`<button class="answer" data-v="${o[0]}" onclick="pick6(this)">${o[1]}</button>`).join('')}</div><button class="primary center" onclick="check6()">Έλεγχος</button>`}
+function pick6(el){a6=el.dataset.v;selectOne('.answer',el);setFeedback('Η απάντηση καταγράφηκε.',null)}
+function check6(){if(!a6)return setFeedback('Διάλεξε πρώτα μία απάντηση.',false);if(a6!=='unknown')return setFeedback('Σκέψου αν γνωρίζουμε πάντα εκ των προτέρων πόσες επαναλήψεις θα χρειαστούν.',false);setFeedback('Σωστά! Η «Επανάλαβε ώσπου» είναι χρήσιμη όταν ο αριθμός επαναλήψεων δεν είναι γνωστός από πριν.',true);advance()}
+
+/* 7 */
+let cards7=[],current7=null,done7=0,phase7='sort',stop7=null;
+function makeCards7(){const n=5+Math.floor(Math.random()*3);const arr=[];for(let i=0;i<n;i++)arr.push(Math.random()<.5?'hypatia':'heron');if(arr.every(x=>x==='hypatia'))arr[0]='heron';if(arr.every(x=>x==='heron'))arr[0]='hypatia';return arr}
+function r7(){cards7=makeCards7();current7=null;done7=0;phase7='sort';stop7=null;draw7()}
+function draw7(){if(phase7==='question'){const opts=shuffle([['empty','Δεν υπάρχουν άλλες κάρτες στη στοίβα.'],['five','Έγιναν πέντε επαναλήψεις.'],['hypatia','Βρέθηκε κάρτα της Υπατίας.']]);activity.innerHTML=`<div class="panel"><div class="panel-title"><span class="tag">Τερματισμός</span> Η στοίβα άδειασε.</div><p style="margin:0;font-weight:780">Τι έκανε τη «Επανάλαβε ώσπου» να σταματήσει;</p></div><div class="answers">${opts.map(o=>`<button class="answer" data-v="${o[0]}" onclick="pickStop7(this)">${o[1]}</button>`).join('')}</div><button class="primary center" onclick="checkStop7()">Έλεγχος</button>`;return}
+ const visual=[...cards7];activity.innerHTML=`<div class="stack-layout"><div class="desk"><div class="panel-title"><span class="tag">Στοίβα</span> Κάρτες</div><div class="stack">${visual.length?visual.map((c,i)=>`<div class="stack-card ${i===visual.length-1?'top':''}">Κάρτα</div>`).join(''):'<div style="font-weight:900;color:#6D7A84">Η στοίβα άδειασε</div>'}</div></div><div class="desk"><div class="panel-title"><span class="tag">Τρέχουσα επανάληψη</span> Πάρε την επόμενη κάρτα</div><div class="current-card">${current7?`Η κάρτα ανήκει ${current7==='hypatia'?'στην Υπατία':'στον Ήρωνα'}.`:'Πάτησε «Πάρε κάρτα».'}</div><div style="height:12px"></div>${current7?`<div class="sort-actions"><button class="owner-btn" onclick="give7('hypatia')">Δώσε στην Υπατία</button><button class="owner-btn" onclick="give7('heron')">Δώσε στον Ήρωνα</button></div>`:`<button class="primary center" onclick="take7()" ${cards7.length?'':'disabled'}>Πάρε κάρτα</button>`}<div class="counter-strip"><span>Ταξινομημένες: ${done7}</span><span>Συνθήκη: ${cards7.length===0&&!current7?'ΑΛΗΘΕΙΑ':'ΨΕΥΔΗΣ'}</span></div></div></div>`}
+function take7(){if(current7||!cards7.length)return;current7=cards7.pop();draw7();setFeedback('Πήρες την επόμενη κάρτα. Τώρα εφάρμοσε την επιλογή.',null)}
+function give7(who){if(!current7)return;if(who!==current7)return setFeedback('Έλεγξε σε ποιον ανήκει η τρέχουσα κάρτα.',false);done7++;current7=null;if(cards7.length===0){phase7='question';draw7();setFeedback('Η στοίβα άδειασε. Τώρα έλεγξε γιατί σταμάτησε η επανάληψη.',true)}else{draw7();setFeedback('Σωστά! Η επανάληψη συνεχίζεται.',true)}}
+function pickStop7(el){stop7=el.dataset.v;selectOne('.answer',el);setFeedback('Η απάντηση καταγράφηκε.',null)}
+function checkStop7(){if(!stop7)return setFeedback('Διάλεξε πρώτα μία απάντηση.',false);if(stop7!=='empty')return setFeedback('Η επανάληψη δεν σταματά επειδή συμπληρώθηκε ένας συγκεκριμένος αριθμός.',false);setFeedback('Σωστά! Η επανάληψη σταμάτησε όταν δεν υπήρχαν άλλες κάρτες στη στοίβα.',true);advance()}
+
+/* 8 */
+let sel8=new Set();
+const cardAlg=[
+ ['loop','Επανάλαβε ώσπου να μην υπάρχουν κάρτες στη στοίβα'],
+ ['take','Πάρε την επόμενη κάρτα από τη στοίβα'],
+ ['ifh','Αν ανήκει στην Υπατία, τότε δώσε την κάρτα στην Υπατία'],
+ ['ifhe','Αν ανήκει στον Ήρωνα, τότε δώσε την κάρτα στον Ήρωνα']
+];
+function r8(){sel8=new Set();activity.innerHTML=`<div class="algorithm"><div class="alg-head"><span>ΑΛΓΟΡΙΘΜΟΣ ΚΑΡΤΩΝ</span><span>επίλεξε τις επαναλαμβανόμενες εντολές</span></div><div class="alg-body">${cardAlg.map((x,i)=>`<button class="alg-line ${i?'indent1':''}" data-v="${x[0]}" onclick="toggle8(this)">${x[1]}</button>`).join('')}</div></div><button class="primary center" onclick="check8()">Έλεγχος</button>`}
+function toggle8(el){const v=el.dataset.v;if(sel8.has(v)){sel8.delete(v);el.classList.remove('selected')}else{sel8.add(v);el.classList.add('selected')}setFeedback('Η επιλογή ενημερώθηκε.',null)}
+function check8(){const target=['take','ifh','ifhe'];const ok=sel8.size===target.length&&target.every(x=>sel8.has(x));if(!ok)return setFeedback('Επίλεξε τις εντολές που βρίσκονται μέσα στην επανάληψη, όχι την ίδια την εντολή «Επανάλαβε ώσπου».',false);setFeedback('Σωστά! Αυτές οι εντολές εκτελούνται ξανά και ξανά μέχρι να αδειάσει η στοίβα.',true);advance()}
+
+/* 9 */
+let order9=[];
+const blocks9=[
+ {id:'loop',text:'Επανάλαβε ώσπου να μην υπάρχουν κάρτες στη στοίβα'},
+ {id:'take',text:'Πάρε την επόμενη κάρτα από τη στοίβα'},
+ {id:'if',text:'Αν η κάρτα ανήκει στην Υπατία, τότε'},
+ {id:'giveH',text:'Δώσε την κάρτα στην Υπατία'},
+ {id:'else',text:'Αλλιώς'},
+ {id:'giveHe',text:'Δώσε την κάρτα στον Ήρωνα'}
+];
+function r9(){order9=shuffle(blocks9.map(x=>x.id));draw9()}
+function draw9(){activity.innerHTML=`<div class="builder"><div class="builder-col"><h3>Στόχος</h3><p style="line-height:1.5;font-weight:760">Κάθε κάρτα ανήκει είτε στην Υπατία είτε στον Ήρωνα. Χρησιμοποίησε μία μόνο εντολή επιλογής «Αν… Αλλιώς».</p><div class="note" style="margin:12px 0 0">Με τα βελάκια άλλαξε τη σειρά των βημάτων.</div></div><div class="builder-col"><h3>Αλγόριθμος</h3><div class="sequence-list">${order9.map((id,i)=>{const b=blocks9.find(x=>x.id===id);return `<div class="seq-row"><div class="seq-num">${i+1}</div><div class="seq-text">${b.text}</div><button class="movebtn" onclick="move9(${i},-1)" ${i===0?'disabled':''}>↑</button><button class="movebtn" onclick="move9(${i},1)" ${i===order9.length-1?'disabled':''}>↓</button></div>`}).join('')}</div><button class="primary center" onclick="check9()">Έλεγχος</button></div></div>`}
+function move9(i,d){const j=i+d;if(j<0||j>=order9.length)return;[order9[i],order9[j]]=[order9[j],order9[i]];draw9();setFeedback('Η σειρά ενημερώθηκε.',null)}
+function check9(){const target=['loop','take','if','giveH','else','giveHe'];if(order9.join('|')!==target.join('|'))return setFeedback('Η σειρά χρειάζεται ακόμη διόρθωση. Η κάρτα πρέπει πρώτα να παρθεί από τη στοίβα και μετά να εξεταστεί η επιλογή.',false);setFeedback('Σωστά! Αντικατέστησες τις δύο «Αν… τότε» με μία «Αν… Αλλιώς».',true);advance()}
+
+/* 10 */
+let a10=null;
+function r10(){a10=null;const faulty=[
+ 'Πάρε μία κάρτα από τη στοίβα',
+ 'Επανάλαβε ώσπου να μην υπάρχουν κάρτες στη στοίβα',
+ 'Αν ανήκει στην Υπατία, τότε δώσε την κάρτα στην Υπατία',
+ 'Αν ανήκει στον Ήρωνα, τότε δώσε την κάρτα στον Ήρωνα',
+ 'Πάρε την επόμενη κάρτα από τη στοίβα'
+];const opts=shuffle([['last','Η τελευταία κάρτα βγαίνει από τη στοίβα, αλλά δεν δίνεται σε κανέναν.'],['all','Όλες οι κάρτες ταξινομούνται σωστά.'],['first','Η πρώτη κάρτα δεν εξετάζεται ποτέ.']]);activity.innerHTML=`<div class="trace">${faulty.map((t,i)=>`<div class="trace-row ${i===4?'problem':''}"><div class="trace-n">${i+1}</div><div>${t}</div></div>`).join('')}</div><div class="answers">${opts.map(o=>`<button class="answer" data-v="${o[0]}" onclick="pick10(this)">${o[1]}</button>`).join('')}</div><button class="primary center" onclick="check10()">Έλεγχος</button>`}
+function pick10(el){a10=el.dataset.v;selectOne('.answer',el);setFeedback('Η απάντηση καταγράφηκε.',null)}
+function check10(){if(!a10)return setFeedback('Διάλεξε πρώτα μία απάντηση.',false);if(a10!=='last')return setFeedback('Παρακολούθησε τι συμβαίνει όταν το βήμα 5 πάρει την τελευταία κάρτα και μετά ξαναελεγχθεί η συνθήκη.',false);setFeedback('Σωστά! Η τελευταία κάρτα αφαιρείται από τη στοίβα και η επανάληψη σταματά πριν ταξινομηθεί.',true);advance()}
+
+/* 11 */
+let overall11={};
+function r11(){overall11={};const row=(id,label,opts)=>`<div class="form-row"><label>${label}</label><select id="${id}" onchange="overallChange11('${id}',this.value)"><option value="">— Διάλεξε —</option>${shuffle(opts).map(o=>`<option value="${o[0]}">${o[1]}</option>`).join('')}</select></div>`;activity.innerHTML=`<div class="overall"><div class="overall-scenario">Θέλεις να ταξινομήσεις μια άγνωστου μεγέθους στοίβα καρτών. Κάθε κάρτα ανήκει είτε στην Υπατία είτε στον Ήρωνα.</div><div class="form-grid">${row('stop','Συνθήκη της «Επανάλαβε ώσπου»', [['empty','να μην υπάρχουν κάρτες στη στοίβα'],['ten','να γίνουν 10 επαναλήψεις'],['hero','να βρεθεί κάρτα του Ήρωνα']])}${row('take','Πρώτη εντολή μέσα στην επανάληψη', [['take','Πάρε την επόμενη κάρτα'],['count','Μέτρησε όλες τις κάρτες'],['finish','Σταμάτα τον αλγόριθμο']])}${row('cond','Συνθήκη της επιλογής', [['hypatia','η κάρτα ανήκει στην Υπατία'],['empty','η στοίβα είναι άδεια'],['many','υπάρχουν πολλές κάρτες']])}${row('then','Αν η συνθήκη είναι αληθής', [['giveH','Δώσε την κάρτα στην Υπατία'],['giveHe','Δώσε την κάρτα στον Ήρωνα'],['return','Βάλε την κάρτα πίσω']])}${row('else','Αλλιώς', [['giveHe','Δώσε την κάρτα στον Ήρωνα'],['giveH','Δώσε την κάρτα στην Υπατία'],['skip','Μην κάνεις τίποτα']])}</div><button class="primary center" onclick="check11()">Έλεγχος</button></div>`}
+function overallChange11(k,v){overall11[k]=v;setFeedback('Η επιλογή καταγράφηκε.',null)}
+function check11(){const target={stop:'empty',take:'take',cond:'hypatia',then:'giveH',else:'giveHe'};for(const k of Object.keys(target)){if(!overall11[k])return setFeedback('Συμπλήρωσε πρώτα όλα τα πεδία.',false);if(overall11[k]!==target[k])return setFeedback('Κάποιο μέρος του αλγόριθμου δεν ταιριάζει. Έλεγξε τη συνθήκη τερματισμού και τα δύο κλαδιά της επιλογής.',false)}setFeedback('Εξαιρετικά! Συνδύασες σωστά «Επανάλαβε ώσπου» και «Αν… Αλλιώς».',true);advance(1000)}
+
+/* 12 */
+function r12(){selfChoice=null;activity.innerHTML=`<div class="summary-box"><h3>Στο μάθημα εξασκήθηκες στο να:</h3><ul><li>φτιάχνεις αλγόριθμους με άγνωστο αριθμό επαναλήψεων,</li><li>χρησιμοποιείς εντολές αποφάσεων/επιλογής για διαφορετικά ενδεχόμενα,</li><li>εντοπίζεις λάθη σε έναν αλγόριθμο.</li></ul></div><div class="self-grid"><button class="self-card" onclick="pickSelf(4,this)"><div class="level">4</div>Έχω καταλάβει και μπορώ να εξηγήσω</button><button class="self-card" onclick="pickSelf(3,this)"><div class="level">3</div>Έχω καταλάβει αρκετά καλά</button><button class="self-card" onclick="pickSelf(2,this)"><div class="level">2</div>Έχω καταλάβει αλλά έχω απορίες</button><button class="self-card" onclick="pickSelf(1,this)"><div class="level">1</div>Χρειάζομαι βοήθεια</button></div><button class="primary center" onclick="finish()">Ολοκλήρωση</button><button class="repeat-all" onclick="restart()">↻ Επανάληψη δραστηριότητας</button>`}
+function pickSelf(v,el){selfChoice=v;document.querySelectorAll('.self-card').forEach(x=>x.classList.remove('selected'));el.classList.add('selected');setFeedback('Η αυτοαξιολόγησή σου καταγράφηκε.',null)}
+function finish(){if(!selfChoice)return setFeedback('Διάλεξε πρώτα ένα επίπεδο αυτοαξιολόγησης.',false);completed.add(stage);updateProgress();setFeedback('Μπράβο! Ολοκλήρωσες το Μάθημα 2.',true)}
+function restart(){stage=0;completed=new Set();selfChoice=null;render()}
+
+const renderers=[r1,r2,r3,r4,r5,r6,r7,r8,r9,r10,r11,r12];
+function render(){clearFeedback();updateProgress();const s=stages[stage];document.getElementById('kicker').textContent='Δραστηριότητα '+(stage+1);document.getElementById('title').textContent=s.title;document.getElementById('instruction').textContent=s.instruction;renderers[stage]();window.scrollTo({top:0,behavior:'smooth'})}
+Object.assign(window,{pick1,check1,pick2,toggle3,check3,toggle4,check4,pick5,check5,pick6,check6,take7,give7,pickStop7,checkStop7,toggle8,check8,move9,check9,pick10,check10,overallChange11,check11,pickSelf,finish,restart});
+const modal=document.getElementById('helpModal'),helpText=document.getElementById('helpText');document.getElementById('helpBtn').onclick=()=>{helpText.textContent=stages[stage].help;modal.classList.add('open')};document.getElementById('closeHelp').onclick=()=>modal.classList.remove('open');document.getElementById('gotIt').onclick=()=>modal.classList.remove('open');document.getElementById('speakHelp').onclick=()=>speak(helpText.textContent);modal.onclick=e=>{if(e.target===modal)modal.classList.remove('open')};
+render();
+})();
+</script>
+<footer class="nk-license" aria-label="Πληροφορίες δημιουργού και άδειας χρήσης">
+  <div><strong>Created by Nikos Kalakos · © 2026</strong></div>
+  <div>Original educational content and simulation design licensed under <a class="cc-badge" href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank" rel="license noopener noreferrer">CC BY-NC 4.0</a>.</div>
+  <div>Source code © 2026 Nikos Kalakos.</div>
+  <div>Third-party and textbook materials remain subject to the rights and licences of their respective copyright holders.</div>
+</footer>
+</body>
+</html>

@@ -1,0 +1,331 @@
+<!--
+ICT Educational Simulation
+Created by Nikos Kalakos
+Copyright © 2026 Nikos Kalakos
+
+Original educational content and simulation design licensed under CC BY-NC 4.0.
+Source code © 2026 Nikos Kalakos.
+Third-party and textbook materials remain subject to the rights and licences of their respective copyright holders.
+-->
+<!doctype html>
+<html lang="el">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="author" content="Nikos Kalakos">
+<meta name="copyright" content="© 2026 Nikos Kalakos">
+<meta name="license" content="Original educational content and simulation design: CC BY-NC 4.0; source code © 2026 Nikos Kalakos; third-party and textbook materials excluded.">
+<title>Μάθημα 23 - Χρήση ηλεκτρονικού ταχυδρομείου</title>
+<style>
+:root{
+  --unit:#BC1930;--unit-dark:#921226;--unit-soft:#FFF0F3;
+  --secondary:#545F99;--secondary-dark:#3E487C;--secondary-soft:#EEF0FA;
+  --ink:#24334A;--muted:#687487;--line:#D4DBE6;--panel:#FFFFFF;
+  --ok:#147A54;--ok-soft:#E9F8F2;--bad:#B7505F;--bad-soft:#FFF0F2;
+  --info:#355B87;--info-soft:#EEF5FC;--shadow:0 12px 30px rgba(31,43,68,.14);
+  --aos-bg:#E9ECFA;--aos-bar:#3F497E;--gold:#E99A27;
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{font-family:Arial,"Noto Sans",sans-serif;background:#F7F8FB;color:var(--ink)}
+button,input,textarea{font:inherit}
+button{cursor:pointer}
+button:disabled{cursor:not-allowed;opacity:.55}
+.app{max-width:1300px;margin:auto;padding:16px}
+.top{display:grid;grid-template-columns:1fr auto;gap:16px;align-items:center;background:#fff;border:2px solid #E0E4ED;border-radius:22px;padding:16px 20px;box-shadow:var(--shadow)}
+.top h1{margin:0;font-size:clamp(27px,3.4vw,40px);line-height:1.12}
+.subtitle{margin:7px 0 0;font-weight:900;color:var(--unit);font-size:18px}
+.athena-brand-mini{display:flex;align-items:center;gap:9px;font-weight:950;color:var(--secondary-dark);font-size:18px}
+.owl-logo{width:64px;height:58px}.owl-logo svg{width:100%;height:100%;display:block}
+.progress-card{margin:14px 0;background:#fff;border:2px solid #E0E4ED;border-radius:20px;padding:12px 14px;box-shadow:0 7px 20px rgba(39,48,74,.08)}
+.progress-top{display:flex;justify-content:space-between;gap:10px;font-weight:900;color:#596579}
+.progress-track{height:11px;background:#E8EBF2;border-radius:20px;overflow:hidden;margin:9px 0 11px}
+.progress-fill{height:100%;background:var(--unit);width:0;transition:.3s}
+.dots{display:flex;justify-content:center;gap:8px;flex-wrap:wrap}
+.dot{width:36px;height:36px;border-radius:50%;border:2px solid #ADB6C5;background:#fff;color:#697487;display:grid;place-items:center;font-weight:950;line-height:1}
+.dot.active{background:var(--secondary);border-color:var(--secondary);color:#fff;transform:scale(1.08)}
+.dot.done{background:var(--unit);border-color:var(--unit-dark);color:#fff}
+.panel{background:#fff;border:2px solid #E0E4ED;border-radius:24px;padding:clamp(16px,2.6vw,28px);min-height:700px;box-shadow:var(--shadow)}
+.stage-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.kicker{font-size:14px;font-weight:950;letter-spacing:.06em;color:var(--unit);text-transform:uppercase}
+.stage-title{margin:4px 0 0;font-size:clamp(26px,3.4vw,39px)}
+.help{border:2px solid #D9B5BC;background:#FFF5F7;color:#7A2533;border-radius:14px;padding:10px 16px;font-weight:950}
+.instruction{max-width:1060px;margin:14px auto 18px;text-align:center;font-size:clamp(18px,2vw,23px);line-height:1.42;font-weight:850}
+.feedback{display:none;max-width:920px;margin:16px auto 0;border-radius:16px;padding:13px 17px;text-align:center;font-weight:900;font-size:18px}
+.feedback.good{display:block;background:var(--ok-soft);color:#0C6243;border:2px solid #79C9AB}
+.feedback.bad{display:block;background:var(--bad-soft);color:#853846;border:2px solid #E2A4AE}
+.feedback.info{display:block;background:var(--info-soft);color:#2F587E;border:2px solid #ABC5DF}
+.primary,.secondary-btn{border:0;border-radius:13px;padding:11px 18px;font-weight:950}
+.primary{background:var(--unit);color:#fff}.secondary-btn{background:#EFF2F7;color:#3D4A60;border:2px solid #CBD3DF}
+.no-copy{user-select:none;-webkit-user-select:none}
+
+/* AthenaOS */
+.aos{max-width:1180px;margin:12px auto;border:4px solid var(--secondary-dark);border-radius:18px;overflow:hidden;background:var(--aos-bg);box-shadow:0 18px 38px rgba(33,41,60,.18);position:relative}
+.aos-top{height:45px;background:linear-gradient(135deg,var(--secondary-dark),var(--secondary));color:#fff;display:flex;align-items:center;justify-content:space-between;padding:0 14px;font-weight:950}
+.aos-brand{display:flex;align-items:center;gap:9px}.aos-status{display:flex;gap:12px;font-size:13px;align-items:center}.owl-mini{width:31px;height:31px;display:block}
+.desktop{position:relative;min-height:580px;padding:30px;background:radial-gradient(circle at 78% 18%,rgba(255,255,255,.72),transparent 27%),linear-gradient(135deg,#E7EAFB,#F6F0F6 65%,#EEF3FA)}
+.desktop-grid{display:grid;grid-template-columns:repeat(2,110px);gap:18px;width:max-content}
+.desktop-app{min-height:104px;border:2px solid transparent;border-radius:13px;background:transparent;color:var(--ink);display:grid;place-items:center;text-align:center;font-weight:900;padding:8px}
+.desktop-app:hover,.desktop-app.selected{background:rgba(255,255,255,.64);border-color:#BEC6D8}
+.app-icon{width:58px;height:58px}.app-name{font-size:14px}
+.desktop-note{position:absolute;left:190px;right:190px;bottom:34px;border:2px solid #D4DAE7;background:rgba(255,255,255,.92);border-radius:13px;padding:12px;text-align:center;font-weight:850;color:#596579}
+
+/* Ploigos */
+.window{position:relative;margin:8px;border:2px solid #A8B2C7;border-radius:14px;background:#fff;overflow:hidden;box-shadow:0 11px 25px rgba(34,43,66,.18)}
+.win-title{height:42px;background:#EDF0F6;border-bottom:1px solid #D4DAE5;display:flex;align-items:center;justify-content:space-between;padding:0 11px 0 13px;font-weight:950;color:#36425D}
+.win-title-left{display:flex;align-items:center;gap:8px}.title-icon{width:28px;height:28px}
+.win-controls{display:flex;gap:7px}.win-control{width:27px;height:27px;border:0;border-radius:50%;background:#DDE2EC;color:#3F4960;font-weight:900}.win-control.close{background:#F1D3D8;color:#8F2D3A}
+.browser-toolbar{min-height:48px;border-bottom:1px solid #D6DCE6;background:#F8F9FB;display:flex;align-items:center;gap:7px;padding:6px 8px}
+.nav-btn,.reload-btn{height:34px;min-width:36px;border:1px solid #C5CEDC;background:#fff;border-radius:9px;font-weight:950;color:#48566D}
+.address{flex:1;min-width:120px;height:36px;border:1px solid #BAC5D4;background:#fff;border-radius:10px;padding:0 12px;color:#45526A}
+.address.editable{background:#fff;border:2px solid #AEB8CC}
+.browser-page{min-height:470px;background:#fff;position:relative;overflow:auto}
+.browser-blank{display:grid;place-items:center;min-height:470px;text-align:center;background:linear-gradient(180deg,#fff,#F9FAFC)}
+.browser-blank h2{font-size:42px;margin:0;color:var(--secondary)}.browser-blank p{font-weight:850;color:#687487}
+
+/* Login */
+.login-wrap{max-width:870px;margin:28px auto;border:2px solid #C2CBD8;border-radius:18px;overflow:hidden;background:#fff;box-shadow:0 9px 22px rgba(34,43,66,.1)}
+.login-head{background:linear-gradient(135deg,var(--secondary-dark),var(--secondary));color:#fff;padding:16px 20px;font-weight:950;font-size:20px}
+.login-grid{display:grid;grid-template-columns:1fr 1fr;gap:22px;padding:24px}
+.login-info{border-right:1px solid #DEE3EB;padding-right:20px}.login-info h3{margin:0 0 8px}.login-info p{line-height:1.45;color:#5C697B}
+.demo-creds{border:2px solid #D5DCE7;border-radius:13px;background:#FAFBFD;padding:12px 14px;font-weight:850;line-height:1.7}
+.login-form{display:grid;align-content:center;gap:12px}
+.real-field label{display:block;font-size:13px;font-weight:950;color:#5E697A;margin-bottom:5px}
+.real-input,.real-textarea{width:100%;border:2px solid #C7D0DE;border-radius:11px;background:#fff;padding:10px 12px;color:#26354C;outline:none}
+.real-input:focus,.real-textarea:focus{border-color:var(--secondary);box-shadow:0 0 0 3px rgba(84,95,153,.1)}
+.real-textarea{min-height:115px;resize:vertical}
+.login-btn{height:44px;border:0;border-radius:11px;background:var(--unit);color:#fff;font-weight:950}
+.field-hint{font-size:12px;color:#758093;margin-top:4px}
+
+/* Webmail */
+.mail-shell{display:grid;grid-template-columns:195px 1fr;min-height:470px;background:#fff}
+.mail-side{background:#F2F4F8;border-right:1px solid #D8DEE8;padding:11px}
+.new-mail{width:100%;border:0;border-radius:12px;background:var(--unit);color:#fff;font-weight:950;padding:12px 10px;margin-bottom:11px}
+.side-btn{width:100%;border:0;background:transparent;border-radius:9px;padding:10px 10px;text-align:left;font-weight:900;color:#4D5A6E;margin-bottom:4px}
+.side-btn:hover,.side-btn.active{background:#E5E8F1;color:#2E3951}
+.mail-main{min-width:0;background:#fff}
+.mail-top{height:48px;border-bottom:1px solid #DCE1E9;background:#FAFBFC;display:flex;align-items:center;gap:7px;padding:6px 9px}
+.mail-tool{border:1px solid #C3CBD8;background:#fff;border-radius:8px;padding:7px 10px;font-weight:900;color:#465469}
+.mail-tool:disabled{background:#F1F3F6}
+.mail-list{padding:8px}
+.mail-row{position:relative;display:grid;grid-template-columns:24px 170px 1fr 95px;gap:10px;align-items:center;min-height:54px;border-bottom:1px solid #E3E7ED;padding:7px 10px;cursor:pointer}
+.mail-row:hover{background:#F6F8FB}
+.mail-row.selected{background:var(--unit-soft);outline:2px solid var(--unit);border-radius:9px;padding-right:105px}
+.mail-row.selected::after{content:"✓ Επιλεγμένο";position:absolute;right:12px;color:var(--unit-dark);font-size:11px;font-weight:950}
+.mail-from{font-weight:900}.mail-subject{font-weight:850}.mail-snippet{color:#6A7585;font-weight:500}
+.mail-time{font-size:12px;color:#7C8592;text-align:right}
+/* Όπως σε πραγματικό webmail: το μη αναγνωσμένο μήνυμα ξεχωρίζει μόνο με έντονα γράμματα. */
+.mail-row.unread .mail-from,.mail-row.unread .mail-subject,.mail-row.unread .mail-snippet,.mail-row.unread .mail-time{font-weight:950}
+.mail-empty{padding:50px;text-align:center;color:#758093;font-weight:850}
+
+/* message reader */
+.reader{padding:18px 22px}
+.reader-head{border-bottom:1px solid #DDE2E9;padding-bottom:13px;margin-bottom:14px}
+.reader-head h3{margin:0 0 8px;font-size:24px}.reader-meta{display:grid;gap:5px;color:#5C6978;font-size:14px}
+.reader-body{min-height:165px;line-height:1.55;font-size:17px;padding:16px 0}
+.reader-attachment{display:inline-flex;align-items:center;gap:9px;border:2px solid #CBD3E0;border-radius:12px;padding:8px 12px;background:#FAFBFD;font-weight:900}
+
+/* composer */
+.compose{padding:16px 18px}
+.compose-row{display:grid;grid-template-columns:90px 1fr;gap:10px;align-items:center;margin-bottom:10px}
+.compose-row label{font-weight:950;color:#536074}
+.compose-row input{width:100%;border:2px solid #C7D0DE;border-radius:10px;padding:9px 11px}
+.compose-area{width:100%;min-height:185px;border:2px solid #C7D0DE;border-radius:11px;padding:12px;resize:vertical;line-height:1.45}
+.compose-actions{display:flex;gap:9px;align-items:center;flex-wrap:wrap;margin-top:11px}
+.send-btn,.attach-btn{border:0;border-radius:10px;padding:10px 15px;font-weight:950}
+.send-btn{background:var(--unit);color:#fff}.attach-btn{background:var(--secondary);color:#fff}
+.attachment-chip{display:inline-flex;align-items:center;gap:8px;border:2px solid #C8D1DF;border-radius:11px;background:#FAFBFD;padding:7px 10px;font-weight:900}
+.task-note{max-width:900px;margin:12px auto;border:2px solid #D6DCE7;background:#FAFBFD;border-radius:14px;padding:11px 14px;text-align:center;font-weight:850;color:#566277}
+
+/* Domi picker */
+.picker-overlay{position:absolute;inset:0;background:rgba(29,36,59,.42);display:flex;align-items:center;justify-content:center;padding:18px;z-index:50}
+.domi-picker{width:min(850px,95%);max-height:430px;border:3px solid var(--secondary-dark);border-radius:15px;background:#fff;box-shadow:0 18px 36px rgba(26,35,57,.25);overflow:hidden}
+.domi-title{height:42px;background:#EEF0F6;border-bottom:1px solid #CDD4E0;display:flex;align-items:center;justify-content:space-between;padding:0 12px;font-weight:950;color:#39465F}
+.domi-body{display:grid;grid-template-columns:170px 1fr;min-height:310px}
+.domi-side{background:#F4F5F8;border-right:1px solid #D7DDE6;padding:10px}.domi-side div{padding:8px 9px;border-radius:8px;font-weight:850;color:#536074}
+.domi-files{padding:15px;display:flex;gap:18px;align-items:flex-start;flex-wrap:wrap;align-content:flex-start}
+.file-tile{position:relative;width:130px;min-height:120px;border:2px solid transparent;background:transparent;border-radius:12px;padding:9px;text-align:center;font-weight:900;color:#35415A}
+.file-tile:hover{background:#F4F6FA}.file-tile.selected{background:var(--unit-soft);border-color:var(--unit);padding-bottom:31px}
+.file-tile.selected::after{content:"✓ Επιλεγμένο";position:absolute;left:50%;bottom:7px;transform:translateX(-50%);font-size:10px;color:var(--unit-dark);white-space:nowrap}
+.file-svg{width:58px;height:68px;display:block;margin:0 auto 7px}
+.folder-svg{width:68px;height:56px;display:block;margin:7px auto 12px}
+.domi-actions{display:flex;justify-content:flex-end;gap:8px;padding:9px 12px;border-top:1px solid #D7DDE6;background:#FAFBFC}
+.domi-btn{border:1px solid #BCC6D4;background:#fff;border-radius:9px;padding:8px 14px;font-weight:900}.domi-btn.open{background:var(--unit);border-color:var(--unit);color:#fff}
+
+/* final */
+.final-wrap{max-width:1080px;margin:auto}
+.final-status{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin:8px 0 14px}
+.final-chip{border:2px solid #CBD3DF;border-radius:999px;padding:7px 11px;background:#fff;font-size:13px;font-weight:900;color:#586578}
+.final-chip.done{border-color:#7AC8AA;background:var(--ok-soft);color:#0E6747}
+.completion{max-width:860px;margin:30px auto;text-align:center;border:4px solid var(--unit);border-radius:24px;background:#FFF8F9;padding:30px}
+.completion h2{font-size:34px;margin:10px 0}.completion p{font-size:19px;line-height:1.5}.badge{display:inline-block;background:var(--unit);color:#fff;border-radius:999px;padding:8px 13px;font-weight:950}
+
+/* self assessment */
+.self-wrap{max-width:1120px;margin:18px auto}
+.self-table{display:grid;grid-template-columns:minmax(250px,1.45fr) repeat(4,minmax(130px,1fr));border:2px solid #D3DAE5;border-radius:17px;overflow:hidden}
+.self-head,.self-objective,.self-cell{min-height:95px;border-right:1px solid #D8DEE7;border-bottom:1px solid #D8DEE7;padding:10px;display:grid;place-items:center;text-align:center}
+.self-head{background:#F3F5F8;font-weight:950;font-size:14px}.self-objective{background:#FFF8F9;font-weight:950;text-align:left;place-items:center start}
+.self-cell{position:relative;border-top:0;border-left:0;background:#fff;color:#4C596C;font-weight:850}
+.self-cell.selected{background:var(--unit-soft);outline:3px solid var(--unit);z-index:2;padding-bottom:30px}
+.self-cell.selected::after{content:"✓ Επιλεγμένο";position:absolute;bottom:8px;font-size:11px;color:var(--unit-dark);font-weight:950}
+.self-note{text-align:center;margin:13px auto;color:#667286;font-weight:850}.finish-actions{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin-top:15px}
+
+/* modal */
+.modal{position:fixed;inset:0;background:rgba(25,32,50,.58);display:none;align-items:center;justify-content:center;padding:18px;z-index:100}
+.modal.show{display:flex}.modal-box{max-width:700px;background:#fff;border:4px solid var(--unit);border-radius:23px;padding:23px;box-shadow:var(--shadow);text-align:center}
+.modal-box h3{margin:0 0 10px;font-size:29px}.modal-box p{font-size:21px;line-height:1.45}.modal-actions{display:flex;justify-content:center;gap:10px;flex-wrap:wrap}
+
+@media(max-width:900px){
+ .top{grid-template-columns:1fr}.athena-brand-mini{display:none}.desktop-note{left:35px;right:35px}
+ .login-grid{grid-template-columns:1fr}.login-info{border-right:0;border-bottom:1px solid #DEE3EB;padding:0 0 16px}
+ .mail-shell{grid-template-columns:150px 1fr}.mail-row{grid-template-columns:20px 120px 1fr}.mail-time{display:none}
+ .domi-body{grid-template-columns:120px 1fr}.compose-row{grid-template-columns:1fr}
+ .self-table{grid-template-columns:minmax(220px,1.2fr) repeat(4,minmax(120px,1fr));overflow:auto}
+}
+</style>
+
+<style id="nk-license-style">
+.nk-license{max-width:1100px;margin:14px auto 24px;padding:10px 16px;text-align:center;font:13px/1.45 Arial,"Noto Sans",sans-serif;color:#4e657c}
+.nk-license a{color:inherit;text-decoration:underline;text-underline-offset:2px}
+.nk-license .cc-badge{display:inline-block;margin:0 4px;padding:2px 7px;border:1px solid #8aa0b8;border-radius:6px;background:#fff;font-weight:700;white-space:nowrap}
+</style>
+</head>
+<body>
+<main class="app">
+<header class="top">
+  <div><h1>Χρήση ηλεκτρονικού ταχυδρομείου</h1><p class="subtitle">Μάθημα 23</p></div>
+  <div class="athena-brand-mini"><div class="owl-logo" id="topOwl"></div><span>AthenaOS</span></div>
+</header>
+<section class="progress-card">
+  <div class="progress-top"><span id="progressLabel"></span><span id="counter"></span></div>
+  <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+  <div class="dots" id="dots"></div>
+</section>
+<section class="panel">
+  <div class="stage-head"><div><div class="kicker" id="kicker"></div><h2 class="stage-title" id="stageTitle"></h2></div><button class="help" onclick="openHelp()">❔ Βοήθεια</button></div>
+  <p class="instruction" id="instruction"></p>
+  <div id="activity"></div>
+  <div class="feedback" id="feedback"></div>
+</section>
+</main>
+<div class="modal" id="helpModal"><div class="modal-box"><h3>Βοήθεια</h3><p id="helpText"></p><div class="modal-actions"><button class="secondary-btn" onclick="speakHelp()">🔊 Άκουσε</button><button class="primary" onclick="closeHelp()">Το κατάλαβα</button></div></div></div>
+
+<script>
+const ACTIVITIES=[
+ {t:'Συνδέσου στο ηλεκτρονικό ταχυδρομείο',i:'Άνοιξε το Ploigos με διπλό κλικ, πληκτρολόγησε webmail.sch.gr και συνδέσου με τα στοιχεία της προσομοίωσης.',h:'Κάνε διπλό κλικ στο Ploigos. Στη γραμμή διεύθυνσης γράψε webmail.sch.gr και πάτησε Enter. Στη συνέχεια πληκτρολόγησε το όνομα χρήστη και τον κωδικό της προσομοίωσης.'},
+ {t:'Δημιούργησε νέο μήνυμα',i:'Πάτησε «Νέο μήνυμα» και συμπλήρωσε τον παραλήπτη, το θέμα και το κείμενο που ζητούνται.',h:'Στο «Προς» γράψε τη διεύθυνση που εμφανίζεται στην οδηγία. Στο «Θέμα» γράψε «Καλημέρα» και στο σώμα «Εύχομαι να έχεις μια υπέροχη μέρα».'},
+ {t:'Πρόσθεσε συνημμένο και στείλε',i:'Συνέχισε το μήνυμα: πρόσθεσε την εικόνα από το Domi και έπειτα στείλε το email.',h:'Πάτησε «Προσθήκη συνημμένου». Στο Domi άνοιξε με διπλό κλικ τον φάκελο «Εικόνες», επίλεξε το αρχείο λουλούδι.jpg και πάτησε «Άνοιγμα». Μετά πάτησε «Αποστολή».'},
+ {t:'Διάβασε ένα εισερχόμενο μήνυμα',i:'Άνοιξε τα «Εισερχόμενα» και κάνε αριστερό κλικ στη γραμμή του νέου μηνύματος.',h:'Πρώτα πάτησε «Εισερχόμενα» από το αριστερό μενού. Έπειτα κάνε ένα αριστερό κλικ στη γραμμή του μηνύματος «Καλημέρα από τη Μαρία».'},
+ {t:'Απάντησε στο μήνυμα',i:'Χρησιμοποίησε την εντολή «Απάντηση», γράψε το μήνυμα «Ευχαριστώ για το μήνυμα.» και στείλε την απάντηση.',h:'Πάτησε «Απάντηση». Στο σώμα γράψε ακριβώς «Ευχαριστώ για το μήνυμα.» και έπειτα πάτησε «Αποστολή». Η αντιγραφή και επικόλληση είναι απενεργοποιημένες.'},
+ {t:'Προώθησε το μήνυμα',i:'Χρησιμοποίησε την εντολή «Προώθηση», στείλε το μήνυμα στη διεύθυνση του εκπαιδευτικού της προσομοίωσης και πρόσθεσε ένα σύντομο συνοδευτικό μήνυμα.',h:'Πάτησε «Προώθηση». Στο πεδίο «Προς» γράψε daskalos@school.example και στο σώμα γράψε ακριβώς «Σας προωθώ το μήνυμα.». Έπειτα πάτησε «Αποστολή».'},
+ {t:'Διέγραψε ένα μήνυμα',i:'Στα Εισερχόμενα επίλεξε το μήνυμα «Παλιά ενημέρωση» και διέγραψέ το από το οριζόντιο μενού.',h:'Κάνε ένα αριστερό κλικ στη γραμμή «Παλιά ενημέρωση» ώστε να επιλεγεί. Μετά πάτησε «Διαγραφή».'},
+ {t:'Συνολική δοκιμή',i:'Στείλε ένα νέο email στην ομάδα, με σωστό θέμα, κείμενο και συνημμένο αρχείο.',h:'Δημιούργησε νέο μήνυμα προς omada@school.example, με θέμα «Εργασία» και κείμενο «Σας στέλνω την εργασία.». Πρόσθεσε το αρχείο εργασία.pdf από τον φάκελο «Έγγραφα» του Domi και στείλε το.'},
+ {t:'Τι έμαθα;',i:'Διάλεξε το επίπεδο που σε περιγράφει καλύτερα.',h:'Η αυτοαξιολόγηση δεν έχει σωστή ή λάθος απάντηση. Διάλεξε το επίπεδο που δείχνει πόσο καλά θεωρείς ότι μπορείς να χρησιμοποιείς το ηλεκτρονικό ταχυδρομείο.'}
+];
+let stage=0,transitioning=false,finished=false,completed=new Set();
+const activity=document.getElementById('activity'),feedback=document.getElementById('feedback'),kicker=document.getElementById('kicker'),stageTitle=document.getElementById('stageTitle'),instruction=document.getElementById('instruction');
+
+function owlSvg(cls=''){return `<svg class="${cls}" viewBox="0 0 100 90" aria-label="AthenaOS"><path d="M14 28 7 6 31 18Q50 6 69 18L93 6 86 28Q94 39 91 55Q87 75 69 83Q50 91 31 83Q13 75 9 55Q6 39 14 28Z" fill="#342C7A" stroke="#D8DBFF" stroke-width="5"/><path d="M17 32Q28 20 44 29Q50 33 50 43Q50 33 56 29Q72 20 83 32Q88 42 81 56Q73 69 58 65Q52 63 50 57Q48 63 42 65Q27 69 19 56Q12 42 17 32Z" fill="#A59AF6"/><circle cx="33" cy="43" r="14" fill="#fff"/><circle cx="67" cy="43" r="14" fill="#fff"/><circle cx="33" cy="43" r="5" fill="#1E1E2E"/><circle cx="67" cy="43" r="5" fill="#1E1E2E"/><path d="M44 55 50 66 56 55Z" fill="#FFC642"/></svg>`}
+function ploigosIcon(cls='app-icon'){return `<svg class="${cls}" viewBox="0 0 90 90" aria-label="Ploigos"><rect x="9" y="9" width="72" height="72" rx="18" fill="#fff" stroke="#545F99" stroke-width="5"/><circle cx="45" cy="45" r="24" fill="#EEF0FA" stroke="#545F99" stroke-width="4"/><path d="M45 22c10 10 10 36 0 46M45 22c-10 10-10 36 0 46M22 45h46" fill="none" stroke="#545F99" stroke-width="3"/><path d="M58 31 47 49 34 56 40 39Z" fill="#BC1930" stroke="#921226" stroke-width="2"/></svg>`}
+function folderSvg(cls='folder-svg'){return `<svg class="${cls}" viewBox="0 0 90 70"><path d="M8 20h30l8 9h36v32H8z" fill="#F6B04A" stroke="#545F99" stroke-width="4" stroke-linejoin="round"/><path d="M8 20V12h31l8 8" fill="#FFD48D" stroke="#545F99" stroke-width="4" stroke-linejoin="round"/></svg>`}
+function fileSvg(label,cls='file-svg'){return `<svg class="${cls}" viewBox="0 0 72 84"><path d="M12 4h35l13 13v62H12z" fill="#fff" stroke="#545F99" stroke-width="4" stroke-linejoin="round"/><path d="M47 4v14h13" fill="#EA9221" stroke="#545F99" stroke-width="3" stroke-linejoin="round"/><text x="36" y="50" text-anchor="middle" font-family="Arial" font-size="12" font-weight="900" fill="#35417B">${label}</text></svg>`}
+document.getElementById('topOwl').innerHTML=owlSvg();
+
+function aosTop(){return `<div class="aos-top"><div class="aos-brand">${owlSvg('owl-mini')}<span>AthenaOS</span></div><div class="aos-status"><span>Wi-Fi</span><span>🔊</span><span>10:30</span></div></div>`}
+function setFeedback(t,type){feedback.className='feedback '+(type===true?'good':type===false?'bad':'info');feedback.textContent=t}
+function clearFeedback(){feedback.className='feedback';feedback.textContent=''}
+function updateProgress(){const done=finished;document.getElementById('progressLabel').textContent=done?'Ολοκληρώθηκε':`Δραστηριότητα ${stage+1} από ${ACTIVITIES.length}`;document.getElementById('counter').textContent=done?'100%':`${Math.round((completed.size/ACTIVITIES.length)*100)}%`;document.getElementById('progressFill').style.width=`${done?100:(completed.size/ACTIVITIES.length)*100}%`;document.getElementById('dots').innerHTML=ACTIVITIES.map((_,i)=>`<div class="dot ${done||completed.has(i)?'done':i===stage?'active':''}">${i+1}</div>`).join('')}
+function advance(ms=1050){if(transitioning)return;transitioning=true;completed.add(stage);updateProgress();setTimeout(()=>{stage++;transitioning=false;render()},ms)}
+function openHelp(){document.getElementById('helpText').textContent=ACTIVITIES[Math.min(stage,ACTIVITIES.length-1)].h;document.getElementById('helpModal').classList.add('show')}
+function closeHelp(){document.getElementById('helpModal').classList.remove('show')}
+function speakHelp(){if(!('speechSynthesis' in window))return;window.speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(document.getElementById('helpText').textContent);u.lang='el-GR';u.rate=.86;window.speechSynthesis.speak(u)}
+document.getElementById('helpModal').addEventListener('click',e=>{if(e.target.id==='helpModal')closeHelp()});
+
+function protectTyping(el){if(!el)return;['copy','cut','paste','drop'].forEach(ev=>el.addEventListener(ev,e=>e.preventDefault()));el.addEventListener('contextmenu',e=>e.preventDefault());el.setAttribute('autocomplete','off')}
+function twoWords(v){return v.trim().split(/\s+/).filter(Boolean).length>=2}
+function winFrame(title,body){return `<div class="window"><div class="win-title"><div class="win-title-left">${ploigosIcon('title-icon')}<span>${title}</span></div><div class="win-controls"><button class="win-control">—</button><button class="win-control">□</button><button class="win-control close">×</button></div></div>${body}</div>`}
+function browserWindow(content,address='Νέα καρτέλα',editable=false){return winFrame('Ploigos · Φυλλομετρητής',`<div class="browser-toolbar"><button class="nav-btn">←</button><button class="nav-btn">→</button><input class="address ${editable?'editable':''}" id="addressBar" value="${address}" ${editable?'':'readonly'} aria-label="Γραμμή διεύθυνσης"><button class="reload-btn">↻</button></div><div class="browser-page">${content}</div>`)}
+function desktop(){return `<div class="aos">${aosTop()}<div class="desktop"><div class="desktop-grid"><button class="desktop-app" id="ploigosDesk">${ploigosIcon()}<span class="app-name">Ploigos</span></button></div><div class="desktop-note">Άνοιξε την εφαρμογή με <b>διπλό κλικ</b>, όπως σε έναν συνηθισμένο υπολογιστή.</div></div></div>`}
+
+const DEMO_USER='mathitis4',DEMO_PASS='Asteri!2026';
+function loginPage(){return `<div class="login-wrap"><div class="login-head">Υπηρεσία ηλεκτρονικού ταχυδρομείου · Σύνδεση</div><div class="login-grid"><div class="login-info"><h3>Στοιχεία προσομοίωσης</h3><p>Χρησιμοποίησε τα παρακάτω στοιχεία μόνο για αυτή τη δραστηριότητα.</p><div class="demo-creds no-copy">Όνομα χρήστη: <b>${DEMO_USER}</b><br>Κωδικός πρόσβασης: <b>${DEMO_PASS}</b></div></div><div class="login-form"><div class="real-field"><label for="loginUser">Όνομα χρήστη</label><input class="real-input" id="loginUser" placeholder="Όνομα χρήστη"></div><div class="real-field"><label for="loginPass">Κωδικός πρόσβασης</label><input class="real-input" id="loginPass" type="password" placeholder="Κωδικός πρόσβασης"></div><button class="login-btn" id="loginBtn">Είσοδος</button><div class="field-hint">Η αντιγραφή και επικόλληση είναι απενεργοποιημένες.</div></div></div></div>`}
+
+const inboxMessages=[
+ {id:'maria',from:'Μαρία',subject:'Καλημέρα από τη Μαρία',snippet:'Σου στέλνω μια μικρή ευχή για σήμερα.',time:'10:18',body:'Καλημέρα! Εύχομαι να έχεις μια όμορφη και δημιουργική μέρα.',attach:'ευχή.jpg'},
+ {id:'old',from:'Γραμματεία',subject:'Παλιά ενημέρωση',snippet:'Υπενθύμιση από την προηγούμενη εβδομάδα.',time:'09:40',body:'Αυτό είναι ένα παλιό ενημερωτικό μήνυμα που δεν χρειάζεσαι πια.',attach:''}
+];
+function mailSide(active=''){return `<aside class="mail-side"><button class="new-mail" id="newMailBtn">＋ Νέο μήνυμα</button><button class="side-btn ${active==='inbox'?'active':''}" id="inboxBtn">📥 Εισερχόμενα</button><button class="side-btn ${active==='sent'?'active':''}">📤 Απεσταλμένα</button><button class="side-btn ${active==='trash'?'active':''}">🗑 Διαγραμμένα</button></aside>`}
+function mailRows(messages=inboxMessages,selected=''){return `<div class="mail-list">${messages.length?messages.map(m=>`<div class="mail-row ${selected===m.id?'selected':''} ${m.id==='maria'&&openedMessage!=='maria'?'unread':''}" data-id="${m.id}"><div>✉</div><div class="mail-from">${m.from}</div><div><div class="mail-subject">${m.subject}</div><div class="mail-snippet">${m.snippet}</div></div><div class="mail-time">${m.time}</div></div>`).join(''):'<div class="mail-empty">Δεν υπάρχουν μηνύματα.</div>'}</div>`}
+function inboxView(opts={}){return `<div class="mail-shell">${mailSide(opts.active||'inbox')}<main class="mail-main"><div class="mail-top"><button class="mail-tool" id="replyTool" ${opts.selected?'':'disabled'}>↩ Απάντηση</button><button class="mail-tool" id="forwardTool" ${opts.selected?'':'disabled'}>➜ Προώθηση</button><button class="mail-tool" id="deleteTool" ${opts.selected?'':'disabled'}>🗑 Διαγραφή</button></div>${mailRows(opts.messages||inboxMessages,opts.selected||'')}</main></div>`}
+function readerView(msg){return `<div class="mail-shell">${mailSide('inbox')}<main class="mail-main"><div class="mail-top"><button class="mail-tool" id="replyTool">↩ Απάντηση</button><button class="mail-tool" id="forwardTool">➜ Προώθηση</button><button class="mail-tool" id="deleteTool">🗑 Διαγραφή</button></div><div class="reader"><div class="reader-head"><h3>${msg.subject}</h3><div class="reader-meta"><span><b>Από:</b> ${msg.from} &lt;${msg.id}@school.example&gt;</span><span><b>Προς:</b> mathitis4@school.example</span></div></div><div class="reader-body">${msg.body}</div>${msg.attach?`<div class="reader-attachment">${fileSvg('JPG','file-svg')}<span>${msg.attach}</span></div>`:''}</div></main></div>`}
+function composeView(opts={}){const mode=opts.mode||'new';const title=mode==='reply'?'Απάντηση':mode==='forward'?'Προώθηση':'Νέο μήνυμα';return `<div class="mail-shell">${mailSide()}<main class="mail-main"><div class="mail-top"><strong>${title}</strong></div><div class="compose">${mode==='reply'?`<div class="compose-row"><label>Προς</label><input value="maria@school.example" readonly></div>`:`<div class="compose-row"><label>Προς</label><input id="toField" value="${opts.to||''}" placeholder="Διεύθυνση email"></div>`}<div class="compose-row"><label>Θέμα</label><input id="subjectField" value="${opts.subject||''}" ${mode==='reply'?'readonly':''} placeholder="Θέμα"></div><textarea class="compose-area" id="bodyField" placeholder="Γράψε το μήνυμά σου">${opts.body||''}</textarea>${opts.original?`<div class="task-note"><b>Προωθούμενο μήνυμα:</b> ${opts.original}</div>`:''}<div class="compose-actions"><button class="attach-btn" id="attachBtn" ${mode==='reply'?'style="display:none"':''}>📎 Προσθήκη συνημμένου</button>${opts.attachment?`<span class="attachment-chip">${fileSvg(opts.attachment.endsWith('.pdf')?'PDF':'JPG','file-svg')} ${opts.attachment}</span>`:''}<button class="send-btn" id="sendBtn">Αποστολή</button></div></div></main></div>`}
+
+let loginState='desktop',urlValue='',draft={to:'',subject:'',body:'',attachment:''},pickerOpen=false,pickerFolder='home',pickerSelected='';
+let openedMessage=null,replyName='',forwardTo='',forwardName='',deletedOld=false;
+let finalDraft={to:'',subject:'',body:'',attachment:''},finalPicker=false,finalFolder='home',finalSelected='';
+
+/* Activity 1 */
+function r1(){
+ if(loginState==='desktop'){activity.innerHTML=desktop();const app=document.getElementById('ploigosDesk');app.onclick=()=>app.classList.add('selected');app.ondblclick=()=>{loginState='browser';r1();setFeedback('Το Ploigos άνοιξε. Πληκτρολόγησε τώρα τη διεύθυνση webmail.sch.gr.','info')};return}
+ if(loginState==='browser'){activity.innerHTML=`<div class="aos">${aosTop()}<div class="desktop">${browserWindow('<div class="browser-blank"><div><h2>Ploigos</h2><p>Πληκτρολόγησε μια διεύθυνση στη γραμμή διεύθυνσης.</p></div></div>',urlValue,true)}</div></div>`;const bar=document.getElementById('addressBar');protectTyping(bar);bar.focus();bar.setSelectionRange(bar.value.length,bar.value.length);bar.addEventListener('input',()=>urlValue=bar.value);bar.addEventListener('keydown',e=>{if(e.key==='Enter'){if(bar.value.trim().toLowerCase()!=='webmail.sch.gr'){setFeedback('Η διεύθυνση δεν είναι σωστή. Πληκτρολόγησε webmail.sch.gr.',false);return}urlValue='webmail.sch.gr';loginState='login';r1();setFeedback('Η σελίδα σύνδεσης άνοιξε. Συμπλήρωσε τα στοιχεία της προσομοίωσης.','info')}});return}
+ activity.innerHTML=`<div class="aos">${aosTop()}<div class="desktop">${browserWindow(loginPage(),'webmail.sch.gr')}</div></div>`;
+ const u=document.getElementById('loginUser'),p=document.getElementById('loginPass'),b=document.getElementById('loginBtn');protectTyping(u);protectTyping(p);b.onclick=()=>{if(u.value!==DEMO_USER||p.value!==DEMO_PASS){setFeedback('Έλεγξε ξανά το όνομα χρήστη και τον κωδικό της προσομοίωσης.',false);return}setFeedback('Σωστά! Συνδέθηκες και εμφανίστηκαν τα μηνύματά σου.',true);advance(1400)}
+}
+
+/* Activity 2 */
+function r2(){activity.innerHTML=`<div class="task-note no-copy">Παραλήπτης: <b>filos@school.example</b> · Θέμα: <b>Καλημέρα</b> · Κείμενο: <b>Εύχομαι να έχεις μια υπέροχη μέρα</b></div><div class="aos">${aosTop()}<div class="desktop">${browserWindow(inboxView(),'webmail.sch.gr')}</div></div>`;
+ const newBtn=document.getElementById('newMailBtn');newBtn.onclick=()=>{activity.innerHTML=`<div class="task-note no-copy">Παραλήπτης: <b>filos@school.example</b> · Θέμα: <b>Καλημέρα</b> · Κείμενο: <b>Εύχομαι να έχεις μια υπέροχη μέρα</b></div><div class="aos">${aosTop()}<div class="desktop">${browserWindow(composeView({to:draft.to,subject:draft.subject,body:draft.body}),'webmail.sch.gr')}</div></div>`;bindDraftTyping()}}
+function bindDraftTyping(){const to=document.getElementById('toField'),su=document.getElementById('subjectField'),bo=document.getElementById('bodyField'),send=document.getElementById('sendBtn'),attach=document.getElementById('attachBtn');[to,su,bo].forEach(protectTyping);send.style.display='none';attach.style.display='none';function refresh(){draft.to=to.value;draft.subject=su.value;draft.body=bo.value;const ok=draft.to==='filos@school.example'&&draft.subject==='Καλημέρα'&&draft.body==='Εύχομαι να έχεις μια υπέροχη μέρα';if(ok){setFeedback('Τα βασικά πεδία του νέου μηνύματος συμπληρώθηκαν σωστά.',true);advance(1350)}}[to,su,bo].forEach(el=>el.addEventListener('input',refresh));refresh()}
+
+/* Domi picker */
+function pickerHtml(kind='lesson'){const isFinal=kind==='final';const folder=isFinal?finalFolder:pickerFolder,selected=isFinal?finalSelected:pickerSelected;const folders=folder==='home'?`<button class="file-tile folder-tile" data-folder="${isFinal?'documents':'images'}">${folderSvg()}<span>${isFinal?'Έγγραφα':'Εικόνες'}</span></button>`:'';const files=folder!=='home'?(isFinal?[{name:'εργασία.pdf',label:'PDF'},{name:'σημειώσεις.txt',label:'TXT'}]:[{name:'λουλούδι.jpg',label:'JPG'},{name:'τοπίο.png',label:'PNG'}]).map(f=>`<button class="file-tile ${selected===f.name?'selected':''}" data-file="${f.name}">${fileSvg(f.label)}<span>${f.name}</span></button>`).join(''):'';return `<div class="picker-overlay"><div class="domi-picker"><div class="domi-title"><span>Domi · Επιλογή αρχείου</span><span>${folder==='home'?'Αρχική':isFinal?'Έγγραφα':'Εικόνες'}</span></div><div class="domi-body"><aside class="domi-side"><div>🏠 Αρχική</div><div>📁 Αρχεία</div><div>⬇ Λήψεις</div></aside><main class="domi-files">${folders}${files}</main></div><div class="domi-actions"><button class="domi-btn" id="cancelPicker">Άκυρο</button><button class="domi-btn open" id="openPicker" ${selected?'':'disabled'}>Άνοιγμα</button></div></div></div>`}
+function bindPicker(kind='lesson'){const isFinal=kind==='final';document.querySelectorAll('.folder-tile').forEach(f=>{f.onclick=()=>f.classList.add('selected');f.ondblclick=()=>{if(isFinal){finalFolder=f.dataset.folder;finalSelected=''}else{pickerFolder=f.dataset.folder;pickerSelected=''};renderPicker(kind)}});document.querySelectorAll('[data-file]').forEach(f=>f.onclick=()=>{if(isFinal)finalSelected=f.dataset.file;else pickerSelected=f.dataset.file;renderPicker(kind)});document.getElementById('cancelPicker').onclick=()=>{if(isFinal)finalPicker=false;else pickerOpen=false;renderPicker(kind)};document.getElementById('openPicker').onclick=()=>{if(isFinal){if(finalSelected!=='εργασία.pdf'){setFeedback('Για τη συνολική δοκιμή επίλεξε το αρχείο εργασία.pdf.',false);return}finalDraft.attachment=finalSelected;finalPicker=false}else{if(pickerSelected!=='λουλούδι.jpg'){setFeedback('Η οδηγία ζητά την εικόνα λουλούδι.jpg.',false);return}draft.attachment=pickerSelected;pickerOpen=false}renderPicker(kind);setFeedback('Το αρχείο προστέθηκε ως συνημμένο.','info')}}
+function renderPicker(kind='lesson'){if(kind==='final'){renderFinalCompose()}else renderAttachStage()}
+
+/* Activity 3 */
+function r3(){renderAttachStage()}
+function renderAttachStage(){activity.innerHTML=`<div class="aos">${aosTop()}<div class="desktop">${browserWindow(composeView({to:'filos@school.example',subject:'Καλημέρα',body:'Εύχομαι να έχεις μια υπέροχη μέρα',attachment:draft.attachment}),'webmail.sch.gr')}${pickerOpen?pickerHtml('lesson'):''}</div></div>`;const attach=document.getElementById('attachBtn'),send=document.getElementById('sendBtn');document.getElementById('toField').readOnly=true;document.getElementById('subjectField').readOnly=true;document.getElementById('bodyField').readOnly=true;attach.onclick=()=>{pickerOpen=true;pickerFolder='home';pickerSelected='';renderAttachStage()};send.disabled=!draft.attachment;send.onclick=()=>{if(!draft.attachment)return;setFeedback('Το μήνυμα στάλθηκε μαζί με το συνημμένο αρχείο.',true);advance(1450)};if(pickerOpen)bindPicker('lesson')}
+
+/* Activity 4 */
+let inboxActivated=false;
+function r4(){activity.innerHTML=`<div class="aos">${aosTop()}<div class="desktop">${browserWindow(inboxView({active:inboxActivated?'inbox':''}),'webmail.sch.gr')}</div></div>`;document.getElementById('newMailBtn').disabled=true;document.getElementById('inboxBtn').onclick=()=>{inboxActivated=true;r4();setFeedback('Άνοιξες τα Εισερχόμενα. Τώρα κάνε κλικ στη γραμμή του νέου μηνύματος.','info')};if(inboxActivated){document.querySelectorAll('.mail-row').forEach(row=>row.onclick=()=>{if(row.dataset.id!=='maria'){setFeedback('Άνοιξε το μήνυμα «Καλημέρα από τη Μαρία».',false);return}openedMessage='maria';activity.innerHTML=`<div class="aos">${aosTop()}<div class="desktop">${browserWindow(readerView(inboxMessages[0]),'webmail.sch.gr')}</div></div>`;setFeedback('Σωστά! Άνοιξες και διάβασες το εισερχόμενο μήνυμα.',true);advance(1400)})}}
+
+/* Activity 5 */
+function r5(){const msg=inboxMessages[0];activity.innerHTML=`<div class="aos">${aosTop()}<div class="desktop">${browserWindow(readerView(msg),'webmail.sch.gr')}</div></div>`;document.getElementById('replyTool').onclick=()=>{activity.innerHTML=`<div class="task-note no-copy">Στο σώμα γράψε: <b>Ευχαριστώ για το μήνυμα.</b></div><div class="aos">${aosTop()}<div class="desktop">${browserWindow(composeView({mode:'reply',subject:'Απ: '+msg.subject,body:replyName}),'webmail.sch.gr')}</div></div>`;const body=document.getElementById('bodyField'),send=document.getElementById('sendBtn');protectTyping(body);body.addEventListener('input',()=>replyName=body.value);send.onclick=()=>{replyName=body.value;if(replyName!=='Ευχαριστώ για το μήνυμα.'){setFeedback('Γράψε ακριβώς το μήνυμα που ζητά η οδηγία.',false);return}setFeedback('Η απάντησή σου στάλθηκε στον αποστολέα.',true);advance(1350)}}}
+
+/* Activity 6 */
+function r6(){const msg=inboxMessages[0];activity.innerHTML=`<div class="aos">${aosTop()}<div class="desktop">${browserWindow(readerView(msg),'webmail.sch.gr')}</div></div>`;document.getElementById('forwardTool').onclick=()=>{activity.innerHTML=`<div class="task-note no-copy">Παραλήπτης προώθησης: <b>daskalos@school.example</b> · Κείμενο: <b>Σας προωθώ το μήνυμα.</b></div><div class="aos">${aosTop()}<div class="desktop">${browserWindow(composeView({mode:'forward',to:forwardTo,subject:'Πρ: '+msg.subject,body:forwardName,original:msg.body}),'webmail.sch.gr')}</div></div>`;const to=document.getElementById('toField'),body=document.getElementById('bodyField'),send=document.getElementById('sendBtn');protectTyping(to);protectTyping(body);to.addEventListener('input',()=>forwardTo=to.value);body.addEventListener('input',()=>forwardName=body.value);send.onclick=()=>{forwardTo=to.value;forwardName=body.value;if(forwardTo!=='daskalos@school.example'){setFeedback('Έλεγξε τη διεύθυνση του παραλήπτη.',false);return}if(forwardName!=='Σας προωθώ το μήνυμα.'){setFeedback('Γράψε ακριβώς το συνοδευτικό μήνυμα που ζητά η οδηγία.',false);return}setFeedback('Το μήνυμα προωθήθηκε στον νέο παραλήπτη.',true);advance(1350)}}}
+
+/* Activity 7 */
+let deleteSelected='';
+function r7(){const msgs=deletedOld?inboxMessages.filter(m=>m.id!=='old'):inboxMessages;activity.innerHTML=`<div class="aos">${aosTop()}<div class="desktop">${browserWindow(inboxView({active:'inbox',messages:msgs,selected:deleteSelected}),'webmail.sch.gr')}</div></div>`;document.getElementById('newMailBtn').disabled=true;document.querySelectorAll('.mail-row').forEach(row=>row.onclick=()=>{deleteSelected=row.dataset.id;r7();setFeedback('Το μήνυμα επιλέχθηκε. Χρησιμοποίησε τώρα την εντολή «Διαγραφή».','info')});const del=document.getElementById('deleteTool');if(del)del.onclick=()=>{if(deleteSelected!=='old'){setFeedback('Η οδηγία ζητά να διαγράψεις το μήνυμα «Παλιά ενημέρωση».',false);return}deletedOld=true;deleteSelected='';r7();setFeedback('Το μήνυμα διαγράφηκε από τα Εισερχόμενα.',true);advance(1400)}}
+
+/* Activity 8 */
+let finalStarted=false;
+function finalStatus(){return `<div class="final-status"><span class="final-chip ${finalDraft.to==='omada@school.example'?'done':''}">Παραλήπτης</span><span class="final-chip ${finalDraft.subject==='Εργασία'?'done':''}">Θέμα</span><span class="final-chip ${finalDraft.body==='Σας στέλνω την εργασία.'?'done':''}">Κείμενο</span><span class="final-chip ${finalDraft.attachment==='εργασία.pdf'?'done':''}">Συνημμένο</span></div>`}
+function r8(){if(!finalStarted){activity.innerHTML=`<div class="final-wrap">${finalStatus()}<div class="aos">${aosTop()}<div class="desktop">${browserWindow(inboxView(),'webmail.sch.gr')}</div></div></div>`;document.getElementById('newMailBtn').onclick=()=>{finalStarted=true;renderFinalCompose()};return}renderFinalCompose()}
+function renderFinalCompose(){activity.innerHTML=`<div class="final-wrap">${finalStatus()}<div class="task-note no-copy">Προς: <b>omada@school.example</b> · Θέμα: <b>Εργασία</b> · Κείμενο: <b>Σας στέλνω την εργασία.</b></div><div class="aos">${aosTop()}<div class="desktop">${browserWindow(composeView({to:finalDraft.to,subject:finalDraft.subject,body:finalDraft.body,attachment:finalDraft.attachment}),'webmail.sch.gr')}${finalPicker?pickerHtml('final'):''}</div></div></div>`;const to=document.getElementById('toField'),su=document.getElementById('subjectField'),bo=document.getElementById('bodyField'),attach=document.getElementById('attachBtn'),send=document.getElementById('sendBtn');[to,su,bo].forEach(protectTyping);function store(){finalDraft.to=to.value;finalDraft.subject=su.value;finalDraft.body=bo.value;const st=document.querySelector('.final-status');if(st)st.outerHTML=finalStatus()}[to,su,bo].forEach(el=>el.addEventListener('input',store));attach.onclick=()=>{store();finalPicker=true;finalFolder='home';finalSelected='';renderFinalCompose()};send.onclick=()=>{store();if(finalDraft.to!=='omada@school.example'){setFeedback('Έλεγξε τη διεύθυνση του παραλήπτη.',false);return}if(finalDraft.subject!=='Εργασία'){setFeedback('Το θέμα πρέπει να είναι «Εργασία».',false);return}if(finalDraft.body!=='Σας στέλνω την εργασία.'){setFeedback('Το κείμενο δεν είναι ακόμη αυτό που ζητά η οδηγία.',false);return}if(finalDraft.attachment!=='εργασία.pdf'){setFeedback('Πρόσθεσε πρώτα το αρχείο εργασία.pdf από το Domi.',false);return}setFeedback('Μπράβο! Ολοκλήρωσες σωστά τη συνολική δοκιμή και έστειλες το email.',true);advance(1600)};if(finalPicker)bindPicker('final')}
+
+/* Activity 9 */
+const levels=['Χρειάζομαι βοήθεια','Έχω καταλάβει αλλά έχω απορίες','Έχω καταλάβει αρκετά καλά','Έχω καταλάβει και μπορώ να εξηγήσω'];
+let selfSel=null;
+function r9(){activity.innerHTML=`<div class="self-wrap"><div class="self-table"><div class="self-head">Τι έμαθα;</div>${levels.map(x=>`<div class="self-head">${x}</div>`).join('')}<div class="self-objective">Να χρησιμοποιώ το ηλεκτρονικό ταχυδρομείο.</div>${levels.map((l,col)=>`<button class="self-cell ${selfSel===col?'selected':''}" onclick="pickSelf(${col},this)">${l}</button>`).join('')}</div><div class="self-note">Επίλεξε το επίπεδο που σε περιγράφει καλύτερα. Η αυτοαξιολόγηση δεν έχει σωστή ή λάθος απάντηση.</div><div class="finish-actions"><button class="primary" id="finishBtn" onclick="finishLesson()" ${selfSel===null?'disabled':''}>Ολοκλήρωση</button><button class="secondary-btn" onclick="restart()">↻ Επανάληψη δραστηριότητας</button></div></div>`}
+function pickSelf(col,el){selfSel=selfSel===col?null:col;document.querySelectorAll('.self-cell').forEach(x=>x.classList.remove('selected'));if(selfSel!==null)el.classList.add('selected');document.getElementById('finishBtn').disabled=selfSel===null;if(selfSel!==null){completed.add(8);updateProgress();setFeedback('Η αυτοαξιολόγηση ολοκληρώθηκε. Μπορείς να ολοκληρώσεις το μάθημα.',true)}else clearFeedback()}
+function finishLesson(){if(selfSel===null)return setFeedback('Διάλεξε ένα επίπεδο αυτοαξιολόγησης.',false);completed.add(8);finished=true;updateProgress();setFeedback('Μπράβο! Ολοκλήρωσες το Μάθημα 23.',true);setTimeout(render,650)}
+function renderCompletion(){kicker.textContent='ΟΛΟΚΛΗΡΩΣΗ';stageTitle.textContent='Μπράβο!';instruction.textContent='Ολοκλήρωσες το Μάθημα 23: Χρήση ηλεκτρονικού ταχυδρομείου.';activity.innerHTML=`<div class="completion"><span class="badge">Ενότητα 4 · Μάθημα 23</span><h2>Χρησιμοποίησες το ηλεκτρονικό ταχυδρομείο</h2><p>Συνδέθηκες σε υπηρεσία ηλεκτρονικού ταχυδρομείου, έγραψες και έστειλες μήνυμα με συνημμένο, διάβασες εισερχόμενο μήνυμα και χρησιμοποίησες Απάντηση, Προώθηση και Διαγραφή.</p><button class="secondary-btn" onclick="restart()">↻ Επανάληψη δραστηριότητας</button></div>`;clearFeedback()}
+
+function initAll(){stage=0;transitioning=false;finished=false;completed=new Set();loginState='desktop';urlValue='';draft={to:'',subject:'',body:'',attachment:''};pickerOpen=false;pickerFolder='home';pickerSelected='';openedMessage=null;replyName='';forwardTo='';forwardName='';deletedOld=false;deleteSelected='';finalStarted=false;finalDraft={to:'',subject:'',body:'',attachment:''};finalPicker=false;finalFolder='home';finalSelected='';inboxActivated=false;selfSel=null}
+function restart(){initAll();render()}
+const renderers=[r1,r2,r3,r4,r5,r6,r7,r8,r9];
+function render(){clearFeedback();updateProgress();if(finished){renderCompletion();window.scrollTo({top:0,behavior:'smooth'});return}const s=ACTIVITIES[stage];kicker.textContent='Δραστηριότητα '+(stage+1);stageTitle.textContent=s.t;instruction.textContent=s.i;renderers[stage]();window.scrollTo({top:0,behavior:'smooth'})}
+initAll();render();
+</script>
+
+<footer class="nk-license" aria-label="Πληροφορίες δημιουργού και άδειας χρήσης">
+  <div><strong>Created by Nikos Kalakos · © 2026</strong></div>
+  <div>Original educational content and simulation design licensed under <a class="cc-badge" href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank" rel="license noopener noreferrer">CC BY-NC 4.0</a>.</div>
+  <div>Source code © 2026 Nikos Kalakos.</div>
+  <div>Third-party and textbook materials remain subject to the rights and licences of their respective copyright holders.</div>
+</footer>
+</body>
+</html>
