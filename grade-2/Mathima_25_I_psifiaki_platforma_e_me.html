@@ -1,0 +1,256 @@
+<!--
+ICT Educational Simulation
+Created by Nikos Kalakos
+Copyright © 2026 Nikos Kalakos
+
+Original educational content and simulation design licensed under CC BY-NC 4.0.
+Source code © 2026 Nikos Kalakos.
+Third-party and textbook materials remain subject to the rights and licences of their respective copyright holders.
+-->
+<!doctype html>
+<html lang="el">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="author" content="Nikos Kalakos">
+<meta name="copyright" content="© 2026 Nikos Kalakos">
+<meta name="license" content="Original educational content and simulation design: CC BY-NC 4.0; source code © 2026 Nikos Kalakos; third-party and textbook materials excluded.">
+<title>Μάθημα 25 - Η ψηφιακή πλατφόρμα Agora</title>
+<style>
+:root{
+  --unit-red:#D93A2E;
+  --unit-red-dark:#A92920;
+  --unit-red-soft:#FFF0EE;
+  --ink:#25334a;
+  --line:#d5dbe6;
+  --good:#eef7dc;
+  --bad:#fff0ed;
+  --athena:#5b4eb5;
+  --agora:#356a86;
+  --agora-dark:#23495f;
+  --agora-soft:#eef7fb;
+  --gold:#f1c84b;
+  --shadow:0 10px 28px rgba(37,51,74,.12);
+}
+*{box-sizing:border-box}
+body{margin:0;background:#f7f9fb;color:var(--ink);font-family:Arial,"Noto Sans",sans-serif}
+button,input{font:inherit}button{cursor:pointer}
+.app{max-width:1180px;margin:auto;padding:16px}
+.top{background:#fff;border:3px solid #f0c3be;border-radius:24px;padding:14px 18px;display:flex;align-items:center;justify-content:space-between;box-shadow:var(--shadow)}
+.top h1{margin:0;font-size:clamp(27px,4vw,40px)}
+.badge{width:70px;height:70px;border-radius:22px;background:var(--unit-red);color:#fff;display:grid;place-items:center;font-size:31px;font-weight:900;box-shadow:inset 0 -5px 0 rgba(0,0,0,.10)}
+.path{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin:16px 0}
+.dot{width:44px;height:44px;border-radius:50%;display:grid;place-items:center;border:3px solid #aeb7c7;background:#fff;color:#65718a;font-weight:900;font-size:20px}
+.dot.active{background:var(--unit-red);border-color:var(--unit-red-dark);color:#fff;transform:scale(1.1)}
+.dot.done{background:var(--unit-red);border-color:var(--unit-red-dark);color:#fff}
+.panel{min-height:710px;background:#fff;border:3px solid #f0c3be;border-radius:28px;padding:24px;box-shadow:var(--shadow)}
+.step-head{display:flex;justify-content:space-between;gap:12px;align-items:flex-start}
+.step-head h2{margin:0;font-size:clamp(25px,4vw,37px)}
+.help{background:#fff3f2;color:#8c241d;border:3px solid #efaaa4;border-radius:16px;padding:10px 17px;font-weight:900}
+.instruction{max-width:970px;margin:14px auto 18px;text-align:center;font-size:clamp(19px,2.3vw,24px);font-weight:900;line-height:1.38}
+.card{max-width:1040px;margin:auto;border:3px solid #f0c3be;border-radius:28px;background:#fff;padding:22px;min-height:500px}
+.feedback{display:none;max-width:860px;margin:16px auto 0;padding:12px 18px;border-radius:17px;text-align:center;font-weight:900;font-size:20px}
+.feedback.good{display:block;background:var(--good);border:2px solid #9dbd57}.feedback.bad{display:block;background:var(--bad);border:2px solid #e5a59b}
+.check{display:block;margin:18px auto 0;padding:13px 28px;border:0;border-radius:16px;background:var(--unit-red);color:#fff;font-size:21px;font-weight:900;box-shadow:0 5px 0 var(--unit-red-dark)}
+.smallhelp{text-align:center;font-size:14px;color:#6d7890;font-weight:800;margin-top:10px}
+.taskbox{max-width:860px;margin:0 auto 16px;border:4px solid var(--unit-red);background:#fff6f5;border-radius:18px;padding:12px 16px;text-align:center;font-size:20px;font-weight:900}
+
+/* Concept */
+.concept-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;max-width:940px;margin:28px auto}
+.concept{min-height:230px;border:3px solid #cfd7e2;border-radius:22px;background:#fff;padding:18px;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;gap:12px;font-weight:900;font-size:19px}
+.concept .ico{font-size:64px}.concept:hover{border-color:var(--unit-red)}
+.note{max-width:800px;margin:16px auto;padding:14px 18px;border:3px solid #d8e2e8;background:#f8fbfd;border-radius:16px;font-weight:800;line-height:1.45;text-align:center}
+
+/* AthenaOS */
+.os{max-width:930px;margin:auto;border:5px solid #3f475c;border-radius:24px;overflow:hidden;background:#1f2940;box-shadow:0 12px 28px rgba(20,28,45,.24)}
+.os-top{height:38px;background:#20283b;color:#fff;display:flex;align-items:center;justify-content:space-between;padding:0 12px;font-size:14px;font-weight:900}
+.brand{display:flex;align-items:center;gap:8px}.owl{width:25px;height:25px;border-radius:9px 9px 12px 12px;background:var(--athena);position:relative}
+.owl:before,.owl:after{content:"";position:absolute;top:6px;width:6px;height:6px;border-radius:50%;background:#fff}.owl:before{left:5px}.owl:after{right:5px}.owl span{position:absolute;left:10px;top:13px;width:0;height:0;border-left:3px solid transparent;border-right:3px solid transparent;border-top:6px solid #f2c84a}
+.desktop{position:relative;height:500px;overflow:hidden;background:radial-gradient(circle at 72% 18%,rgba(255,255,255,.10),transparent 25%),linear-gradient(140deg,#5964a6 0%,#3f477b 50%,#273453 100%)}
+.desktop-icon{position:absolute;width:118px;min-height:118px;border:3px solid transparent;border-radius:16px;background:transparent;color:#fff;font-weight:900;text-align:center;padding:8px}
+.desktop-icon:hover{background:rgba(255,255,255,.12);border-color:rgba(255,255,255,.30)}
+.desktop-icon.graphis{left:80px;top:65px}.desktop-icon.chroma{left:245px;top:65px}.desktop-icon.ploigos{left:410px;top:65px}.desktop-icon.ennoia{left:575px;top:65px}
+.doc-symbol,.paint-symbol,.browser-symbol,.map-symbol{width:64px;height:64px;border-radius:16px;margin:0 auto 7px;position:relative;background:#f7f9fb;border:4px solid #384a61}
+.doc-symbol:before,.doc-symbol:after{content:"";position:absolute;left:13px;right:13px;height:4px;background:#6f8298;border-radius:3px}.doc-symbol:before{top:20px}.doc-symbol:after{top:35px}
+.paint-symbol{background:#626CA8}.paint-symbol:before{content:"🎨";position:absolute;inset:0;display:grid;place-items:center;font-size:35px}
+.browser-symbol{background:#edf4fa}.browser-symbol:before{content:"";position:absolute;width:34px;height:34px;border-radius:50%;background:#64b8de;border:4px solid #2d6c8e;left:11px;top:11px}.browser-symbol:after{content:"";position:absolute;left:29px;top:9px;width:4px;height:42px;background:#2d6c8e;transform:rotate(38deg);border-radius:3px}
+.map-symbol:before{content:"◉";position:absolute;inset:0;display:grid;place-items:center;color:#6f5ab7;font-size:40px}
+.taskbar{position:absolute;left:0;right:0;bottom:0;height:50px;background:rgba(28,34,50,.94)}
+
+/* Ploigos */
+.browser{max-width:940px;margin:auto;border:5px solid #3f475c;border-radius:23px;overflow:hidden;background:#fff;box-shadow:0 12px 28px rgba(20,28,45,.20)}
+.browser-top{height:42px;background:linear-gradient(90deg,#334c66,#526b84);color:#fff;display:flex;align-items:center;justify-content:space-between;padding:0 12px;font-weight:900}
+.browser-tabs{height:36px;background:#e9eef3;border-bottom:2px solid #cbd4df;display:flex;align-items:end;padding-left:10px}
+.tab{background:#fff;border:2px solid #cbd4df;border-bottom:0;border-radius:10px 10px 0 0;padding:7px 16px;font-weight:900;font-size:13px}
+.browser-bar{min-height:54px;background:#f6f8fa;border-bottom:2px solid #d5dce5;display:flex;align-items:center;gap:8px;padding:8px 10px}
+.navbtn{width:38px;height:38px;border:2px solid #bbc6d2;border-radius:10px;background:#fff;font-weight:900}
+.address{flex:1;border:3px solid #aeb9c6;border-radius:13px;padding:9px 12px;font-weight:900;font-size:17px;background:#fff}
+.go{border:0;border-radius:12px;background:#496d8f;color:#fff;padding:10px 16px;font-weight:900}
+.page{min-height:410px;background:#fff;position:relative;overflow:auto}
+
+/* Agora landing/login */
+.agora-hero{min-height:410px;background:linear-gradient(135deg,#eef7fb,#fff 55%,#fff8da);display:grid;place-items:center;padding:30px}
+.agora-landing{max-width:720px;text-align:center}.agora-mark{width:94px;height:94px;border-radius:28px;background:var(--agora);color:#fff;display:grid;place-items:center;margin:0 auto 14px;font:900 54px/1 Arial;box-shadow:inset 0 -7px 0 rgba(0,0,0,.12)}
+.agora-name{font-size:42px;font-weight:900;color:var(--agora-dark);letter-spacing:.5px}.agora-sub{font-size:20px;font-weight:800;line-height:1.4;max-width:620px;margin:10px auto 20px}
+.enter{border:0;border-radius:16px;background:var(--unit-red);color:#fff;padding:14px 34px;font-size:21px;font-weight:900;box-shadow:0 5px 0 var(--unit-red-dark)}
+.login-wrap{min-height:410px;background:linear-gradient(135deg,#eef7fb,#fff);display:grid;place-items:center;padding:24px}.login-card{width:min(620px,95%);border:4px solid #cbdbe4;border-radius:24px;background:#fff;padding:24px;box-shadow:var(--shadow)}
+.login-head{text-align:center;margin-bottom:16px}.login-head .agora-mark{width:62px;height:62px;font-size:36px;border-radius:19px}.login-head h3{margin:6px 0 0;font-size:26px;color:var(--agora-dark)}
+.demo-card{border:3px solid #e1d07b;background:#fff9dc;border-radius:16px;padding:10px 14px;margin:10px 0 18px;text-align:center;font-weight:900;line-height:1.5}
+.field{display:grid;gap:6px;margin:12px 0}.field label{font-weight:900}.field input{border:3px solid #aeb9c6;border-radius:12px;padding:10px 12px;font-weight:900;font-size:18px}.login-btn{display:block;width:100%;border:0;border-radius:14px;background:var(--agora);color:#fff;padding:12px;font-weight:900;font-size:20px;margin-top:16px}
+
+/* Agora dashboard */
+.agora-app{min-height:445px;background:#eef3f6;display:grid;grid-template-rows:62px 1fr}
+.agora-top{background:var(--agora-dark);color:#fff;display:flex;align-items:center;gap:12px;padding:0 14px}.agora-mini{width:42px;height:42px;border-radius:13px;background:#fff;color:var(--agora);display:grid;place-items:center;font-size:27px;font-weight:900}.agora-title{font-weight:900;font-size:21px;margin-right:auto}
+.top-tool{position:relative;border:2px solid rgba(255,255,255,.45);background:rgba(255,255,255,.08);color:#fff;border-radius:12px;min-width:54px;height:44px;padding:4px 8px;font-size:23px;font-weight:900}.top-tool span.label{font-size:0}.counter{position:absolute;right:-6px;top:-8px;min-width:24px;height:24px;border-radius:50%;background:var(--unit-red);color:#fff;border:2px solid #fff;display:grid;place-items:center;font-size:13px;font-weight:900}.profile-pill{display:flex;align-items:center;gap:8px;border:2px solid rgba(255,255,255,.45);border-radius:14px;padding:4px 10px;background:rgba(255,255,255,.08);font-weight:900}.avatar{width:34px;height:34px;border-radius:50%;background:#f2cf71;color:#6a4b22;display:grid;place-items:center;font-size:20px}
+.agora-body{display:grid;grid-template-columns:220px 1fr;gap:16px;padding:16px}.side{background:#fff;border:3px solid #d2dce3;border-radius:18px;padding:12px}.side h4{margin:2px 0 10px}.side-item{width:100%;border:2px solid #cbd5de;background:#fff;border-radius:12px;padding:10px;margin:6px 0;font-weight:900;text-align:left}.side-item:hover,.top-tool:hover,.profile-pill:hover{outline:4px solid rgba(217,58,46,.18)}
+.dash{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}.tile{border:3px solid #cbd5de;border-radius:20px;background:#fff;min-height:140px;padding:18px;text-align:center;font-weight:900;font-size:20px}.tile .ico{font-size:48px;display:block;margin-bottom:8px}.tile:hover{border-color:var(--unit-red)}
+.mission{max-width:760px;margin:0 auto 14px;padding:12px 16px;border:4px solid var(--unit-red);border-radius:18px;background:#fff6f5;text-align:center;font-size:20px;font-weight:900}.mission-progress{display:flex;justify-content:center;gap:8px;flex-wrap:wrap;margin:10px 0}.mission-chip{border:2px solid #cbd5de;border-radius:12px;padding:6px 10px;background:#fff;font-weight:900}.mission-chip.done{border-color:#8cab52;background:#f0f7df}
+
+/* signal stage */
+.signal-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;max-width:900px;margin:22px auto}.signal{border:3px solid #cbd5de;border-radius:20px;background:#fff;min-height:160px;padding:18px;display:grid;place-items:center;text-align:center;font-weight:900;font-size:18px;position:relative}.signal .big{font-size:52px}.signal:hover{border-color:var(--unit-red)}
+
+/* final */
+.finalBox{max-width:820px;margin:auto;text-align:center}.stars{font-size:58px;margin:18px}.summary{padding:20px;border:4px solid var(--unit-red);background:#fff4f2;border-radius:22px;font-size:21px;font-weight:900;line-height:1.45;text-align:left}.summary ul{margin:10px 0 0;padding-left:24px}
+.faces{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:18px}.face{min-height:130px;border:3px solid var(--line);border-radius:20px;background:#fff;font-weight:900;font-size:17px}.face span{display:block;font-size:52px;margin-bottom:7px}.face.sel{border-color:var(--unit-red);background:var(--unit-red-soft)}
+.repeatBtn{display:block;margin:15px auto 0;padding:12px 22px;border:0;border-radius:15px;background:#4f6b86;color:#fff;font-size:19px;font-weight:900;box-shadow:0 5px 0 #31475b}
+.modal{position:fixed;inset:0;background:#24344d99;display:none;place-items:center;padding:18px;z-index:60}.modal.show{display:grid}.modal-box{max-width:620px;background:#fff;border-radius:24px;border:4px solid var(--unit-red);padding:22px;text-align:center;font-size:20px}.modal-box button{padding:10px 20px;border:0;border-radius:13px;background:var(--unit-red);color:#fff;font-weight:900}
+@media(max-width:850px){.concept-grid,.faces,.signal-grid{grid-template-columns:1fr}.agora-body{grid-template-columns:1fr}.dash{grid-template-columns:1fr}.desktop{height:620px}.desktop-icon.graphis{left:40px}.desktop-icon.chroma{left:190px}.desktop-icon.ploigos{left:40px;top:220px}.desktop-icon.ennoia{left:190px;top:220px}.profile-pill{font-size:0}.agora-title{font-size:17px}}
+</style>
+<style id="nk-license-style">
+.nk-license{max-width:1100px;margin:14px auto 24px;padding:10px 16px;text-align:center;font:13px/1.45 Arial,"Noto Sans",sans-serif;color:#4e657c}
+.nk-license a{color:inherit;text-decoration:underline;text-underline-offset:2px}
+.nk-license .cc-badge{display:inline-block;margin:0 4px;padding:2px 7px;border:1px solid #8aa0b8;border-radius:6px;background:#fff;font-weight:700;white-space:nowrap}
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="top">
+    <h1>Η ψηφιακή πλατφόρμα Agora</h1>
+    <div class="badge">25</div>
+  </div>
+  <div class="path" id="path"></div>
+  <main class="panel">
+    <div class="step-head">
+      <h2 id="title"></h2>
+      <button class="help" onclick="help()">❓ Βοήθεια</button>
+    </div>
+    <div class="instruction" id="inst"></div>
+    <div class="card" id="card"></div>
+    <div class="feedback" id="feedback"></div>
+  </main>
+</div>
+
+<div class="modal" id="modal">
+  <div class="modal-box">
+    <h2>💡 Βοήθεια</h2>
+    <p id="helpText"></p>
+    <button onclick="closeHelp()">Εντάξει</button>
+  </div>
+</div>
+
+<script>
+const steps=[
+ {t:"Τι είναι η Agora;",i:"Διάλεξε την περιγραφή που ταιριάζει σε μια ψηφιακή εκπαιδευτική πλατφόρμα.",h:"Η Agora είναι ένας διαδικτυακός χώρος για μάθηση, συνεργασία και επικοινωνία. Δεν είναι μόνο ένα παιχνίδι ή ένα πρόγραμμα ζωγραφικής.",k:"concept"},
+ {t:"Ανοίγω τον Ploigos",i:"Στην επιφάνεια εργασίας του AthenaOS άνοιξε τον Ploigos με διπλό κλικ.",h:"Ο Ploigos είναι ο φυλλομετρητής. Κάνε διπλό κλικ στο εικονίδιό του.",k:"open"},
+ {t:"Πηγαίνω στην Agora",i:"Στη γραμμή διεύθυνσης γράψε ακριβώς agora.edu και πάτησε ENTER. Μετά επίλεξε «ΕΙΣΟΔΟΣ».",h:"Πληκτρολόγησε agora.edu στη γραμμή διεύθυνσης του Ploigos. Πάτησε το πραγματικό πλήκτρο Enter και, όταν ανοίξει η σελίδα, επίλεξε «ΕΙΣΟΔΟΣ».",k:"visit"},
+ {t:"Συνδέομαι στην Agora",i:"Χρησιμοποίησε τα δοκιμαστικά στοιχεία που εμφανίζονται και πάτησε «Σύνδεση».",h:"Γράψε ακριβώς το όνομα χρήστη και τον κωδικό που δίνονται στο κίτρινο πλαίσιο. Τα στοιχεία είναι μόνο για αυτή τη δραστηριότητα.",k:"login"},
+ {t:"Γνωρίζω το περιβάλλον",i:"Βρες ένα-ένα τα βασικά εργαλεία της Agora ακολουθώντας τις οδηγίες.",h:"Θα εντοπίσεις το προφίλ, τα μηνύματα, τις ειδοποιήσεις, τους Kykloi και τις επαφές.",k:"environment"},
+ {t:"Μηνύματα και ειδοποιήσεις",i:"Διάλεξε το σωστό σημείο της Agora για κάθε μικρή αποστολή.",h:"Το φακελάκι είναι για τα μηνύματα, η καμπανούλα για τις ειδοποιήσεις, οι Kykloi για τις ομάδες/τάξεις και οι Επαφές για τους ανθρώπους που έχεις στις επαφές σου.",k:"signals"},
+ {t:"Συνολική δοκιμή",i:"Μπες μόνος ή μόνη σου στην Agora και άνοιξε τους Kykloi.",h:"Θυμήσου τη σειρά: Ploigos → agora.edu → ΕΙΣΟΔΟΣ → στοιχεία σύνδεσης → Kykloi.",k:"finaltest"},
+ {t:"Τα κατάφερες!",i:"Σκέψου τι έμαθες στο Μάθημα 25.",h:"Σκέψου αν γνωρίζεις τι είναι μια ψηφιακή εκπαιδευτική πλατφόρμα, πώς συνδέεσαι σε αυτή και πού βρίσκονται τα βασικά εργαλεία της.",k:"final"}
+];
+
+let s=0,selfChoice=null;
+let envMission=0,signalMission=0,finalPhase=0;
+const envTasks=[
+ {id:"profile",txt:"Πάτησε το προφίλ σου."},
+ {id:"messages",txt:"Πάτησε τα Μηνύματα."},
+ {id:"notifications",txt:"Πάτησε τις Ειδοποιήσεις."},
+ {id:"kykloi",txt:"Πάτησε τους Kykloi."},
+ {id:"contacts",txt:"Πάτησε τις Επαφές."}
+];
+const signalTasks=[
+ {id:"messages",txt:"Έχεις νέο μήνυμα. Πού θα πατήσεις;"},
+ {id:"notifications",txt:"Έχεις νέα ειδοποίηση. Πού θα πατήσεις;"},
+ {id:"kykloi",txt:"Θέλεις να βρεις τις ομάδες της τάξης σου. Πού θα πατήσεις;"},
+ {id:"contacts",txt:"Θέλεις να βρεις μια επαφή. Πού θα πατήσεις;"}
+];
+
+function nav(){document.getElementById("path").innerHTML=steps.map((_,i)=>`<div class="dot ${i<s?'done':i===s?'active':''}">${i+1}</div>`).join("")}
+function completeFinalDot(){s=steps.length;nav()}
+function clearFeedback(){const f=document.getElementById("feedback");f.className="feedback";f.textContent=""}
+function setFeedback(t,ok){const f=document.getElementById("feedback");f.className="feedback "+(ok?"good":"bad");f.textContent=t}
+function nextAfter(ms=850){setTimeout(()=>{s++;render()},ms)}
+function render(){nav();clearFeedback();const x=steps[s];document.getElementById("title").textContent=x.t;document.getElementById("inst").textContent=x.i;({concept:stage1,open:stage2,visit:stage3,login:stage4,environment:stage5,signals:stage6,finaltest:stage7,final:stage8})[x.k]()}
+function help(){const idx=Math.min(s,steps.length-1);document.getElementById("helpText").textContent=steps[idx].h;document.getElementById("modal").classList.add("show")}
+function closeHelp(){document.getElementById("modal").classList.remove("show")}
+
+function athenaDesktop(finalMode=false){return `<div class="os"><div class="os-top"><span class="brand"><span class="owl"><span></span></span>AthenaOS</span><span>10:25</span></div><div class="desktop">
+ <button class="desktop-icon graphis" onclick="desktopWrong()"><div class="doc-symbol"></div>Graphis</button>
+ <button class="desktop-icon chroma" onclick="desktopWrong()"><div class="paint-symbol"></div>Chroma</button>
+ <button class="desktop-icon ploigos" onclick="singlePloigos()" ondblclick="${finalMode?'finalOpenPloigos()':'openPloigos()'}"><div class="browser-symbol"></div>Ploigos</button>
+ <button class="desktop-icon ennoia" onclick="desktopWrong()"><div class="map-symbol"></div>Ennoia</button><div class="taskbar"></div></div></div>`}
+function browserShell(body,addressValue="",addressDisabled=false,finalMode=false){return `<div class="browser"><div class="browser-top"><span>◉ Ploigos</span><span>— □ ×</span></div><div class="browser-tabs"><div class="tab">Νέα καρτέλα</div></div><div class="browser-bar"><button class="navbtn" aria-label="Πίσω">←</button><button class="navbtn" aria-label="Επαναφόρτωση">↻</button><input class="address" id="address" value="${addressValue}" ${addressDisabled?'disabled':''} aria-label="Γραμμή διεύθυνσης" autocomplete="off"><button class="go" onclick="${finalMode?'finalGoAddress()':'goAddress()'}">Μετάβαση</button></div><div class="page" id="webpage">${body}</div></div>`}
+function landing(finalMode=false){return `<div class="agora-hero"><div class="agora-landing"><div class="agora-mark">A</div><div class="agora-name">Agora</div><div class="agora-sub">Ψηφιακή εκπαιδευτική πλατφόρμα για μάθηση, συνεργασία και επικοινωνία.</div><button class="enter" onclick="${finalMode?'finalEntrance()':'enterAgora()'}">ΕΙΣΟΔΟΣ</button></div></div>`}
+function loginPage(finalMode=false){return `<div class="login-wrap"><div class="login-card"><div class="login-head"><div class="agora-mark">A</div><h3>Σύνδεση στην Agora</h3></div><div class="demo-card">Δοκιμαστικός λογαριασμός<br>Όνομα χρήστη: <strong>paidi2</strong><br>Κωδικός: <strong>taksi2</strong></div><div class="field"><label for="username">Όνομα χρήστη</label><input id="username" autocomplete="off"></div><div class="field"><label for="password">Κωδικός</label><input id="password" type="password" autocomplete="off"></div><button class="login-btn" onclick="${finalMode?'finalLogin()':'checkLogin()'}">Σύνδεση</button></div></div>`}
+function dashboard(clickHandler="envClick",counts=true){return `<div class="agora-app"><div class="agora-top"><div class="agora-mini">A</div><div class="agora-title">Agora</div>
+ <button class="top-tool" onclick="${clickHandler}('messages')" aria-label="Μηνύματα">✉️${counts?'<span class="counter">2</span>':''}</button>
+ <button class="top-tool" onclick="${clickHandler}('notifications')" aria-label="Ειδοποιήσεις">🔔${counts?'<span class="counter">1</span>':''}</button>
+ <button class="profile-pill" onclick="${clickHandler}('profile')"><span class="avatar">🙂</span><span>paidi2</span></button></div>
+ <div class="agora-body"><div class="side"><h4>Εργαλεία</h4><button class="side-item" onclick="${clickHandler}('kykloi')">⭕ Kykloi</button><button class="side-item" onclick="${clickHandler}('contacts')">👥 Επαφές</button></div><div class="dash"><button class="tile" onclick="${clickHandler}('kykloi')"><span class="ico">⭕</span>Kykloi</button><button class="tile" onclick="${clickHandler}('contacts')"><span class="ico">👥</span>Επαφές</button><button class="tile" onclick="${clickHandler}('messages')"><span class="ico">✉️</span>Μηνύματα</button><button class="tile" onclick="${clickHandler}('notifications')"><span class="ico">🔔</span>Ειδοποιήσεις</button></div></div></div>`}
+
+/* 1 */
+function stage1(){document.getElementById("card").innerHTML=`<div class="note">Η <strong>Agora</strong> είναι η εικονική εκπαιδευτική πλατφόρμα αυτής της δραστηριότητας.</div><div class="concept-grid"><button class="concept" onclick="conceptAnswer(false)"><span class="ico">🎨</span><span>Μόνο πρόγραμμα ζωγραφικής</span></button><button class="concept" onclick="conceptAnswer(true)"><span class="ico">🏫</span><span>Χώρος για μάθηση, συνεργασία και επικοινωνία</span></button><button class="concept" onclick="conceptAnswer(false)"><span class="ico">🎮</span><span>Μόνο ένα παιχνίδι</span></button></div>`}
+function conceptAnswer(ok){if(!ok){setFeedback("Δοκίμασε ξανά. Μια ψηφιακή εκπαιδευτική πλατφόρμα προσφέρει περισσότερα από μία μόνο εφαρμογή.",false);return}setFeedback("Σωστά! Η Agora είναι ψηφιακή εκπαιδευτική πλατφόρμα.",true);nextAfter()}
+
+/* 2 */
+function stage2(){document.getElementById("card").innerHTML=athenaDesktop(false)}
+function singlePloigos(){setFeedback("Χρησιμοποίησε διπλό κλικ για να ανοίξεις τον Ploigos.",false)}
+function desktopWrong(){setFeedback("Χρειάζεσαι τον φυλλομετρητή Ploigos.",false)}
+function openPloigos(){setFeedback("Σωστά! Άνοιξες τον Ploigos.",true);nextAfter(700)}
+
+/* 3 */
+function stage3(){document.getElementById("card").innerHTML=browserShell(`<div class="agora-hero"><div class="agora-landing"><div style="font-size:64px">🌐</div><div class="agora-sub">Γράψε τη διεύθυνση της Agora στη γραμμή διεύθυνσης.</div></div></div>`,"",false,false);document.getElementById("address").focus();document.getElementById("address").addEventListener("keydown",e=>{if(e.key==="Enter")goAddress()})}
+function goAddress(){const a=document.getElementById("address");if(!a)return;if(a.value!=="agora.edu"){setFeedback("Γράψε ακριβώς agora.edu.",false);return}a.disabled=true;document.getElementById("webpage").innerHTML=landing(false);setFeedback("Σωστά! Άνοιξε η σελίδα της Agora. Τώρα επίλεξε «ΕΙΣΟΔΟΣ».",true)}
+function enterAgora(){setFeedback("Μπράβο! Προχώρησες στη σύνδεση.",true);nextAfter(700)}
+
+/* 4 */
+function stage4(){document.getElementById("card").innerHTML=browserShell(loginPage(false),"agora.edu",true,false)}
+function checkLogin(){const u=document.getElementById("username").value,p=document.getElementById("password").value;if(u!=="paidi2"||p!=="taksi2"){setFeedback("Τα στοιχεία δεν είναι σωστά. Αντέγραψέ τα ακριβώς από το κίτρινο πλαίσιο.",false);return}document.getElementById("webpage").innerHTML=dashboard("noop",false);setFeedback("Σωστά! Συνδέθηκες στην Agora.",true);nextAfter(900)}
+function noop(){setFeedback("Σε λίγο θα γνωρίσεις αυτά τα εργαλεία.",true)}
+
+/* 5 */
+function stage5(){envMission=0;drawEnvironment()}
+function drawEnvironment(){const chips=envTasks.map((x,i)=>`<span class="mission-chip ${i<envMission?'done':''}">${i<envMission?'✓ ':''}${x.id==='profile'?'Προφίλ':x.id==='messages'?'Μηνύματα':x.id==='notifications'?'Ειδοποιήσεις':x.id==='kykloi'?'Kykloi':'Επαφές'}</span>`).join("");document.getElementById("card").innerHTML=`<div class="mission" id="missionText">${envTasks[envMission]?.txt||''}</div><div class="mission-progress">${chips}</div>${dashboard("envClick",true)}`}
+function envClick(id){const task=envTasks[envMission];if(!task)return;if(id!==task.id){setFeedback("Δοκίμασε άλλο σημείο της Agora.",false);return}envMission++;if(envMission<envTasks.length){setFeedback("Σωστά! Πάμε στο επόμενο εργαλείο.",true);setTimeout(()=>{clearFeedback();drawEnvironment()},550)}else{setFeedback("Μπράβο! Εντόπισες τα βασικά εργαλεία της Agora.",true);nextAfter(950)}}
+
+/* 6 */
+function stage6(){signalMission=0;drawSignals()}
+function drawSignals(){const t=signalTasks[signalMission];document.getElementById("card").innerHTML=`<div class="taskbox">${t.txt}</div><div class="signal-grid"><button class="signal" onclick="signalClick('messages')"><span class="counter">2</span><span class="big">✉️</span><span>Μηνύματα</span></button><button class="signal" onclick="signalClick('notifications')"><span class="counter">1</span><span class="big">🔔</span><span>Ειδοποιήσεις</span></button><button class="signal" onclick="signalClick('kykloi')"><span class="big">⭕</span><span>Kykloi</span></button><button class="signal" onclick="signalClick('contacts')"><span class="big">👥</span><span>Επαφές</span></button></div><div class="smallhelp">Αποστολή ${signalMission+1} από ${signalTasks.length}</div>`}
+function signalClick(id){if(id!==signalTasks[signalMission].id){setFeedback("Αυτό είναι διαφορετικό εργαλείο. Δοκίμασε ξανά.",false);return}signalMission++;if(signalMission<signalTasks.length){setFeedback("Σωστά!",true);setTimeout(()=>{clearFeedback();drawSignals()},500)}else{setFeedback("Μπράβο! Ξέρεις πού βρίσκονται μηνύματα, ειδοποιήσεις, Kykloi και επαφές.",true);nextAfter(900)}}
+
+/* 7 */
+function stage7(){finalPhase=0;drawFinalTest()}
+function drawFinalTest(){clearFeedback();const c=document.getElementById("card");if(finalPhase===0){c.innerHTML=`<div class="taskbox">1. Άνοιξε τον Ploigos.</div>${athenaDesktop(true)}`;return}if(finalPhase===1){c.innerHTML=`<div class="taskbox">2. Πήγαινε στην Agora.</div>${browserShell(`<div class="agora-hero"><div class="agora-landing"><div style="font-size:64px">🌐</div><div class="agora-sub">Χρησιμοποίησε τη γραμμή διεύθυνσης.</div></div></div>`,"",false,true)}`;const a=document.getElementById("address");a.focus();a.addEventListener("keydown",e=>{if(e.key==="Enter")finalGoAddress()});return}if(finalPhase===2){c.innerHTML=`<div class="taskbox">3. Επίλεξε «ΕΙΣΟΔΟΣ».</div>${browserShell(landing(true),"agora.edu",true,true)}`;return}if(finalPhase===3){c.innerHTML=`<div class="taskbox">4. Συνδέσου με τα δοκιμαστικά στοιχεία.</div>${browserShell(loginPage(true),"agora.edu",true,true)}`;return}c.innerHTML=`<div class="taskbox">5. Άνοιξε τους Kykloi.</div>${browserShell(dashboard("finalDashClick",false),"agora.edu",true,true)}`}
+function finalOpenPloigos(){finalPhase=1;setFeedback("Σωστά!",true);setTimeout(drawFinalTest,500)}
+function finalGoAddress(){const a=document.getElementById("address");if(!a||a.value!=="agora.edu"){setFeedback("Γράψε ακριβώς agora.edu.",false);return}finalPhase=2;setFeedback("Σωστά!",true);setTimeout(drawFinalTest,500)}
+function finalEntrance(){finalPhase=3;setFeedback("Σωστά!",true);setTimeout(drawFinalTest,500)}
+function finalLogin(){const u=document.getElementById("username").value,p=document.getElementById("password").value;if(u!=="paidi2"||p!=="taksi2"){setFeedback("Έλεγξε ξανά τα δοκιμαστικά στοιχεία.",false);return}finalPhase=4;setFeedback("Σωστά!",true);setTimeout(drawFinalTest,500)}
+function finalDashClick(id){if(id!=="kykloi"){setFeedback("Η αποστολή ζητά να ανοίξεις τους Kykloi.",false);return}setFeedback("Μπράβο! Ολοκλήρωσες τη συνολική δοκιμή.",true);nextAfter(1000)}
+
+/* 8 */
+function stage8(){selfChoice=null;document.getElementById("card").innerHTML=`<div class="finalBox"><div class="stars">⭐ ⭐ ⭐</div><div class="summary">Έμαθες:<ul><li>τι είναι μια ψηφιακή εκπαιδευτική πλατφόρμα,</li><li>να ανοίγεις την Agora από τον Ploigos και να συνδέεσαι με όνομα χρήστη και κωδικό,</li><li>να εντοπίζεις το προφίλ, τα μηνύματα, τις ειδοποιήσεις, τους Kykloi και τις επαφές.</li></ul></div><div class="faces"><button class="face" onclick="selfPick(1,this)"><span>🙂</span>Θέλω λίγη εξάσκηση</button><button class="face" onclick="selfPick(2,this)"><span>😊</span>Τα κατάφερα</button><button class="face" onclick="selfPick(3,this)"><span>🤩</span>Τα κατάφερα πολύ καλά</button></div><button class="check" onclick="finish()">Ολοκλήρωση</button><button class="repeatBtn" onclick="restartAll()">↻ Επανάληψη δραστηριότητας</button></div>`}
+function selfPick(v,e){selfChoice=v;document.querySelectorAll(".face").forEach(x=>x.classList.remove("sel"));e.classList.add("sel")}
+function finish(){if(!selfChoice){setFeedback("Διάλεξε πρώτα πώς νιώθεις για όσα έμαθες.",false);return}completeFinalDot();setFeedback("Μπράβο! Ολοκλήρωσες το Μάθημα 25.",true)}
+function restartAll(){s=0;selfChoice=null;envMission=0;signalMission=0;finalPhase=0;render()}
+
+render();
+</script>
+<footer class="nk-license" aria-label="Πληροφορίες δημιουργού και άδειας χρήσης">
+  <div><strong>Created by Nikos Kalakos · © 2026</strong></div>
+  <div>Original educational content and simulation design licensed under <a class="cc-badge" href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank" rel="license noopener noreferrer">CC BY-NC 4.0</a>.</div>
+  <div>Source code © 2026 Nikos Kalakos.</div>
+  <div>Third-party and textbook materials remain subject to the rights and licences of their respective copyright holders.</div>
+</footer>
+</body>
+</html>

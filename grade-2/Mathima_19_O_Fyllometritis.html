@@ -1,0 +1,812 @@
+<!--
+ICT Educational Simulation
+Created by Nikos Kalakos
+Copyright © 2026 Nikos Kalakos
+
+Original educational content and simulation design licensed under CC BY-NC 4.0.
+Source code © 2026 Nikos Kalakos.
+Third-party and textbook materials remain subject to the rights and licences of their respective copyright holders.
+-->
+<!doctype html>
+<html lang="el">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="author" content="Nikos Kalakos">
+<meta name="copyright" content="© 2026 Nikos Kalakos">
+<meta name="license" content="Original educational content and simulation design: CC BY-NC 4.0; source code © 2026 Nikos Kalakos; third-party and textbook materials excluded.">
+<title>Μάθημα 19 - Ο φυλλομετρητής</title>
+<style>
+:root{
+  --unit-red:#D93A2E;
+  --unit-red-dark:#A92920;
+  --unit-red-soft:#FFF0EE;
+  --ink:#25334a;
+  --line:#d5dbe6;
+  --good:#eef7dc;
+  --bad:#fff0ed;
+  --athena:#5b4eb5;
+  --athena-dark:#463a96;
+  --browser:#4f6b86;
+  --browser-dark:#2f4053;
+  --shadow:0 10px 28px rgba(37,51,74,.12);
+}
+*{box-sizing:border-box}
+body{margin:0;background:#f7f9fb;color:var(--ink);font-family:Arial,"Noto Sans",sans-serif}
+button,input{font:inherit}
+button{cursor:pointer}
+.app{max-width:1180px;margin:auto;padding:16px}
+.top{
+  background:#fff;border:3px solid #f0c3be;border-radius:24px;padding:14px 18px;
+  display:flex;align-items:center;justify-content:space-between;box-shadow:var(--shadow)
+}
+.top h1{margin:0;font-size:clamp(28px,4vw,41px)}
+.badge{
+  width:70px;height:70px;border-radius:22px;background:var(--unit-red);color:#fff;
+  display:grid;place-items:center;font-size:31px;font-weight:900;
+  box-shadow:inset 0 -5px 0 rgba(0,0,0,.10)
+}
+.path{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin:16px 0}
+.dot{
+  width:44px;height:44px;border-radius:50%;display:grid;place-items:center;
+  border:3px solid #aeb7c7;background:#fff;color:#65718a;font-weight:900;font-size:20px
+}
+.dot.active{background:var(--unit-red);border-color:var(--unit-red-dark);color:#fff;transform:scale(1.1)}
+.dot.done{background:var(--unit-red);border-color:var(--unit-red-dark);color:#fff}
+.panel{
+  min-height:710px;background:#fff;border:3px solid #f0c3be;border-radius:28px;
+  padding:24px;box-shadow:var(--shadow)
+}
+.step-head{display:flex;justify-content:space-between;gap:12px;align-items:flex-start}
+.step-head h2{margin:0;font-size:clamp(25px,4vw,37px)}
+.help{
+  background:#fff3f2;color:#8c241d;border:3px solid #efaaa4;
+  border-radius:16px;padding:10px 17px;font-weight:900
+}
+.instruction{
+  max-width:970px;margin:14px auto 18px;text-align:center;font-size:clamp(19px,2.3vw,24px);
+  font-weight:900;line-height:1.38
+}
+.card{
+  max-width:1040px;margin:auto;border:3px solid #f0c3be;border-radius:28px;
+  background:#fff;padding:22px;min-height:500px
+}
+.feedback{
+  display:none;max-width:860px;margin:16px auto 0;padding:12px 18px;border-radius:17px;
+  text-align:center;font-weight:900;font-size:20px
+}
+.feedback.good{display:block;background:var(--good);border:2px solid #9dbd57}
+.feedback.bad{display:block;background:var(--bad);border:2px solid #e5a59b}
+.check{
+  display:block;margin:18px auto 0;padding:13px 28px;border:0;border-radius:16px;
+  background:var(--unit-red);color:#fff;font-size:21px;font-weight:900;
+  box-shadow:0 5px 0 var(--unit-red-dark)
+}
+.smallhelp{text-align:center;font-size:14px;color:#6d7890;font-weight:800;margin-top:10px}
+.row{display:flex;gap:14px;justify-content:center;align-items:stretch;flex-wrap:wrap}
+.choice{
+  min-width:205px;max-width:285px;min-height:125px;border:3px solid var(--line);
+  border-radius:22px;background:#fff;padding:15px;font-weight:900;font-size:18px;
+  display:flex;flex-direction:column;justify-content:center;align-items:center;gap:10px
+}
+.choice:hover{transform:translateY(-2px);box-shadow:var(--shadow)}
+.choice.selected{border-color:var(--unit-red);background:var(--unit-red-soft)}
+.choice .big{font-size:48px}
+
+/* Browser icon */
+.browser-icon{
+  width:58px;height:58px;border-radius:15px;background:#edf4fa;border:4px solid #31475b;
+  display:grid;place-items:center;position:relative
+}
+.browser-icon:before{
+  content:"";width:34px;height:34px;border-radius:50%;background:#64b8de;
+  border:4px solid #2d6c8e;position:absolute
+}
+.browser-icon:after{
+  content:"";width:38px;height:4px;background:#2d6c8e;position:absolute;transform:rotate(-20deg);
+  border-radius:4px
+}
+.browser-icon span{
+  width:4px;height:38px;background:#2d6c8e;position:absolute;z-index:2;border-radius:4px
+}
+
+/* Stage 2 */
+.require-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px;max-width:800px;margin:auto}
+.req{
+  min-height:150px;border:3px solid #d2d8e2;border-radius:22px;background:#fff;padding:16px;
+  display:flex;align-items:center;justify-content:center;gap:13px;text-align:center;font-weight:900;font-size:19px
+}
+.req span{font-size:47px}
+.req.sel{border-color:var(--unit-red);background:var(--unit-red-soft)}
+
+/* AthenaOS desktop */
+.os{
+  max-width:930px;margin:auto;border:5px solid #3f475c;border-radius:24px;overflow:hidden;
+  background:#1f2940;box-shadow:0 12px 28px rgba(20,28,45,.24)
+}
+.os-top{
+  height:38px;background:#20283b;color:#fff;display:flex;align-items:center;justify-content:space-between;
+  padding:0 12px;font-size:14px;font-weight:900
+}
+.brand{display:flex;align-items:center;gap:8px}
+.owl{width:25px;height:25px;border-radius:9px 9px 12px 12px;background:var(--athena);position:relative}
+.owl:before,.owl:after{content:"";position:absolute;top:6px;width:6px;height:6px;border-radius:50%;background:#fff}
+.owl:before{left:5px}.owl:after{right:5px}
+.owl span{position:absolute;left:10px;top:13px;width:0;height:0;border-left:3px solid transparent;border-right:3px solid transparent;border-top:6px solid #f2c84a}
+.desktop{
+  position:relative;height:500px;overflow:hidden;
+  background:
+    radial-gradient(circle at 72% 18%,rgba(255,255,255,.10),transparent 25%),
+    linear-gradient(140deg,#5964a6 0%,#3f477b 50%,#273453 100%)
+}
+.desktop-icon{
+  position:absolute;width:105px;min-height:105px;border:3px solid transparent;border-radius:16px;
+  background:transparent;color:#fff;font-weight:900;text-align:center;padding:8px
+}
+.desktop-icon:hover{background:rgba(255,255,255,.12);border-color:rgba(255,255,255,.30)}
+.desktop-icon .app-symbol{margin:0 auto 7px}
+.desktop-icon.ploigos{left:70px;top:65px}
+.desktop-icon.chroma{left:220px;top:65px}
+.desktop-icon.graphis{left:370px;top:65px}
+.paint-symbol{
+  width:58px;height:58px;border-radius:16px;background:#fff;border:4px solid #384a61;
+  display:grid;place-items:center;font-size:35px
+}
+.doc-symbol{
+  width:58px;height:58px;border-radius:13px;background:#f7f9fb;border:4px solid #384a61;
+  position:relative
+}
+.doc-symbol:before,.doc-symbol:after{
+  content:"";position:absolute;left:11px;right:11px;height:4px;background:#6f8298;border-radius:3px
+}
+.doc-symbol:before{top:18px}.doc-symbol:after{top:31px}
+.taskbar{
+  position:absolute;left:0;right:0;bottom:0;height:50px;background:rgba(28,34,50,.94);
+  display:flex;align-items:center;gap:9px;padding:0 12px
+}
+.task-item{height:36px;min-width:45px;border:2px solid #737d9b;border-radius:10px;background:#414b67;color:#fff;display:grid;place-items:center;padding:0 8px;font-weight:900}
+
+/* Ploigos browser */
+.browser{
+  max-width:940px;margin:auto;border:5px solid #3f475c;border-radius:23px;overflow:hidden;background:#fff;
+  box-shadow:0 12px 28px rgba(20,28,45,.20)
+}
+.browser-top{
+  height:42px;background:linear-gradient(90deg,#4f6b86,#6e89a2);color:#fff;
+  display:flex;align-items:center;justify-content:space-between;padding:0 7px 0 12px;font-weight:900
+}
+.window-controls{display:flex;align-items:center;gap:4px}
+.window-control{
+  width:34px;height:29px;border:0;border-radius:6px;background:rgba(255,255,255,.92);
+  color:#405268;font-weight:900;display:grid;place-items:center
+}
+.window-control.browser-close{
+  background:#ffe7e9;color:#a32836;border:2px solid #d95a65
+}
+.browser-brand{display:flex;align-items:center;gap:9px}
+.browser-brand .mini-globe{
+  width:25px;height:25px;border-radius:50%;background:#77c4e4;border:3px solid #e8f7ff;
+  position:relative
+}
+.browser-brand .mini-globe:before{
+  content:"";position:absolute;left:9px;top:1px;width:3px;height:17px;background:#397b9d;border-radius:3px
+}
+.tab-row{
+  height:42px;background:#eef1f5;border-bottom:2px solid #ccd3dd;
+  display:flex;align-items:end;gap:5px;padding:0 8px
+}
+.tab{
+  height:34px;min-width:175px;max-width:220px;background:#fff;border:2px solid #b9c2ce;border-bottom:0;
+  border-radius:10px 10px 0 0;padding:5px 6px 5px 12px;font-weight:900;
+  display:flex;align-items:center;justify-content:space-between;gap:9px
+}
+.tab-title{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.tab-close{
+  width:24px;height:24px;border:0;border-radius:6px;background:#eef1f5;color:#66758a;font-weight:900;
+  display:grid;place-items:center;flex:0 0 24px
+}
+.new-tab{
+  width:34px;height:31px;margin-bottom:1px;border:2px solid #aeb8c5;border-radius:9px;
+  background:#fff;color:#42566d;font-weight:900;position:relative;padding:0;overflow:hidden
+}
+.new-tab .plus-glyph{
+  position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);
+  display:block;font-size:22px;line-height:1;font-weight:900;
+  width:22px;height:22px;text-align:center
+}
+.toolbar{
+  height:53px;background:#f7f9fb;border-bottom:2px solid #d8dde4;display:flex;align-items:center;gap:7px;padding:0 10px
+}
+.bbtn{
+  width:39px;height:38px;border:2px solid #b9c2ce;border-radius:9px;background:#fff;
+  display:grid;place-items:center;font-size:22px;font-weight:900;color:#44566b
+}
+.bbtn:hover{background:#edf5fa}
+.address{
+  height:38px;flex:1;border:3px solid #aeb8c5;border-radius:10px;background:#fff;padding:7px 12px;
+  font-size:14px;font-weight:800;color:#45556b;white-space:nowrap;overflow:hidden
+}
+.bookmark{
+  width:39px;height:38px;border:2px solid #b9c2ce;border-radius:9px;background:#fff;
+  display:grid;place-items:center;font-size:24px;color:#61738a;font-weight:900
+}
+.bookmark.saved{color:#2779c5;background:#eef7ff;border-color:#7fb6e8}
+/* Browser close is placed with the window controls in the upper-right corner. */
+.webpage{
+  min-height:340px;background:#f9fbfd;padding:18px;position:relative
+}
+.site-head{
+  background:#dbe98c;border-radius:16px;padding:12px 15px;font-size:24px;font-weight:900;
+  display:flex;align-items:center;justify-content:space-between
+}
+.site-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:14px}
+.site-card{
+  min-height:115px;border:2px solid #cfd6df;border-radius:13px;background:#fff;padding:10px;text-align:center;font-weight:900
+}
+.site-card .animal{font-size:44px;display:block;margin-bottom:5px}
+
+/* Stage 4 label matching */
+.browser-wrap{position:relative;max-width:940px;margin:auto}
+.label-tray{
+  display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin-bottom:14px;padding:10px;
+  border:3px solid #d7dde6;border-radius:15px;background:#f8fafc
+}
+.label-token{
+  border:3px solid #9ca8b7;border-radius:12px;background:#fff;padding:8px 11px;font-weight:900;
+  cursor:grab;user-select:none
+}
+.label-token.selectedDrag{outline:4px solid var(--unit-red);background:var(--unit-red-soft)}
+.label-token.locked{opacity:.35}
+.zoom-grid{
+  display:grid;grid-template-columns:repeat(3,1fr);gap:13px;
+  max-width:910px;margin:auto
+}
+.zoom-item{
+  min-height:150px;border:3px solid #d4dae4;border-radius:19px;background:#f8fafc;
+  padding:12px;display:grid;grid-template-rows:88px 44px;gap:8px
+}
+.zoom-ui{
+  border:3px solid #47566b;border-radius:13px;background:#fff;overflow:hidden;
+  display:grid;place-items:center;position:relative
+}
+.zoom-browser-title{
+  position:absolute;left:0;right:0;top:0;height:29px;background:#59758e;color:#fff;
+  display:flex;align-items:center;padding:0 8px;font-size:12px;font-weight:900
+}
+.zoom-tab{
+  width:150px;height:42px;border:3px solid #9aa6b5;border-radius:10px 10px 3px 3px;
+  background:#fff;display:flex;align-items:center;justify-content:space-between;
+  padding:0 7px 0 11px;font-weight:900
+}
+.zoom-back,.zoom-refresh,.zoom-bookmark{
+  width:52px;height:48px;border:3px solid #9ca8b7;border-radius:12px;background:#fff;
+  display:grid;place-items:center;font-size:28px;font-weight:900;color:#45596f
+}
+.zoom-address{
+  width:92%;height:45px;border:3px solid #9ca8b7;border-radius:11px;background:#fff;
+  display:flex;align-items:center;padding:0 12px;font-size:14px;font-weight:900;color:#45596f
+}
+.zoom-close-area{
+  position:absolute;left:0;right:0;top:0;height:40px;background:#59758e;
+  display:flex;align-items:center;justify-content:flex-end;padding:0 5px;gap:4px
+}
+.zoom-win{
+  width:35px;height:28px;border-radius:6px;border:0;background:#fff;color:#405268;font-weight:900
+}
+.zoom-win.close{background:#ffe7e9;color:#a32836;border:2px solid #d95a65}
+.zoom-target{
+  border:3px dashed var(--unit-red);border-radius:11px;background:#fff8f7;
+  display:grid;place-items:center;text-align:center;font-size:13px;font-weight:900;color:#8f2d25;
+  padding:4px
+}
+.zoom-target.over{background:#ffe5e1}
+.zoom-target.filled{border-style:solid;color:#3e4c61;background:#fff}
+/* Stage 5 task box */
+.taskbox{
+  max-width:760px;margin:0 auto 12px;border:4px solid var(--unit-red);background:#fff6f5;
+  border-radius:18px;padding:12px 16px;text-align:center;font-size:20px;font-weight:900
+}
+.flash{animation:flash .45s 2}
+@keyframes flash{50%{box-shadow:0 0 0 7px rgba(217,58,46,.24)}}
+
+/* quiz/final */
+.quiz{
+  max-width:850px;margin:auto;border:4px solid var(--unit-red);border-radius:24px;
+  background:#fff9f8;padding:20px;text-align:center
+}
+.quiz-progress{height:14px;background:#e7edf1;border-radius:9px;overflow:hidden;max-width:520px;margin:0 auto 18px}
+.quiz-progress span{display:block;height:100%;background:var(--unit-red);width:0;transition:.25s}
+.quiz-q{font-size:24px;font-weight:900;margin-bottom:18px}
+.finalBox{max-width:780px;margin:auto;text-align:center}
+.stars{font-size:58px;margin:18px}
+.summary{
+  padding:20px;border:4px solid var(--unit-red);background:#fff4f2;border-radius:22px;
+  font-size:21px;font-weight:900;line-height:1.45
+}
+.faces{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:18px}
+.face{
+  min-height:130px;border:3px solid var(--line);border-radius:20px;background:#fff;
+  font-weight:900;font-size:17px
+}
+.face span{display:block;font-size:52px;margin-bottom:7px}
+.face.sel{border-color:var(--unit-red);background:var(--unit-red-soft)}
+.repeatBtn{
+  display:block;margin:15px auto 0;padding:12px 22px;border:0;border-radius:15px;
+  background:#4f6b86;color:#fff;font-size:19px;font-weight:900;
+  box-shadow:0 5px 0 #31475b
+}
+.modal{
+  position:fixed;inset:0;background:#24344d99;display:none;place-items:center;padding:18px;z-index:60
+}
+.modal.show{display:grid}
+.modal-box{
+  max-width:620px;background:#fff;border-radius:24px;border:4px solid var(--unit-red);
+  padding:22px;text-align:center;font-size:20px
+}
+.modal-box button{
+  padding:10px 20px;border:0;border-radius:13px;background:var(--unit-red);color:#fff;font-weight:900
+}
+@media(max-width:850px){
+  .require-grid,.faces{grid-template-columns:1fr}
+  .site-grid{grid-template-columns:repeat(2,1fr)}
+  .zoom-grid{grid-template-columns:repeat(2,1fr)}
+}
+</style>
+
+
+<style id="nk-license-style">
+.nk-license{max-width:1100px;margin:14px auto 24px;padding:10px 16px;text-align:center;font:13px/1.45 Arial,"Noto Sans",sans-serif;color:#4e657c}
+.nk-license a{color:inherit;text-decoration:underline;text-underline-offset:2px}
+.nk-license .cc-badge{display:inline-block;margin:0 4px;padding:2px 7px;border:1px solid #8aa0b8;border-radius:6px;background:#fff;font-weight:700;white-space:nowrap}
+</style></head>
+<body>
+<div class="app">
+  <div class="top"><h1>Ο φυλλομετρητής</h1><div class="badge">19</div></div>
+  <div class="path" id="path"></div>
+
+  <main class="panel">
+    <div class="step-head">
+      <h2 id="title"></h2>
+      <button class="help" onclick="help()">❓ Βοήθεια</button>
+    </div>
+    <div class="instruction" id="inst"></div>
+    <div class="card" id="card"></div>
+    <div class="feedback" id="feedback"></div>
+  </main>
+</div>
+
+<div class="modal" id="modal">
+  <div class="modal-box"><h2>💡 Βοήθεια</h2><p id="helpText"></p><button onclick="closeHelp()">Εντάξει</button></div>
+</div>
+
+<script>
+const steps=[
+ {t:"Τι κάνει ένας φυλλομετρητής;",i:"Διάλεξε για ποιο σκοπό χρησιμοποιούμε έναν φυλλομετρητή.",h:"Ο φυλλομετρητής είναι εφαρμογή που χρησιμοποιούμε για να βλέπουμε ιστοσελίδες στο διαδίκτυο.",k:"purpose"},
+ {t:"Τι χρειάζομαι;",i:"Διάλεξε και τα δύο πράγματα που χρειάζονται για να δεις μία ιστοσελίδα.",h:"Χρειάζεσαι μία συσκευή με σύνδεση στο διαδίκτυο και μία εφαρμογή φυλλομετρητή.",k:"requirements"},
+ {t:"Ανοίγω τον Ploigos",i:"Στην επιφάνεια εργασίας του AthenaOS άνοιξε τον Ploigos με διπλό κλικ.",h:"Ο Ploigos είναι ο εικονικός φυλλομετρητής του AthenaOS. Κάνε διπλό κλικ στο εικονίδιό του.",k:"open"},
+ {t:"Γνωρίζω το παράθυρο",i:"Ταίριαξε τα έξι ονόματα με τα σωστά μέρη του παραθύρου του Ploigos.",h:"Τα έξι μέρη είναι: καρτέλα, πίσω, ανανέωση, γραμμή διεύθυνσης, σελιδοδείκτης και κλείσιμο.",k:"parts"},
+ {t:"Χρησιμοποιώ βασικές λειτουργίες",i:"Ακολούθησε τις οδηγίες και χρησιμοποίησε τα βασικά κουμπιά του Ploigos.",h:"Θα χρησιμοποιήσεις Πίσω, Ανανέωση, Σελιδοδείκτη, νέα καρτέλα, κλείσιμο καρτέλας και τέλος το κουμπί που κλείνει ολόκληρο τον Ploigos.",k:"functions"},
+ {t:"Τελική δοκιμή",i:"Εντόπισε σωστά τα βασικά μέρη και τα κουμπιά καρτελών του Ploigos.",h:"Διάβασε κάθε οδηγία και πάτησε το σωστό μέρος του Ploigos. Πρόσεξε τη διαφορά ανάμεσα στο κλείσιμο καρτέλας και στο κλείσιμο ολόκληρου του φυλλομετρητή.",k:"quiz"},
+ {t:"Τα κατάφερες!",i:"Σκέψου τι έμαθες στο Μάθημα 19.",h:"Σκέψου τι είναι ο φυλλομετρητής, πώς τον ανοίγουμε και ποιες βασικές λειτουργίες έχει.",k:"final"}
+];
+
+let s=0,selfChoice=null,answerOrders={},reqSelected=new Set();
+let labelSelected=null,labelLocked=new Set(),labelItems=[];
+let functionStep=0,bookmarked=false;
+let quizIndex=0,quizOrder=[];
+
+function shuffled(arr){
+ const a=[...arr];
+ for(let i=a.length-1;i>0;i--){
+  const j=Math.floor(Math.random()*(i+1));
+  [a[i],a[j]]=[a[j],a[i]];
+ }
+ return a;
+}
+function nav(){
+ document.getElementById("path").innerHTML=steps.map((_,i)=>`<div class="dot ${i<s?'done':i===s?'active':''}">${i+1}</div>`).join("");
+}
+function completeFinalDot(){s=steps.length;nav()}
+function clearFeedback(){const f=document.getElementById("feedback");f.className="feedback";f.textContent=""}
+function setFeedback(t,ok){const f=document.getElementById("feedback");f.className="feedback "+(ok?"good":"bad");f.textContent=t}
+function nextAfter(ms=900){setTimeout(()=>{s++;render()},ms)}
+function render(){
+ nav();clearFeedback();
+ const x=steps[s];
+ document.getElementById("title").textContent=x.t;
+ document.getElementById("inst").textContent=x.i;
+ if(x.k==="purpose")stage1();
+ if(x.k==="requirements")stage2();
+ if(x.k==="open")stage3();
+ if(x.k==="parts")stage4();
+ if(x.k==="functions")stage5();
+ if(x.k==="quiz")stage6();
+ if(x.k==="final")stage7();
+}
+
+/* Stage 1 */
+function stage1(){
+ answerOrders.purpose=shuffled([
+  {ok:true,icon:"🌐",txt:"Για να βλέπω ιστοσελίδες στο διαδίκτυο"},
+  {ok:false,icon:"🎨",txt:"Για να ζωγραφίζω"},
+  {ok:false,icon:"🧮",txt:"Για να κάνω αριθμητικές πράξεις"}
+ ]);
+ document.getElementById("card").innerHTML=`
+  <div class="row">
+   ${answerOrders.purpose.map((o,i)=>`<button class="choice" onclick="purposeAns(${i})"><span class="big">${o.icon}</span>${o.txt}</button>`).join("")}
+  </div>`;
+}
+function purposeAns(i){
+ if(!answerOrders.purpose[i].ok){setFeedback("Ο φυλλομετρητής χρησιμοποιείται για κάτι διαφορετικό.",false);return}
+ setFeedback("Σωστά! Με έναν φυλλομετρητή βλέπουμε ιστοσελίδες στο διαδίκτυο.",true);nextAfter();
+}
+
+/* Stage 2 */
+function stage2(){
+ reqSelected=new Set();
+ answerOrders.req=shuffled([
+  {ok:true,icon:"💻",txt:"Συσκευή με σύνδεση στο διαδίκτυο"},
+  {ok:true,icon:"🌐",txt:"Εφαρμογή φυλλομετρητή"},
+  {ok:false,icon:"🖨️",txt:"Εκτυπωτής"},
+  {ok:false,icon:"🎤",txt:"Μικρόφωνο"}
+ ]);
+ document.getElementById("card").innerHTML=`
+  <div class="require-grid">
+   ${answerOrders.req.map((o,i)=>`<button class="req" id="req${i}" onclick="toggleReq(${i})"><span>${o.icon}</span>${o.txt}</button>`).join("")}
+  </div>
+  <button class="check" onclick="checkReq()">Έλεγχος</button>`;
+}
+function toggleReq(i){
+ reqSelected.has(i)?reqSelected.delete(i):reqSelected.add(i);
+ document.getElementById("req"+i).classList.toggle("sel",reqSelected.has(i));
+}
+function checkReq(){
+ const correct=answerOrders.req.map((o,i)=>o.ok?i:-1).filter(i=>i>=0);
+ if(reqSelected.size!==2||!correct.every(i=>reqSelected.has(i))){
+  setFeedback("Χρειάζονται ακριβώς δύο σωστά στοιχεία.",false);return;
+ }
+ setFeedback("Σωστά! Χρειάζεσαι συσκευή με διαδίκτυο και έναν φυλλομετρητή.",true);nextAfter();
+}
+
+/* Stage 3 */
+function browserIconHTML(){
+ return `<div class="browser-icon app-symbol"><span></span></div>`;
+}
+function stage3(){
+ document.getElementById("card").innerHTML=`
+  <div class="os">
+   <div class="os-top"><span class="brand"><span class="owl"><span></span></span>AthenaOS</span><span>12:30</span></div>
+   <div class="desktop">
+    <button class="desktop-icon ploigos" id="ploigosDesk" ondblclick="openPloigos()" onclick="singlePloigos()">${browserIconHTML()}Ploigos</button>
+    <button class="desktop-icon chroma" onclick="wrongDesktop()"><div class="paint-symbol app-symbol">🎨</div>Chroma</button>
+    <button class="desktop-icon graphis" onclick="wrongDesktop()"><div class="doc-symbol app-symbol"></div>Graphis</button>
+    <div class="taskbar"><div class="task-item">Α</div></div>
+   </div>
+  </div>`;
+}
+function singlePloigos(){
+ const el=document.getElementById("ploigosDesk");el.classList.add("flash");setTimeout(()=>el.classList.remove("flash"),900);
+ setFeedback("Σε υπολογιστή άνοιξε την εφαρμογή με διπλό κλικ.",false);
+}
+function wrongDesktop(){setFeedback("Άνοιξε τον φυλλομετρητή Ploigos.",false)}
+function openPloigos(){
+ setFeedback("Σωστά! Άνοιξες τον Ploigos.",true);nextAfter(800);
+}
+
+/* Shared browser */
+function browserHTML(opts={}){
+ const saved=opts.saved||false;
+ const tabs=Math.max(1,opts.tabs||1);
+ let tabsHTML="";
+ for(let i=1;i<=tabs;i++){
+   const title=i===1?"Τα ζώα":`Νέα καρτέλα ${i}`;
+   tabsHTML+=`<div class="tab ${i===tabs?"active":""}" id="browserTab${i}">
+     <span class="tab-title">${title}</span>
+     <button class="tab-close" id="tabClose${i}" title="Κλείσιμο καρτέλας">×</button>
+   </div>`;
+ }
+ return `<div class="browser">
+  <div class="browser-top">
+   <span class="browser-brand"><span class="mini-globe"></span>Ploigos</span>
+   <span class="window-controls">
+    <button class="window-control" id="minBtn" title="Ελαχιστοποίηση">—</button>
+    <button class="window-control" id="maxBtn" title="Μεγιστοποίηση">□</button>
+    <button class="window-control browser-close" id="browserCloseBtn" title="Κλείσιμο φυλλομετρητή">×</button>
+   </span>
+  </div>
+  <div class="tab-row">${tabsHTML}<button class="new-tab" id="newTabBtn" title="Νέα καρτέλα"><span class="plus-glyph">+</span></button></div>
+  <div class="toolbar">
+   <button class="bbtn" id="backBtn" title="Πίσω">←</button>
+   <button class="bbtn" id="refreshBtn" title="Ανανέωση">↻</button>
+   <div class="address" id="addressBar">https://mathaino.example/zoa</div>
+   <button class="bookmark ${saved?"saved":""}" id="bookmarkBtn" title="Σελιδοδείκτης">★</button>
+  </div>
+  <div class="webpage" id="webpage">
+   <div class="site-head">Τα ζώα <span>🔎</span></div>
+   <div class="site-grid">
+    <div class="site-card"><span class="animal">🐕</span>Σκύλος</div>
+    <div class="site-card"><span class="animal">🐒</span>Πίθηκος</div>
+    <div class="site-card"><span class="animal">🐇</span>Κουνέλι</div>
+    <div class="site-card"><span class="animal">🐻</span>Αρκούδα</div>
+   </div>
+  </div>
+ </div>`;
+}
+
+/* Stage 4 */
+function stage4(){
+ labelSelected=null;labelLocked=new Set();
+ labelItems=shuffled([
+  {id:"tab",label:"Καρτέλα",target:"tab"},
+  {id:"back",label:"Πίσω",target:"back"},
+  {id:"refresh",label:"Ανανέωση",target:"refresh"},
+  {id:"address",label:"Γραμμή διεύθυνσης",target:"address"},
+  {id:"bookmark",label:"Σελιδοδείκτης",target:"bookmark"},
+  {id:"close",label:"Κλείσιμο",target:"close"}
+ ]);
+ document.getElementById("card").innerHTML=`
+  <div class="browser-wrap">
+   <div class="label-tray">
+    ${labelItems.map(x=>`<button class="label-token" id="lab_${x.id}" draggable="true"
+      ondragstart="labelDragStart(event,'${x.id}')" ondragend="labelDragEnd(event)"
+      onclick="labelPick('${x.id}')">${x.label}</button>`).join("")}
+   </div>
+
+   <div class="zoom-grid">
+    ${zoomItem("tab",`<div class="zoom-tab"><span>Τα ζώα</span><span>×</span></div>`)}
+    ${zoomItem("back",`<div class="zoom-back">←</div>`)}
+    ${zoomItem("refresh",`<div class="zoom-refresh">↻</div>`)}
+    ${zoomItem("address",`<div class="zoom-address">https://mathaino.example/zoa</div>`)}
+    ${zoomItem("bookmark",`<div class="zoom-bookmark">★</div>`)}
+    ${zoomItem("close",`<div class="zoom-close-area"><button class="zoom-win">—</button><button class="zoom-win">□</button><button class="zoom-win close">×</button></div>`)}
+   </div>
+  </div>`;
+}
+function zoomItem(id,ui){
+ return `<div class="zoom-item">
+   <div class="zoom-ui">${ui}</div>
+   <div class="zoom-target" id="co_${id}"
+     ondragover="labelOver(event)" ondragleave="labelLeave(event)"
+     ondrop="labelDrop(event,'${id}')" onclick="labelTapTarget('${id}')">Τοποθέτησε το όνομα</div>
+  </div>`;
+}
+function labelDragStart(ev,id){
+ labelSelected=id;document.getElementById("lab_"+id)?.classList.add("selectedDrag");
+ if(ev.dataTransfer)ev.dataTransfer.setData("text/plain",id);
+}
+function labelDragEnd(ev){ev.currentTarget.classList.remove("selectedDrag")}
+function labelPick(id){
+ if(labelLocked.has(id))return;
+ document.querySelectorAll(".label-token").forEach(x=>x.classList.remove("selectedDrag"));
+ labelSelected=labelSelected===id?null:id;
+ if(labelSelected)document.getElementById("lab_"+id)?.classList.add("selectedDrag");
+}
+function labelOver(ev){ev.preventDefault();ev.currentTarget.classList.add("over")}
+function labelLeave(ev){ev.currentTarget.classList.remove("over")}
+function labelDrop(ev,target){
+ ev.preventDefault();ev.currentTarget.classList.remove("over");
+ const id=(ev.dataTransfer&&ev.dataTransfer.getData("text/plain"))||labelSelected;
+ if(id)placeLabel(id,target);
+}
+function labelTapTarget(target){if(labelSelected)placeLabel(labelSelected,target)}
+function placeLabel(id,target){
+ const item=labelItems.find(x=>x.id===id);
+ if(!item||labelLocked.has(id))return;
+ if(item.target!==target){
+  setFeedback("Αυτό το όνομα ταιριάζει σε διαφορετικό στοιχείο του Ploigos.",false);return;
+ }
+ labelLocked.add(id);labelSelected=null;
+ document.getElementById("lab_"+id).classList.add("locked");
+ const co=document.getElementById("co_"+target);co.textContent=item.label;co.classList.add("filled");
+ if(labelLocked.size===labelItems.length){
+  setFeedback("Μπράβο! Αναγνώρισες και τα έξι βασικά μέρη του φυλλομετρητή.",true);nextAfter(950);
+ }else setFeedback("Σωστά! Συνέχισε.",true);
+}
+
+/* Stage 5 */
+const functionTasks=[
+ {id:"back",text:"Πάτησε το κουμπί «Πίσω»."},
+ {id:"refresh",text:"Πάτησε το κουμπί «Ανανέωση»."},
+ {id:"bookmark",text:"Αποθήκευσε την ιστοσελίδα ως σελιδοδείκτη."},
+ {id:"newTab",text:"Πάτησε το ＋ δύο φορές για να ανοίξεις δύο νέες καρτέλες."},
+ {id:"closeTab",text:"Κλείσε μόνο την τελευταία καρτέλα πατώντας το × πάνω στην καρτέλα."},
+ {id:"closeBrowser",text:"Τώρα κλείσε ολόκληρο τον φυλλομετρητή από το × στην επάνω δεξιά γωνία."}
+];
+let tabCount=1,newTabsNeeded=0;
+
+function stage5(){
+ functionStep=0;bookmarked=false;tabCount=1;newTabsNeeded=0;drawFunctionStage();
+}
+function drawFunctionStage(){
+ const task=functionTasks[functionStep];
+ document.getElementById("card").innerHTML=`
+  <div class="taskbox">${task.text}</div>
+  ${browserHTML({saved:bookmarked,tabs:tabCount})}`;
+ wireFunctionButtons();
+}
+function wireFunctionButtons(){
+ document.getElementById("backBtn").onclick=()=>functionAction("back");
+ document.getElementById("refreshBtn").onclick=()=>functionAction("refresh");
+ document.getElementById("bookmarkBtn").onclick=()=>functionAction("bookmark");
+ document.getElementById("newTabBtn").onclick=()=>functionAction("newTab");
+ document.getElementById("browserCloseBtn").onclick=()=>functionAction("closeBrowser");
+ document.getElementById("addressBar").onclick=()=>functionAction("address");
+
+ for(let i=1;i<=tabCount;i++){
+  document.getElementById("browserTab"+i)?.addEventListener("click",()=>functionAction("tab"));
+  document.getElementById("tabClose"+i)?.addEventListener("click",ev=>{
+    ev.stopPropagation();
+    functionAction("closeTab",i);
+  });
+ }
+}
+function finishFunctionTask(delay=850){
+ functionStep++;
+ if(functionStep<functionTasks.length){
+  setTimeout(()=>{clearFeedback();drawFunctionStage()},delay);
+ }else nextAfter(950);
+}
+function functionAction(id,tabIndex=null){
+ const expected=functionTasks[functionStep].id;
+
+ if(expected==="newTab"){
+  if(id!=="newTab"){setFeedback("Βρες το κουμπί ＋ δίπλα στις καρτέλες.",false);return}
+  tabCount++;
+  newTabsNeeded++;
+  setFeedback(`Άνοιξες νέα καρτέλα. Τώρα υπάρχουν ${tabCount} καρτέλες.`,true);
+  if(newTabsNeeded<2){
+    setTimeout(()=>{clearFeedback();drawFunctionStage()},600);
+  }else{
+    setFeedback("Σωστά! Με το ＋ μπορείς να ανοίγεις πολλές καρτέλες.",true);
+    finishFunctionTask(850);
+  }
+  return;
+ }
+
+ if(expected==="closeTab"){
+  if(id!=="closeTab"){setFeedback("Πάτησε το × που βρίσκεται πάνω στην τελευταία καρτέλα.",false);return}
+  if(tabIndex!==tabCount){
+    setFeedback("Κλείσε την τελευταία καρτέλα.",false);return;
+  }
+  tabCount=Math.max(1,tabCount-1);
+  setFeedback("Σωστά! Έκλεισες μόνο μία καρτέλα. Ο Ploigos παραμένει ανοιχτός.",true);
+  finishFunctionTask(900);
+  return;
+ }
+
+ if(id!==expected){
+  setFeedback("Διάβασε ξανά την οδηγία και πάτησε το κατάλληλο κουμπί.",false);return;
+ }
+
+ if(id==="back"){
+  document.querySelector(".site-head").innerHTML="Αρχική σελίδα <span>🏠</span>";
+  setFeedback("Σωστά! Το «Πίσω» σε πήγε στην προηγούμενη ιστοσελίδα.",true);
+ }else if(id==="refresh"){
+  const page=document.getElementById("webpage");page.classList.add("flash");setTimeout(()=>page.classList.remove("flash"),650);
+  setFeedback("Σωστά! Η ιστοσελίδα ανανεώθηκε.",true);
+ }else if(id==="bookmark"){
+  bookmarked=true;document.getElementById("bookmarkBtn").classList.add("saved");
+  setFeedback("Σωστά! Ο σελιδοδείκτης έγινε μπλε, επειδή αποθήκευσες την ιστοσελίδα.",true);
+ }else if(id==="closeBrowser"){
+  document.querySelector(".browser").innerHTML=`<div style="height:470px;display:grid;place-items:center;font-size:24px;font-weight:900;background:#eef1f5">Ο Ploigos έκλεισε.</div>`;
+  setFeedback("Σωστά! Το × της επάνω δεξιάς γωνίας έκλεισε ολόκληρο τον φυλλομετρητή.",true);
+ }
+ finishFunctionTask();
+}
+
+/* Stage 6 */
+const quizParts=[
+ {id:"tab",q:"Πάτησε μία καρτέλα."},
+ {id:"newTab",q:"Πάτησε το κουμπί που ανοίγει νέα καρτέλα."},
+ {id:"closeTab",q:"Πάτησε το × που κλείνει μόνο την τελευταία καρτέλα."},
+ {id:"back",q:"Πάτησε το κουμπί «Πίσω»."},
+ {id:"refresh",q:"Πάτησε το κουμπί «Ανανέωση»."},
+ {id:"address",q:"Πάτησε τη γραμμή διεύθυνσης."},
+ {id:"bookmark",q:"Πάτησε τον σελιδοδείκτη."},
+ {id:"closeBrowser",q:"Πάτησε το × που κλείνει ολόκληρο τον Ploigos."}
+];
+function stage6(){
+ quizIndex=0;quizOrder=shuffled(quizParts);drawPartQuiz();
+}
+function drawPartQuiz(){
+ const q=quizOrder[quizIndex];
+ document.getElementById("card").innerHTML=`
+  <div class="quiz">
+   <div class="quiz-progress"><span style="width:${(quizIndex/quizOrder.length)*100}%"></span></div>
+   <div class="quiz-q">${q.q}</div>
+   ${browserHTML({tabs:2})}
+   <div class="smallhelp">${quizIndex+1} από ${quizOrder.length}</div>
+  </div>`;
+ wireQuizBrowser();
+}
+function wireQuizBrowser(){
+ const simpleMap={
+  back:"backBtn",
+  refresh:"refreshBtn",
+  address:"addressBar",
+  bookmark:"bookmarkBtn",
+  newTab:"newTabBtn",
+  closeBrowser:"browserCloseBtn"
+ };
+ Object.entries(simpleMap).forEach(([id,el])=>{
+  const node=document.getElementById(el);
+  if(node)node.onclick=()=>quizPartAns(id,node);
+ });
+
+ document.getElementById("browserTab1")?.addEventListener("click",()=>quizPartAns("tab",document.getElementById("browserTab1")));
+ document.getElementById("browserTab2")?.addEventListener("click",()=>quizPartAns("tab",document.getElementById("browserTab2")));
+
+ document.getElementById("tabClose1")?.addEventListener("click",ev=>{
+  ev.stopPropagation();quizPartAns("closeTab",document.getElementById("tabClose1"));
+ });
+ document.getElementById("tabClose2")?.addEventListener("click",ev=>{
+  ev.stopPropagation();quizPartAns("closeTab",document.getElementById("tabClose2"));
+ });
+}
+function quizPartAns(id,node){
+ const expected=quizOrder[quizIndex].id;
+ if(id!==expected){
+  node.classList.add("flash");setTimeout(()=>node.classList.remove("flash"),700);
+  setFeedback("Αυτό είναι διαφορετικό μέρος του Ploigos.",false);return;
+ }
+ quizIndex++;
+ if(quizIndex<quizOrder.length){
+  setFeedback("Σωστά! Πάμε στο επόμενο.",true);
+  setTimeout(()=>{clearFeedback();drawPartQuiz()},650);
+ }else{
+  setFeedback("Μπράβο! Αναγνώρισες σωστά τα βασικά μέρη και τα κουμπιά των καρτελών.",true);nextAfter(900);
+ }
+}
+
+/* Stage 7 */
+function stage7(){
+ selfChoice=null;
+ document.getElementById("card").innerHTML=`
+  <div class="finalBox">
+   <div class="stars">⭐ ⭐ ⭐</div>
+   <div class="summary">
+    Έμαθες τι είναι ένας φυλλομετρητής, πώς ανοίγουμε τον Ploigos και πώς χρησιμοποιούμε
+    βασικά μέρη του παραθύρου του: καρτέλα, πίσω, ανανέωση, γραμμή διεύθυνσης και σελιδοδείκτη.
+    Έμαθες επίσης να ανοίγεις νέες καρτέλες, να κλείνεις μία καρτέλα χωρίς να κλείνει ο Ploigos
+    και να κλείνεις ολόκληρο τον φυλλομετρητή από την επάνω δεξιά γωνία.
+   </div>
+   <div class="faces">
+    <button class="face" onclick="selfPick(1,this)"><span>🙂</span>Θέλω λίγη εξάσκηση</button>
+    <button class="face" onclick="selfPick(2,this)"><span>😊</span>Τα κατάφερα</button>
+    <button class="face" onclick="selfPick(3,this)"><span>🤩</span>Τα κατάφερα πολύ καλά</button>
+   </div>
+   <button class="check" onclick="finish()">Ολοκλήρωση</button>
+   <button class="repeatBtn" onclick="restartAll()">↻ Επανάληψη δραστηριότητας</button>
+  </div>`;
+}
+function selfPick(v,e){
+ selfChoice=v;document.querySelectorAll(".face").forEach(x=>x.classList.remove("sel"));e.classList.add("sel");
+}
+function finish(){
+ const f=document.getElementById("feedback");
+ if(!selfChoice){f.className="feedback bad";f.textContent="Διάλεξε πρώτα πώς νιώθεις για όσα έμαθες.";return}
+ completeFinalDot();
+ f.className="feedback good";f.textContent="Μπράβο! Ολοκλήρωσες το Μάθημα 19.";
+}
+function restartAll(){
+ s=0;selfChoice=null;answerOrders={};reqSelected=new Set();
+ labelSelected=null;labelLocked=new Set();labelItems=[];
+ functionStep=0;bookmarked=false;tabCount=1;newTabsNeeded=0;quizIndex=0;quizOrder=[];render();
+}
+function help(){
+ const idx=Math.min(s,steps.length-1);
+ document.getElementById("helpText").textContent=steps[idx].h;
+ document.getElementById("modal").classList.add("show");
+}
+function closeHelp(){document.getElementById("modal").classList.remove("show")}
+render();
+</script>
+
+
+<footer class="nk-license" aria-label="Πληροφορίες δημιουργού και άδειας χρήσης">
+  <div><strong>Created by Nikos Kalakos · © 2026</strong></div>
+  <div>Original educational content and simulation design licensed under <a class="cc-badge" href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank" rel="license noopener noreferrer">CC BY-NC 4.0</a>.</div>
+  <div>Source code © 2026 Nikos Kalakos.</div>
+  <div>Third-party and textbook materials remain subject to the rights and licences of their respective copyright holders.</div>
+</footer></body>
+</html>
