@@ -1,0 +1,155 @@
+<!doctype html>
+<html lang="el">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="author" content="Nikos Kalakos">
+  <meta name="copyright" content="© 2026 Nikos Kalakos">
+  <title>Δ΄ Δημοτικού / Grade 4 · Διαδραστικές Δραστηριότητες Πληροφορικής</title>
+  <style>
+    :root{
+      --ink:#24324a;
+      --muted:#68758a;
+      --primary:#545F99;
+      --primary-dark:#3d477c;
+      --primary-soft:#eef0f8;
+      --accent:#EA922C;
+      --accent-dark:#b86610;
+      --surface:#ffffff;
+      --line:#dfe4ee;
+      --bg:#f6f8fc;
+      --shadow:0 10px 28px rgba(36,50,74,.10);
+    }
+    *{box-sizing:border-box}
+    html{scroll-behavior:smooth}
+    body{
+      margin:0;
+      font-family:Arial,"Noto Sans",sans-serif;
+      color:var(--ink);
+      background:
+        radial-gradient(circle at 10% 0%, rgba(234,146,44,.11), transparent 28rem),
+        radial-gradient(circle at 100% 12%, rgba(84,95,153,.10), transparent 30rem),
+        var(--bg);
+    }
+    a{color:inherit}
+    .shell{width:min(1180px,calc(100% - 32px));margin:0 auto;padding:28px 0 44px}
+    .topbar{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:18px}
+    .home-link{
+      display:inline-flex;align-items:center;gap:8px;text-decoration:none;font-weight:700;
+      color:var(--primary-dark);background:var(--surface);border:1px solid var(--line);
+      border-radius:999px;padding:9px 13px;box-shadow:0 4px 14px rgba(36,50,74,.06)
+    }
+    .home-link:hover,.home-link:focus-visible{border-color:var(--primary);outline:none}
+    .creator-mini{font-size:13px;color:var(--muted);text-align:right}
+    .hero{
+      background:var(--surface);border:1px solid var(--line);border-top:6px solid var(--accent);
+      border-radius:20px;padding:30px;box-shadow:var(--shadow);margin-bottom:24px
+    }
+    .eyebrow{font-size:13px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--accent-dark);margin-bottom:8px}
+    h1{margin:0;font-size:clamp(30px,5vw,48px);line-height:1.08;color:var(--primary-dark)}
+    .en-title{margin:8px 0 0;font-size:clamp(19px,2.6vw,28px);font-weight:700;color:var(--ink)}
+    .intro{max-width:850px;margin:16px 0 0;color:var(--muted);line-height:1.62;font-size:16px}
+    .intro strong{color:var(--ink)}
+    .section-head{display:flex;align-items:end;justify-content:space-between;gap:16px;margin:30px 2px 14px}
+    h2{margin:0;font-size:24px;color:var(--primary-dark)}
+    .hint{font-size:13px;color:var(--muted)}
+    .grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+    .lesson{
+      position:relative;display:flex;gap:14px;align-items:flex-start;min-height:124px;
+      padding:18px;text-decoration:none;background:var(--surface);border:1px solid var(--line);
+      border-radius:16px;box-shadow:0 5px 16px rgba(36,50,74,.06);
+      transition:transform .16s ease,border-color .16s ease,box-shadow .16s ease
+    }
+    .lesson:hover,.lesson:focus-visible{
+      transform:translateY(-2px);border-color:rgba(84,95,153,.55);box-shadow:0 10px 24px rgba(36,50,74,.11);outline:none
+    }
+    .num{
+      flex:0 0 42px;height:42px;border-radius:12px;background:var(--primary-soft);color:var(--primary-dark);
+      display:grid;place-items:center;font-weight:800;border:1px solid #d8dcef
+    }
+    .lesson:nth-child(5n+1) .num{background:#fff3e4;color:var(--accent-dark);border-color:#f5d3a9}
+    .lesson-title{font-size:16px;font-weight:800;line-height:1.3;margin:1px 0 6px}
+    .lesson-en{font-size:13px;color:var(--muted);line-height:1.35}
+    .open{position:absolute;right:14px;bottom:12px;font-size:12px;font-weight:700;color:var(--primary)}
+    .footer{
+      margin-top:32px;background:var(--surface);border:1px solid var(--line);border-radius:16px;
+      padding:20px;text-align:center;color:var(--muted);font-size:13px;line-height:1.55
+    }
+    .footer strong{color:var(--ink)}
+    .footer a{color:var(--primary-dark);text-underline-offset:2px}
+    @media (max-width:900px){.grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+    @media (max-width:620px){
+      .shell{width:min(100% - 20px,1180px);padding-top:16px}
+      .topbar{align-items:flex-start;flex-direction:column}
+      .creator-mini{text-align:left}
+      .hero{padding:22px 18px}
+      .grid{grid-template-columns:1fr}
+      .section-head{align-items:flex-start;flex-direction:column}
+      .lesson{min-height:114px}
+    }
+  </style>
+</head>
+<body>
+  <main class="shell">
+    <div class="topbar">
+      <a class="home-link" href="../" aria-label="Επιστροφή στην αρχική σελίδα / Back to home">← Αρχική / Home</a>
+      <div class="creator-mini">Created by <strong>Nikos Kalakos</strong> · © 2026</div>
+    </div>
+
+    <section class="hero">
+      <div class="eyebrow">Διαδραστικές Δραστηριότητες Πληροφορικής · Interactive ICT Activities</div>
+      <h1>Δ΄ Δημοτικού</h1>
+      <div class="en-title">Grade 4</div>
+      <p class="intro">
+        Επιλέξτε ένα μάθημα για να ανοίξετε τη διαδραστική δραστηριότητα. Κάθε δραστηριότητα ανοίγει σε νέα καρτέλα, ώστε η σελίδα μαθημάτων να παραμένει διαθέσιμη.<br>
+        <strong>Select a lesson to open its interactive activity.</strong> Each activity opens in a new tab so that this lesson page remains available.
+      </p>
+    </section>
+
+    <div class="section-head">
+      <h2>Μαθήματα / Lessons</h2>
+      <div class="hint">30 δραστηριότητες · 30 activities</div>
+    </div>
+
+    <section class="grid" aria-label="Μαθήματα Δ΄ Δημοτικού / Grade 4 lessons">
+      <a class="lesson" href="Mathima_01_Oi_Algorithmoi.html" target="_blank" rel="noopener"><span class="num">1</span><span><div class="lesson-title">Οι αλγόριθμοι</div><div class="lesson-en">Algorithms</div></span><span class="open">Άνοιγμα ↗</span></a>
+      <a class="lesson" href="Mathima_02_Nea_Entoli_Epilogis_kai_Epanalipsis.html" target="_blank" rel="noopener"><span class="num">2</span><span><div class="lesson-title">Νέα εντολή επιλογής και επανάληψης</div><div class="lesson-en">New selection and repetition command</div></span><span class="open">Άνοιγμα ↗</span></a>
+      <a class="lesson" href="Mathima_03_Xana_kai_Xana.html" target="_blank" rel="noopener"><span class="num">3</span><span><div class="lesson-title">Ξανά και ξανά</div><div class="lesson-en">Again and again</div></span><span class="open">Άνοιγμα ↗</span></a>
+      <a class="lesson" href="Mathima_04_Arithmitikes_Praxeis.html" target="_blank" rel="noopener"><span class="num">4</span><span><div class="lesson-title">Αριθμητικές πράξεις</div><div class="lesson-en">Arithmetic operations</div></span><span class="open">Άνοιγμα ↗</span></a>
+      <a class="lesson" href="Mathima_05_Epanalave_Opsou.html" target="_blank" rel="noopener"><span class="num">5</span><span><div class="lesson-title">Επανάλαβε ώσπου</div><div class="lesson-en">Repeat until</div></span><span class="open">Άνοιγμα ↗</span></a>
+      <a class="lesson" href="Mathima_06_Allazontas_Endymasies.html" target="_blank" rel="noopener"><span class="num">6</span><span><div class="lesson-title">Αλλάζοντας ενδυμασίες</div><div class="lesson-en">Changing costumes</div></span><span class="open">Άνοιγμα ↗</span></a>
+      <a class="lesson" href="Mathima_07_Afigisi_Istorion_me_Programmatismo.html" target="_blank" rel="noopener"><span class="num">7</span><span><div class="lesson-title">Αφήγηση ιστοριών με προγραμματισμό</div><div class="lesson-en">Storytelling with programming</div></span><span class="open">Άνοιγμα ↗</span></a>
+      <a class="lesson" href="Mathima_08_Odigisi_se_Pista.html" target="_blank" rel="noopener"><span class="num">8</span><span><div class="lesson-title">Οδήγηση σε πίστα</div><div class="lesson-en">Driving on a track</div></span><span class="open">Άνοιγμα ↗</span></a>
+      <a class="lesson" href="Mathima_09_Anagnorizontas_tis_Mavres_Grammes.html" target="_blank" rel="noopener"><span class="num">9</span><span><div class="lesson-title">Αναγνωρίζοντας τις μαύρες γραμμές</div><div class="lesson-en">Recognizing black lines</div></span><span class="open">Άνοιγμα ↗</span></a>
+      <a class="lesson" href="Mathima_10_Odigontas_to_Rompot_ston_Lavyrintho.html" target="_blank" rel="noopener"><span class="num">10</span><span><div class="lesson-title">Οδηγώντας το ρομπότ στον λαβύρινθο</div><div class="lesson-en">Guiding the robot through the maze</div></span><span class="open">Άνοιγμα ↗</span></a>
+      <a class="lesson" href="Mathima_11_Psifiaka_Dedomena.html" target="_blank" rel="noopener"><span class="num">11</span><span><div class="lesson-title">Ψηφιακά δεδομένα</div><div class="lesson-en">Digital data</div></span><span class="open">Άνοιγμα ↗</span></a>
+      <a class="lesson" href="Mathima_12_Poion_Ypologisti_na_Dialexo.html" target="_blank" rel="noopener"><span class="num">12</span><span><div class="lesson-title">Ποιον υπολογιστή να διαλέξω</div><div class="lesson-en">Which computer should I choose?</div></span><span class="open">Άνοιγμα ↗</span></a>
+      <a class="lesson" href="Mathima_13_Oi_Efarmoges_tou_Ypologisti.html" target="_blank" rel="noopener"><span class="num">13</span><span><div class="lesson-title">Οι εφαρμογές του υπολογιστή</div><div class="lesson-en">Computer applications</div></span><span class="open">Άνοιγμα ↗</span></a>
+      <a class="lesson" href="Mathima_14_To_Taxidi_ton_Dedomenon_se_ena_Diktyo.html" target="_blank" rel="noopener"><span class="num">14</span><span><div class="lesson-title">Το ταξίδι των δεδομένων σε ένα δίκτυο</div><div class="lesson-en">The journey of data through a network</div></span><span class="open">Άνοιγμα ↗</span></a>
+      <a class="lesson" href="Mathima_15_Prostatevomai_apo_Diadiktyakes_Epitheseis.html" target="_blank" rel="noopener"><span class="num">15</span><span><div class="lesson-title">Προστατεύομαι από διαδικτυακές επιθέσεις</div><div class="lesson-en">Protecting myself from online attacks</div></span><span class="open">Άνοιγμα ↗</span></a>
+      <a class="lesson" href="Mathima_16_Dimiourgia_Psifiakou_Periexomenou.html" target="_blank" rel="noopener"><span class="num">16</span><span><div class="lesson-title">Δημιουργία ψηφιακού περιεχομένου</div><div class="lesson-en">Creating digital content</div></span><span class="open">Άνοιγμα ↗</span></a>
+      <a class="lesson" href="Mathima_17_Megethi_kai_Diaxeirisi_Arxeion.html" target="_blank" rel="noopener"><span class="num">17</span><span><div class="lesson-title">Μεγέθη και διαχείριση αρχείων</div><div class="lesson-en">File sizes and file management</div></span><span class="open">Άνοιγμα ↗</span></a>
+      <a class="lesson" href="Mathima_18_Epexergasia_Dedomenon.html" target="_blank" rel="noopener"><span class="num">18</span><span><div class="lesson-title">Επεξεργασία δεδομένων</div><div class="lesson-en">Data processing</div></span><span class="open">Άνοιγμα ↗</span></a>
+      <a class="lesson" href="Mathima_19_Prostheto_Eikones_kai_Syndeseis_ston_Ennoiologiko_mou_Xarti.html" target="_blank" rel="noopener"><span class="num">19</span><span><div class="lesson-title">Προσθέτω εικόνες και συνδέσεις στον εννοιολογικό μου χάρτη</div><div class="lesson-en">Adding images and links to my concept map</div></span><span class="open">Άνοιγμα ↗</span></a>
+      <a class="lesson" href="Mathima_20_Xrisi_Leitourgion_Fyllometriti_kai_Anazitisi_me_Lexeis_Kleidia.html" target="_blank" rel="noopener"><span class="num">20</span><span><div class="lesson-title">Χρήση λειτουργιών φυλλομετρητή και αναζήτηση με λέξεις-κλειδιά</div><div class="lesson-en">Using browser functions and keyword search</div></span><span class="open">Άνοιγμα ↗</span></a>
+      <a class="lesson" href="Mathima_21_Diakrisi_Apotelesmaton_kai_Axiologisi_Diadiktyakou_Periexomenou.html" target="_blank" rel="noopener"><span class="num">21</span><span><div class="lesson-title">Διάκριση αποτελεσμάτων και αξιολόγηση διαδικτυακού περιεχομένου</div><div class="lesson-en">Distinguishing results and evaluating online content</div></span><span class="open">Άνοιγμα ↗</span></a>
+      <a class="lesson" href="Mathima_22_Diakrisi_Ilektronikou_kai_Symvatikou_Taxydromeiou_Logariasmos_Xristi.html" target="_blank" rel="noopener"><span class="num">22</span><span><div class="lesson-title">Διάκριση ηλεκτρονικού και συμβατικού ταχυδρομείου – λογαριασμός χρήστη</div><div class="lesson-en">Email vs. conventional mail and user accounts</div></span><span class="open">Άνοιγμα ↗</span></a>
+      <a class="lesson" href="Mathima_23_Xrisi_Ilektronikou_Taxydromeiou.html" target="_blank" rel="noopener"><span class="num">23</span><span><div class="lesson-title">Χρήση ηλεκτρονικού ταχυδρομείου</div><div class="lesson-en">Using email</div></span><span class="open">Άνοιγμα ↗</span></a>
+      <a class="lesson" href="Mathima_24_Dimiourgia_Parousiasis_Antigrafi_kai_Apothikefsi_Periexomenou.html" target="_blank" rel="noopener"><span class="num">24</span><span><div class="lesson-title">Δημιουργία παρουσίασης – αντιγραφή και αποθήκευση περιεχομένου</div><div class="lesson-en">Creating a presentation – copying and saving content</div></span><span class="open">Άνοιγμα ↗</span></a>
+      <a class="lesson" href="Mathima_25_Vasikes_Dynatotites_Epexergasti_Keimenou.html" target="_blank" rel="noopener"><span class="num">25</span><span><div class="lesson-title">Βασικές δυνατότητες επεξεργαστή κειμένου</div><div class="lesson-en">Basic word processor features</div></span><span class="open">Άνοιγμα ↗</span></a>
+      <a class="lesson" href="Mathima_26_Diaxeirisi_Epafon_kai_Epikoinonia_meso_Ekpaideftikis_Platformas.html" target="_blank" rel="noopener"><span class="num">26</span><span><div class="lesson-title">Διαχείριση επαφών και επικοινωνία μέσω εκπαιδευτικής πλατφόρμας</div><div class="lesson-en">Managing contacts and communication through an educational platform</div></span><span class="open">Άνοιγμα ↗</span></a>
+      <a class="lesson" href="Mathima_27_Synergasia_kai_Epikoinonia_meso_Ekpaideftikis_Platformas.html" target="_blank" rel="noopener"><span class="num">27</span><span><div class="lesson-title">Συνεργασία και επικοινωνία μέσω εκπαιδευτικής πλατφόρμας</div><div class="lesson-en">Collaboration and communication through an educational platform</div></span><span class="open">Άνοιγμα ↗</span></a>
+      <a class="lesson" href="Mathima_28_Pnevmatika_Dikaiomata_sto_Diadiktyo_kai_Ypefthyni_Psifiaki_Symperifora.html" target="_blank" rel="noopener"><span class="num">28</span><span><div class="lesson-title">Πνευματικά δικαιώματα στο διαδίκτυο και υπεύθυνη ψηφιακή συμπεριφορά</div><div class="lesson-en">Copyright online and responsible digital behavior</div></span><span class="open">Άνοιγμα ↗</span></a>
+      <a class="lesson" href="Mathima_29_Kanones_Symperiforas_Netiquette_kai_Psifiako_Apotypoma.html" target="_blank" rel="noopener"><span class="num">29</span><span><div class="lesson-title">Κανόνες συμπεριφοράς (Netiquette) και ψηφιακό αποτύπωμα</div><div class="lesson-en">Netiquette and digital footprint</div></span><span class="open">Άνοιγμα ↗</span></a>
+      <a class="lesson" href="Mathima_30_Kritiria_Axiologisis_Pigon_sto_Diadiktyo.html" target="_blank" rel="noopener"><span class="num">30</span><span><div class="lesson-title">Κριτήρια αξιολόγησης πηγών στο διαδίκτυο</div><div class="lesson-en">Criteria for evaluating online sources</div></span><span class="open">Άνοιγμα ↗</span></a>
+    </section>
+
+    <footer class="footer">
+      <div><strong>Created by Nikos Kalakos · © 2026</strong></div>
+      <div>Original educational content and simulation design licensed under <a href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank" rel="license noopener noreferrer">CC BY-NC 4.0</a>.</div>
+      <div>Source code © 2026 Nikos Kalakos.</div>
+      <div>Third-party and textbook materials remain subject to the rights and licences of their respective copyright holders.</div>
+    </footer>
+  </main>
+</body>
+</html>
