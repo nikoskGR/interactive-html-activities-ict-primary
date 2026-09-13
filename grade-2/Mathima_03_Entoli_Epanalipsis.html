@@ -1,0 +1,206 @@
+<!--
+ICT Educational Simulation
+Created by Nikos Kalakos
+Copyright © 2026 Nikos Kalakos
+
+Original educational content and simulation design licensed under CC BY-NC 4.0.
+Source code © 2026 Nikos Kalakos.
+Third-party and textbook materials remain subject to the rights and licences of their respective copyright holders.
+-->
+<!doctype html><html lang="el"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="author" content="Nikos Kalakos">
+<meta name="copyright" content="© 2026 Nikos Kalakos">
+<meta name="license" content="Original educational content and simulation design: CC BY-NC 4.0; source code © 2026 Nikos Kalakos; third-party and textbook materials excluded.">
+<title>Μάθημα 3 - Η εντολή επανάληψης</title>
+<style>
+:root{--ink:#17324d;--blue:#147ca8;--blue2:#0b648b;--soft:#eaf7fb;--lime:#9abd22;--lime2:#789b12;--line:#c9d8e7;--orange:#f08a28;--shadow:0 10px 28px rgba(23,50,77,.12)}
+*{box-sizing:border-box}body{margin:0;background:#f7fafc;color:var(--ink);font-family:Arial,"Noto Sans",sans-serif}button{font:inherit;cursor:pointer}.app{max-width:1160px;margin:auto;padding:16px}
+.top{background:#fff;border:3px solid #b8dfea;border-radius:24px;padding:14px 18px;display:flex;align-items:center;justify-content:space-between;box-shadow:var(--shadow)}.top h1{margin:0;font-size:clamp(28px,4vw,42px)}.badge{width:68px;height:68px;border-radius:22px;background:var(--blue);display:grid;place-items:center;color:#fff;font-size:31px;font-weight:900}
+.path{display:flex;gap:10px;justify-content:center;margin:16px 0;flex-wrap:wrap}.dot{width:44px;height:44px;border-radius:50%;border:3px solid #aab9c9;background:#fff;color:#5e7389;display:grid;place-items:center;font-weight:900;font-size:20px}.dot.active{background:var(--blue);border-color:var(--blue);color:#fff;transform:scale(1.1)}.dot.done{background:var(--lime);border-color:var(--lime2);color:#fff}
+.panel{min-height:700px;background:#fff;border:3px solid #b8dfea;border-radius:28px;padding:24px;box-shadow:var(--shadow)}.step-head{display:flex;justify-content:space-between;gap:12px}.step-head h2{margin:0;font-size:clamp(26px,4vw,38px)}.help{background:#fff7d6;color:#624700;border:3px solid #dfbc44;border-radius:16px;padding:10px 17px;font-weight:900}.instruction{max-width:940px;margin:14px auto 18px;text-align:center;font-size:clamp(20px,2.4vw,25px);font-weight:900;line-height:1.35}.card{max-width:1000px;margin:auto;border:3px solid #c7e4ec;border-radius:28px;background:#fff;padding:22px;min-height:470px}
+.feedback{display:none;max-width:820px;margin:16px auto 0;padding:12px 18px;border-radius:17px;text-align:center;font-weight:900;font-size:20px}.feedback.good{display:block;background:#e5f8ef;border:2px solid #87cdae}.feedback.bad{display:block;background:#fff0ed;border:2px solid #e5a59b}.row{display:flex;gap:14px;justify-content:center;align-items:stretch;flex-wrap:wrap}.choice{min-width:210px;min-height:145px;border:3px solid var(--line);border-radius:22px;background:#fff;padding:14px;font-weight:900;font-size:19px;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:10px}.choice:hover{transform:translateY(-2px);box-shadow:var(--shadow)}.choice.selected{background:#eef8d8;border-color:var(--lime)}
+.check{display:block;margin:18px auto 0;padding:13px 28px;border:0;border-radius:16px;background:var(--lime);color:#fff;font-size:21px;font-weight:900;box-shadow:0 5px 0 var(--lime2)}
+.program{display:flex;gap:8px;justify-content:center;align-items:center;flex-wrap:wrap;margin:18px auto}.cmd{min-width:82px;height:64px;border-radius:13px;background:#1f9ed1;border:4px solid #0878a7;color:#fff;display:grid;place-items:center;font-size:31px;font-weight:900;box-shadow:0 5px 0 #075f83}.repeat{display:flex;align-items:center;gap:7px;border:5px solid var(--orange);background:#fff4e8;border-radius:18px;padding:10px}.repeat .n{width:55px;height:50px;border:3px solid #b95f13;border-radius:10px;background:#fff;font-size:27px;font-weight:900;display:grid;place-items:center;color:#8b430d}.repeat .loop{font-size:34px;color:#c96616;font-weight:900}
+.grid{display:grid;grid-template-columns:repeat(5,62px);grid-template-rows:repeat(5,62px);gap:3px;justify-content:center;margin:18px auto}.grid.small{grid-template-columns:repeat(3,72px);grid-template-rows:repeat(3,72px)}.cell{border:2px solid #e3b15c;background:#fff;display:grid;place-items:center;font-size:38px;position:relative}.frog{font-size:42px}.lily{font-size:35px}.moving-frog{position:absolute;z-index:2;width:42px;height:42px;display:grid;place-items:center;font-size:42px;line-height:1;transition:left .36s ease,top .36s ease;pointer-events:none}
+.compare{display:grid;grid-template-columns:1fr 1fr;gap:18px;max-width:850px;margin:auto}.box{border:3px solid #cbd9e6;border-radius:22px;padding:18px;background:#fbfdff;text-align:center}.box h3{margin-top:0}.counter{display:flex;justify-content:center;align-items:center;gap:14px}.counter button{width:50px;height:50px;border:3px solid #9bc5d5;border-radius:14px;background:#fff;font-size:27px;font-weight:900}.num{font-size:34px;font-weight:900;min-width:42px}
+.finalBox{max-width:760px;margin:auto;text-align:center}.stars{font-size:58px;margin:18px}.summary{padding:20px;border:4px solid var(--blue);background:var(--soft);border-radius:22px;font-size:21px;font-weight:900;line-height:1.45}.faces{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:18px}.face{min-height:130px;border:3px solid var(--line);border-radius:20px;background:#fff;font-weight:900;font-size:17px}.face span{display:block;font-size:52px;margin-bottom:7px}.face.sel{border-color:var(--lime);background:#eef8d8}
+.modal{position:fixed;inset:0;background:#17324d99;display:none;place-items:center;padding:18px;z-index:5}.modal.show{display:grid}.modal-box{max-width:600px;background:#fff;border-radius:24px;border:4px solid #dfbc44;padding:22px;text-align:center;font-size:20px}.modal-box button{padding:10px 20px;border:0;border-radius:13px;background:#dfbc44;font-weight:900}
+@media(max-width:760px){.compare{grid-template-columns:1fr}.faces{grid-template-columns:1fr}.grid{grid-template-columns:repeat(5,52px);grid-template-rows:repeat(5,52px)}}
+</style>
+<style id="nk-license-style">
+.nk-license{max-width:1100px;margin:14px auto 24px;padding:10px 16px;text-align:center;font:13px/1.45 Arial,"Noto Sans",sans-serif;color:#4e657c}
+.nk-license a{color:inherit;text-decoration:underline;text-underline-offset:2px}
+.nk-license .cc-badge{display:inline-block;margin:0 4px;padding:2px 7px;border:1px solid #8aa0b8;border-radius:6px;background:#fff;font-weight:700;white-space:nowrap}
+</style>
+</head><body>
+<div class="app"><div class="top"><h1>Η εντολή επανάληψης</h1><div class="badge">3</div></div><div class="path" id="path"></div>
+<main class="panel"><div class="step-head"><h2 id="title"></h2><button class="help" onclick="help()">❓ Βοήθεια</button></div><div class="instruction" id="inst"></div><div class="card" id="card"></div><div class="feedback" id="fb"></div></main></div>
+<div class="modal" id="modal"><div class="modal-box"><h2>💡 Βοήθεια</h2><p id="helpText"></p><button onclick="closeHelp()">Εντάξει</button></div></div>
+<script>
+const steps=[
+{t:"Τι κάνει η επανάληψη;",i:"Το βατραχάκι ακολουθεί το μονοπάτι με 4 κινήσεις: δεξιά, πάνω, δεξιά, πάνω. Ποια εντολή επανάληψης κάνει ακριβώς το ίδιο;",h:"Βρες ποιες δύο κινήσεις επαναλαμβάνονται με την ίδια σειρά.",k:"meaning"},
+{t:"Άλλαξε τον αριθμό",i:"Το πρόγραμμα περιέχει μία εντολή «πάνω». Διάλεξε τον αριθμό επαναλήψεων ώστε το βατραχάκι να φτάσει στο τελευταίο νούφαρο.",h:"Άλλαξε μόνο τον αριθμό στο κουτάκι της επανάληψης. Μετά έλεγξε την κίνηση του βατραχιού.",k:"number"},
+{t:"Δύο εντολές μέσα στην επανάληψη",i:"Το βατραχάκι ακολουθεί το μονοπάτι με 8 κινήσεις. Ποιο πρόγραμμα επαναλαμβάνει σωστά το ζευγάρι «δεξιά και πάνω» 4 φορές;",h:"Στο παράδειγμα του βιβλίου, οι δύο εντολές «δεξιά» και «πάνω» βρίσκονται μαζί μέσα στην επανάληψη.",k:"two"},
+{t:"Λιγότερες εντολές",i:"Σύγκρινε τα δύο προγράμματα. Ποιο είναι πιο σύντομο αλλά κάνει ακριβώς την ίδια διαδρομή;",h:"Η επανάληψη βοηθά να γράφουμε το ίδιο πρόγραμμα με λιγότερες εντολές.",k:"short"},
+{t:"Πόσες εντολές χωρίς επανάληψη;",i:"Το πρόγραμμα επαναλαμβάνει δύο εντολές 3 φορές. Υπολόγισε πόσες εντολές θα χρειαζόταν χωρίς την επανάληψη.",h:"Μέτρα πόσες εντολές υπάρχουν μέσα στην επανάληψη και πόσες φορές εκτελούνται.",k:"calc"},
+{t:"Τα κατάφερες!",i:"Σκέψου τι έμαθες για την εντολή επανάληψης.",h:"Ο αριθμός δείχνει τις επαναλήψεις και οι εντολές μέσα στο πλαίσιο εκτελούνται κάθε φορά.",k:"final"}];
+let s=0,n=1,selfChoice=null;
+function path(){document.getElementById("path").innerHTML=steps.map((_,i)=>`<div class="dot ${i<s?'done':i===s?'active':''}">${i+1}</div>`).join("")}
+function feedback(msg,ok){let f=document.getElementById("fb");f.className="feedback "+(ok?"good":"bad");f.textContent=msg;if(ok)setTimeout(()=>{s++;render()},900)}
+function clearfb(){let f=document.getElementById("fb");f.className="feedback";f.textContent=""}
+function C(a){return `<div class="cmd">${a}</div>`}
+function R(num,inside){return `<div class="repeat"><div class="n">${num}</div>${inside}<div class="loop">↻</div></div>`}
+function render(){path();clearfb();let x=steps[s];document.getElementById("title").textContent=x.t;document.getElementById("inst").textContent=x.i;if(x.k==="meaning")meaning();if(x.k==="number")number();if(x.k==="two")two();if(x.k==="short")short();if(x.k==="calc")calc();if(x.k==="final")finalStage()}
+function meaning(){
+ document.getElementById("card").innerHTML=`
+ <div style="position:relative;width:222px;height:222px;margin:18px auto">
+   <div class="grid small" style="position:absolute;inset:0;margin:0">
+     <div class="cell"></div><div class="cell"></div><div class="cell">🪷</div>
+     <div class="cell"></div><div class="cell">🪷</div><div class="cell">🪷</div>
+     <div class="cell"></div><div class="cell">🪷</div><div class="cell"></div>
+   </div>
+   <div id="frog1" class="moving-frog" style="left:15px;top:165px">🐸</div>
+ </div>
+ <div style="text-align:center;font-weight:900;font-size:20px;margin:8px 0 16px">
+   Οι 4 κινήσεις είναι: ➡️ ⬆️ ➡️ ⬆️
+ </div>
+ <div class="row">
+   <button class="choice" onclick="meaningAns(false)">${R(4,C("➡"))}<b>4 φορές δεξιά</b></button>
+   <button class="choice" onclick="meaningAns(true)">${R(2,C("➡")+C("⬆"))}<b>2 φορές: δεξιά + πάνω</b></button>
+   <button class="choice" onclick="meaningAns(false)">${R(2,C("⬆")+C("➡"))}<b>2 φορές: πάνω + δεξιά</b></button>
+ </div>`;
+}
+function meaningAns(ok){
+ if(!ok){
+   feedback("Δοκίμασε ξανά. Πρόσεξε τη σειρά: δεξιά και μετά πάνω.",false);
+   return;
+ }
+ const f=document.getElementById("fb");
+ f.className="feedback good";
+ f.textContent="Σωστά! Παρατήρησε το βατραχάκι να ακολουθεί όλη τη διαδρομή.";
+ const frog=document.getElementById("frog1");
+ const path=[
+   [90,165],  // δεξιά
+   [90,90],   // πάνω
+   [165,90],  // δεξιά
+   [165,15]   // πάνω
+ ];
+ let i=0;
+ const timer=setInterval(()=>{
+   frog.style.left=path[i][0]+"px";
+   frog.style.top=path[i][1]+"px";
+   i++;
+   if(i===path.length){
+     clearInterval(timer);
+     setTimeout(()=>{s++;render()},650);
+   }
+ },430);
+}
+
+function number(){
+ n=1;
+ document.getElementById("card").innerHTML=`
+ <div class="program">${R('<span id="rn">1</span>',C("⬆"))}</div>
+ <div style="position:relative;width:322px;height:322px;margin:18px auto">
+   <div class="grid" style="position:absolute;inset:0;margin:0">
+     <div class="cell"></div><div class="cell"></div><div class="cell">🪷</div><div class="cell"></div><div class="cell"></div>
+     <div class="cell"></div><div class="cell"></div><div class="cell">🪷</div><div class="cell"></div><div class="cell"></div>
+     <div class="cell"></div><div class="cell"></div><div class="cell">🪷</div><div class="cell"></div><div class="cell"></div>
+     <div class="cell"></div><div class="cell"></div><div class="cell">🪷</div><div class="cell"></div><div class="cell"></div>
+     <div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div>
+   </div>
+   <div id="movingFrog" class="moving-frog" style="left:140px;top:270px">🐸</div>
+ </div>
+ <div class="counter">
+   <button onclick="chg(-1)">−</button><div class="num" id="num">1</div><button onclick="chg(1)">+</button>
+ </div>
+ <button class="check" onclick="checkNum()">Έλεγχος</button>`;
+}
+function chg(d){n=Math.max(1,Math.min(6,n+d));document.getElementById("num").textContent=n;document.getElementById("rn").textContent=n}
+function checkNum(){
+ if(n!==4){
+   feedback("Μέτρα τα νούφαρα που πρέπει να διασχίσει.",false);
+   return;
+ }
+ const frog=document.getElementById("movingFrog");
+ const stops=[205,140,75,10];
+ let i=0;
+ const f=document.getElementById("fb");
+ f.className="feedback good";
+ f.textContent="Σωστά! Παρατήρησε το βατραχάκι να εκτελεί την εντολή «πάνω» 4 φορές.";
+ const timer=setInterval(()=>{
+   frog.style.top=stops[i]+"px";
+   i++;
+   if(i===stops.length){
+     clearInterval(timer);
+     setTimeout(()=>{s++;render()},700);
+   }
+ },430);
+}
+function two(){
+ document.getElementById("card").innerHTML=`
+ <div style="position:relative;width:322px;height:322px;margin:18px auto">
+   <div class="grid" style="position:absolute;inset:0;margin:0">
+     <div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell">🪷</div>
+     <div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell">🪷</div><div class="cell">🪷</div>
+     <div class="cell"></div><div class="cell"></div><div class="cell">🪷</div><div class="cell">🪷</div><div class="cell"></div>
+     <div class="cell"></div><div class="cell">🪷</div><div class="cell">🪷</div><div class="cell"></div><div class="cell"></div>
+     <div class="cell"></div><div class="cell">🪷</div><div class="cell"></div><div class="cell"></div><div class="cell"></div>
+   </div>
+   <div id="frog3" class="moving-frog" style="left:10px;top:270px">🐸</div>
+ </div>
+ <div style="text-align:center;font-weight:900;font-size:20px;margin:8px 0 16px">
+   Η διαδρομή είναι: ➡️ ⬆️ ➡️ ⬆️ ➡️ ⬆️ ➡️ ⬆️
+ </div>
+ <div class="row">
+   <button class="choice" onclick="twoAns(false)">${R(4,C("⬆"))}<b>Μόνο πάνω</b></button>
+   <button class="choice" onclick="twoAns(true)">${R(4,C("➡")+C("⬆"))}<b>4 φορές: δεξιά + πάνω</b></button>
+   <button class="choice" onclick="twoAns(false)">${R(2,C("➡")+C("⬆"))}<b>Μόνο 2 φορές</b></button>
+ </div>`;
+}
+function twoAns(ok){
+ if(!ok){
+   feedback("Κοίτα τη διαδρομή: κάθε φορά χρειάζεται δεξιά και μετά πάνω.",false);
+   return;
+ }
+ const f=document.getElementById("fb");
+ f.className="feedback good";
+ f.textContent="Σωστά! Παρατήρησε το βατραχάκι να εκτελεί τις δύο εντολές 4 φορές.";
+ const frog=document.getElementById("frog3");
+ const path=[
+   [75,270], [75,205],
+   [140,205],[140,140],
+   [205,140],[205,75],
+   [270,75], [270,10]
+ ];
+ let i=0;
+ const timer=setInterval(()=>{
+   frog.style.left=path[i][0]+"px";
+   frog.style.top=path[i][1]+"px";
+   i++;
+   if(i===path.length){
+     clearInterval(timer);
+     setTimeout(()=>{s++;render()},650);
+   }
+ },400);
+}
+function short(){let long=(C("➡")+C("⬆")).repeat(4);document.getElementById("card").innerHTML=`<div class="compare"><button class="box choice" onclick="shortAns(false)"><h3>Πρόγραμμα Α</h3><div class="program">${long}</div><b>8 εντολές</b></button><button class="box choice" onclick="shortAns(true)"><h3>Πρόγραμμα Β</h3><div class="program">${R(4,C("➡")+C("⬆"))}</div><b>1 επανάληψη με 2 εντολές</b></button></div>`}
+function shortAns(ok){feedback(ok?"Σωστά! Η επανάληψη κάνει το πρόγραμμα πιο σύντομο και ευκολότερο να διαβαστεί.":"Και τα δύο κάνουν την ίδια διαδρομή. Διάλεξε αυτό που χρησιμοποιεί λιγότερες εντολές.",ok)}
+function calc(){n=1;document.getElementById("card").innerHTML=`<div class="program">${R(3,C("⬅")+C("⬇"))}</div><p style="text-align:center;font-weight:900;font-size:21px">Χωρίς την επανάληψη, πόσες εντολές θα γράφαμε;</p><div class="counter"><button onclick="calcChg(-1)">−</button><div class="num" id="calcN">1</div><button onclick="calcChg(1)">+</button></div><button class="check" onclick="checkCalc()">Έλεγχος</button>`}
+function calcChg(d){n=Math.max(1,Math.min(12,n+d));document.getElementById("calcN").textContent=n}
+function checkCalc(){feedback(n===6?"Σωστά! 2 εντολές × 3 επαναλήψεις = 6 εντολές.":"Υπολόγισε πόσες φορές εκτελούνται συνολικά οι δύο εντολές.",n===6)}
+function finalStage(){selfChoice=null;document.getElementById("card").innerHTML=`<div class="finalBox"><div class="stars">⭐ ⭐ ⭐</div><div class="summary">Έμαθες ότι η εντολή επανάληψης περιέχει μία ή περισσότερες εντολές, ότι ο αριθμός ορίζει πόσες φορές θα εκτελεστούν και ότι η επανάληψη βοηθά να γράφουμε και να διαβάζουμε ευκολότερα τα προγράμματα.</div><div class="faces"><button class="face" onclick="selfPick(1,this)"><span>🙂</span>Θέλω λίγη εξάσκηση</button><button class="face" onclick="selfPick(2,this)"><span>😊</span>Τα κατάφερα</button><button class="face" onclick="selfPick(3,this)"><span>🤩</span>Τα κατάφερα πολύ καλά</button></div><button class="check" onclick="finish()">Ολοκλήρωση</button><button class="check" style="background:var(--blue);box-shadow:0 5px 0 var(--blue2)" onclick="restart()">↻ Επανάληψη δραστηριότητας</button></div>`}
+function selfPick(v,e){selfChoice=v;document.querySelectorAll(".face").forEach(x=>x.classList.remove("sel"));e.classList.add("sel")}
+function finish(){let f=document.getElementById("fb");if(!selfChoice){f.className="feedback bad";f.textContent="Διάλεξε πρώτα πώς νιώθεις για όσα έμαθες.";return}f.className="feedback good";f.textContent="Μπράβο! Ολοκλήρωσες το Μάθημα 3."}
+function restart(){s=0;n=1;selfChoice=null;render()}
+function help(){document.getElementById("helpText").textContent=steps[s].h;document.getElementById("modal").classList.add("show")}
+function closeHelp(){document.getElementById("modal").classList.remove("show")}
+render();
+</script>
+<footer class="nk-license" aria-label="Πληροφορίες δημιουργού και άδειας χρήσης">
+  <div><strong>Created by Nikos Kalakos · © 2026</strong></div>
+  <div>Original educational content and simulation design licensed under <a class="cc-badge" href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank" rel="license noopener noreferrer">CC BY-NC 4.0</a>.</div>
+  <div>Source code © 2026 Nikos Kalakos.</div>
+  <div>Third-party and textbook materials remain subject to the rights and licences of their respective copyright holders.</div>
+</footer>
+</body></html>

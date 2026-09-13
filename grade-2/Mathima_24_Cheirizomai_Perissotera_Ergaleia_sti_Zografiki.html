@@ -1,0 +1,1056 @@
+<!--
+ICT Educational Simulation
+Created by Nikos Kalakos
+Copyright © 2026 Nikos Kalakos
+
+Original educational content and simulation design licensed under CC BY-NC 4.0.
+Source code © 2026 Nikos Kalakos.
+Third-party and textbook materials remain subject to the rights and licences of their respective copyright holders.
+-->
+<!doctype html>
+<html lang="el">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="author" content="Nikos Kalakos">
+<meta name="copyright" content="© 2026 Nikos Kalakos">
+<meta name="license" content="Original educational content and simulation design: CC BY-NC 4.0; source code © 2026 Nikos Kalakos; third-party and textbook materials excluded.">
+<title>Μάθημα 24 - Χειρίζομαι περισσότερα εργαλεία στη ζωγραφική</title>
+<style>
+:root{
+  --unit-red:#D93A2E;
+  --unit-red-dark:#A92920;
+  --unit-red-soft:#FFF0EE;
+  --ink:#25334a;
+  --line:#d5dbe6;
+  --good:#eef7dc;
+  --bad:#fff0ed;
+  --athena:#5b4eb5;
+  --shadow:0 10px 28px rgba(37,51,74,.12);
+}
+*{box-sizing:border-box}
+body{margin:0;background:#f7f9fb;color:var(--ink);font-family:Arial,"Noto Sans",sans-serif}
+button,input{font:inherit}
+button{cursor:pointer}
+.app{max-width:1180px;margin:auto;padding:16px}
+.top{
+  background:#fff;border:3px solid #f0c3be;border-radius:24px;padding:14px 18px;
+  display:flex;align-items:center;justify-content:space-between;box-shadow:var(--shadow)
+}
+.top h1{margin:0;font-size:clamp(27px,4vw,40px)}
+.badge{
+  width:70px;height:70px;border-radius:22px;background:var(--unit-red);color:#fff;
+  display:grid;place-items:center;font-size:31px;font-weight:900;box-shadow:inset 0 -5px 0 rgba(0,0,0,.10)
+}
+.path{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin:16px 0}
+.dot{
+  width:44px;height:44px;border-radius:50%;display:grid;place-items:center;
+  border:3px solid #aeb7c7;background:#fff;color:#65718a;font-weight:900;font-size:20px
+}
+.dot.active{background:var(--unit-red);border-color:var(--unit-red-dark);color:#fff;transform:scale(1.1)}
+.dot.done{background:var(--unit-red);border-color:var(--unit-red-dark);color:#fff}
+.panel{
+  min-height:710px;background:#fff;border:3px solid #f0c3be;border-radius:28px;
+  padding:24px;box-shadow:var(--shadow)
+}
+.step-head{display:flex;justify-content:space-between;gap:12px;align-items:flex-start}
+.step-head h2{margin:0;font-size:clamp(25px,4vw,37px)}
+.help{
+  background:#fff3f2;color:#8c241d;border:3px solid #efaaa4;
+  border-radius:16px;padding:10px 17px;font-weight:900
+}
+.instruction{
+  max-width:970px;margin:14px auto 18px;text-align:center;font-size:clamp(19px,2.3vw,24px);
+  font-weight:900;line-height:1.38
+}
+.card{
+  max-width:1040px;margin:auto;border:3px solid #f0c3be;border-radius:28px;
+  background:#fff;padding:22px;min-height:500px
+}
+.feedback{
+  display:none;max-width:860px;margin:16px auto 0;padding:12px 18px;border-radius:17px;
+  text-align:center;font-weight:900;font-size:20px
+}
+.feedback.good{display:block;background:var(--good);border:2px solid #9dbd57}
+.feedback.bad{display:block;background:var(--bad);border:2px solid #e5a59b}
+.check{
+  display:block;margin:18px auto 0;padding:13px 28px;border:0;border-radius:16px;
+  background:var(--unit-red);color:#fff;font-size:21px;font-weight:900;
+  box-shadow:0 5px 0 var(--unit-red-dark)
+}
+.smallhelp{text-align:center;font-size:14px;color:#6d7890;font-weight:800;margin-top:10px}
+.taskbox{
+  max-width:820px;margin:0 auto 14px;border:4px solid var(--unit-red);background:#fff6f5;
+  border-radius:18px;padding:12px 16px;text-align:center;font-size:20px;font-weight:900
+}
+
+/* AthenaOS */
+.os{
+  max-width:930px;margin:auto;border:5px solid #3f475c;border-radius:24px;overflow:hidden;
+  background:#1f2940;box-shadow:0 12px 28px rgba(20,28,45,.24)
+}
+.os-top{
+  height:38px;background:#20283b;color:#fff;display:flex;align-items:center;justify-content:space-between;
+  padding:0 12px;font-size:14px;font-weight:900
+}
+.brand{display:flex;align-items:center;gap:8px}
+.owl{width:25px;height:25px;border-radius:9px 9px 12px 12px;background:var(--athena);position:relative}
+.owl:before,.owl:after{content:"";position:absolute;top:6px;width:6px;height:6px;border-radius:50%;background:#fff}
+.owl:before{left:5px}.owl:after{right:5px}
+.owl span{position:absolute;left:10px;top:13px;width:0;height:0;border-left:3px solid transparent;border-right:3px solid transparent;border-top:6px solid #f2c84a}
+.desktop{
+  position:relative;height:500px;overflow:hidden;
+  background:
+    radial-gradient(circle at 72% 18%,rgba(255,255,255,.10),transparent 25%),
+    linear-gradient(140deg,#5964a6 0%,#3f477b 50%,#273453 100%)
+}
+.desktop-icon{
+  position:absolute;width:112px;min-height:110px;border:3px solid transparent;border-radius:16px;
+  background:transparent;color:#fff;font-weight:900;text-align:center;padding:8px
+}
+.desktop-icon:hover{background:rgba(255,255,255,.12);border-color:rgba(255,255,255,.30)}
+.desktop-icon.chroma{
+  left:75px;top:65px;
+  background:transparent!important;
+  border-color:transparent!important;
+  outline:none!important;
+  box-shadow:none!important;
+  appearance:none;
+  -webkit-appearance:none;
+}
+.desktop-icon.graphis{left:235px;top:65px}
+.desktop-icon.ploigos{left:395px;top:65px}
+.paint-symbol{
+  width:62px;height:62px;border-radius:16px;
+  background:#626CA8!important;
+  border:4px solid #384a61;
+  display:grid;place-items:center;margin:0 auto 7px;position:relative
+}
+.paint-symbol:before{
+  content:"";
+  position:absolute;
+  left:9px;top:9px;
+  width:36px;height:36px;
+  border-radius:12px;
+  background:#ffffff!important;
+  border:4px solid #526277;
+}
+.paint-symbol:after{
+  content:"";
+  position:absolute;
+  width:9px;height:9px;
+  border-radius:50%;
+  background:#e7473c;
+  left:19px;top:20px;
+  box-shadow:
+    13px -5px 0 #f1c84b,
+    22px 8px 0 #4c9bd6,
+    9px 18px 0 #55b96d;
+}
+.doc-symbol{
+  width:62px;height:62px;border-radius:13px;background:#f7f9fb;border:4px solid #384a61;
+  position:relative;margin:0 auto 7px
+}
+.doc-symbol:before,.doc-symbol:after{content:"";position:absolute;left:12px;right:12px;height:4px;background:#6f8298;border-radius:3px}
+.doc-symbol:before{top:19px}.doc-symbol:after{top:33px}
+.browser-symbol{
+  width:62px;height:62px;border-radius:16px;background:#edf4fa;border:4px solid #31475b;
+  display:grid;place-items:center;margin:0 auto 7px;position:relative
+}
+.browser-symbol:before{content:"";width:34px;height:34px;border-radius:50%;background:#64b8de;border:4px solid #2d6c8e}
+.taskbar{position:absolute;left:0;right:0;bottom:0;height:50px;background:rgba(28,34,50,.94);display:flex;align-items:center;padding:0 12px}
+
+/* Chroma */
+.chroma{
+  max-width:940px;margin:auto;border:5px solid #3f475c;border-radius:23px;overflow:hidden;background:#fff;
+  box-shadow:0 12px 28px rgba(20,28,45,.20)
+}
+.chroma-top{
+  height:42px;background:linear-gradient(90deg,var(--athena),#7d66d3);color:#fff;
+  display:flex;align-items:center;justify-content:space-between;padding:0 10px 0 14px;font-weight:900
+}
+.chroma-controls{display:flex;gap:4px}
+.chroma-controls button{width:34px;height:29px;border:0;border-radius:6px;background:#f7f5ff;color:#443b81;font-weight:900}
+.chroma-menu{
+  height:38px;background:#f2f3f7;border-bottom:2px solid #d8dce4;
+  display:flex;align-items:center;gap:12px;padding:0 12px;font-size:14px;font-weight:800
+}
+.chroma-main{display:grid;grid-template-columns:176px 1fr 96px;height:438px}
+.tools{
+  background:#f7f9fc;border-right:3px solid #d6dde6;padding:7px;
+  display:grid;grid-template-columns:repeat(2,1fr);gap:7px;align-content:start;overflow:hidden
+}
+.tool{
+  width:100%;min-height:82px;border:3px solid #aab5c3;border-radius:13px;background:#fff;
+  padding:6px 4px;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:4px;font-weight:900;font-size:11px;text-align:center;line-height:1.05
+}
+.tool .toollabel{display:block;white-space:normal}
+.tool.selected{border-color:var(--unit-red);background:#fff2f0}
+.toolicon-wrap{
+  width:46px;height:43px;display:grid;place-items:center;flex:0 0 43px
+}
+.toolicon-large{width:92px;height:92px;flex-basis:92px}
+.simple-tool-icon{
+  width:42px;height:40px;position:relative;display:block
+}
+.toolicon-large .simple-tool-icon{width:82px;height:82px}
+
+/* Πινέλο: καθαρό πινέλο με λαβή και μπλε τρίχες */
+.simple-brush{
+  transform:rotate(-43deg);
+}
+.simple-brush:before{
+  content:"";position:absolute;
+  left:17px;top:0;width:9px;height:27px;
+  background:#b87535;border:2px solid #6f4a28;border-radius:6px 6px 3px 3px;
+  box-shadow:0 1px 0 rgba(255,255,255,.35) inset
+}
+.simple-brush:after{
+  content:"";position:absolute;
+  left:10px;top:23px;width:23px;height:16px;
+  background:linear-gradient(to bottom,#d7dce2 0 36%,#4c83ad 36% 100%);
+  border:3px solid #526277;border-radius:3px 3px 10px 10px;
+  clip-path:polygon(8% 0,92% 0,100% 70%,72% 100%,28% 100%,0 70%)
+}
+.toolicon-large .simple-brush:before{
+  left:35px;top:1px;width:14px;height:49px;border-width:3px;border-radius:8px 8px 4px 4px
+}
+.toolicon-large .simple-brush:after{
+  left:20px;top:44px;width:44px;height:32px;border-width:4px;border-radius:5px 5px 15px 15px
+}
+
+/* Γέμισμα: δοχείο που γέρνει και μία σταγόνα */
+.simple-fill:before{
+  content:"";position:absolute;width:22px;height:18px;border-radius:5px;
+  background:#f1c84b;border:3px solid #526277;left:5px;top:8px;transform:rotate(-28deg)
+}
+.simple-fill:after{
+  content:"";position:absolute;width:10px;height:14px;border-radius:60% 60% 65% 65%;
+  background:#4c9bd6;right:3px;bottom:2px;transform:rotate(10deg)
+}
+.toolicon-large .simple-fill:before{width:42px;height:32px;border-width:4px;left:8px;top:15px}
+.toolicon-large .simple-fill:after{width:18px;height:25px;right:7px;bottom:8px}
+
+/* Σχήματα: τετράγωνο, κύκλος, τρίγωνο */
+.simple-shapes:before{
+  content:"";position:absolute;width:16px;height:16px;background:#4c9bd6;border:3px solid #526277;
+  border-radius:3px;left:1px;top:3px;
+  box-shadow:19px 14px 0 -2px #e7473c,19px 14px 0 1px #526277
+}
+.simple-shapes:after{
+  content:"";position:absolute;width:16px;height:16px;background:#f1c84b;border:3px solid #526277;
+  border-radius:50%;left:4px;bottom:0
+}
+.toolicon-large .simple-shapes:before{
+  width:28px;height:28px;border-width:4px;left:4px;top:5px;
+  box-shadow:37px 27px 0 -3px #e7473c,37px 27px 0 1px #526277
+}
+.toolicon-large .simple-shapes:after{width:29px;height:29px;border-width:4px;left:10px;bottom:5px}
+
+/* Σβήστρα: καθαρό ροζ ορθογώνιο */
+.simple-eraser:before{
+  content:"";position:absolute;width:29px;height:18px;border-radius:5px;
+  background:linear-gradient(90deg,#f59baa 0 68%,#f7d5dc 68%);
+  border:3px solid #765565;left:5px;top:10px;transform:rotate(-14deg)
+}
+.toolicon-large .simple-eraser:before{
+  width:56px;height:33px;border-width:4px;border-radius:7px;left:11px;top:23px
+}
+
+/* Αναίρεση */
+.simple-undo:before{
+  content:"↶";position:absolute;inset:0;display:grid;place-items:center;
+  font-size:38px;line-height:1;color:#385d91;font-weight:900
+}
+.toolicon-large .simple-undo:before{font-size:72px}
+
+/* Κείμενο */
+.simple-text:before{
+  content:"A";position:absolute;inset:0;display:grid;place-items:center;
+  font-size:37px;line-height:1;color:#29487d;font-weight:900
+}
+.toolicon-large .simple-text:before{font-size:70px}
+.work{
+  position:relative;background:#fff;overflow:hidden
+}
+.palette{
+  background:#f7f9fc;border-left:3px solid #d6dde6;padding:8px;overflow:auto
+}
+.palette h4{margin:4px 0 8px;text-align:center}
+.color{
+  width:43px;height:43px;border:4px solid #fff;border-radius:50%;box-shadow:0 0 0 2px #8491a2;
+  margin:8px auto;display:block
+}
+.color.sel{box-shadow:0 0 0 5px var(--unit-red)}
+.c-red{background:#e7473c}.c-blue{background:#4c9bd6}.c-yellow{background:#f1c84b}
+.c-green{background:#55b96d}.c-purple{background:#9a72d0}.c-orange{background:#ed9b3f}
+.canvas-tip{
+  position:absolute;right:8px;bottom:7px;background:#fff;border:2px solid #ccd4de;
+  border-radius:10px;padding:5px 8px;font-size:12px;font-weight:900;color:#67758a;z-index:30
+}
+
+/* Stage 2 */
+.tool-match{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;max-width:900px;margin:auto}
+.tool-card{
+  border:3px solid #d0d7e2;border-radius:20px;background:#fff;padding:18px 20px 20px;text-align:center;min-height:340px;
+  display:grid;grid-template-rows:105px 44px 1fr;gap:10px;align-items:center
+}
+.bigtool{display:grid;place-items:center}
+.tool-function{font-weight:900;color:#4e5d72;font-size:26px}
+.tool-options{
+  width:100%;display:grid;grid-template-columns:1fr;gap:10px;justify-items:stretch;
+  max-width:470px;margin:0 auto;align-self:start
+}
+.tool-choice{
+  width:100%;min-height:55px;display:flex;align-items:center;justify-content:center;text-align:center;
+  border:3px solid #aeb8c5;border-radius:11px;background:#fff;padding:8px 14px;font-weight:900;line-height:1.2
+}
+.tool-choice.good{border-color:#8cab52;background:#f0f7df}
+
+/* Fill/brush */
+.paint-lab{position:relative;height:438px;background:#fff}
+.paint-boxes{display:flex;gap:28px;justify-content:center;padding-top:70px}
+.fillbox{
+  width:125px;height:125px;border:4px solid #6e7c8e;border-radius:18px;background:#fff;
+  display:grid;place-items:center;font-weight:900;color:#657388;cursor:pointer
+}
+.brush-zone{
+  position:absolute;left:120px;right:120px;bottom:35px;height:120px;border:4px dashed #9ca9b9;
+  border-radius:18px;background:#fbfcfd
+}
+.brush-stroke{
+  position:absolute;height:12px;border-radius:10px;transform-origin:left center;pointer-events:none
+}
+
+/* Shape robot */
+.robot-work{
+  position:relative;height:438px;overflow:hidden;background:
+  linear-gradient(#eef1f5 1px,transparent 1px),
+  linear-gradient(90deg,#eef1f5 1px,transparent 1px),
+  #fff;background-size:25px 25px;touch-action:none
+}
+.shape-picker{
+  position:absolute;left:8px;top:8px;width:150px;background:#fff;border:3px solid #ccd4df;
+  border-radius:14px;padding:7px;z-index:25
+}
+.shape-picker h4{margin:2px 0 6px;text-align:center;font-size:13px}
+.shape-btn{
+  width:39px;height:37px;border:3px solid #aeb8c5;border-radius:9px;background:#fff;margin:2px;
+  font-size:20px;font-weight:900
+}
+.shape-btn.sel{border-color:var(--unit-red);background:#fff2f0}
+.robot-progress{
+  position:absolute;right:8px;top:8px;background:#fff;border:3px solid #ccd4df;border-radius:12px;
+  padding:7px 9px;font-weight:900;font-size:12px;z-index:26
+}
+.robot-target{
+  position:absolute;border:4px dashed #98a7b9;background:rgba(250,251,253,.45);
+  pointer-events:none;z-index:14
+}
+.robot-target.done{border-color:transparent;background:transparent;visibility:hidden}
+.robot-target.rect{border-radius:12px}
+.robot-target.circle{border-radius:50%}
+.robot-line-target{
+  position:absolute;z-index:14;pointer-events:none
+}
+.robot-line-target.horizontal{height:0;border-top:5px dashed #98a7b9}
+.robot-line-target.vertical{width:0;border-left:5px dashed #98a7b9}
+.robot-line-target.done{border-color:transparent;visibility:hidden}
+.rt-head{left:278px;top:58px;width:118px;height:76px}
+.rt-body{left:250px;top:170px;width:175px;height:125px}
+.rt-eye1{left:302px;top:82px;width:24px;height:24px}
+.rt-eye2{left:349px;top:82px;width:24px;height:24px}
+.rt-arm1{left:175px;top:215px;width:66px}
+.rt-arm2{left:437px;top:215px;width:66px}
+.rt-leg1{left:291px;top:310px;height:82px}
+.rt-leg2{left:383px;top:310px;height:82px}
+.draw-preview{
+  position:absolute;z-index:10;pointer-events:none;border:4px solid #526277;background:transparent
+}
+.draw-preview.circle{border-radius:50%}
+.draw-preview.line{
+  height:10px;border:0;border-radius:8px;transform-origin:0 50%
+}
+.drawn-robot-part{
+  position:absolute;z-index:8;pointer-events:none;border:4px solid #526277
+}
+.drawn-robot-part.circle{border-radius:50%}
+.drawn-robot-line{
+  position:absolute;z-index:8;height:10px;border-radius:8px;transform-origin:0 50%;pointer-events:none
+}
+.robot-draw-note{
+  position:absolute;left:170px;right:8px;bottom:7px;border:2px solid #ccd4df;background:#fff;
+  border-radius:10px;padding:5px 8px;font-size:12px;font-weight:900;color:#657388;text-align:center;z-index:22
+}
+/* Correction */
+.error-shape{
+  position:absolute;left:535px;top:95px;width:75px;height:75px;background:#222;border-radius:50%;
+  border:4px solid #111;display:grid;place-items:center;color:#fff;font-weight:900;cursor:pointer
+}
+.undo-btn{
+  position:absolute;left:10px;top:10px;border:3px solid #aeb8c5;border-radius:10px;background:#fff;
+  padding:9px 14px;font-weight:900;font-size:20px
+}
+
+/* Text */
+.text-work{position:relative;height:438px;background:#fff}
+.completed-robot{
+  position:absolute;left:50%;top:45%;transform:translate(-50%,-50%);
+  width:330px;height:290px
+}
+.rb-head{position:absolute;left:95px;top:0;width:140px;height:80px;background:#f1c84b;border:4px solid #5d6979;border-radius:15px}
+.rb-body{position:absolute;left:70px;top:105px;width:190px;height:120px;background:#4c9bd6;border:4px solid #5d6979;border-radius:10px}
+.rb-eye{position:absolute;top:25px;width:20px;height:20px;background:#26354b;border-radius:50%}
+.rb-eye.e1{left:130px}.rb-eye.e2{left:180px}
+.rb-arm{position:absolute;top:145px;width:80px;height:18px;background:#e7473c;border:4px solid #5d6979;border-radius:9px}
+.rb-arm.a1{left:0}.rb-arm.a2{right:0}
+.rb-leg{position:absolute;top:220px;width:24px;height:70px;background:#55b96d;border:4px solid #5d6979;border-radius:8px}
+.rb-leg.l1{left:110px}.rb-leg.l2{left:195px}
+.text-anchor{
+  position:absolute;left:50%;bottom:25px;transform:translateX(-50%);width:300px;height:60px;
+  border:4px dashed var(--unit-red);border-radius:14px;background:#fff7f6;display:grid;place-items:center
+}
+.text-entry{
+  width:250px;padding:10px 12px;border:3px solid #8f9cab;border-radius:10px;font-size:20px;font-weight:900;text-align:center
+}
+.source-card{
+  max-width:500px;margin:0 auto 12px;border:3px solid #d1d8e2;border-radius:16px;background:#f9fafc;
+  padding:10px;text-align:center;font-weight:900;font-size:20px;
+  user-select:none;-webkit-user-select:none
+}
+
+/* Quiz/final */
+.quiz{
+  max-width:900px;margin:auto;border:4px solid var(--unit-red);border-radius:24px;background:#fff9f8;padding:18px
+}
+.quiz-progress{height:14px;background:#e7edf1;border-radius:9px;overflow:hidden;max-width:540px;margin:0 auto 14px}
+.quiz-progress span{display:block;height:100%;background:var(--unit-red);width:0;transition:.25s}
+.quiz-q{text-align:center;font-size:23px;font-weight:900;margin-bottom:12px}
+.quiz-options{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
+.quiz-choice{
+  min-width:205px;min-height:110px;border:3px solid #d0d7e2;border-radius:18px;background:#fff;
+  font-weight:900;font-size:18px;padding:14px
+}
+.finalBox{max-width:780px;margin:auto;text-align:center}
+.stars{font-size:58px;margin:18px}
+.summary{
+  padding:20px;border:4px solid var(--unit-red);background:#fff4f2;border-radius:22px;
+  font-size:21px;font-weight:900;line-height:1.45
+}
+.faces{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:18px}
+.face{min-height:130px;border:3px solid var(--line);border-radius:20px;background:#fff;font-weight:900;font-size:17px}
+.face span{display:block;font-size:52px;margin-bottom:7px}
+.face.sel{border-color:var(--unit-red);background:var(--unit-red-soft)}
+.repeatBtn{
+  display:block;margin:15px auto 0;padding:12px 22px;border:0;border-radius:15px;
+  background:#4f6b86;color:#fff;font-size:19px;font-weight:900;box-shadow:0 5px 0 #31475b
+}
+.modal{
+  position:fixed;inset:0;background:#24344d99;display:none;place-items:center;padding:18px;z-index:60
+}
+.modal.show{display:grid}
+.modal-box{max-width:620px;background:#fff;border-radius:24px;border:4px solid var(--unit-red);padding:22px;text-align:center;font-size:20px}
+.modal-box button{padding:10px 20px;border:0;border-radius:13px;background:var(--unit-red);color:#fff;font-weight:900}
+
+@media(max-width:850px){
+  .tool-match,.faces{grid-template-columns:1fr}
+  .chroma-main{grid-template-columns:110px 1fr 90px}
+}
+</style>
+
+
+<style id="nk-license-style">
+.nk-license{max-width:1100px;margin:14px auto 24px;padding:10px 16px;text-align:center;font:13px/1.45 Arial,"Noto Sans",sans-serif;color:#4e657c}
+.nk-license a{color:inherit;text-decoration:underline;text-underline-offset:2px}
+.nk-license .cc-badge{display:inline-block;margin:0 4px;padding:2px 7px;border:1px solid #8aa0b8;border-radius:6px;background:#fff;font-weight:700;white-space:nowrap}
+</style></head>
+<body>
+<div class="app">
+  <div class="top">
+    <h1>Χειρίζομαι περισσότερα εργαλεία στη ζωγραφική</h1>
+    <div class="badge">24</div>
+  </div>
+  <div class="path" id="path"></div>
+
+  <main class="panel">
+    <div class="step-head">
+      <h2 id="title"></h2>
+      <button class="help" onclick="help()">❓ Βοήθεια</button>
+    </div>
+    <div class="instruction" id="inst"></div>
+    <div class="card" id="card"></div>
+    <div class="feedback" id="feedback"></div>
+  </main>
+</div>
+
+<div class="modal" id="modal">
+  <div class="modal-box">
+    <h2>💡 Βοήθεια</h2>
+    <p id="helpText"></p>
+    <button onclick="closeHelp()">Εντάξει</button>
+  </div>
+</div>
+
+<script>
+const steps=[
+ {t:"Ανοίγω το Chroma",i:"Στην επιφάνεια εργασίας του AthenaOS άνοιξε το Chroma με διπλό κλικ.",h:"Το Chroma είναι το εικονικό πρόγραμμα ζωγραφικής. Κάνε διπλό κλικ στο εικονίδιό του.",k:"open"},
+ {t:"Γνωρίζω τα εργαλεία",i:"Διάλεξε τη σωστή λειτουργία για κάθε εργαλείο ζωγραφικής.",h:"Θα χρησιμοποιήσεις πινέλο, γέμισμα, σχήματα, σβήστρα, αναίρεση και κείμενο.",k:"tools"},
+ {t:"Χρώμα και πινέλο",i:"Γέμισε τα τρία σχήματα με τρία διαφορετικά χρώματα και μετά σχεδίασε μία γραμμή με το πινέλο.",h:"Επίλεξε «Γέμισμα», διάλεξε ένα χρώμα και πάτησε ένα σχήμα. Για τη γραμμή, επίλεξε «Πινέλο» και σύρε μέσα στο διακεκομμένο πλαίσιο.",k:"paint"},
+ {t:"Σχεδιάζω ένα ρομπότ",i:"Χρησιμοποίησε τα εργαλεία του Chroma και σύρε το ποντίκι για να σχεδιάσεις μέσα στις διακεκομμένες περιοχές.",h:"Για το κεφάλι και το σώμα χρησιμοποίησε ορθογώνια, για τα μάτια κύκλους και για τα χέρια και τα πόδια γραμμές. Διάλεξε το σωστό είδος και σύρε μέσα στη διακεκομμένη περιοχή.",k:"robot"},
+ {t:"Διορθώνω ένα λάθος",i:"Αφαίρεσε το μαύρο σχήμα. Μπορείς να χρησιμοποιήσεις είτε τη σβήστρα είτε την αναίρεση.",h:"Η σβήστρα αφαιρεί το λάθος όταν την επιλέξεις και πατήσεις πάνω του. Η αναίρεση επιστρέφει στο προηγούμενο βήμα.",k:"correct"},
+ {t:"Δίνω όνομα στο ρομπότ",i:"Χρησιμοποίησε το εργαλείο κειμένου και γράψε ακριβώς «Ρομπότ 24».",h:"Επίλεξε «Κείμενο», πάτησε το διακεκομμένο πλαίσιο και γράψε ακριβώς «Ρομπότ 24».",k:"text"},
+ {t:"Τελική δοκιμή",i:"Απάντησε σωστά και στις έξι ερωτήσεις για τα εργαλεία του Chroma.",h:"Θυμήσου τι κάνουν: πινέλο, γέμισμα, σχήματα, σβήστρα, αναίρεση και κείμενο.",k:"quiz"},
+ {t:"Τα κατάφερες!",i:"Σκέψου τι έμαθες στο Μάθημα 24.",h:"Σκέψου πώς χρησιμοποιείς εργαλεία ζωγραφικής για χρώμα, γραμμές, σχήματα, διόρθωση και κείμενο.",k:"final"}
+];
+
+let s=0,selfChoice=null;
+let toolQuizIndex=0,toolQuizOrder=[],toolQuizOptions=[];
+let activeTool=null,activeColor="blue",filledBoxes=new Set(),usedColors=new Set();
+let brushDrawing=false,brushStart=null,brushDone=false;
+let robotShape=null,robotDone=new Set(),robotColor="blue",robotDrawing=false,robotStart=null,robotPreview=null;
+let errorRemoved=false,textReady=false;
+let quizIndex=0,quizOrder=[],quizOpts=[];
+
+const toolDefs=[
+ {id:"brush",name:"Πινέλο",function:"Σχεδιάζει ελεύθερες γραμμές"},
+ {id:"fill",name:"Γέμισμα",function:"Γεμίζει μια κλειστή περιοχή με χρώμα"},
+ {id:"shapes",name:"Σχήματα",function:"Σχεδιάζει έτοιμα γεωμετρικά σχήματα"},
+ {id:"eraser",name:"Σβήστρα",function:"Σβήνει ένα μέρος της ζωγραφιάς"},
+ {id:"undo",name:"Αναίρεση",function:"Επιστρέφει στο προηγούμενο βήμα"},
+ {id:"text",name:"Κείμενο",function:"Γράφει γράμματα και αριθμούς"}
+];
+
+function toolIcon(id,large=false){
+ const wrapClass=large?"toolicon-wrap toolicon-large":"toolicon-wrap";
+ const cls={
+  brush:"simple-brush",
+  fill:"simple-fill",
+  shapes:"simple-shapes",
+  eraser:"simple-eraser",
+  undo:"simple-undo",
+  text:"simple-text"
+ }[id]||"";
+ return `<span class="${wrapClass}"><span class="simple-tool-icon ${cls}"></span></span>`;
+}
+
+function shuffled(arr){
+ const a=[...arr];
+ for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}
+ return a;
+}
+function nav(){
+ document.getElementById("path").innerHTML=steps.map((_,i)=>`<div class="dot ${i<s?'done':i===s?'active':''}">${i+1}</div>`).join("");
+}
+function completeFinalDot(){s=steps.length;nav()}
+function clearFeedback(){const f=document.getElementById("feedback");f.className="feedback";f.textContent=""}
+function setFeedback(t,ok){const f=document.getElementById("feedback");f.className="feedback "+(ok?"good":"bad");f.textContent=t}
+function nextAfter(ms=850){setTimeout(()=>{s++;render()},ms)}
+function render(){
+ nav();clearFeedback();
+ const x=steps[s];
+ document.getElementById("title").textContent=x.t;
+ document.getElementById("inst").textContent=x.i;
+ if(x.k==="open")stage1();
+ if(x.k==="tools")stage2();
+ if(x.k==="paint")stage3();
+ if(x.k==="robot")stage4();
+ if(x.k==="correct")stage5();
+ if(x.k==="text")stage6();
+ if(x.k==="quiz")stage7();
+ if(x.k==="final")stage8();
+}
+function toolButton(id,name){
+ return `<button class="tool ${activeTool===id?"selected":""}" id="tool_${id}" onclick="chooseTool('${id}')">${toolIcon(id)}<span class="toollabel">${name}</span></button>`;
+}
+function colorButton(id,cls){
+ return `<button class="color c-${cls} ${activeColor===id?"sel":""}" onclick="chooseColor('${id}')" aria-label="${id}"></button>`;
+}
+function chromaShell(content){
+ return `<div class="chroma">
+  <div class="chroma-top"><span>Chroma — Ζωγραφική</span><span class="chroma-controls"><button>—</button><button>□</button><button>×</button></span></div>
+  <div class="chroma-menu"><span>Αρχείο</span><span>Επεξεργασία</span><span>Εικόνα</span><span>Βοήθεια</span></div>
+  <div class="chroma-main">
+   <div class="tools">
+    ${toolButton("brush","Πινέλο")}
+    ${toolButton("fill","Γέμισμα")}
+    ${toolButton("shapes","Σχήματα")}
+    ${toolButton("eraser","Σβήστρα")}
+    ${toolButton("undo","Αναίρεση")}
+    ${toolButton("text","Κείμενο")}
+   </div>
+   <div class="work" id="work">${content}<div class="canvas-tip">Chroma</div></div>
+   <div class="palette">
+    <h4>Χρώματα</h4>
+    ${colorButton("red","red")}${colorButton("blue","blue")}${colorButton("yellow","yellow")}
+    ${colorButton("green","green")}${colorButton("purple","purple")}${colorButton("orange","orange")}
+   </div>
+  </div>
+ </div>`;
+}
+function chooseTool(id){
+ activeTool=id;
+ document.querySelectorAll(".tool").forEach(x=>x.classList.remove("selected"));
+ document.getElementById("tool_"+id)?.classList.add("selected");
+
+ if(s===4&&id==="undo"&&!errorRemoved){
+  errorRemoved=true;
+  document.getElementById("errorShape")?.remove();
+  setFeedback("Σωστά! Η αναίρεση αφαίρεσε το τελευταίο λάθος.",true);
+  nextAfter(900);
+ }
+}
+function chooseColor(id){
+ activeColor=id;robotColor=id;
+ document.querySelectorAll(".color").forEach(x=>x.classList.remove("sel"));
+ document.querySelectorAll(`.c-${id}`).forEach(x=>x.classList.add("sel"));
+}
+function colorValue(id){
+ return {red:"#e7473c",blue:"#4c9bd6",yellow:"#f1c84b",green:"#55b96d",purple:"#9a72d0",orange:"#ed9b3f"}[id];
+}
+
+/* Stage 1 */
+function stage1(){
+ document.getElementById("card").innerHTML=`
+  <div class="os">
+   <div class="os-top"><span class="brand"><span class="owl"><span></span></span>AthenaOS</span><span>12:30</span></div>
+   <div class="desktop">
+    <button class="desktop-icon chroma" id="chromaDesk" onclick="singleChroma()" ondblclick="openChroma()"><div class="paint-symbol"></div>Chroma</button>
+    <button class="desktop-icon graphis" onclick="wrongApp()"><div class="doc-symbol"></div>Graphis</button>
+    <button class="desktop-icon ploigos" onclick="wrongApp()"><div class="browser-symbol"></div>Ploigos</button>
+    <div class="taskbar"></div>
+   </div>
+  </div>`;
+}
+function singleChroma(){
+ setFeedback("Χρησιμοποίησε διπλό κλικ για να ανοίξεις το Chroma.",false);
+}
+function wrongApp(){setFeedback("Άνοιξε το πρόγραμμα ζωγραφικής Chroma.",false)}
+function openChroma(){setFeedback("Σωστά! Άνοιξες το Chroma.",true);nextAfter(750)}
+
+/* Stage 2 */
+function stage2(){
+ toolQuizIndex=0;
+ toolQuizOrder=shuffled(toolDefs);
+ drawToolQuiz();
+}
+function drawToolQuiz(){
+ const t=toolQuizOrder[toolQuizIndex];
+ const wrong=shuffled(toolDefs.filter(x=>x.id!==t.id)).slice(0,2).map(x=>x.function);
+ toolQuizOptions=shuffled([{ok:true,txt:t.function},...wrong.map(txt=>({ok:false,txt}))]);
+ document.getElementById("card").innerHTML=`
+  <div class="taskbox">Τι κάνει το εργαλείο «${t.name}»;</div>
+  <div class="tool-card" style="max-width:650px;margin:auto">
+   <div class="bigtool">${toolIcon(t.id,true)}</div>
+   <div class="tool-function">${t.name}</div>
+   <div class="tool-options">
+    ${toolQuizOptions.map((o,i)=>`<button class="tool-choice" onclick="toolQuizAnswer(${i})">${o.txt}</button>`).join("")}
+   </div>
+  </div>
+  <div class="smallhelp">${toolQuizIndex+1} από ${toolQuizOrder.length}</div>`;
+}
+function toolQuizAnswer(i){
+ if(!toolQuizOptions[i].ok){setFeedback("Αυτό είναι διαφορετική λειτουργία.",false);return}
+ toolQuizIndex++;
+ if(toolQuizIndex<toolQuizOrder.length){
+  setFeedback("Σωστά! Πάμε στο επόμενο εργαλείο.",true);
+  setTimeout(()=>{clearFeedback();drawToolQuiz()},600);
+ }else{
+  setFeedback("Μπράβο! Αναγνώρισες όλα τα βασικά εργαλεία.",true);nextAfter();
+ }
+}
+
+/* Stage 3 */
+function stage3(){
+ activeTool=null;activeColor="blue";filledBoxes=new Set();usedColors=new Set();
+ brushDrawing=false;brushStart=null;brushDone=false;
+ document.getElementById("card").innerHTML=chromaShell(`
+  <div class="paint-lab" id="paintLab">
+   <div class="paint-boxes">
+    <div class="fillbox" id="fb1" onclick="fillBox('fb1')">1</div>
+    <div class="fillbox" id="fb2" onclick="fillBox('fb2')">2</div>
+    <div class="fillbox" id="fb3" onclick="fillBox('fb3')">3</div>
+   </div>
+   <div class="brush-zone" id="brushZone" onpointerdown="brushDown(event)" onpointermove="brushMove(event)" onpointerup="brushUp(event)"></div>
+  </div>`);
+}
+function fillBox(id){
+ if(activeTool!=="fill"){setFeedback("Επίλεξε πρώτα το εργαλείο «Γέμισμα».",false);return}
+ if(filledBoxes.has(id))return;
+ if(usedColors.has(activeColor)){setFeedback("Διάλεξε διαφορετικό χρώμα για αυτό το σχήμα.",false);return}
+ const el=document.getElementById(id);el.style.background=colorValue(activeColor);el.style.color="#26354b";
+ filledBoxes.add(id);usedColors.add(activeColor);
+ if(filledBoxes.size<3){
+  setFeedback("Σωστά! Τώρα διάλεξε διαφορετικό χρώμα για το επόμενο σχήμα.",true);
+ }else{
+  setFeedback("Μπράβο! Χρησιμοποίησες τρία διαφορετικά χρώματα. Τώρα επίλεξε το πινέλο και σχεδίασε μία γραμμή στο κάτω πλαίσιο.",true);
+ }
+}
+function brushPoint(ev){
+ const z=document.getElementById("brushZone").getBoundingClientRect();
+ return {x:ev.clientX-z.left,y:ev.clientY-z.top};
+}
+function brushDown(ev){
+ if(filledBoxes.size!==3){setFeedback("Πρώτα γέμισε και τα τρία σχήματα με διαφορετικά χρώματα.",false);return}
+ if(activeTool!=="brush"){setFeedback("Επίλεξε πρώτα το εργαλείο «Πινέλο».",false);return}
+ brushDrawing=true;brushStart=brushPoint(ev);
+}
+function brushMove(ev){
+ if(!brushDrawing)return;
+ const p=brushPoint(ev),dx=p.x-brushStart.x,dy=p.y-brushStart.y;
+ const len=Math.hypot(dx,dy),ang=Math.atan2(dy,dx)*180/Math.PI;
+ let stroke=document.getElementById("brushStroke");
+ if(!stroke){
+  stroke=document.createElement("div");stroke.id="brushStroke";stroke.className="brush-stroke";
+  document.getElementById("brushZone").appendChild(stroke);
+ }
+ stroke.style.left=brushStart.x+"px";stroke.style.top=brushStart.y+"px";
+ stroke.style.width=len+"px";stroke.style.transform=`rotate(${ang}deg)`;
+ stroke.style.background=colorValue(activeColor);
+}
+function brushUp(ev){
+ if(!brushDrawing)return;
+ brushDrawing=false;
+ const p=brushPoint(ev);
+ if(Math.hypot(p.x-brushStart.x,p.y-brushStart.y)>4){
+  brushDone=true;setFeedback("Μπράβο! Χρησιμοποίησες γέμισμα, χρώματα και πινέλο.",true);nextAfter(900);
+ }else setFeedback("Σύρε λίγο μέσα στο διακεκομμένο πλαίσιο για να σχεδιάσεις γραμμή.",false);
+}
+
+/* Stage 4 */
+const robotTargets={
+ head:{shape:"rect",x:278,y:58,w:118,h:76},
+ body:{shape:"rect",x:250,y:170,w:175,h:125},
+ eye1:{shape:"circle",x:302,y:82,w:24,h:24},
+ eye2:{shape:"circle",x:349,y:82,w:24,h:24},
+ arm1:{shape:"line",x1:175,y1:215,x2:241,y2:215},
+ arm2:{shape:"line",x1:437,y1:215,x2:503,y2:215},
+ leg1:{shape:"line",x1:291,y1:310,x2:291,y2:392},
+ leg2:{shape:"line",x1:383,y1:310,x2:383,y2:392}
+};
+
+function stage4(){
+ activeTool="shapes";activeColor="blue";robotColor="blue";robotShape=null;
+ robotDone=new Set();robotDrawing=false;robotStart=null;robotPreview=null;
+ drawRobotStage();
+}
+
+function drawRobotStage(){
+ document.getElementById("card").innerHTML=chromaShell(`
+  <div class="robot-work" id="robotWork"
+       onpointerdown="robotPointerDown(event)"
+       onpointermove="robotPointerMove(event)"
+       onpointerup="robotPointerUp(event)"
+       onpointercancel="robotPointerCancel(event)">
+   <div class="shape-picker">
+    <h4>Σχήμα / γραμμή</h4>
+    <button class="shape-btn ${robotShape==="rect"?"sel":""}" onclick="event.stopPropagation();selectRobotShape('rect',this)">▭</button>
+    <button class="shape-btn ${robotShape==="circle"?"sel":""}" onclick="event.stopPropagation();selectRobotShape('circle',this)">○</button>
+    <button class="shape-btn ${robotShape==="line"?"sel":""}" onclick="event.stopPropagation();selectRobotShape('line',this)">╱</button>
+   </div>
+   <div class="robot-progress">${robotDone.size} / 8 μέρη</div>
+
+   <div class="robot-target rect rt-head ${robotDone.has("head")?"done":""}" id="rt_head"></div>
+   <div class="robot-target rect rt-body ${robotDone.has("body")?"done":""}" id="rt_body"></div>
+   <div class="robot-target circle rt-eye1 ${robotDone.has("eye1")?"done":""}" id="rt_eye1"></div>
+   <div class="robot-target circle rt-eye2 ${robotDone.has("eye2")?"done":""}" id="rt_eye2"></div>
+
+   <div class="robot-line-target horizontal rt-arm1 ${robotDone.has("arm1")?"done":""}" id="rt_arm1"></div>
+   <div class="robot-line-target horizontal rt-arm2 ${robotDone.has("arm2")?"done":""}" id="rt_arm2"></div>
+   <div class="robot-line-target vertical rt-leg1 ${robotDone.has("leg1")?"done":""}" id="rt_leg1"></div>
+   <div class="robot-line-target vertical rt-leg2 ${robotDone.has("leg2")?"done":""}" id="rt_leg2"></div>
+
+   ${renderDrawnRobotParts()}
+   <div class="robot-draw-note">Διάλεξε σχήμα ή γραμμή και σύρε μέσα στη σωστή διακεκομμένη περιοχή.</div>
+  </div>`);
+}
+
+function renderDrawnRobotParts(){
+ let out="";
+ for(const id of robotDone){
+  const t=robotTargets[id];
+  const c=colorValue(window["robotPartColor_"+id]||"blue");
+  if(t.shape==="rect"){
+   out+=`<div class="drawn-robot-part" style="left:${t.x}px;top:${t.y}px;width:${t.w}px;height:${t.h}px;background:${c};border-radius:10px"></div>`;
+  }else if(t.shape==="circle"){
+   out+=`<div class="drawn-robot-part circle" style="left:${t.x}px;top:${t.y}px;width:${t.w}px;height:${t.h}px;background:${c}"></div>`;
+  }else{
+   const dx=t.x2-t.x1,dy=t.y2-t.y1,len=Math.hypot(dx,dy),ang=Math.atan2(dy,dx)*180/Math.PI;
+   out+=`<div class="drawn-robot-line" style="left:${t.x1}px;top:${t.y1-5}px;width:${len}px;background:${c};transform:rotate(${ang}deg)"></div>`;
+  }
+ }
+ return out;
+}
+
+function selectRobotShape(type,btn){
+ robotShape=type;
+ document.querySelectorAll(".shape-btn").forEach(x=>x.classList.remove("sel"));
+ btn?.classList.add("sel");
+}
+
+function robotPoint(ev){
+ const r=document.getElementById("robotWork").getBoundingClientRect();
+ return {x:ev.clientX-r.left,y:ev.clientY-r.top};
+}
+
+function pointInsideTarget(p,t){
+ if(t.shape==="line"){
+  const minX=Math.min(t.x1,t.x2)-18,maxX=Math.max(t.x1,t.x2)+18;
+  const minY=Math.min(t.y1,t.y2)-18,maxY=Math.max(t.y1,t.y2)+18;
+  return p.x>=minX&&p.x<=maxX&&p.y>=minY&&p.y<=maxY;
+ }
+ return p.x>=t.x&&p.x<=t.x+t.w&&p.y>=t.y&&p.y<=t.y+t.h;
+}
+
+function findTargetForStart(p){
+ for(const [id,t] of Object.entries(robotTargets)){
+  if(robotDone.has(id))continue;
+  if(t.shape!==robotShape)continue;
+  if(pointInsideTarget(p,t))return id;
+ }
+ return null;
+}
+
+function robotPointerDown(ev){
+ if(ev.target.closest(".shape-picker"))return;
+ if(activeTool!=="shapes"){setFeedback("Επίλεξε πρώτα το εργαλείο «Σχήματα».",false);return}
+ if(!robotShape){setFeedback("Διάλεξε πρώτα ορθογώνιο, κύκλο ή γραμμή.",false);return}
+ const p=robotPoint(ev);
+ const id=findTargetForStart(p);
+ if(!id){
+  setFeedback("Ξεκίνα να σχεδιάζεις μέσα σε μία διακεκομμένη περιοχή που ταιριάζει στο επιλεγμένο σχήμα.",false);
+  return;
+ }
+ robotDrawing=true;
+ robotStart={...p,target:id};
+ ev.currentTarget.setPointerCapture?.(ev.pointerId);
+}
+
+function robotPointerMove(ev){
+ if(!robotDrawing||!robotStart)return;
+ const p=robotPoint(ev);
+ drawRobotPreview(robotStart,p);
+}
+
+function drawRobotPreview(a,b){
+ robotPreview?.remove();
+ const work=document.getElementById("robotWork");
+ if(!work)return;
+ const d=document.createElement("div");
+ d.id="robotPreview";
+ d.className="draw-preview";
+ d.style.background=colorValue(activeColor);
+
+ if(robotShape==="line"){
+  const dx=b.x-a.x,dy=b.y-a.y,len=Math.hypot(dx,dy),ang=Math.atan2(dy,dx)*180/Math.PI;
+  d.classList.add("line");
+  d.style.left=a.x+"px";d.style.top=(a.y-5)+"px";d.style.width=len+"px";
+  d.style.transform=`rotate(${ang}deg)`;
+ }else{
+  const left=Math.min(a.x,b.x),top=Math.min(a.y,b.y);
+  const w=Math.max(4,Math.abs(b.x-a.x)),h=Math.max(4,Math.abs(b.y-a.y));
+  d.style.left=left+"px";d.style.top=top+"px";d.style.width=w+"px";d.style.height=h+"px";
+  if(robotShape==="circle")d.classList.add("circle");
+ }
+ work.appendChild(d);
+ robotPreview=d;
+}
+
+function robotPointerUp(ev){
+ if(!robotDrawing||!robotStart)return;
+ const p=robotPoint(ev);
+ const id=robotStart.target;
+ const t=robotTargets[id];
+ const moved=Math.hypot(p.x-robotStart.x,p.y-robotStart.y);
+ robotDrawing=false;
+ robotPreview?.remove();robotPreview=null;
+
+ if(moved<4){
+  setFeedback("Σύρε λίγο το ποντίκι για να σχεδιάσεις.",false);
+  robotStart=null;return;
+ }
+
+ // For the line targets, confirm that the drag generally follows the dashed line.
+ if(t.shape==="line"){
+  const targetDx=t.x2-t.x1,targetDy=t.y2-t.y1;
+  const dragDx=p.x-robotStart.x,dragDy=p.y-robotStart.y;
+  const targetHorizontal=Math.abs(targetDx)>=Math.abs(targetDy);
+  const dragHorizontal=Math.abs(dragDx)>=Math.abs(dragDy);
+  if(targetHorizontal!==dragHorizontal){
+   setFeedback("Ακολούθησε τη διακεκομμένη γραμμή.",false);
+   robotStart=null;return;
+  }
+ }
+
+ robotDone.add(id);
+ window["robotPartColor_"+id]=activeColor;
+ robotStart=null;
+ setFeedback("Σωστά! Σχεδίασες ένα μέρος του ρομπότ.",true);
+ drawRobotStage();
+
+ if(robotDone.size===8){
+  setFeedback("Μπράβο! Σχεδίασες το ρομπότ με σχήματα και γραμμές.",true);
+  nextAfter(1100);
+ }
+}
+
+function robotPointerCancel(){
+ robotDrawing=false;robotStart=null;robotPreview?.remove();robotPreview=null;
+}
+
+/* Stage 5 */
+function stage5(){
+ activeTool=null;errorRemoved=false;activeColor="blue";
+ document.getElementById("card").innerHTML=chromaShell(`
+  <div style="position:relative;height:438px;background:#fff">
+   <button class="undo-btn" onclick="chooseTool('undo')">↶ Αναίρεση</button>
+   <div class="completed-robot" style="top:51%">
+    <div class="rb-head"></div><div class="rb-body"></div>
+    <div class="rb-eye e1"></div><div class="rb-eye e2"></div>
+    <div class="rb-arm a1"></div><div class="rb-arm a2"></div>
+    <div class="rb-leg l1"></div><div class="rb-leg l2"></div>
+   </div>
+   <div class="error-shape" id="errorShape" onclick="eraseError()">Λάθος</div>
+  </div>`);
+}
+function eraseError(){
+ if(errorRemoved)return;
+ if(activeTool!=="eraser"){setFeedback("Για να σβήσεις το σχήμα, επίλεξε πρώτα τη «Σβήστρα». Ή χρησιμοποίησε «Αναίρεση».",false);return}
+ errorRemoved=true;document.getElementById("errorShape")?.remove();
+ setFeedback("Σωστά! Η σβήστρα αφαίρεσε το λάθος.",true);nextAfter(900);
+}
+
+/* Stage 6 */
+function stage6(){
+ activeTool=null;textReady=false;
+ document.getElementById("card").innerHTML=`
+  <div class="source-card" oncontextmenu="return false" oncopy="return false" oncut="return false">Ρομπότ 24</div>
+  ${chromaShell(`
+   <div class="text-work">
+    <div class="completed-robot">
+     <div class="rb-head"></div><div class="rb-body"></div>
+     <div class="rb-eye e1"></div><div class="rb-eye e2"></div>
+     <div class="rb-arm a1"></div><div class="rb-arm a2"></div>
+     <div class="rb-leg l1"></div><div class="rb-leg l2"></div>
+    </div>
+    <div class="text-anchor" id="textAnchor" onclick="prepareText()">Πάτησε εδώ με το εργαλείο «Κείμενο»</div>
+   </div>`)}
+ `;
+}
+function prepareText(){
+ if(activeTool!=="text"){setFeedback("Επίλεξε πρώτα το εργαλείο «Κείμενο».",false);return}
+ if(textReady)return;
+ textReady=true;
+ document.getElementById("textAnchor").innerHTML=`<input class="text-entry" id="robotName" autocomplete="off" placeholder="Γράψε το όνομα">`;
+ document.getElementById("robotName").focus();
+ document.getElementById("robotName").addEventListener("keydown",ev=>{if(ev.key==="Enter")checkRobotName()});
+ const btn=document.createElement("button");btn.className="check";btn.textContent="Έλεγχος";btn.onclick=checkRobotName;
+ document.getElementById("card").appendChild(btn);
+}
+function checkRobotName(){
+ const inp=document.getElementById("robotName");if(!inp)return;
+ if(inp.value.trim()!=="Ρομπότ 24"){setFeedback("Γράψε ακριβώς «Ρομπότ 24». Πρόσεξε κεφαλαίο και τόνο.",false);return}
+ setFeedback("Μπράβο! Χρησιμοποίησες το εργαλείο κειμένου για γράμματα και αριθμούς.",true);nextAfter(950);
+}
+
+/* Stage 7 */
+const quizQuestions=[
+ {q:"Ποιο εργαλείο χρησιμοποιείς για ελεύθερες γραμμές;",correct:"Πινέλο",wrong:["Κείμενο","Αναίρεση"]},
+ {q:"Ποιο εργαλείο γεμίζει μια κλειστή περιοχή με χρώμα;",correct:"Γέμισμα",wrong:["Σβήστρα","Κείμενο"]},
+ {q:"Ποιο εργαλείο χρησιμοποιείς για ορθογώνια και κύκλους;",correct:"Σχήματα",wrong:["Πινέλο","Αναίρεση"]},
+ {q:"Ποιο εργαλείο αφαιρεί ένα λάθος μέρος της ζωγραφιάς;",correct:"Σβήστρα",wrong:["Γέμισμα","Κείμενο"]},
+ {q:"Ποιο εργαλείο επιστρέφει στο προηγούμενο βήμα;",correct:"Αναίρεση",wrong:["Σχήματα","Πινέλο"]},
+ {q:"Ποιο εργαλείο χρησιμοποιείς για γράμματα και αριθμούς;",correct:"Κείμενο",wrong:["Σβήστρα","Γέμισμα"]}
+];
+function stage7(){
+ quizIndex=0;quizOrder=shuffled(quizQuestions);drawQuiz();
+}
+function drawQuiz(){
+ const q=quizOrder[quizIndex];
+ quizOpts=shuffled([{ok:true,txt:q.correct},...q.wrong.map(txt=>({ok:false,txt}))]);
+ document.getElementById("card").innerHTML=`
+  <div class="quiz">
+   <div class="quiz-progress"><span style="width:${(quizIndex/quizOrder.length)*100}%"></span></div>
+   <div class="quiz-q">${q.q}</div>
+   <div class="quiz-options">
+    ${quizOpts.map((o,i)=>`<button class="quiz-choice" onclick="quizAnswer(${i})">${o.txt}</button>`).join("")}
+   </div>
+   <div class="smallhelp">${quizIndex+1} από ${quizOrder.length}</div>
+  </div>`;
+}
+function quizAnswer(i){
+ if(!quizOpts[i].ok){setFeedback("Δοκίμασε ξανά.",false);return}
+ quizIndex++;
+ if(quizIndex<quizOrder.length){
+  setFeedback("Σωστά! Πάμε στην επόμενη ερώτηση.",true);
+  setTimeout(()=>{clearFeedback();drawQuiz()},600);
+ }else{
+  setFeedback("Μπράβο! Αναγνώρισες σωστά όλα τα εργαλεία.",true);nextAfter();
+ }
+}
+
+/* Stage 8 */
+function stage8(){
+ selfChoice=null;
+ document.getElementById("card").innerHTML=`
+  <div class="finalBox">
+   <div class="stars">⭐ ⭐ ⭐</div>
+   <div class="summary">
+    Έμαθες να ζωγραφίζεις στο Chroma με πινέλο, γέμισμα και σχήματα,
+    να διορθώνεις λάθη με σβήστρα ή αναίρεση και να προσθέτεις γράμματα και αριθμούς με το εργαλείο κειμένου.
+   </div>
+   <div class="faces">
+    <button class="face" onclick="selfPick(1,this)"><span>🙂</span>Θέλω λίγη εξάσκηση</button>
+    <button class="face" onclick="selfPick(2,this)"><span>😊</span>Τα κατάφερα</button>
+    <button class="face" onclick="selfPick(3,this)"><span>🤩</span>Τα κατάφερα πολύ καλά</button>
+   </div>
+   <button class="check" onclick="finish()">Ολοκλήρωση</button>
+   <button class="repeatBtn" onclick="restartAll()">↻ Επανάληψη δραστηριότητας</button>
+  </div>`;
+}
+function selfPick(v,e){
+ selfChoice=v;document.querySelectorAll(".face").forEach(x=>x.classList.remove("sel"));e.classList.add("sel");
+}
+function finish(){
+ const f=document.getElementById("feedback");
+ if(!selfChoice){f.className="feedback bad";f.textContent="Διάλεξε πρώτα πώς νιώθεις για όσα έμαθες.";return}
+ completeFinalDot();f.className="feedback good";f.textContent="Μπράβο! Ολοκλήρωσες το Μάθημα 24.";
+}
+function restartAll(){
+ s=0;selfChoice=null;
+ toolQuizIndex=0;toolQuizOrder=[];toolQuizOptions=[];
+ activeTool=null;activeColor="blue";filledBoxes=new Set();usedColors=new Set();
+ brushDrawing=false;brushStart=null;brushDone=false;
+ robotShape=null;robotDone=new Set();robotColor="blue";robotDrawing=false;robotStart=null;robotPreview=null;
+ errorRemoved=false;textReady=false;
+ quizIndex=0;quizOrder=[];quizOpts=[];
+ render();
+}
+function help(){
+ const idx=Math.min(s,steps.length-1);
+ document.getElementById("helpText").textContent=steps[idx].h;
+ document.getElementById("modal").classList.add("show");
+}
+function closeHelp(){document.getElementById("modal").classList.remove("show")}
+render();
+</script>
+
+
+<footer class="nk-license" aria-label="Πληροφορίες δημιουργού και άδειας χρήσης">
+  <div><strong>Created by Nikos Kalakos · © 2026</strong></div>
+  <div>Original educational content and simulation design licensed under <a class="cc-badge" href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank" rel="license noopener noreferrer">CC BY-NC 4.0</a>.</div>
+  <div>Source code © 2026 Nikos Kalakos.</div>
+  <div>Third-party and textbook materials remain subject to the rights and licences of their respective copyright holders.</div>
+</footer></body>
+</html>
+<style>
+.desktop-icon.chroma:hover,
+.desktop-icon.chroma:focus,
+.desktop-icon.chroma:focus-visible,
+.desktop-icon.chroma:active{
+  background:transparent!important;
+  border-color:transparent!important;
+  outline:none!important;
+  box-shadow:none!important;
+}
+</style>

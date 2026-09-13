@@ -1,0 +1,745 @@
+<!--
+ICT Educational Simulation
+Created by Nikos Kalakos
+Copyright © 2026 Nikos Kalakos
+
+Original educational content and simulation design licensed under CC BY-NC 4.0.
+Source code © 2026 Nikos Kalakos.
+Third-party and textbook materials remain subject to the rights and licences of their respective copyright holders.
+-->
+<!doctype html>
+<html lang="el">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="author" content="Nikos Kalakos">
+<meta name="copyright" content="© 2026 Nikos Kalakos">
+<meta name="license" content="Original educational content and simulation design: CC BY-NC 4.0; source code © 2026 Nikos Kalakos; third-party and textbook materials excluded.">
+<title>Μάθημα 18 - Ο δεύτερος εννοιολογικός μου χάρτης</title>
+<style>
+:root{
+  --unit-gold:#D19E11;
+  --unit-gold-dark:#A97D08;
+  --unit-cyan:#00A2E3;
+  --unit-cyan-dark:#007EB3;
+  --ink:#25334a;
+  --line:#d5dbe6;
+  --good:#eef7dc;
+  --bad:#fff0ed;
+  --athena:#5b4eb5;
+  --athena-dark:#463a96;
+  --shadow:0 10px 28px rgba(37,51,74,.12);
+}
+*{box-sizing:border-box}
+body{margin:0;background:#f7f9fb;color:var(--ink);font-family:Arial,"Noto Sans",sans-serif}
+button,input{font:inherit}
+button{cursor:pointer}
+.app{max-width:1180px;margin:auto;padding:16px}
+.top{
+  background:#fff;border:3px solid #ead9a6;border-radius:24px;padding:14px 18px;
+  display:flex;align-items:center;justify-content:space-between;box-shadow:var(--shadow)
+}
+.top h1{margin:0;font-size:clamp(27px,4vw,40px)}
+.badge{
+  width:70px;height:70px;border-radius:22px;background:var(--unit-gold);color:#fff;
+  display:grid;place-items:center;font-size:31px;font-weight:900;box-shadow:inset 0 -5px 0 rgba(0,0,0,.1)
+}
+.path{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin:16px 0}
+.dot{
+  width:44px;height:44px;border-radius:50%;display:grid;place-items:center;
+  border:3px solid #aeb7c7;background:#fff;color:#65718a;font-weight:900;font-size:20px
+}
+.dot.active{background:var(--unit-cyan);border-color:var(--unit-cyan-dark);color:#fff;transform:scale(1.1)}
+.dot.done{background:var(--unit-gold);border-color:var(--unit-gold-dark);color:#fff}
+.panel{
+  min-height:710px;background:#fff;border:3px solid #ead9a6;border-radius:28px;
+  padding:24px;box-shadow:var(--shadow)
+}
+.step-head{display:flex;justify-content:space-between;gap:12px;align-items:flex-start}
+.step-head h2{margin:0;font-size:clamp(25px,4vw,37px)}
+.help{
+  background:#edf9ff;color:#005b82;border:3px solid #80d4f3;
+  border-radius:16px;padding:10px 17px;font-weight:900
+}
+.instruction{
+  max-width:970px;margin:14px auto 18px;text-align:center;font-size:clamp(19px,2.3vw,24px);
+  font-weight:900;line-height:1.38
+}
+.card{
+  max-width:1040px;margin:auto;border:3px solid #ead9a6;border-radius:28px;
+  background:#fff;padding:22px;min-height:500px
+}
+.feedback{
+  display:none;max-width:860px;margin:16px auto 0;padding:12px 18px;border-radius:17px;
+  text-align:center;font-weight:900;font-size:20px
+}
+.feedback.good{display:block;background:var(--good);border:2px solid #9dbd57}
+.feedback.bad{display:block;background:var(--bad);border:2px solid #e5a59b}
+.check{
+  display:block;margin:18px auto 0;padding:13px 28px;border:0;border-radius:16px;
+  background:var(--unit-gold);color:#fff;font-size:21px;font-weight:900;
+  box-shadow:0 5px 0 var(--unit-gold-dark)
+}
+.smallhelp{text-align:center;font-size:14px;color:#6d7890;font-weight:800;margin-top:10px}
+.row{display:flex;gap:14px;justify-content:center;align-items:stretch;flex-wrap:wrap}
+.choice{
+  min-width:205px;max-width:285px;min-height:120px;border:3px solid var(--line);
+  border-radius:22px;background:#fff;padding:15px;font-weight:900;font-size:18px;
+  display:flex;flex-direction:column;justify-content:center;align-items:center;gap:10px
+}
+.choice:hover{transform:translateY(-2px);box-shadow:var(--shadow)}
+.choice.selected{border-color:var(--unit-gold);background:#fff7dc}
+.choice .big{font-size:48px}
+
+/* text-answer stages */
+.sentence{
+  max-width:820px;margin:12px auto 22px;padding:18px 22px;border:4px solid var(--unit-cyan);
+  border-radius:22px;background:#f4fcff;text-align:center;font-size:27px;font-weight:900
+}
+.write-grid{
+  max-width:780px;margin:auto;display:grid;grid-template-columns:repeat(2,1fr);gap:14px
+}
+.write-box{
+  border:3px solid #ccd4df;border-radius:18px;background:#fafbfd;padding:13px
+}
+.write-box label{display:block;font-weight:900;margin-bottom:7px}
+.write-box input{
+  width:100%;padding:11px 12px;border:3px solid #9ca8b8;border-radius:11px;
+  background:#fff;font-size:18px;font-weight:800
+}
+.two-answer{
+  max-width:730px;margin:auto;display:grid;grid-template-columns:1fr 1fr;gap:18px
+}
+
+/* Ennoia */
+.ennoia{
+  max-width:960px;margin:auto;border:5px solid #3f475c;border-radius:24px;overflow:hidden;
+  background:#1f2940;box-shadow:0 12px 28px rgba(20,28,45,.24)
+}
+.ennoia-top{
+  height:42px;background:linear-gradient(90deg,var(--athena),#7d66d3);color:#fff;
+  display:flex;align-items:center;justify-content:space-between;padding:0 12px;font-weight:900
+}
+.ennoia-brand{display:flex;align-items:center;gap:10px}
+.ennoia-logo{
+  width:30px;height:30px;border-radius:9px;background:#fff;position:relative
+}
+.ennoia-logo:before,.ennoia-logo:after{
+  content:"";position:absolute;width:8px;height:8px;border-radius:50%;background:var(--athena)
+}
+.ennoia-logo:before{left:5px;top:11px}.ennoia-logo:after{right:5px;top:11px}
+.ennoia-logo span{
+  position:absolute;left:11px;top:5px;width:8px;height:8px;border-radius:50%;background:var(--unit-gold)
+}
+.ennoia-logo i,.ennoia-logo b{
+  position:absolute;height:3px;background:#737d96;transform-origin:left center
+}
+.ennoia-logo i{left:9px;top:11px;width:10px;transform:rotate(-28deg)}
+.ennoia-logo b{left:12px;top:12px;width:10px;transform:rotate(28deg)}
+.ennoia-menu{
+  height:38px;background:#f3f4f7;border-bottom:2px solid #d7dbe3;
+  display:flex;align-items:center;gap:4px;padding:0 8px;font-size:14px
+}
+.menu-btn{border:0;background:transparent;padding:7px 10px;border-radius:7px}
+.ennoia-toolbar{
+  height:48px;background:#fafbfc;border-bottom:2px solid #e0e4ea;
+  display:flex;align-items:center;gap:8px;padding:0 10px
+}
+.toolbtn{
+  min-width:42px;height:37px;border:2px solid #b8c0cc;border-radius:8px;background:#fff;
+  display:grid;place-items:center;padding:0 10px;font-weight:900;color:#3f4c62
+}
+.toolbtn.newmap{background:#eefaff;border-color:#7dccea;color:#006992}
+.ennoia-canvas{
+  position:relative;height:430px;background:#fff;overflow:hidden
+}
+.build-shell{
+  height:430px;display:grid;grid-template-columns:165px 1fr;background:#fff
+}
+.build-tray{
+  border-right:3px solid #d8dde6;background:#f7f9fc;padding:9px;overflow:auto
+}
+.build-step{
+  border:3px solid var(--unit-cyan);background:#eefaff;color:#00648e;border-radius:12px;
+  padding:7px 8px;text-align:center;font-weight:900;margin-bottom:8px;font-size:14px
+}
+.build-tray h3{
+  margin:4px 0 8px;text-align:center;font-size:16px;color:#4a556b
+}
+.token{
+  width:100%;border:3px solid #9da9ba;border-radius:12px;background:#fff;
+  padding:8px 6px;margin:6px 0;font-weight:900;font-size:13px;line-height:1.15;
+  cursor:grab;user-select:none;touch-action:none;text-align:center
+}
+.token:hover{border-color:var(--unit-cyan);background:#f1fbff}
+.token.selectedDrag{outline:4px solid var(--unit-gold);background:#fff8df}
+.token.locked{opacity:.3;cursor:default}
+.map-work{
+  position:relative;height:430px;overflow:hidden;
+  background:
+    linear-gradient(#eef1f5 1px,transparent 1px),
+    linear-gradient(90deg,#eef1f5 1px,transparent 1px),
+    #fff;
+  background-size:24px 24px
+}
+.map-svg{
+  position:absolute;inset:0;width:100%;height:100%;z-index:1;pointer-events:none
+}
+.map-svg line{stroke:#7a8798;stroke-width:4;stroke-linecap:round}
+.slot{
+  position:absolute;height:52px;border:3px dashed #8ea1b7;border-radius:15px;background:#fff;
+  display:grid;place-items:center;text-align:center;font-weight:900;font-size:15px;
+  padding:6px;z-index:5;color:#718096
+}
+.slot.main{border-color:var(--unit-gold-dark);background:#fffaf0}
+.slot.child{border-color:#4db8df;background:#f5fcff}
+.slot.example{font-size:13px}
+.slot.inactive{opacity:.36;pointer-events:none}
+.slot.over{background:#fff5cf;border-color:var(--unit-gold);transform:scale(1.02)}
+.slot.filled{border-style:solid;color:#26354b;background:#fff}
+.slot.main.filled{background:#fff7d6}
+.slot.child.filled{background:#eefaff}
+.relation{
+  position:absolute;min-width:94px;height:34px;border:3px dashed #8b96a6;
+  border-radius:11px;background:#f8f9fb;display:grid;place-items:center;text-align:center;
+  font-weight:900;font-size:12px;padding:2px 6px;z-index:8;color:#727d8e;
+  transform:translate(-50%,-50%)
+}
+.relation.inactive{opacity:1;pointer-events:none}
+.relation.over{background:#fff5cf;border-color:var(--unit-gold)}
+.relation.filled{border-style:solid;background:#f7f8fb;color:#39475c}
+.map-tip{
+  position:absolute;right:8px;bottom:7px;z-index:12;background:#fff;border:2px solid #ccd4df;
+  border-radius:10px;padding:5px 8px;font-size:12px;font-weight:900;color:#657188
+}
+.complete-note{
+  position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);z-index:20;
+  border:4px solid var(--unit-gold);background:#fffaf0;border-radius:22px;padding:18px 26px;
+  font-size:21px;font-weight:900;text-align:center;box-shadow:0 8px 24px rgba(0,0,0,.17)
+}
+
+/* quiz/final */
+.quiz{
+  max-width:850px;margin:auto;border:4px solid var(--unit-cyan);border-radius:24px;
+  background:#fafcff;padding:20px;text-align:center
+}
+.quiz-progress{height:14px;background:#e7edf1;border-radius:9px;overflow:hidden;max-width:520px;margin:0 auto 18px}
+.quiz-progress span{display:block;height:100%;background:var(--unit-gold);width:0;transition:.25s}
+.quiz-q{font-size:24px;font-weight:900;margin-bottom:18px}
+.finalBox{max-width:780px;margin:auto;text-align:center}
+.stars{font-size:58px;margin:18px}
+.summary{
+  padding:20px;border:4px solid var(--unit-cyan);background:#eefaff;border-radius:22px;
+  font-size:21px;font-weight:900;line-height:1.45
+}
+.faces{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:18px}
+.face{
+  min-height:130px;border:3px solid var(--line);border-radius:20px;background:#fff;
+  font-weight:900;font-size:17px
+}
+.face span{display:block;font-size:52px;margin-bottom:7px}
+.face.sel{border-color:var(--unit-gold);background:#fff7dc}
+.repeatBtn{
+  display:block;margin:15px auto 0;padding:12px 22px;border:0;border-radius:15px;
+  background:var(--unit-cyan);color:#fff;font-size:19px;font-weight:900;
+  box-shadow:0 5px 0 var(--unit-cyan-dark)
+}
+.modal{
+  position:fixed;inset:0;background:#24344d99;display:none;place-items:center;padding:18px;z-index:60
+}
+.modal.show{display:grid}
+.modal-box{
+  max-width:620px;background:#fff;border-radius:24px;border:4px solid var(--unit-gold);
+  padding:22px;text-align:center;font-size:20px
+}
+.modal-box button{
+  padding:10px 20px;border:0;border-radius:13px;background:var(--unit-gold);color:#fff;font-weight:900
+}
+@media(max-width:850px){
+  .write-grid,.two-answer,.faces{grid-template-columns:1fr}
+  .build-shell{grid-template-columns:145px 1fr}
+}
+</style>
+
+
+<style id="nk-license-style">
+.nk-license{max-width:1100px;margin:14px auto 24px;padding:10px 16px;text-align:center;font:13px/1.45 Arial,"Noto Sans",sans-serif;color:#4e657c}
+.nk-license a{color:inherit;text-decoration:underline;text-underline-offset:2px}
+.nk-license .cc-badge{display:inline-block;margin:0 4px;padding:2px 7px;border:1px solid #8aa0b8;border-radius:6px;background:#fff;font-weight:700;white-space:nowrap}
+</style></head>
+<body>
+<div class="app">
+  <div class="top"><h1>Ο δεύτερος εννοιολογικός μου χάρτης</h1><div class="badge">18</div></div>
+  <div class="path" id="path"></div>
+
+  <main class="panel">
+    <div class="step-head">
+      <h2 id="title"></h2>
+      <button class="help" onclick="help()">❓ Βοήθεια</button>
+    </div>
+    <div class="instruction" id="inst"></div>
+    <div class="card" id="card"></div>
+    <div class="feedback" id="feedback"></div>
+  </main>
+</div>
+
+<div class="modal" id="modal">
+  <div class="modal-box">
+    <h2>💡 Βοήθεια</h2>
+    <p id="helpText"></p>
+    <button onclick="closeHelp()">Εντάξει</button>
+  </div>
+</div>
+
+<script>
+const steps=[
+ {t:"Πόσες έννοιες;",i:"Διάβασε την πρόταση και βρες πόσες έννοιες θα έχει ο νέος χάρτης.",h:"Μην μετρήσεις τη λέξη που περιγράφει τη σχέση ανάμεσα στις έννοιες.",k:"count"},
+ {t:"Γράφω τις έννοιες",i:"Γράψε τις τέσσερις έννοιες της πρότασης. Μπορείς να τις γράψεις με οποιαδήποτε σειρά.",h:"Οι τέσσερις έννοιες είναι ακριβώς οι λέξεις ή φράσεις: «Ο άνθρωπος», «λαχανικά», «κρέας», «δημητριακά». Πρόσεξε κεφαλαία, πεζά και τόνους.",k:"writeConcepts"},
+ {t:"Σύνδεση και κύρια έννοια",i:"Γράψε τη λέξη που συνδέει τις έννοιες και την κύρια έννοια του χάρτη.",h:"Η σύνδεση είναι «τρώει» και η κύρια έννοια είναι «Ο άνθρωπος». Η γραφή είναι case-sensitive.",k:"relationMain"},
+ {t:"Φτιάχνω τον νέο χάρτη",i:"Στο Ennoia τοποθέτησε τις έννοιες και τη σύνδεση για την πρόταση «Ο άνθρωπος τρώει λαχανικά, κρέας, δημητριακά».",h:"Πρώτα τοποθέτησε την κύρια έννοια και τις τρεις τροφές. Μετά τοποθέτησε τη σύνδεση «τρώει» στο κεντρικό πλαίσιο πάνω από τα τρία βέλη.",k:"build"},
+ {t:"Επεκτείνω τον χάρτη",i:"Συμπλήρωσε τον χάρτη με παραδείγματα για τα λαχανικά, το κρέας και τα δημητριακά.",h:"Στα λαχανικά ανήκουν «ντομάτες» και «μπρόκολο». Στο κρέας: «μοσχάρι», «χοιρινό», «κοτόπουλο». Στα δημητριακά: «ρύζι», «σιτάρι», «καλαμπόκι». Χρησιμοποίησε τη σύνδεση «μπορεί να είναι».",k:"extend"},
+ {t:"Ελέγχω όσα έμαθα",i:"Απάντησε σωστά και στις τέσσερις ερωτήσεις.",h:"Ο χάρτης έχει 4 έννοιες. Η κύρια έννοια είναι «Ο άνθρωπος», η σύνδεση είναι «τρώει» και μία από τις τρεις έννοιες τροφών είναι τα «δημητριακά».",k:"quiz"},
+ {t:"Τα κατάφερες!",i:"Σκέψου τι έμαθες στο Μάθημα 18.",h:"Σκέψου πώς ξεκινάμε από μία πρόταση και τη μετατρέπουμε σε έναν απλό εννοιολογικό χάρτη.",k:"final"}
+];
+
+let s=0,selfChoice=null,answerOrders={};
+let buildPhase=1,buildSelected=null,buildPlaced={},buildLocked=new Set(),buildTokens=[];
+let extendPhase=1,extendSelected=null,extendPlaced={},extendLocked=new Set(),extendTokens=[];
+let quizIndex=0,quizOrder=[];
+
+function shuffled(arr){
+ const a=[...arr];
+ for(let i=a.length-1;i>0;i--){
+  const j=Math.floor(Math.random()*(i+1));
+  [a[i],a[j]]=[a[j],a[i]];
+ }
+ return a;
+}
+function exact(v){return (v||"").replace(/\s+/g," ").trim()}
+function nav(){
+ document.getElementById("path").innerHTML=steps.map((_,i)=>`<div class="dot ${i<s?'done':i===s?'active':''}">${i+1}</div>`).join("");
+}
+function completeFinalDot(){s=steps.length;nav()}
+function clearFeedback(){const f=document.getElementById("feedback");f.className="feedback";f.textContent=""}
+function setFeedback(t,ok){const f=document.getElementById("feedback");f.className="feedback "+(ok?"good":"bad");f.textContent=t}
+function nextAfter(ms=900){setTimeout(()=>{s++;render()},ms)}
+function render(){
+ nav();clearFeedback();
+ const x=steps[s];
+ document.getElementById("title").textContent=x.t;
+ document.getElementById("inst").textContent=x.i;
+ if(x.k==="count")stage1();
+ if(x.k==="writeConcepts")stage2();
+ if(x.k==="relationMain")stage3();
+ if(x.k==="build")stage4();
+ if(x.k==="extend")stage5();
+ if(x.k==="quiz")stage6();
+ if(x.k==="final")stage7();
+}
+
+/* Stage 1 */
+function stage1(){
+ const opts=shuffled([
+  {ok:false,txt:"3"},
+  {ok:true,txt:"4"},
+  {ok:false,txt:"5"}
+ ]);
+ answerOrders.count=opts;
+ document.getElementById("card").innerHTML=`
+  <div class="sentence">Ο άνθρωπος τρώει λαχανικά, κρέας, δημητριακά.</div>
+  <div class="row">
+   ${opts.map((o,i)=>`<button class="choice" onclick="countAns(${i})"><span class="big">${o.txt}</span>έννοιες</button>`).join("")}
+  </div>`;
+}
+function countAns(i){
+ if(!answerOrders.count[i].ok){setFeedback("Ξαναμέτρησε τις έννοιες. Η λέξη «τρώει» είναι η σύνδεση.",false);return}
+ setFeedback("Σωστά! Ο νέος χάρτης έχει 4 έννοιες.",true);nextAfter();
+}
+
+/* Stage 2 */
+function stage2(){
+ document.getElementById("card").innerHTML=`
+  <div class="sentence">Ο άνθρωπος τρώει λαχανικά, κρέας, δημητριακά.</div>
+  <div class="write-grid">
+   ${[1,2,3,4].map(i=>`<div class="write-box"><label>Έννοια ${i}</label><input id="concept${i}" autocomplete="off"></div>`).join("")}
+  </div>
+    <button class="check" onclick="checkConcepts()">Έλεγχος</button>`;
+}
+function checkConcepts(){
+ const vals=[1,2,3,4].map(i=>exact(document.getElementById("concept"+i).value));
+ const expected=["Ο άνθρωπος","λαχανικά","κρέας","δημητριακά"];
+ const unique=new Set(vals);
+ const ok=unique.size===4&&expected.every(x=>unique.has(x));
+ if(!ok){
+  setFeedback("Χρειάζονται ακριβώς οι έννοιες «Ο άνθρωπος», «λαχανικά», «κρέας», «δημητριακά». Πρόσεξε τη γραφή.",false);return;
+ }
+ setFeedback("Μπράβο! Έγραψες σωστά και τις τέσσερις έννοιες.",true);nextAfter();
+}
+
+/* Stage 3 */
+function stage3(){
+ document.getElementById("card").innerHTML=`
+  <div class="sentence">Ο άνθρωπος τρώει λαχανικά, κρέας, δημητριακά.</div>
+  <div class="two-answer">
+   <div class="write-box"><label>Λέξη σύνδεσης</label><input id="relWord" autocomplete="off"></div>
+   <div class="write-box"><label>Κύρια έννοια</label><input id="mainConcept" autocomplete="off"></div>
+  </div>
+    <button class="check" onclick="checkRelationMain()">Έλεγχος</button>`;
+}
+function checkRelationMain(){
+ const rel=exact(document.getElementById("relWord").value);
+ const main=exact(document.getElementById("mainConcept").value);
+ if(rel!=="τρώει"){setFeedback("Γράψε ακριβώς τη λέξη σύνδεσης «τρώει».",false);return}
+ if(main!=="Ο άνθρωπος"){setFeedback("Γράψε ακριβώς την κύρια έννοια «Ο άνθρωπος».",false);return}
+ setFeedback("Σωστά! Η κύρια έννοια είναι «Ο άνθρωπος» και η σύνδεση είναι «τρώει».",true);nextAfter();
+}
+
+/* Ennoia shell */
+function ennoiaShell(inner,phaseText){
+ return `<div class="ennoia">
+  <div class="ennoia-top">
+   <span class="ennoia-brand"><span class="ennoia-logo"><span></span><i></i><b></b></span>Ennoia</span>
+   <span>— □ ×</span>
+  </div>
+  <div class="ennoia-menu"><button class="menu-btn">Αρχείο</button><button class="menu-btn">Επεξεργασία</button><button class="menu-btn">Χάρτης</button><button class="menu-btn">Βοήθεια</button></div>
+  <div class="ennoia-toolbar"><button class="toolbtn newmap" disabled>＋ Νέος χάρτης</button><span style="font-weight:900;color:#506078">${phaseText}</span></div>
+  <div class="ennoia-canvas">${inner}</div>
+ </div>`;
+}
+
+function tokenHTML(t,prefix){
+ return `<button class="token" id="${prefix}tok_${t.id}" draggable="true"
+  ondragstart="${prefix}DragStart(event,'${t.id}')" ondragend="${prefix}DragEnd(event)"
+  onclick="${prefix}Pick('${t.id}')">${t.label}</button>`;
+}
+function commonOver(ev){ev.preventDefault();ev.currentTarget.classList.add("over")}
+function commonLeave(ev){ev.currentTarget.classList.remove("over")}
+
+/* Stage 4 */
+const buildConcepts=[
+ {id:"human",label:"Ο άνθρωπος",target:"human",phase:1},
+ {id:"veg",label:"λαχανικά",target:"veg",phase:1},
+ {id:"meat",label:"κρέας",target:"meat",phase:1},
+ {id:"grain",label:"δημητριακά",target:"grain",phase:1}
+];
+const buildRelations=[{id:"eat",label:"τρώει",target:"eat",phase:2}];
+
+const buildSlots={
+ human:{x:305,y:24,w:170,cls:"main"},
+ veg:{x:75,y:300,w:140,cls:"child"},
+ meat:{x:325,y:300,w:140,cls:"child"},
+ grain:{x:575,y:300,w:140,cls:"child"}
+};
+
+function stage4(){
+ buildPhase=1;buildSelected=null;buildPlaced={};buildLocked=new Set();drawBuild();
+}
+function drawBuild(){
+ buildSelected=null;
+ buildTokens=buildPhase===1
+  ? shuffled(buildConcepts.filter(x=>!buildLocked.has(x.id)))
+  : shuffled(buildRelations.filter(x=>!buildLocked.has(x.id)));
+
+ const tray=`<div class="build-tray">
+  <div class="build-step">Βήμα ${buildPhase} από 2</div>
+  <h3>${buildPhase===1?"Έννοιες":"Σύνδεση"}</h3>
+  ${buildTokens.map(t=>tokenHTML(t,"build")).join("")}
+  <div class="smallhelp">Σύρε ένα στοιχείο ή πάτησέ το και μετά πάτησε το σωστό πλαίσιο.</div>
+ </div>`;
+
+ const map=`<div class="map-work" id="buildMap">
+  ${buildArrowSvg()}
+  ${Object.entries(buildSlots).map(([id,p])=>buildSlotHTML(id,p)).join("")}
+  ${buildRelationHTML()}
+  <div class="map-tip">${buildPhase===1?"Τοποθέτησε τις 4 έννοιες.":"Τοποθέτησε τη σύνδεση πάνω από τα τρία βέλη."}</div>
+ </div>`;
+
+ document.getElementById("card").innerHTML=ennoiaShell(`<div class="build-shell">${tray}${map}</div>`,buildPhase===1?"Έννοιες":"Σύνδεση");
+}
+function buildArrowSvg(){
+ return `<svg class="map-svg" viewBox="0 0 790 430" preserveAspectRatio="none" aria-hidden="true">
+  <defs><marker id="buildArrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0L10 5L0 10z" fill="#7a8798"></path></marker></defs>
+  <line x1="390" y1="76" x2="390" y2="145"></line>
+  <line x1="390" y1="179" x2="145" y2="300" marker-end="url(#buildArrow)"></line>
+  <line x1="390" y1="179" x2="395" y2="300" marker-end="url(#buildArrow)"></line>
+  <line x1="390" y1="179" x2="645" y2="300" marker-end="url(#buildArrow)"></line>
+ </svg>`;
+}
+function buildSlotHTML(id,p){
+ const filled=buildPlaced[id];
+ const inactive=buildPhase!==1&&!filled;
+ return `<div class="slot ${p.cls} ${filled?"filled":""} ${inactive?"inactive":""}"
+  id="buildslot_${id}" style="left:${p.x}px;top:${p.y}px;width:${p.w}px"
+  ondragover="commonOver(event)" ondragleave="commonLeave(event)"
+  ondrop="buildDropConcept(event,'${id}')" onclick="buildTapConcept('${id}')">${filled||"Έννοια"}</div>`;
+}
+function buildRelationHTML(){
+ const filled=buildPlaced.eat;
+ const active=buildPhase===2;
+ return `<div class="relation ${filled?"filled":""} ${!active&&!filled?"inactive":""}"
+  id="buildrel_eat" style="left:390px;top:162px"
+  ${active?`ondragover="commonOver(event)" ondragleave="commonLeave(event)" ondrop="buildDropRelation(event)" onclick="buildTapRelation()"`:""}>
+  ${filled||"Σύνδεση"}</div>`;
+}
+function buildDragStart(ev,id){buildSelected=id;document.getElementById("buildtok_"+id)?.classList.add("selectedDrag");if(ev.dataTransfer)ev.dataTransfer.setData("text/plain",id)}
+function buildDragEnd(ev){ev.currentTarget.classList.remove("selectedDrag")}
+function buildPick(id){
+ if(buildLocked.has(id))return;
+ document.querySelectorAll(".token").forEach(x=>x.classList.remove("selectedDrag"));
+ buildSelected=buildSelected===id?null:id;
+ if(buildSelected)document.getElementById("buildtok_"+id)?.classList.add("selectedDrag");
+}
+function buildDropConcept(ev,target){ev.preventDefault();ev.currentTarget.classList.remove("over");const id=(ev.dataTransfer&&ev.dataTransfer.getData("text/plain"))||buildSelected;if(id)buildPlaceConcept(id,target)}
+function buildTapConcept(target){if(buildSelected)buildPlaceConcept(buildSelected,target)}
+function buildPlaceConcept(id,target){
+ const item=buildConcepts.find(x=>x.id===id);
+ if(!item||buildPhase!==1||buildLocked.has(id))return;
+ if(item.target!==target){setFeedback("Αυτή η έννοια ανήκει σε διαφορετικό πλαίσιο.",false);return}
+ buildLocked.add(id);buildPlaced[target]=item.label;buildSelected=null;
+ document.getElementById("buildtok_"+id)?.classList.add("locked");
+ const slot=document.getElementById("buildslot_"+target);slot.textContent=item.label;slot.classList.add("filled");
+ if(buildConcepts.every(x=>buildLocked.has(x.id))){
+  setFeedback("Σωστά! Τοποθέτησες όλες τις έννοιες.",true);
+  setTimeout(()=>{buildPhase=2;clearFeedback();drawBuild()},800);
+ }else setFeedback("Σωστά! Συνέχισε.",true);
+}
+function buildDropRelation(ev){ev.preventDefault();ev.currentTarget.classList.remove("over");const id=(ev.dataTransfer&&ev.dataTransfer.getData("text/plain"))||buildSelected;if(id)buildPlaceRelation(id)}
+function buildTapRelation(){if(buildSelected)buildPlaceRelation(buildSelected)}
+function buildPlaceRelation(id){
+ const item=buildRelations.find(x=>x.id===id);
+ if(!item||buildPhase!==2||buildLocked.has(id))return;
+ buildLocked.add(id);buildPlaced.eat=item.label;buildSelected=null;
+ document.getElementById("buildtok_"+id)?.classList.add("locked");
+ const rel=document.getElementById("buildrel_eat");rel.textContent=item.label;rel.classList.add("filled");
+ setFeedback("Μπράβο! Δημιούργησες τον νέο εννοιολογικό χάρτη.",true);
+ document.getElementById("buildMap").insertAdjacentHTML("beforeend",`<div class="complete-note">✓ Ο χάρτης ολοκληρώθηκε!</div>`);
+ nextAfter(1200);
+}
+
+/* Stage 5 */
+const extendConcepts=[
+ {id:"tomato",label:"ντομάτες",target:"tomato",phase:1},
+ {id:"broccoli",label:"μπρόκολο",target:"broccoli",phase:1},
+
+ {id:"beef",label:"μοσχάρι",target:"beef",phase:1},
+ {id:"pork",label:"χοιρινό",target:"pork",phase:1},
+ {id:"chicken",label:"κοτόπουλο",target:"chicken",phase:1},
+
+ {id:"rice",label:"ρύζι",target:"rice",phase:1},
+ {id:"wheat",label:"σιτάρι",target:"wheat",phase:1},
+ {id:"corn",label:"καλαμπόκι",target:"corn",phase:1}
+];
+const extendRelations=[
+ {id:"mayVeg",label:"μπορεί να είναι",kind:"veg",phase:2},
+ {id:"mayMeat",label:"μπορεί να είναι",kind:"meat",phase:2},
+ {id:"mayGrain",label:"μπορεί να είναι",kind:"grain",phase:2}
+];
+const extendSlots={
+ tomato:{x:0,y:335,w:82,cls:"example"},
+ broccoli:{x:85,y:335,w:82,cls:"example"},
+
+ beef:{x:220,y:335,w:82,cls:"example"},
+ pork:{x:305,y:335,w:82,cls:"example"},
+ chicken:{x:390,y:335,w:82,cls:"example"},
+
+ rice:{x:535,y:335,w:82,cls:"example"},
+ wheat:{x:620,y:335,w:82,cls:"example"},
+ corn:{x:705,y:335,w:82,cls:"example"}
+};
+function stage5(){
+ extendPhase=1;extendSelected=null;extendPlaced={};extendLocked=new Set();drawExtend();
+}
+function drawExtend(){
+ extendSelected=null;
+ extendTokens=extendPhase===1
+  ? shuffled(extendConcepts.filter(x=>!extendLocked.has(x.id)))
+  : shuffled(extendRelations.filter(x=>!extendLocked.has(x.id)));
+
+ const tray=`<div class="build-tray">
+  <div class="build-step">Βήμα ${extendPhase} από 2</div>
+  <h3>${extendPhase===1?"Παραδείγματα":"Συνδέσεις"}</h3>
+  ${extendTokens.map(t=>tokenHTML(t,"extend")).join("")}
+  <div class="smallhelp">Σύρε ένα στοιχείο ή πάτησέ το και μετά πάτησε το σωστό πλαίσιο.</div>
+ </div>`;
+
+ const map=`<div class="map-work" id="extendMap">
+  ${extendArrowSvg()}
+  <div class="slot main filled" style="left:305px;top:10px;width:170px">Ο άνθρωπος</div>
+  <div class="relation filled" style="left:390px;top:86px">τρώει</div>
+  <div class="slot child filled" style="left:75px;top:135px;width:140px">λαχανικά</div>
+  <div class="slot child filled" style="left:325px;top:135px;width:140px">κρέας</div>
+  <div class="slot child filled" style="left:575px;top:135px;width:140px">δημητριακά</div>
+  ${Object.entries(extendSlots).map(([id,p])=>extendSlotHTML(id,p)).join("")}
+  ${extendRelationHTML("veg",145,245)}
+  ${extendRelationHTML("meat",395,245)}
+  ${extendRelationHTML("grain",645,245)}
+  <div class="map-tip">${extendPhase===1?"Τοποθέτησε τα παραδείγματα.":"Τοποθέτησε μία σύνδεση σε κάθε ομάδα βελών."}</div>
+ </div>`;
+
+ document.getElementById("card").innerHTML=ennoiaShell(`<div class="build-shell">${tray}${map}</div>`,extendPhase===1?"Παραδείγματα":"Συνδέσεις");
+}
+function extendArrowSvg(){
+ return `<svg class="map-svg" viewBox="0 0 790 430" preserveAspectRatio="none" aria-hidden="true">
+  <defs><marker id="extendArrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0L10 5L0 10z" fill="#7a8798"></path></marker></defs>
+
+  <!-- Ο άνθρωπος -> τρεις βασικές έννοιες -->
+  <line x1="390" y1="62" x2="390" y2="69"></line>
+  <line x1="390" y1="103" x2="145" y2="135" marker-end="url(#extendArrow)"></line>
+  <line x1="390" y1="103" x2="395" y2="135" marker-end="url(#extendArrow)"></line>
+  <line x1="390" y1="103" x2="645" y2="135" marker-end="url(#extendArrow)"></line>
+
+  <!-- Λαχανικά -> παραδείγματα -->
+  <line x1="145" y1="187" x2="145" y2="228"></line>
+  <line x1="145" y1="262" x2="41" y2="335" marker-end="url(#extendArrow)"></line>
+  <line x1="145" y1="262" x2="126" y2="335" marker-end="url(#extendArrow)"></line>
+
+  <!-- Κρέας -> παραδείγματα -->
+  <line x1="395" y1="187" x2="395" y2="228"></line>
+  <line x1="395" y1="262" x2="261" y2="335" marker-end="url(#extendArrow)"></line>
+  <line x1="395" y1="262" x2="346" y2="335" marker-end="url(#extendArrow)"></line>
+  <line x1="395" y1="262" x2="431" y2="335" marker-end="url(#extendArrow)"></line>
+
+  <!-- Δημητριακά -> παραδείγματα -->
+  <line x1="645" y1="187" x2="645" y2="228"></line>
+  <line x1="645" y1="262" x2="576" y2="335" marker-end="url(#extendArrow)"></line>
+  <line x1="645" y1="262" x2="661" y2="335" marker-end="url(#extendArrow)"></line>
+  <line x1="645" y1="262" x2="746" y2="335" marker-end="url(#extendArrow)"></line>
+ </svg>`;
+}
+function extendSlotHTML(id,p){
+ const filled=extendPlaced[id],inactive=extendPhase!==1&&!filled;
+ return `<div class="slot ${p.cls} ${filled?"filled":""} ${inactive?"inactive":""}"
+  id="extslot_${id}" style="left:${p.x}px;top:${p.y}px;width:${p.w}px"
+  ondragover="commonOver(event)" ondragleave="commonLeave(event)"
+  ondrop="extendDropConcept(event,'${id}')" onclick="extendTapConcept('${id}')">${filled||"Έννοια"}</div>`;
+}
+function extendRelationHTML(kind,x,y){
+ const key={veg:"relVeg",meat:"relMeat",grain:"relGrain"}[kind];
+ const filled=extendPlaced[key],active=extendPhase===2;
+ return `<div class="relation ${filled?"filled":""} ${!active&&!filled?"inactive":""}"
+  id="extrel_${kind}" style="left:${x}px;top:${y}px"
+  ${active?`ondragover="commonOver(event)" ondragleave="commonLeave(event)" ondrop="extendDropRelation(event,'${kind}')" onclick="extendTapRelation('${kind}')"`:""}>
+  ${filled||"Σύνδεση"}</div>`;
+}
+function extendDragStart(ev,id){extendSelected=id;document.getElementById("extendtok_"+id)?.classList.add("selectedDrag");if(ev.dataTransfer)ev.dataTransfer.setData("text/plain",id)}
+function extendDragEnd(ev){ev.currentTarget.classList.remove("selectedDrag")}
+function extendPick(id){
+ if(extendLocked.has(id))return;
+ document.querySelectorAll(".token").forEach(x=>x.classList.remove("selectedDrag"));
+ extendSelected=extendSelected===id?null:id;
+ if(extendSelected)document.getElementById("extendtok_"+id)?.classList.add("selectedDrag");
+}
+function extendDropConcept(ev,target){ev.preventDefault();ev.currentTarget.classList.remove("over");const id=(ev.dataTransfer&&ev.dataTransfer.getData("text/plain"))||extendSelected;if(id)extendPlaceConcept(id,target)}
+function extendTapConcept(target){if(extendSelected)extendPlaceConcept(extendSelected,target)}
+function extendPlaceConcept(id,target){
+ const item=extendConcepts.find(x=>x.id===id);
+ if(!item||extendPhase!==1||extendLocked.has(id))return;
+ if(item.target!==target){setFeedback("Αυτό το παράδειγμα ανήκει σε διαφορετικό πλαίσιο.",false);return}
+ extendLocked.add(id);extendPlaced[target]=item.label;extendSelected=null;
+ document.getElementById("extendtok_"+id)?.classList.add("locked");
+ const slot=document.getElementById("extslot_"+target);slot.textContent=item.label;slot.classList.add("filled");
+ if(extendConcepts.every(x=>extendLocked.has(x.id))){
+  setFeedback("Σωστά! Τοποθέτησες όλα τα παραδείγματα.",true);
+  setTimeout(()=>{extendPhase=2;clearFeedback();drawExtend()},800);
+ }else setFeedback("Σωστά! Συνέχισε.",true);
+}
+function extendDropRelation(ev,kind){ev.preventDefault();ev.currentTarget.classList.remove("over");const id=(ev.dataTransfer&&ev.dataTransfer.getData("text/plain"))||extendSelected;if(id)extendPlaceRelation(id,kind)}
+function extendTapRelation(kind){if(extendSelected)extendPlaceRelation(extendSelected,kind)}
+function extendPlaceRelation(id,kind){
+ const item=extendRelations.find(x=>x.id===id);
+ if(!item||extendPhase!==2||extendLocked.has(id))return;
+ if(item.kind!==kind){setFeedback("Τοποθέτησε αυτή τη σύνδεση στην άλλη ομάδα βελών.",false);return}
+ extendLocked.add(id);extendPlaced[{veg:"relVeg",meat:"relMeat",grain:"relGrain"}[kind]]=item.label;extendSelected=null;
+ document.getElementById("extendtok_"+id)?.classList.add("locked");
+ const rel=document.getElementById("extrel_"+kind);rel.textContent=item.label;rel.classList.add("filled");
+ if(extendRelations.every(x=>extendLocked.has(x.id))){
+  setFeedback("Μπράβο! Επέκτεινες σωστά τον χάρτη.",true);
+  document.getElementById("extendMap").insertAdjacentHTML("beforeend",`<div class="complete-note">✓ Ο επεκταμένος χάρτης ολοκληρώθηκε!</div>`);
+  nextAfter(1200);
+ }else setFeedback("Σωστά! Συνέχισε με τις υπόλοιπες συνδέσεις.",true);
+}
+
+/* Stage 6 */
+const quizQs=[
+ {q:"Πόσες έννοιες έχει ο βασικός χάρτης;",correct:"4",wrong:["3","5"]},
+ {q:"Ποια είναι η κύρια έννοια;",correct:"Ο άνθρωπος",wrong:["τρώει","λαχανικά"]},
+ {q:"Ποια λέξη συνδέει την κύρια έννοια με τις τρεις τροφές;",correct:"τρώει",wrong:["είναι","περιλαμβάνει"]},
+ {q:"Ποια από τις παρακάτω είναι μία από τις τρεις έννοιες τροφών του χάρτη;",correct:"δημητριακά",wrong:["ντομάτες","κοτόπουλο"]}
+];
+function stage6(){
+ quizIndex=0;quizOrder=shuffled(quizQs);drawQuiz();
+}
+function drawQuiz(){
+ const q=quizOrder[quizIndex];
+ const opts=shuffled([{ok:true,txt:q.correct},...q.wrong.map(txt=>({ok:false,txt}))]);
+ answerOrders.quiz=opts;
+ document.getElementById("card").innerHTML=`
+  <div class="quiz">
+   <div class="quiz-progress"><span style="width:${(quizIndex/quizOrder.length)*100}%"></span></div>
+   <div class="quiz-q">${q.q}</div>
+   <div class="row">${opts.map((o,i)=>`<button class="choice" onclick="quizAns(${i})">${o.txt}</button>`).join("")}</div>
+   <div class="smallhelp">${quizIndex+1} από ${quizOrder.length}</div>
+  </div>`;
+}
+function quizAns(i){
+ if(!answerOrders.quiz[i].ok){setFeedback("Δοκίμασε ξανά.",false);return}
+ quizIndex++;
+ if(quizIndex<quizOrder.length){
+  setFeedback("Σωστά! Πάμε στην επόμενη ερώτηση.",true);
+  setTimeout(()=>{clearFeedback();drawQuiz()},650);
+ }else{
+  setFeedback("Μπράβο! Ολοκλήρωσες την τελική δοκιμή.",true);nextAfter(900);
+ }
+}
+
+/* Stage 7 */
+function stage7(){
+ selfChoice=null;
+ document.getElementById("card").innerHTML=`
+  <div class="finalBox">
+   <div class="stars">⭐ ⭐ ⭐</div>
+   <div class="summary">
+    Έμαθες να ξεκινάς από μία πρόταση, να βρίσκεις τις έννοιες, τη σύνδεση και την κύρια έννοια,
+    και να δημιουργείς έναν νέο εννοιολογικό χάρτη στο Ennoia. Επίσης έμαθες πώς μπορείς να επεκτείνεις έναν χάρτη με περισσότερες έννοιες.
+   </div>
+   <div class="faces">
+    <button class="face" onclick="selfPick(1,this)"><span>🙂</span>Θέλω λίγη εξάσκηση</button>
+    <button class="face" onclick="selfPick(2,this)"><span>😊</span>Τα κατάφερα</button>
+    <button class="face" onclick="selfPick(3,this)"><span>🤩</span>Τα κατάφερα πολύ καλά</button>
+   </div>
+   <button class="check" onclick="finish()">Ολοκλήρωση</button>
+   <button class="repeatBtn" onclick="restartAll()">↻ Επανάληψη δραστηριότητας</button>
+  </div>`;
+}
+function selfPick(v,e){
+ selfChoice=v;document.querySelectorAll(".face").forEach(x=>x.classList.remove("sel"));e.classList.add("sel");
+}
+function finish(){
+ const f=document.getElementById("feedback");
+ if(!selfChoice){f.className="feedback bad";f.textContent="Διάλεξε πρώτα πώς νιώθεις για όσα έμαθες.";return}
+ completeFinalDot();
+ f.className="feedback good";f.textContent="Μπράβο! Ολοκλήρωσες το Μάθημα 18.";
+}
+function restartAll(){
+ s=0;selfChoice=null;answerOrders={};
+ buildPhase=1;buildSelected=null;buildPlaced={};buildLocked=new Set();buildTokens=[];
+ extendPhase=1;extendSelected=null;extendPlaced={};extendLocked=new Set();extendTokens=[];
+ quizIndex=0;quizOrder=[];render();
+}
+function help(){
+ const idx=Math.min(s,steps.length-1);
+ document.getElementById("helpText").textContent=steps[idx].h;
+ document.getElementById("modal").classList.add("show");
+}
+function closeHelp(){document.getElementById("modal").classList.remove("show")}
+render();
+</script>
+
+
+<footer class="nk-license" aria-label="Πληροφορίες δημιουργού και άδειας χρήσης">
+  <div><strong>Created by Nikos Kalakos · © 2026</strong></div>
+  <div>Original educational content and simulation design licensed under <a class="cc-badge" href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank" rel="license noopener noreferrer">CC BY-NC 4.0</a>.</div>
+  <div>Source code © 2026 Nikos Kalakos.</div>
+  <div>Third-party and textbook materials remain subject to the rights and licences of their respective copyright holders.</div>
+</footer></body>
+</html>

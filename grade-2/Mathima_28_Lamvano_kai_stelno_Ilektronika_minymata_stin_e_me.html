@@ -1,0 +1,212 @@
+<!--
+ICT Educational Simulation
+Created by Nikos Kalakos
+Copyright © 2026 Nikos Kalakos
+
+Original educational content and simulation design licensed under CC BY-NC 4.0.
+Source code © 2026 Nikos Kalakos.
+Third-party and textbook materials remain subject to the rights and licences of their respective copyright holders.
+-->
+<!doctype html>
+<html lang="el">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="author" content="Nikos Kalakos">
+<meta name="copyright" content="© 2026 Nikos Kalakos">
+<meta name="license" content="Original educational content and simulation design: CC BY-NC 4.0; source code © 2026 Nikos Kalakos; third-party and textbook materials excluded.">
+<title>Μάθημα 28 - Λαμβάνω και στέλνω ηλεκτρονικά μηνύματα στην Agora</title>
+<style>
+:root{
+  --unit-red:#D93A2E;--unit-red-dark:#A92920;--unit-red-soft:#FFF0EE;
+  --ink:#25334a;--line:#d5dbe6;--good:#eef7dc;--bad:#fff0ed;
+  --agora:#356a86;--agora-dark:#23495f;--agora-soft:#eef7fb;--athena:#5b4eb5;
+  --gold:#f1c84b;--shadow:0 10px 28px rgba(37,51,74,.12)
+}
+*{box-sizing:border-box}
+body{margin:0;background:#f7f9fb;color:var(--ink);font-family:Arial,"Noto Sans",sans-serif}
+button,input,textarea{font:inherit}button{cursor:pointer}
+.app{max-width:1180px;margin:auto;padding:16px}
+.top{background:#fff;border:3px solid #f0c3be;border-radius:24px;padding:14px 18px;display:flex;align-items:center;justify-content:space-between;box-shadow:var(--shadow)}
+.top h1{margin:0;font-size:clamp(27px,4vw,40px)}
+.badge{width:70px;height:70px;border-radius:22px;background:var(--unit-red);color:#fff;display:grid;place-items:center;font-size:29px;font-weight:900;box-shadow:inset 0 -5px 0 rgba(0,0,0,.10)}
+.path{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin:16px 0}
+.dot{width:44px;height:44px;border-radius:50%;display:grid;place-items:center;border:3px solid #aeb7c7;background:#fff;color:#65718a;font-weight:900;font-size:20px}
+.dot.active{background:var(--unit-red);border-color:var(--unit-red-dark);color:#fff;transform:scale(1.1)}
+.dot.done{background:var(--unit-red);border-color:var(--unit-red-dark);color:#fff}
+.panel{min-height:710px;background:#fff;border:3px solid #f0c3be;border-radius:28px;padding:24px;box-shadow:var(--shadow)}
+.step-head{display:flex;justify-content:space-between;gap:12px;align-items:flex-start}
+.step-head h2{margin:0;font-size:clamp(25px,4vw,37px)}
+.help{background:#fff3f2;color:#8c241d;border:3px solid #efaaa4;border-radius:16px;padding:10px 17px;font-weight:900}
+.instruction{max-width:970px;margin:14px auto 18px;text-align:center;font-size:clamp(19px,2.3vw,24px);font-weight:900;line-height:1.38}
+.card{max-width:1040px;margin:auto;border:3px solid #f0c3be;border-radius:28px;background:#fff;padding:22px;min-height:500px}
+.feedback{display:none;max-width:860px;margin:16px auto 0;padding:12px 18px;border-radius:17px;text-align:center;font-weight:900;font-size:20px}
+.feedback.good{display:block;background:var(--good);border:2px solid #9dbd57}
+.feedback.bad{display:block;background:var(--bad);border:2px solid #e5a59b}
+.smallhelp{text-align:center;font-size:14px;color:#6d7890;font-weight:800;margin-top:10px}
+.taskbox{max-width:840px;margin:0 auto 14px;border:4px solid var(--unit-red);background:#fff6f5;border-radius:18px;padding:12px 16px;text-align:center;font-size:20px;font-weight:900}
+
+/* Agora */
+.agora{max-width:940px;margin:auto;border:5px solid #3f475c;border-radius:24px;overflow:hidden;background:#fff;box-shadow:0 12px 28px rgba(20,28,45,.20)}
+.agora-top{height:52px;background:linear-gradient(90deg,var(--agora-dark),var(--agora));color:#fff;display:flex;align-items:center;justify-content:space-between;padding:0 14px;font-weight:900}
+.agora-brand{display:flex;align-items:center;gap:10px;font-size:20px}.agora-logo{width:32px;height:32px;border-radius:50%;background:#fff;color:var(--agora-dark);display:grid;place-items:center;font-weight:900}
+.agora-user{display:flex;align-items:center;gap:8px}.avatar{width:32px;height:32px;border-radius:50%;background:#f1c84b;color:#584710;display:grid;place-items:center;font-weight:900;border:2px solid #fff}
+.agora-shell{display:grid;grid-template-columns:190px 1fr;min-height:455px;background:#f4f7f9}
+.side{background:#eef3f6;border-right:2px solid #d8e1e7;padding:14px 10px}
+.navbtn{width:100%;border:2px solid transparent;border-radius:13px;background:transparent;padding:11px 10px;margin-bottom:7px;text-align:left;font-weight:900;color:#385167;display:flex;align-items:center;gap:10px;position:relative}
+.navbtn:hover,.navbtn.sel{background:#fff;border-color:#bfd1dc}.navico{width:28px;text-align:center;font-size:20px}
+.count{margin-left:auto;min-width:25px;height:25px;border-radius:50%;background:var(--unit-red);color:#fff;display:grid;place-items:center;font-size:13px}
+.content{padding:18px;min-width:0}
+.home-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}
+.home-tile{min-height:125px;border:3px solid #c9d7df;border-radius:18px;background:#fff;padding:16px;display:grid;grid-template-columns:60px 1fr;gap:12px;align-items:center;text-align:left;font-weight:900;color:#344b5f}
+.home-tile:hover{border-color:var(--agora)}.home-tile .bigico{font-size:40px;text-align:center}.tile-title{font-size:20px}.tile-note{font-size:14px;color:#6c7d8c;margin-top:4px}
+.toolbar{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:13px;flex-wrap:wrap}.page-title{font-size:24px;font-weight:900;color:#274659}
+.newbtn,.sendbtn,.replybtn{border:0;border-radius:12px;background:var(--agora);color:#fff;padding:10px 16px;font-weight:900}.sendbtn{background:var(--unit-red)}
+.mail-list{display:grid;gap:10px}.mail-item{width:100%;border:3px solid #cedae2;border-radius:15px;background:#fff;padding:13px;display:grid;grid-template-columns:46px 1fr auto;gap:11px;align-items:center;text-align:left}.mail-item.unread{border-color:var(--agora);background:#f5fbfe}.mail-av{width:44px;height:44px;border-radius:50%;background:#e9dffc;display:grid;place-items:center;font-weight:900;color:#554292}.mail-from{font-weight:900}.mail-sub{font-size:14px;color:#617586;margin-top:3px}.unread-dot{width:13px;height:13px;border-radius:50%;background:var(--unit-red);border:2px solid #fff;box-shadow:0 0 0 2px #efaaa4}
+.message{border:3px solid #cedae2;border-radius:18px;background:#fff;overflow:hidden}.msg-head{padding:14px;background:#f3f7f9;border-bottom:2px solid #d7e1e7;display:flex;align-items:center;gap:12px}.msg-name{font-weight:900;font-size:18px}.msg-body{padding:20px;font-size:19px;line-height:1.5;min-height:125px}.reply-area{border-top:2px solid #e1e7ec;padding:14px;background:#fbfcfd}.reply-area textarea,.compose textarea{width:100%;min-height:90px;border:3px solid #aab9c6;border-radius:13px;padding:11px;resize:vertical}.reply-actions{display:flex;justify-content:flex-end;margin-top:9px}
+.compose{display:grid;gap:12px}.fieldlabel{font-weight:900}.contacts{display:flex;gap:10px;flex-wrap:wrap}.contact{border:3px solid #cad6df;border-radius:14px;background:#fff;padding:10px 14px;font-weight:900;display:flex;gap:8px;align-items:center}.contact.sel{border-color:var(--agora);background:var(--agora-soft)}.contact.blocked{opacity:.65;border-style:dashed}.compose-actions{display:flex;justify-content:flex-end}.statusline{font-size:14px;font-weight:900;color:#607487}
+
+/* concept / sequence */
+.choice-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;max-width:900px;margin:auto}.choice{min-height:140px;border:3px solid #ced7e0;border-radius:20px;background:#fff;padding:16px;font-weight:900;font-size:18px}.choice .ci{display:block;font-size:45px;margin-bottom:8px}
+.contact-rule{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;max-width:850px;margin:auto}.person{border:3px solid #cbd6df;border-radius:20px;background:#fff;padding:18px;text-align:center;font-weight:900}.person .pico{font-size:52px}.person small{display:block;color:#697c8d;margin-top:6px}.person:hover{border-color:var(--agora)}
+.sequence-wrap{max-width:850px;margin:auto}.target-order{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;min-height:72px;padding:12px;border:3px dashed #b8c6d2;border-radius:18px;background:#f8fafb;margin-bottom:18px}.placed{padding:9px 12px;border:2px solid #8fadb9;border-radius:11px;background:#eef7fb;font-weight:900}.seq-pool{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}.seq{border:3px solid #c9d6df;border-radius:15px;background:#fff;padding:15px;font-weight:900;text-align:left}.seq.used{opacity:.35;pointer-events:none}
+
+/* final */
+.finalBox{max-width:820px;margin:auto;text-align:center}.stars{font-size:58px;margin:18px}.summary{padding:20px;border:4px solid var(--unit-red);background:#fff4f2;border-radius:22px;font-size:21px;font-weight:900;line-height:1.45}.goal-list{margin:18px auto 0;text-align:left;max-width:710px;border:3px solid #e0c0bc;border-radius:18px;padding:14px 18px;background:#fff}.goal-list div{padding:8px 0;font-weight:900}.faces{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:18px}.face{min-height:130px;border:3px solid var(--line);border-radius:20px;background:#fff;font-weight:900;font-size:17px}.face span{display:block;font-size:52px;margin-bottom:7px}.face.sel{border-color:var(--unit-red);background:var(--unit-red-soft)}
+.check{display:block;margin:18px auto 0;padding:13px 28px;border:0;border-radius:16px;background:var(--unit-red);color:#fff;font-size:21px;font-weight:900;box-shadow:0 5px 0 var(--unit-red-dark)}
+.repeatBtn{display:block;margin:15px auto 0;padding:12px 22px;border:0;border-radius:15px;background:#4f6b86;color:#fff;font-size:19px;font-weight:900;box-shadow:0 5px 0 #31475b}
+.modal{position:fixed;inset:0;background:#24344d99;display:none;place-items:center;padding:18px;z-index:60}.modal.show{display:grid}.modal-box{max-width:620px;background:#fff;border-radius:24px;border:4px solid var(--unit-red);padding:22px;text-align:center;font-size:20px}.modal-box button{padding:10px 20px;border:0;border-radius:13px;background:var(--unit-red);color:#fff;font-weight:900}
+@media(max-width:820px){.agora-shell{grid-template-columns:1fr}.side{display:flex;gap:6px;overflow:auto;border-right:0;border-bottom:2px solid #d8e1e7}.navbtn{min-width:150px}.home-grid,.choice-grid,.contact-rule,.faces,.seq-pool{grid-template-columns:1fr}}
+</style>
+
+<style id="nk-license-style">
+.nk-license{max-width:1100px;margin:14px auto 24px;padding:10px 16px;text-align:center;font:13px/1.45 Arial,"Noto Sans",sans-serif;color:#4e657c}
+.nk-license a{color:inherit;text-decoration:underline;text-underline-offset:2px}
+.nk-license .cc-badge{display:inline-block;margin:0 4px;padding:2px 7px;border:1px solid #8aa0b8;border-radius:6px;background:#fff;font-weight:700;white-space:nowrap}
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="top">
+    <h1>Λαμβάνω και στέλνω ηλεκτρονικά μηνύματα στην Agora</h1>
+    <div class="badge">28</div>
+  </div>
+  <div class="path" id="path"></div>
+  <main class="panel">
+    <div class="step-head">
+      <h2 id="title"></h2>
+      <button class="help" onclick="help()">❓ Βοήθεια</button>
+    </div>
+    <div class="instruction" id="inst"></div>
+    <div class="card" id="card"></div>
+    <div class="feedback" id="feedback"></div>
+  </main>
+</div>
+
+<div class="modal" id="modal">
+  <div class="modal-box">
+    <h2>💡 Βοήθεια</h2>
+    <p id="helpText"></p>
+    <button onclick="closeHelp()">Εντάξει</button>
+  </div>
+</div>
+
+<script>
+const steps=[
+ {t:"Βρίσκω τα μηνύματα",i:"Στην αρχική σελίδα της Agora πάτησε το σημείο που δείχνει ότι έχεις ένα νέο μήνυμα.",h:"Το φακελάκι με τον αριθμό 1 δείχνει ότι υπάρχει ένα νέο μήνυμα.",k:"home"},
+ {t:"Διαβάζω ένα νέο μήνυμα",i:"Άνοιξε το νέο μήνυμα και βρες ποιος το έστειλε.",h:"Στα Μηνύματα, το αδιάβαστο μήνυμα ξεχωρίζει και έχει ένδειξη νέου μηνύματος.",k:"read"},
+ {t:"Απαντώ σε μήνυμα",i:"Απάντησε στο μήνυμα γράφοντας ακριβώς «Ναι, θα έρθω!» και πάτησε Αποστολή.",h:"Η απάντηση γράφεται κάτω από το μήνυμα που διάβασες. Πρόσεξε κεφαλαίο, τόνο και θαυμαστικό.",k:"reply"},
+ {t:"Δημιουργώ νέο μήνυμα",i:"Φτιάξε νέο μήνυμα προς τον Νίκο. Γράψε ακριβώς «Γεια σου!» και στείλε το.",h:"Πάτησε «Νέο μήνυμα», διάλεξε τον Νίκο από τις επαφές, γράψε το κείμενο και πάτησε Αποστολή.",k:"compose"},
+ {t:"Στέλνω μόνο σε επαφές",i:"Ποιο από τα παρακάτω πρόσωπα μπορείς να επιλέξεις ως παραλήπτη μέσα στην Agora;",h:"Μπορείς να στείλεις μήνυμα μόνο σε πρόσωπα που βρίσκονται στις επαφές σου.",k:"contacts"},
+ {t:"Βάζω τα βήματα στη σειρά",i:"Πάτησε τα βήματα με τη σωστή σειρά για να στείλεις ένα νέο μήνυμα.",h:"Πρώτα ανοίγεις τα Μηνύματα, μετά δημιουργείς νέο μήνυμα, επιλέγεις επαφή, γράφεις και τέλος στέλνεις.",k:"sequence"},
+ {t:"Συνολική δοκιμή",i:"Ολοκλήρωσε μόνος σου: διάβασε ένα νέο μήνυμα, απάντησε και μετά στείλε νέο μήνυμα σε μία επαφή.",h:"Ξεκίνα από το φακελάκι με το 1. Στην απάντηση γράψε «Το έλαβα!». Μετά δημιούργησε νέο μήνυμα στην Ελένη με κείμενο «Καλημέρα!».",k:"finaltask"},
+ {t:"Τα κατάφερες!",i:"Σκέψου τι έμαθες στο Μάθημα 28.",h:"Σκέψου αν μπορείς να δημιουργείς και να στέλνεις, να διαβάζεις και να απαντάς σε μηνύματα μέσα στην Agora.",k:"final"}
+];
+let s=0,selfChoice=null;
+let composeRecipient=null;
+let seqIndex=0,seqOrder=[];
+let finalPhase=0,finalRecipient=null;
+
+function nav(){document.getElementById("path").innerHTML=steps.map((_,i)=>`<div class="dot ${i<s?'done':i===s?'active':''}">${i<s?'✓':i+1}</div>`).join("")}
+function completeFinalDot(){s=steps.length;nav()}
+function clearFeedback(){const f=document.getElementById("feedback");f.className="feedback";f.textContent=""}
+function setFeedback(t,ok){const f=document.getElementById("feedback");f.className="feedback "+(ok?"good":"bad");f.textContent=t}
+function nextAfter(ms=850){setTimeout(()=>{s++;render()},ms)}
+function shuffled(arr){const a=[...arr];for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
+function render(){nav();clearFeedback();const x=steps[s];document.getElementById("title").textContent=x.t;document.getElementById("inst").textContent=x.i;if(x.k==="home")stage1();if(x.k==="read")stage2();if(x.k==="reply")stage3();if(x.k==="compose")stage4();if(x.k==="contacts")stage5();if(x.k==="sequence")stage6();if(x.k==="finaltask")stage7();if(x.k==="final")stage8()}
+
+function agoraShell(active,body,badge=1){return `<div class="agora"><div class="agora-top"><div class="agora-brand"><span class="agora-logo">A</span><span>Agora</span></div><div class="agora-user"><span class="avatar">Μ</span><span>Μαθητής</span></div></div><div class="agora-shell"><aside class="side"><button class="navbtn ${active==='home'?'sel':''}" onclick="navClick('home')"><span class="navico">⌂</span>Αρχική</button><button class="navbtn ${active==='mail'?'sel':''}" onclick="navClick('mail')"><span class="navico">✉</span>Μηνύματα${badge?`<span class="count">${badge}</span>`:''}</button><button class="navbtn" onclick="navClick('kykloi')"><span class="navico">◉</span>Kykloi</button><button class="navbtn" onclick="navClick('contacts')"><span class="navico">👥</span>Επαφές</button></aside><section class="content">${body}</section></div></div>`}
+function navClick(where){
+ if(s===0){if(where==='mail'){setFeedback("Σωστά! Άνοιξες τα Μηνύματα.",true);nextAfter(700)}else setFeedback("Βρες το φακελάκι που δείχνει 1 νέο μήνυμα.",false);return}
+ if(s===6){if(finalPhase===0&&where==='mail'){finalPhase=1;drawFinalTask();setFeedback("Σωστά. Τώρα άνοιξε το νέο μήνυμα.",true);return}if(where!=='mail')setFeedback("Για τη δοκιμή χρησιμοποίησε πρώτα τα Μηνύματα.",false);return}
+ setFeedback("Σε αυτό το βήμα ακολούθησε την οδηγία της δραστηριότητας.",false)
+}
+
+function homeBody(){return `<div class="toolbar"><div class="page-title">Αρχική σελίδα</div><div class="statusline">Καλώς ήρθες στην Agora</div></div><div class="home-grid"><button class="home-tile" onclick="navClick('mail')"><span class="bigico">✉</span><span><span class="tile-title">Μηνύματα</span><span class="tile-note">1 νέο μήνυμα</span></span></button><button class="home-tile" onclick="navClick('kykloi')"><span class="bigico">◉</span><span><span class="tile-title">Kykloi</span><span class="tile-note">Οι χώροι της τάξης σου</span></span></button><button class="home-tile" onclick="navClick('contacts')"><span class="bigico">👥</span><span><span class="tile-title">Επαφές</span><span class="tile-note">Άτομα που γνωρίζεις</span></span></button><button class="home-tile" onclick="navClick('home')"><span class="bigico">🔔</span><span><span class="tile-title">Ειδοποιήσεις</span><span class="tile-note">Καμία νέα</span></span></button></div>`}
+
+/* 1 */
+function stage1(){document.getElementById("card").innerHTML=agoraShell('home',homeBody(),1)}
+
+/* 2 */
+function stage2(){document.getElementById("card").innerHTML=agoraShell('mail',`<div class="toolbar"><div class="page-title">Μηνύματα</div><button class="newbtn" onclick="wrongRead()">＋ Νέο μήνυμα</button></div><div class="mail-list"><button class="mail-item unread" onclick="openUnread()"><span class="mail-av">Ε</span><span><span class="mail-from">Ελένη</span><span class="mail-sub">Πρόσκληση για τη σχολική βιβλιοθήκη</span></span><span class="unread-dot" aria-label="Νέο μήνυμα"></span></button><button class="mail-item" onclick="wrongRead()"><span class="mail-av">Ν</span><span><span class="mail-from">Νίκος</span><span class="mail-sub">Χθεσινό μήνυμα</span></span><span>✓</span></button></div>`,1)}
+function wrongRead(){setFeedback("Άνοιξε το μήνυμα που έχει την ένδειξη ότι είναι νέο.",false)}
+function openUnread(){document.getElementById("card").innerHTML=agoraShell('mail',`<div class="toolbar"><div class="page-title">Μήνυμα</div></div><div class="message"><div class="msg-head"><span class="mail-av">Ε</span><span><span class="msg-name">Ελένη</span><span class="mail-sub">Νέο μήνυμα</span></span></div><div class="msg-body">Γεια σου! Θα έρθεις σήμερα στη σχολική βιβλιοθήκη;</div></div><div class="taskbox" style="margin-top:16px">Ποιος έστειλε το μήνυμα;</div><div class="choice-grid"><button class="choice" onclick="senderAnswer('Νίκος')"><span class="ci">👦</span>Νίκος</button><button class="choice" onclick="senderAnswer('Ελένη')"><span class="ci">👧</span>Ελένη</button><button class="choice" onclick="senderAnswer('Δάσκαλος')"><span class="ci">🧑‍🏫</span>Δάσκαλος</button></div>`,0)}
+function senderAnswer(v){if(v!=="Ελένη"){setFeedback("Διάβασε το όνομα στο επάνω μέρος του μηνύματος.",false);return}setFeedback("Σωστά! Διάβασες ποιος έστειλε το μήνυμα.",true);nextAfter(850)}
+
+/* 3 */
+function stage3(){document.getElementById("card").innerHTML=agoraShell('mail',`<div class="toolbar"><div class="page-title">Απάντηση</div></div><div class="message"><div class="msg-head"><span class="mail-av">Ε</span><span><span class="msg-name">Ελένη</span><span class="mail-sub">Προς εσένα</span></span></div><div class="msg-body">Γεια σου! Θα έρθεις σήμερα στη σχολική βιβλιοθήκη;</div><div class="reply-area"><label class="fieldlabel" for="replyText">Η απάντησή σου</label><textarea id="replyText" autocomplete="off" placeholder="Γράψε εδώ"></textarea><div class="reply-actions"><button class="sendbtn" onclick="sendReply()">➤ Αποστολή</button></div></div></div>`,0);document.getElementById("replyText").focus()}
+function sendReply(){const v=document.getElementById("replyText").value;if(v!=="Ναι, θα έρθω!"){setFeedback("Γράψε ακριβώς «Ναι, θα έρθω!». Πρόσεξε κεφαλαίο, τόνο και θαυμαστικό.",false);return}setFeedback("Μπράβο! Απάντησες και έστειλες το μήνυμα.",true);nextAfter(900)}
+
+/* 4 */
+function stage4(){composeRecipient=null;drawCompose()}
+function drawCompose(){document.getElementById("card").innerHTML=agoraShell('mail',`<div class="toolbar"><div class="page-title">Νέο μήνυμα</div></div><div class="compose"><div class="fieldlabel">Προς</div><div class="contacts"><button class="contact ${composeRecipient==='Νίκος'?'sel':''}" onclick="pickRecipient('Νίκος')">👦 Νίκος</button><button class="contact ${composeRecipient==='Ελένη'?'sel':''}" onclick="pickRecipient('Ελένη')">👧 Ελένη</button><button class="contact ${composeRecipient==='Κυρία Άννα'?'sel':''}" onclick="pickRecipient('Κυρία Άννα')">🧑‍🏫 Κυρία Άννα</button></div><label class="fieldlabel" for="newText">Μήνυμα</label><textarea id="newText" autocomplete="off" placeholder="Γράψε εδώ"></textarea><div class="compose-actions"><button class="sendbtn" onclick="sendNew()">➤ Αποστολή</button></div></div>`,0)}
+function pickRecipient(v){composeRecipient=v;const cur=document.getElementById("newText")?.value||"";drawCompose();document.getElementById("newText").value=cur;document.getElementById("newText").focus()}
+function sendNew(){const text=document.getElementById("newText").value;if(composeRecipient!=="Νίκος"){setFeedback("Διάλεξε τον Νίκο ως παραλήπτη.",false);return}if(text!=="Γεια σου!"){setFeedback("Γράψε ακριβώς «Γεια σου!».",false);return}setFeedback("Σωστά! Δημιούργησες και έστειλες νέο μήνυμα σε μία επαφή.",true);nextAfter(900)}
+
+/* 5 */
+function stage5(){document.getElementById("card").innerHTML=`<div class="taskbox">Στην Agora μπορείς να στείλεις μήνυμα μόνο σε άτομα που βρίσκονται στις επαφές σου.</div><div class="contact-rule"><button class="person" onclick="contactRule(true)"><div class="pico">👧</div>Ελένη<small>✓ Στις επαφές σου</small></button><button class="person" onclick="contactRule(false)"><div class="pico">👤</div>Άγνωστος χρήστης<small>Δεν είναι στις επαφές σου</small></button><button class="person" onclick="contactRule(false)"><div class="pico">🌐</div>Τυχαίος χρήστης<small>Δεν είναι στις επαφές σου</small></button></div>`}
+function contactRule(ok){if(!ok){setFeedback("Δεν μπορείς να στείλεις μήνυμα σε άτομο που δεν είναι στις επαφές σου.",false);return}setFeedback("Σωστά! Επιλέγεις παραλήπτη από τις επαφές σου.",true);nextAfter(850)}
+
+/* 6 */
+const seqSteps=["Άνοιξε τα Μηνύματα","Πάτησε Νέο μήνυμα","Διάλεξε μία επαφή","Γράψε το μήνυμα","Πάτησε Αποστολή"];
+function stage6(){seqIndex=0;seqOrder=shuffled(seqSteps);drawSequence()}
+function drawSequence(){document.getElementById("card").innerHTML=`<div class="sequence-wrap"><div class="target-order" id="targetOrder">${seqSteps.slice(0,seqIndex).map((x,i)=>`<span class="placed">${i+1}. ${x}</span>`).join("")}</div><div class="seq-pool">${seqOrder.map(x=>`<button class="seq ${seqSteps.indexOf(x)<seqIndex?'used':''}" onclick="sequencePick('${x.replace(/'/g,"\\'")}')">${x}</button>`).join("")}</div><div class="smallhelp">${seqIndex} από ${seqSteps.length} βήματα στη σωστή θέση</div></div>`}
+function sequencePick(v){if(v!==seqSteps[seqIndex]){setFeedback("Αυτό το βήμα δεν είναι το επόμενο. Σκέψου τι κάνεις πρώτα.",false);return}seqIndex++;if(seqIndex<seqSteps.length){setFeedback("Σωστά! Συνέχισε με το επόμενο βήμα.",true);drawSequence()}else{setFeedback("Μπράβο! Έβαλες όλα τα βήματα στη σωστή σειρά.",true);nextAfter(900)}}
+
+/* 7 */
+function stage7(){finalPhase=0;finalRecipient=null;drawFinalTask()}
+function drawFinalTask(){
+ let body="";
+ if(finalPhase===0){body=homeBody()}
+ if(finalPhase===1){body=`<div class="toolbar"><div class="page-title">Μηνύματα</div><button class="newbtn" onclick="finalWrong()">＋ Νέο μήνυμα</button></div><div class="mail-list"><button class="mail-item unread" onclick="finalOpenReceived()"><span class="mail-av">Α</span><span><span class="mail-from">Κυρία Άννα</span><span class="mail-sub">Υπενθύμιση</span></span><span class="unread-dot"></span></button></div>`}
+ if(finalPhase===2){body=`<div class="toolbar"><div class="page-title">Μήνυμα</div></div><div class="message"><div class="msg-head"><span class="mail-av">Α</span><span><span class="msg-name">Κυρία Άννα</span><span class="mail-sub">Νέο μήνυμα</span></span></div><div class="msg-body">Θυμήσου να φέρεις αύριο το τετράδιό σου.</div><div class="reply-area"><label class="fieldlabel" for="finalReply">Απάντηση</label><textarea id="finalReply" autocomplete="off" placeholder="Γράψε εδώ"></textarea><div class="reply-actions"><button class="sendbtn" onclick="finalSendReply()">➤ Αποστολή</button></div></div></div>`}
+ if(finalPhase===3){body=`<div class="toolbar"><div class="page-title">Μηνύματα</div><button class="newbtn" onclick="finalNewMessage()">＋ Νέο μήνυμα</button></div><div class="mail-list"><div class="mail-item"><span class="mail-av">Α</span><span><span class="mail-from">Κυρία Άννα</span><span class="mail-sub">Απάντησες: Το έλαβα!</span></span><span>✓</span></div></div>`}
+ if(finalPhase===4){body=`<div class="toolbar"><div class="page-title">Νέο μήνυμα</div></div><div class="compose"><div class="fieldlabel">Προς</div><div class="contacts"><button class="contact ${finalRecipient==='Ελένη'?'sel':''}" onclick="finalPickRecipient('Ελένη')">👧 Ελένη</button><button class="contact ${finalRecipient==='Νίκος'?'sel':''}" onclick="finalPickRecipient('Νίκος')">👦 Νίκος</button><button class="contact ${finalRecipient==='Κυρία Άννα'?'sel':''}" onclick="finalPickRecipient('Κυρία Άννα')">🧑‍🏫 Κυρία Άννα</button></div><label class="fieldlabel" for="finalNewText">Μήνυμα</label><textarea id="finalNewText" autocomplete="off" placeholder="Γράψε εδώ"></textarea><div class="compose-actions"><button class="sendbtn" onclick="finalSendNew()">➤ Αποστολή</button></div></div>`}
+ document.getElementById("card").innerHTML=agoraShell(finalPhase===0?'home':'mail',body,finalPhase<2?1:0);
+ if(finalPhase===2)document.getElementById("finalReply").focus();if(finalPhase===4)document.getElementById("finalNewText").focus();
+}
+function finalWrong(){setFeedback("Πρώτα άνοιξε το νέο μήνυμα που έλαβες.",false)}
+function finalOpenReceived(){finalPhase=2;drawFinalTask();setFeedback("Διάβασες το μήνυμα. Τώρα γράψε ακριβώς «Το έλαβα!» και στείλε την απάντηση.",true)}
+function finalSendReply(){const v=document.getElementById("finalReply").value;if(v!=="Το έλαβα!"){setFeedback("Γράψε ακριβώς «Το έλαβα!».",false);return}finalPhase=3;drawFinalTask();setFeedback("Σωστά! Απάντησες. Τώρα δημιούργησε νέο μήνυμα.",true)}
+function finalNewMessage(){finalPhase=4;drawFinalTask();setFeedback("Διάλεξε την Ελένη, γράψε ακριβώς «Καλημέρα!» και στείλε το μήνυμα.",true)}
+function finalPickRecipient(v){finalRecipient=v;const cur=document.getElementById("finalNewText")?.value||"";drawFinalTask();document.getElementById("finalNewText").value=cur;document.getElementById("finalNewText").focus()}
+function finalSendNew(){const text=document.getElementById("finalNewText").value;if(finalRecipient!=="Ελένη"){setFeedback("Διάλεξε την Ελένη από τις επαφές.",false);return}if(text!=="Καλημέρα!"){setFeedback("Γράψε ακριβώς «Καλημέρα!».",false);return}setFeedback("Μπράβο! Διάβασες, απάντησες και έστειλες νέο μήνυμα μόνος σου.",true);nextAfter(1100)}
+
+/* 8 */
+function stage8(){selfChoice=null;document.getElementById("card").innerHTML=`<div class="finalBox"><div class="stars">⭐ ⭐ ⭐</div><div class="summary">Έμαθες να χρησιμοποιείς τα Μηνύματα της Agora για να διαβάζεις όσα λαμβάνεις, να απαντάς και να δημιουργείς νέο μήνυμα προς μία επαφή.</div><div class="goal-list"><div>✓ Δημιουργώ και στέλνω ηλεκτρονικό μήνυμα.</div><div>✓ Διαβάζω ηλεκτρονικό μήνυμα που έλαβα.</div><div>✓ Απαντώ σε ηλεκτρονικό μήνυμα που έλαβα.</div></div><div class="faces"><button class="face" onclick="selfPick(1,this)"><span>🙂</span>Θέλω λίγη εξάσκηση</button><button class="face" onclick="selfPick(2,this)"><span>😊</span>Τα κατάφερα</button><button class="face" onclick="selfPick(3,this)"><span>🤩</span>Τα κατάφερα πολύ καλά</button></div><button class="check" onclick="finish()">Ολοκλήρωση</button><button class="repeatBtn" onclick="restartAll()">↻ Επανάληψη δραστηριότητας</button></div>`}
+function selfPick(v,e){selfChoice=v;document.querySelectorAll(".face").forEach(x=>x.classList.remove("sel"));e.classList.add("sel")}
+function finish(){if(!selfChoice){setFeedback("Διάλεξε πρώτα πώς νιώθεις για όσα έμαθες.",false);return}completeFinalDot();setFeedback("Μπράβο! Ολοκλήρωσες το Μάθημα 28.",true)}
+function restartAll(){s=0;selfChoice=null;composeRecipient=null;seqIndex=0;seqOrder=[];finalPhase=0;finalRecipient=null;render()}
+function help(){const idx=Math.min(s,steps.length-1);document.getElementById("helpText").textContent=steps[idx].h;document.getElementById("modal").classList.add("show")}
+function closeHelp(){document.getElementById("modal").classList.remove("show")}
+render();
+</script>
+
+<footer class="nk-license" aria-label="Πληροφορίες δημιουργού και άδειας χρήσης">
+  <div><strong>Created by Nikos Kalakos · © 2026</strong></div>
+  <div>Original educational content and simulation design licensed under <a class="cc-badge" href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank" rel="license noopener noreferrer">CC BY-NC 4.0</a>.</div>
+  <div>Source code © 2026 Nikos Kalakos.</div>
+  <div>Third-party and textbook materials remain subject to the rights and licences of their respective copyright holders.</div>
+</footer>
+</body>
+</html>

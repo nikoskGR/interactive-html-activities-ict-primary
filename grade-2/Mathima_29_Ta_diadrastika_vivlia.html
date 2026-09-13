@@ -1,0 +1,247 @@
+<!--
+ICT Educational Simulation
+Created by Nikos Kalakos
+Copyright © 2026 Nikos Kalakos
+
+Original educational content and simulation design licensed under CC BY-NC 4.0.
+Source code © 2026 Nikos Kalakos.
+Third-party and textbook materials remain subject to the rights and licences of their respective copyright holders.
+-->
+<!doctype html>
+<html lang="el">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="author" content="Nikos Kalakos">
+<meta name="copyright" content="© 2026 Nikos Kalakos">
+<meta name="license" content="Original educational content and simulation design: CC BY-NC 4.0; source code © 2026 Nikos Kalakos; third-party and textbook materials excluded.">
+<title>Μάθημα 29 - Τα διαδραστικά βιβλία στο Biblion</title>
+<style>
+:root{
+  --unit-red:#D93A2E;--unit-red-dark:#A92920;--unit-red-soft:#FFF0EE;
+  --ink:#25334a;--line:#d5dbe6;--good:#eef7dc;--bad:#fff0ed;
+  --athena:#5b4eb5;--browser:#2e6f8f;--browser-dark:#214e66;
+  --biblion:#74519a;--biblion-dark:#50366f;--biblion-soft:#f5effb;
+  --gold:#f1c84b;--shadow:0 10px 28px rgba(37,51,74,.12)
+}
+*{box-sizing:border-box}
+body{margin:0;background:#f7f9fb;color:var(--ink);font-family:Arial,"Noto Sans",sans-serif}
+button,input{font:inherit}button{cursor:pointer}
+.app{max-width:1180px;margin:auto;padding:16px}
+.top{background:#fff;border:3px solid #f0c3be;border-radius:24px;padding:14px 18px;display:flex;align-items:center;justify-content:space-between;box-shadow:var(--shadow)}
+.top h1{margin:0;font-size:clamp(27px,4vw,40px)}
+.badge{width:70px;height:70px;border-radius:22px;background:var(--unit-red);color:#fff;display:grid;place-items:center;font-size:29px;font-weight:900;box-shadow:inset 0 -5px 0 rgba(0,0,0,.10)}
+.path{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin:16px 0}
+.dot{width:44px;height:44px;border-radius:50%;display:grid;place-items:center;border:3px solid #aeb7c7;background:#fff;color:#65718a;font-weight:900;font-size:20px}
+.dot.active{background:var(--unit-red);border-color:var(--unit-red-dark);color:#fff;transform:scale(1.1)}
+.dot.done{background:var(--unit-red);border-color:var(--unit-red-dark);color:#fff}
+.panel{min-height:710px;background:#fff;border:3px solid #f0c3be;border-radius:28px;padding:24px;box-shadow:var(--shadow)}
+.step-head{display:flex;justify-content:space-between;gap:12px;align-items:flex-start}
+.step-head h2{margin:0;font-size:clamp(25px,4vw,37px)}
+.help{background:#fff3f2;color:#8c241d;border:3px solid #efaaa4;border-radius:16px;padding:10px 17px;font-weight:900}
+.instruction{max-width:970px;margin:14px auto 18px;text-align:center;font-size:clamp(19px,2.3vw,24px);font-weight:900;line-height:1.38}
+.card{max-width:1040px;margin:auto;border:3px solid #f0c3be;border-radius:28px;background:#fff;padding:22px;min-height:500px}
+.feedback{display:none;max-width:860px;margin:16px auto 0;padding:12px 18px;border-radius:17px;text-align:center;font-weight:900;font-size:20px}
+.feedback.good{display:block;background:var(--good);border:2px solid #9dbd57}
+.feedback.bad{display:block;background:var(--bad);border:2px solid #e5a59b}
+.check{display:block;margin:18px auto 0;padding:13px 28px;border:0;border-radius:16px;background:var(--unit-red);color:#fff;font-size:21px;font-weight:900;box-shadow:0 5px 0 var(--unit-red-dark)}
+.smallhelp{text-align:center;font-size:14px;color:#6d7890;font-weight:800;margin-top:10px}
+.taskbox{max-width:850px;margin:0 auto 14px;border:4px solid var(--unit-red);background:#fff6f5;border-radius:18px;padding:12px 16px;text-align:center;font-size:20px;font-weight:900}
+
+/* Stage 1 */
+.media-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;max-width:900px;margin:auto}
+.media-card{min-height:145px;border:3px solid #ccd5df;border-radius:20px;background:#fff;padding:16px;text-align:center;font-weight:900;font-size:18px;display:grid;place-items:center;align-content:center;gap:8px}
+.media-card .ico{font-size:50px}.media-card.sel{border-color:var(--unit-red);background:var(--unit-red-soft)}.selmark{display:block;font-size:20px;color:#6b281f;font-weight:900}
+.media-card.correct{box-shadow:0 0 0 3px #9dbd57 inset}.media-card.wrong{box-shadow:0 0 0 3px #e5a59b inset}
+
+/* AthenaOS + Ploigos */
+.os{max-width:940px;margin:auto;border:5px solid #3f475c;border-radius:24px;overflow:hidden;background:#1f2940;box-shadow:0 12px 28px rgba(20,28,45,.24)}
+.os-top{height:38px;background:#20283b;color:#fff;display:flex;align-items:center;justify-content:space-between;padding:0 12px;font-size:14px;font-weight:900}
+.brand{display:flex;align-items:center;gap:8px}.owl{width:25px;height:25px;border-radius:9px 9px 12px 12px;background:var(--athena);position:relative}.owl:before,.owl:after{content:"";position:absolute;top:6px;width:6px;height:6px;border-radius:50%;background:#fff}.owl:before{left:5px}.owl:after{right:5px}.owl span{position:absolute;left:10px;top:13px;width:0;height:0;border-left:3px solid transparent;border-right:3px solid transparent;border-top:6px solid #f2c84a}
+.desktop{position:relative;height:500px;overflow:hidden;background:radial-gradient(circle at 72% 18%,rgba(255,255,255,.10),transparent 25%),linear-gradient(140deg,#5964a6 0%,#3f477b 50%,#273453 100%)}
+.desktop-icon{position:absolute;width:115px;min-height:112px;border:3px solid transparent;border-radius:16px;background:transparent;color:#fff;font-weight:900;text-align:center;padding:8px}
+.desktop-icon:hover{background:rgba(255,255,255,.12);border-color:rgba(255,255,255,.30)}
+.desktop-icon.ploigos{left:90px;top:70px}.desktop-icon.graphis{left:250px;top:70px}.desktop-icon.chroma{left:410px;top:70px}
+.browser-symbol{width:62px;height:62px;border-radius:16px;background:#edf4fa;border:4px solid #31475b;display:grid;place-items:center;margin:0 auto 7px;position:relative}.browser-symbol:before{content:"";width:34px;height:34px;border-radius:50%;background:#64b8de;border:4px solid #2d6c8e}.doc-symbol{width:62px;height:62px;border-radius:13px;background:#f7f9fb;border:4px solid #384a61;position:relative;margin:0 auto 7px}.doc-symbol:before,.doc-symbol:after{content:"";position:absolute;left:12px;right:12px;height:4px;background:#6f8298;border-radius:3px}.doc-symbol:before{top:19px}.doc-symbol:after{top:33px}.paint-symbol{width:62px;height:62px;border-radius:16px;background:#626CA8;border:4px solid #384a61;display:grid;place-items:center;margin:0 auto 7px;font-size:30px}.taskbar{position:absolute;left:0;right:0;bottom:0;height:50px;background:rgba(28,34,50,.94)}
+
+.browser{max-width:950px;margin:auto;border:5px solid #3f475c;border-radius:22px;overflow:hidden;background:#fff;box-shadow:0 12px 28px rgba(20,28,45,.20)}
+.browser-top{height:44px;background:linear-gradient(90deg,var(--browser-dark),var(--browser));color:#fff;display:flex;align-items:center;justify-content:space-between;padding:0 13px;font-weight:900}.browser-title{display:flex;align-items:center;gap:9px}.browser-globe{width:27px;height:27px;border-radius:50%;background:#e9f6fc;color:#2e6f8f;display:grid;place-items:center}.browser-controls{font-weight:900;letter-spacing:8px}
+.browser-bar{height:58px;background:#edf3f6;border-bottom:2px solid #cfdae1;display:grid;grid-template-columns:auto 1fr auto;gap:8px;align-items:center;padding:8px 12px}.navicon{border:0;background:#fff;border-radius:9px;width:38px;height:38px;font-weight:900;color:#4f6472}.address{width:100%;height:40px;border:3px solid #9babb6;border-radius:12px;padding:0 13px;font-weight:900}.go{height:40px;border:0;border-radius:11px;background:var(--browser);color:#fff;padding:0 17px;font-weight:900}.browser-page{min-height:435px;background:#f8fafc;padding:16px;overflow:auto}
+
+/* Biblion */
+.biblion{max-width:900px;margin:auto;border:4px solid #c7b2da;border-radius:22px;background:#fff;overflow:hidden;box-shadow:0 8px 22px rgba(63,42,84,.12)}
+.bib-head{background:linear-gradient(90deg,var(--biblion-dark),var(--biblion));color:#fff;padding:16px 18px;display:flex;align-items:center;justify-content:space-between;gap:12px}.bib-brand{display:flex;align-items:center;gap:12px;font-size:24px;font-weight:900}.book-logo{width:45px;height:39px;background:#fff;color:var(--biblion-dark);border-radius:9px;display:grid;place-items:center;font-size:25px}.bib-sub{font-size:13px;font-weight:800;opacity:.92}.bib-nav{display:flex;gap:8px;flex-wrap:wrap;background:#f4eef9;border-bottom:2px solid #d9cbe5;padding:10px}.bib-tab{border:2px solid #c8b3da;border-radius:11px;background:#fff;color:#543b70;padding:9px 13px;font-weight:900}.bib-tab.sel{background:var(--biblion);color:#fff;border-color:var(--biblion-dark)}
+.bib-content{padding:18px;min-height:350px}.hero{border:3px solid #d6c6e3;border-radius:19px;background:linear-gradient(135deg,#f8f2fc,#fff);padding:18px;text-align:center}.hero h3{margin:0 0 6px;font-size:26px}.hero p{margin:0;color:#5f6f80;font-weight:800}.searchline{display:flex;gap:8px;max-width:720px;margin:18px auto}.searchline input{flex:1;border:3px solid #aa97bb;border-radius:12px;padding:12px 14px;font-weight:900}.searchbtn{border:0;border-radius:12px;background:var(--biblion);color:#fff;padding:0 18px;font-weight:900}
+.quick{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:18px}.quickbtn{min-height:110px;border:3px solid #d0c2dc;border-radius:17px;background:#fff;padding:12px;text-align:center;font-weight:900;color:#4f3b65}.quickbtn .qi{display:block;font-size:38px;margin-bottom:6px}.quickbtn:hover{border-color:var(--biblion)}
+.result-list{display:grid;gap:11px}.result{border:3px solid #d2c5dd;border-radius:16px;background:#fff;padding:13px;display:grid;grid-template-columns:58px 1fr auto;gap:12px;align-items:center;text-align:left}.result:hover{border-color:var(--biblion)}.book-cover{width:50px;height:64px;border-radius:7px;background:linear-gradient(160deg,#d93a2e,#f4a198);border:3px solid #8f2a22;color:#fff;display:grid;place-items:center;font-size:25px;font-weight:900}.result-title{font-weight:900;font-size:18px}.result-note{font-size:14px;color:#687988;margin-top:4px}.arrow{font-size:24px;color:#6e5286}
+.selector{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.select-card{min-height:115px;border:3px solid #d2c5dd;border-radius:18px;background:#fff;padding:14px;text-align:center;font-weight:900;font-size:18px}.select-card .si{display:block;font-size:38px;margin-bottom:6px}.select-card:hover{border-color:var(--biblion)}
+.book-view{display:grid;grid-template-columns:210px 1fr;gap:18px}.big-cover{height:270px;border-radius:15px;background:linear-gradient(160deg,#d93a2e,#f2a092);border:5px solid #8f2a22;color:#fff;display:grid;place-items:center;text-align:center;padding:18px;font-weight:900;font-size:23px;box-shadow:0 8px 20px rgba(93,45,43,.18)}.book-main{border:3px solid #d7cbe0;border-radius:16px;background:#fff;padding:15px}.book-main h4{margin:0 0 8px;font-size:22px}.resource-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:13px}.resource{min-height:110px;border:3px solid #cfd8e0;border-radius:15px;background:#fff;padding:10px;text-align:center;font-weight:900}.resource.done{border-color:#86a94b;background:#f2f8e4}.resource .ri{display:block;font-size:38px;margin-bottom:5px}.resource small{display:block;color:#6c7e8c;margin-top:4px}
+.viewer{margin-top:14px;border:3px solid #cfd8e0;border-radius:16px;background:#f8fafc;padding:15px;min-height:135px}.viewer h5{margin:0 0 8px;font-size:19px}.play{border:0;border-radius:12px;background:var(--biblion);color:#fff;padding:10px 16px;font-weight:900}.quizopts{display:flex;gap:8px;flex-wrap:wrap}.quizopt{border:3px solid #cbd5df;border-radius:11px;background:#fff;padding:10px 13px;font-weight:900}.image-preview{height:120px;border-radius:13px;border:3px solid #a9c1d4;background:linear-gradient(#9ed4f0 0 55%,#8bc66a 55% 100%);position:relative;overflow:hidden}.image-preview:before{content:"☀";position:absolute;right:24px;top:12px;font-size:32px}.image-preview:after{content:"⌂";position:absolute;left:45%;bottom:12px;font-size:40px;color:#9a5943}
+
+/* Final test */
+.test-progress{display:flex;gap:8px;justify-content:center;margin-bottom:12px}.test-chip{padding:7px 11px;border:2px solid #c7b8d3;border-radius:999px;background:#fff;font-weight:900;font-size:13px}.test-chip.done{background:#eef7dc;border-color:#96b65c}.test-chip.now{background:var(--biblion);border-color:var(--biblion-dark);color:#fff}
+
+/* Final */
+.finalBox{max-width:820px;margin:auto;text-align:center}.stars{font-size:58px;margin:18px}.summary{padding:20px;border:4px solid var(--unit-red);background:#fff4f2;border-radius:22px;font-size:21px;font-weight:900;line-height:1.45}.goal-list{margin:18px auto 0;text-align:left;max-width:720px;border:3px solid #e0c0bc;border-radius:18px;padding:14px 18px;background:#fff}.goal-list div{padding:8px 0;font-weight:900}.faces{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:18px}.face{min-height:130px;border:3px solid var(--line);border-radius:20px;background:#fff;font-weight:900;font-size:17px}.face span{display:block;font-size:52px;margin-bottom:7px}.face.sel{border-color:var(--unit-red);background:var(--unit-red-soft)}
+.repeatBtn{display:block;margin:15px auto 0;padding:12px 22px;border:0;border-radius:15px;background:#4f6b86;color:#fff;font-size:19px;font-weight:900;box-shadow:0 5px 0 #31475b}
+.modal{position:fixed;inset:0;background:#24344d99;display:none;place-items:center;padding:18px;z-index:60}.modal.show{display:grid}.modal-box{max-width:620px;background:#fff;border-radius:24px;border:4px solid var(--unit-red);padding:22px;text-align:center;font-size:20px}.modal-box button{padding:10px 20px;border:0;border-radius:13px;background:var(--unit-red);color:#fff;font-weight:900}
+@media(max-width:850px){.media-grid,.quick,.selector,.resource-grid,.faces{grid-template-columns:1fr}.book-view{grid-template-columns:1fr}.big-cover{height:180px}.browser-page{padding:10px}.card{padding:14px}.desktop-icon.ploigos{left:45px}.desktop-icon.graphis{left:185px}.desktop-icon.chroma{left:325px}}
+</style>
+<style id="nk-license-style">
+.nk-license{max-width:1100px;margin:14px auto 24px;padding:10px 16px;text-align:center;font:13px/1.45 Arial,"Noto Sans",sans-serif;color:#4e657c}
+.nk-license a{color:inherit;text-decoration:underline;text-underline-offset:2px}
+.nk-license .cc-badge{display:inline-block;margin:0 4px;padding:2px 7px;border:1px solid #8aa0b8;border-radius:6px;background:#fff;font-weight:700;white-space:nowrap}
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="top"><h1>Τα διαδραστικά βιβλία</h1><div class="badge">29</div></div>
+  <div class="path" id="path"></div>
+  <main class="panel">
+    <div class="step-head"><h2 id="title"></h2><button class="help" onclick="help()">❓ Βοήθεια</button></div>
+    <div class="instruction" id="inst"></div>
+    <div class="card" id="card"></div>
+    <div class="feedback" id="feedback"></div>
+  </main>
+</div>
+<div class="modal" id="modal"><div class="modal-box"><h2>💡 Βοήθεια</h2><p id="helpText"></p><button onclick="closeHelp()">Εντάξει</button></div></div>
+<script>
+const steps=[
+ {t:"Τι έχει ένα διαδραστικό βιβλίο;",i:"Διάλεξε όλα όσα μπορούν να υπάρχουν μέσα σε ένα διαδραστικό βιβλίο.",h:"Ένα διαδραστικό βιβλίο μπορεί να περιέχει ψηφιακό εμπλουτισμένο περιεχόμενο, όπως βίντεο, ήχους, εικόνες, παρουσιάσεις και κουίζ.",k:"concept"},
+ {t:"Ανοίγω το Biblion",i:"Άνοιξε το Ploigos και πληκτρολόγησε ακριβώς biblion.edu στη γραμμή διεύθυνσης.",h:"Στην επιφάνεια εργασίας του AthenaOS κάνε διπλό κλικ στο Ploigos. Μετά γράψε biblion.edu στη γραμμή διεύθυνσης και πάτησε Μετάβαση.",k:"open"},
+ {t:"Αναζητώ ένα βιβλίο",i:"Στο Biblion αναζήτησε ακριβώς τη λέξη «Πληροφορική» και άνοιξε το βιβλίο της Β΄ τάξης.",h:"Γράψε «Πληροφορική» στο πλαίσιο αναζήτησης και πάτησε Αναζήτηση. Μετά επίλεξε το αποτέλεσμα που γράφει «Β΄ Δημοτικού · Πληροφορική».",k:"search"},
+ {t:"Υλικό ανά τάξη",i:"Βρες το βιβλίο της Πληροφορικής ξεκινώντας από την επιλογή «Υλικό ανά τάξη».",h:"Πάτησε «Υλικό ανά τάξη», διάλεξε «Β΄ Δημοτικού» και μετά «Πληροφορική».",k:"grade"},
+ {t:"Υλικό ανά μάθημα",i:"Βρες το ίδιο βιβλίο ξεκινώντας αυτή τη φορά από την επιλογή «Υλικό ανά μάθημα».",h:"Πάτησε «Υλικό ανά μάθημα», διάλεξε «Πληροφορική» και μετά «Β΄ Δημοτικού».",k:"subject"},
+ {t:"Χρησιμοποιώ το εμπλουτισμένο περιεχόμενο",i:"Μέσα στο διαδραστικό βιβλίο άνοιξε ένα βίντεο, ένα κουίζ και μία εικόνα.",h:"Τα μικρά εικονίδια μέσα στο βιβλίο ανοίγουν διαφορετικό περιεχόμενο. Δοκίμασε το βίντεο, το κουίζ και την εικόνα και ολοκλήρωσε την ενέργεια σε καθένα.",k:"resources"},
+ {t:"Συνολική δοκιμή",i:"Ξεκίνα από το Ploigos, βρες το βιβλίο της Πληροφορικής από την τάξη σου και ολοκλήρωσε ένα κουίζ μέσα στο βιβλίο.",h:"Θυμήσου όλη τη διαδρομή: biblion.edu → Υλικό ανά τάξη → Β΄ Δημοτικού → Πληροφορική → Κουίζ.",k:"test"},
+ {t:"Τα κατάφερες!",i:"Σκέψου τι έμαθες στο Μάθημα 29.",h:"Σκέψου αν μπορείς να πλοηγείσαι στο Biblion, να βρίσκεις βιβλία και να χρησιμοποιείς το εμπλουτισμένο περιεχόμενό τους.",k:"final"}
+];
+let s=0,selfChoice=null;
+let conceptSel=new Set();
+let openPhase=0;
+let searchPhase=0;
+let gradePhase=0;
+let subjectPhase=0;
+let resourceDone=new Set();
+let testPhase=0;
+
+function nav(){document.getElementById("path").innerHTML=steps.map((_,i)=>`<div class="dot ${i<s?'done':i===s?'active':''}">${i<s?'✓':i+1}</div>`).join("")}
+function clearFeedback(){const f=document.getElementById("feedback");f.className="feedback";f.textContent=""}
+function setFeedback(t,ok){const f=document.getElementById("feedback");f.className="feedback "+(ok?"good":"bad");f.textContent=t}
+function nextAfter(ms=900){setTimeout(()=>{s++;render()},ms)}
+function completeFinalDot(){s=steps.length;nav()}
+function render(){nav();clearFeedback();const x=steps[s];document.getElementById("title").textContent=x.t;document.getElementById("inst").textContent=x.i;({concept:stage1,open:stage2,search:stage3,grade:stage4,subject:stage5,resources:stage6,test:stage7,final:stage8}[x.k])()}
+function help(){const idx=Math.min(s,steps.length-1);document.getElementById("helpText").textContent=steps[idx].h;document.getElementById("modal").classList.add("show")}
+function closeHelp(){document.getElementById("modal").classList.remove("show")}
+function shuffled(arr){const a=[...arr];for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
+
+function desktop(){return `<div class="os"><div class="os-top"><span class="brand"><span class="owl"><span></span></span>AthenaOS</span><span>10:25</span></div><div class="desktop"><button class="desktop-icon ploigos" onclick="singlePloigos()" ondblclick="openPloigos()"><div class="browser-symbol"></div>Ploigos</button><button class="desktop-icon graphis" onclick="wrongApp()"><div class="doc-symbol"></div>Graphis</button><button class="desktop-icon chroma" onclick="wrongApp()"><div class="paint-symbol">🎨</div>Chroma</button><div class="taskbar"></div></div></div>`}
+function browserShell(page,address=""){return `<div class="browser"><div class="browser-top"><span class="browser-title"><span class="browser-globe">◎</span>Ploigos</span><span class="browser-controls">— □ ×</span></div><div class="browser-bar"><button class="navicon" aria-label="Πίσω">←</button><input class="address" id="address" autocomplete="off" value="${address}" placeholder="Γραμμή διεύθυνσης"><button class="go" onclick="browserGo()">Μετάβαση</button></div><div class="browser-page">${page}</div></div>`}
+function biblionHome(){return `<div class="biblion"><div class="bib-head"><div class="bib-brand"><span class="book-logo">📖</span><span>Biblion<div class="bib-sub">Διαδραστικά σχολικά βιβλία</div></span></div><span>📚</span></div><div class="bib-nav"><button class="bib-tab sel">Αρχική</button><button class="bib-tab" onclick="homeGrade()">Υλικό ανά τάξη</button><button class="bib-tab" onclick="homeSubject()">Υλικό ανά μάθημα</button></div><div class="bib-content"><div class="hero"><h3>Βρες το βιβλίο σου</h3><p>Αναζήτησε ή διάλεξε υλικό ανά τάξη και μάθημα.</p><div class="searchline"><input id="searchInput" autocomplete="off" placeholder="Γράψε λέξη ή φράση"><button class="searchbtn" onclick="doSearch()">Αναζήτηση</button></div></div><div class="quick"><button class="quickbtn" onclick="homeGrade()"><span class="qi">🏫</span>Υλικό ανά τάξη</button><button class="quickbtn" onclick="homeSubject()"><span class="qi">📘</span>Υλικό ανά μάθημα</button><button class="quickbtn" onclick="focusSearch()"><span class="qi">🔎</span>Αναζήτηση</button></div></div></div>`}
+function biblionResults(){return `<div class="biblion"><div class="bib-head"><div class="bib-brand"><span class="book-logo">📖</span><span>Biblion<div class="bib-sub">Αποτελέσματα αναζήτησης</div></span></div></div><div class="bib-nav"><button class="bib-tab" onclick="backBiblionHome()">Αρχική</button><button class="bib-tab">Αποτελέσματα</button></div><div class="bib-content"><div class="taskbox" style="border-color:#74519a;background:#f7f1fb">Αποτελέσματα για «Πληροφορική»</div><div class="result-list"><button class="result" onclick="chooseResult(true)"><span class="book-cover">Π</span><span><span class="result-title">Β΄ Δημοτικού · Πληροφορική</span><span class="result-note">Διαδραστικό εμπλουτισμένο βιβλίο</span></span><span class="arrow">›</span></button><button class="result" onclick="chooseResult(false)"><span class="book-cover" style="background:linear-gradient(160deg,#3e78b4,#8ab6e0);border-color:#2d567f">Μ</span><span><span class="result-title">Γ΄ Δημοτικού · Μαθηματικά</span><span class="result-note">Διαδραστικό βιβλίο</span></span><span class="arrow">›</span></button></div></div></div>`}
+function gradeSelector(level=0){let content="";if(level===0){content=`<div class="selector"><button class="select-card" onclick="gradePick('Α')"><span class="si">1️⃣</span>Α΄ Δημοτικού</button><button class="select-card" onclick="gradePick('Β')"><span class="si">2️⃣</span>Β΄ Δημοτικού</button><button class="select-card" onclick="gradePick('Γ')"><span class="si">3️⃣</span>Γ΄ Δημοτικού</button></div>`}else{content=`<div class="taskbox" style="border-color:#74519a;background:#f7f1fb">Β΄ Δημοτικού</div><div class="selector"><button class="select-card" onclick="gradeSubject('Γλώσσα')"><span class="si">🔤</span>Γλώσσα</button><button class="select-card" onclick="gradeSubject('Πληροφορική')"><span class="si">💻</span>Πληροφορική</button><button class="select-card" onclick="gradeSubject('Μαθηματικά')"><span class="si">➗</span>Μαθηματικά</button></div>`}return `<div class="biblion"><div class="bib-head"><div class="bib-brand"><span class="book-logo">📖</span><span>Biblion<div class="bib-sub">Υλικό ανά τάξη</div></span></div></div><div class="bib-nav"><button class="bib-tab" onclick="backBiblionHome()">Αρχική</button><button class="bib-tab sel">Υλικό ανά τάξη</button><button class="bib-tab" onclick="homeSubject()">Υλικό ανά μάθημα</button></div><div class="bib-content">${content}</div></div>`}
+function subjectSelector(level=0){let content="";if(level===0){content=`<div class="selector"><button class="select-card" onclick="subjectPick('Γλώσσα')"><span class="si">🔤</span>Γλώσσα</button><button class="select-card" onclick="subjectPick('Πληροφορική')"><span class="si">💻</span>Πληροφορική</button><button class="select-card" onclick="subjectPick('Μαθηματικά')"><span class="si">➗</span>Μαθηματικά</button></div>`}else{content=`<div class="taskbox" style="border-color:#74519a;background:#f7f1fb">Πληροφορική</div><div class="selector"><button class="select-card" onclick="subjectGrade('Α')"><span class="si">1️⃣</span>Α΄ Δημοτικού</button><button class="select-card" onclick="subjectGrade('Β')"><span class="si">2️⃣</span>Β΄ Δημοτικού</button><button class="select-card" onclick="subjectGrade('Γ')"><span class="si">3️⃣</span>Γ΄ Δημοτικού</button></div>`}return `<div class="biblion"><div class="bib-head"><div class="bib-brand"><span class="book-logo">📖</span><span>Biblion<div class="bib-sub">Υλικό ανά μάθημα</div></span></div></div><div class="bib-nav"><button class="bib-tab" onclick="backBiblionHome()">Αρχική</button><button class="bib-tab" onclick="homeGrade()">Υλικό ανά τάξη</button><button class="bib-tab sel">Υλικό ανά μάθημα</button></div><div class="bib-content">${content}</div></div>`}
+function bookView(includeViewer=true){return `<div class="biblion"><div class="bib-head"><div class="bib-brand"><span class="book-logo">📖</span><span>Biblion<div class="bib-sub">Διαδραστικό βιβλίο</div></span></div></div><div class="bib-nav"><button class="bib-tab" onclick="backBiblionHome()">Αρχική</button><button class="bib-tab sel">Βιβλίο</button></div><div class="bib-content"><div class="book-view"><div class="big-cover">Πληροφορική<br><small style="font-size:16px">Β΄ Δημοτικού</small></div><div class="book-main"><h4>Εμπλουτισμένο περιεχόμενο</h4><div class="resource-grid"><button class="resource ${resourceDone.has('video')?'done':''}" onclick="openResource('video')"><span class="ri">▶️</span>${resourceDone.has('video')?'✓ ':''}Βίντεο<small>Άνοιξε και πάτησε Αναπαραγωγή</small></button><button class="resource ${resourceDone.has('quiz')?'done':''}" onclick="openResource('quiz')"><span class="ri">❓</span>${resourceDone.has('quiz')?'✓ ':''}Κουίζ<small>Άνοιξε και απάντησε</small></button><button class="resource ${resourceDone.has('image')?'done':''}" onclick="openResource('image')"><span class="ri">🖼️</span>${resourceDone.has('image')?'✓ ':''}Εικόνα<small>Άνοιξε την εικόνα</small></button></div>${includeViewer?'<div class="viewer" id="viewer"><h5>Διάλεξε ένα εικονίδιο.</h5>Το περιεχόμενο θα ανοίξει εδώ.</div>':''}</div></div></div></div>`}
+
+/* 1 */
+const mediaDefs=[{id:'video',ico:'▶️',txt:'Βίντεο',ok:true},{id:'audio',ico:'🔊',txt:'Ήχος',ok:true},{id:'image',ico:'🖼️',txt:'Εικόνα',ok:true},{id:'presentation',ico:'📊',txt:'Παρουσίαση',ok:true},{id:'quiz',ico:'❓',txt:'Κουίζ',ok:true},{id:'pencil',ico:'✏️',txt:'Μολύβι',ok:false}];
+function stage1(){conceptSel=new Set();drawConcept()}
+function drawConcept(){document.getElementById('card').innerHTML=`<div class="media-grid">${mediaDefs.map(x=>`<button class="media-card ${conceptSel.has(x.id)?'sel':''}" onclick="toggleMedia('${x.id}')"><span class="ico">${x.ico}</span>${conceptSel.has(x.id)?'<span class="selmark">✓ Επιλέχθηκε</span>':''}${x.txt}</button>`).join('')}</div><button class="check" onclick="checkConcept()">Έλεγχος</button>`}
+function toggleMedia(id){if(conceptSel.has(id))conceptSel.delete(id);else conceptSel.add(id);drawConcept()}
+function checkConcept(){const correct=mediaDefs.filter(x=>x.ok).map(x=>x.id);const ok=correct.every(x=>conceptSel.has(x))&&conceptSel.size===correct.length;if(!ok){setFeedback('Διάλεξε τα ψηφιακά στοιχεία που μπορούν να εμπλουτίζουν ένα διαδραστικό βιβλίο.',false);return}setFeedback('Μπράβο! Ένα διαδραστικό βιβλίο μπορεί να περιέχει πολλά είδη ψηφιακού περιεχομένου.',true);nextAfter()}
+
+/* 2 */
+function stage2(){openPhase=0;document.getElementById('card').innerHTML=desktop()}
+function singlePloigos(){setFeedback('Χρησιμοποίησε διπλό κλικ για να ανοίξεις το Ploigos.',false)}
+function wrongApp(){setFeedback('Άνοιξε τον φυλλομετρητή Ploigos.',false)}
+function openPloigos(){openPhase=1;document.getElementById('card').innerHTML=browserShell('<div class="hero"><h3>Κενή σελίδα</h3><p>Πληκτρολόγησε μια διεύθυνση στη γραμμή επάνω.</p></div>');document.getElementById('address').focus();setFeedback('Άνοιξες το Ploigos. Τώρα γράψε biblion.edu στη γραμμή διεύθυνσης.',true)}
+function browserGo(){const inp=document.getElementById('address');if(!inp)return;const v=inp.value.trim();if(v!=='biblion.edu'){setFeedback('Γράψε ακριβώς biblion.edu στη γραμμή διεύθυνσης.',false);return}if(s===1){document.getElementById('card').innerHTML=browserShell(biblionHome(),'biblion.edu');setFeedback('Σωστά! Άνοιξες το Biblion.',true);nextAfter(1000);return}if(s===6&&testPhase===1){testPhase=2;drawFinalTest();setFeedback('Σωστά! Μπήκες στο Biblion. Τώρα χρησιμοποίησε «Υλικό ανά τάξη».',true)}}
+
+/* 3 */
+function stage3(){searchPhase=0;document.getElementById('card').innerHTML=browserShell(biblionHome(),'biblion.edu');setTimeout(()=>document.getElementById('searchInput')?.focus(),0)}
+function focusSearch(){document.getElementById('searchInput')?.focus()}
+function doSearch(){const inp=document.getElementById('searchInput');if(!inp)return;if(inp.value.trim()!=='Πληροφορική'){setFeedback('Γράψε ακριβώς «Πληροφορική». Πρόσεξε το κεφαλαίο Π και τον τόνο.',false);return}searchPhase=1;document.getElementById('card').innerHTML=browserShell(biblionResults(),'biblion.edu');setFeedback('Σωστά! Βρήκες αποτελέσματα. Τώρα άνοιξε το βιβλίο της Β΄ τάξης.',true)}
+function chooseResult(ok){if(!ok){setFeedback('Διάλεξε το βιβλίο «Β΄ Δημοτικού · Πληροφορική».',false);return}setFeedback('Μπράβο! Βρήκες το σωστό βιβλίο με αναζήτηση.',true);nextAfter()}
+function backBiblionHome(){
+ if(s===5){setFeedback('Μείνε στο βιβλίο και χρησιμοποίησε το εμπλουτισμένο περιεχόμενο.',false);return}
+ if(s===6&&testPhase>=3){setFeedback('Συνέχισε τη συνολική δοκιμή από το σημείο που βρίσκεσαι.',false);return}
+ document.getElementById('card').innerHTML=browserShell(biblionHome(),'biblion.edu')
+}
+function homeGrade(){
+ if(s===2){setFeedback('Σε αυτό το βήμα χρησιμοποίησε το πλαίσιο Αναζήτησης.',false);return}
+ if(s===3){gradePhase=0;document.getElementById('card').innerHTML=browserShell(gradeSelector(0),'biblion.edu');return}
+ if(s===4){setFeedback('Σε αυτό το βήμα χρησιμοποίησε «Υλικό ανά μάθημα».',false);return}
+ if(s===5){setFeedback('Μείνε στο βιβλίο και άνοιξε το εμπλουτισμένο περιεχόμενο.',false);return}
+ if(s===6&&testPhase===2){testPhase=3;drawFinalTest();return}
+ if(s===6){setFeedback('Συνέχισε τη συνολική δοκιμή από το σημείο που βρίσκεσαι.',false);return}
+ document.getElementById('card').innerHTML=browserShell(gradeSelector(0),'biblion.edu')
+}
+function homeSubject(){
+ if(s===2){setFeedback('Σε αυτό το βήμα χρησιμοποίησε το πλαίσιο Αναζήτησης.',false);return}
+ if(s===3){setFeedback('Σε αυτό το βήμα χρησιμοποίησε «Υλικό ανά τάξη».',false);return}
+ if(s===4){subjectPhase=0;document.getElementById('card').innerHTML=browserShell(subjectSelector(0),'biblion.edu');return}
+ if(s===5){setFeedback('Μείνε στο βιβλίο και άνοιξε το εμπλουτισμένο περιεχόμενο.',false);return}
+ if(s===6){setFeedback('Στη συνολική δοκιμή χρησιμοποίησε «Υλικό ανά τάξη».',false);return}
+ document.getElementById('card').innerHTML=browserShell(subjectSelector(0),'biblion.edu')
+}
+
+/* 4 */
+function stage4(){gradePhase=0;document.getElementById('card').innerHTML=browserShell(gradeSelector(0),'biblion.edu')}
+function gradePick(v){
+ if(s===6){if(testPhase!==3){setFeedback('Συνέχισε τη συνολική δοκιμή με τη σειρά.',false);return}if(v!=='Β'){setFeedback('Στη δοκιμή χρειάζεσαι τη Β΄ Δημοτικού.',false);return}testPhase=4;drawFinalTest();setFeedback('Σωστά! Τώρα επίλεξε την Πληροφορική.',true);return}
+ if(s!==3){setFeedback('Ακολούθησε την οδηγία αυτού του βήματος.',false);return}
+ if(v!=='Β'){setFeedback('Διάλεξε «Β΄ Δημοτικού».',false);return}
+ gradePhase=1;document.getElementById('card').innerHTML=browserShell(gradeSelector(1),'biblion.edu');setFeedback('Σωστά! Τώρα διάλεξε το μάθημα Πληροφορική.',true)
+}
+function gradeSubject(v){
+ if(s===6){if(testPhase!==4){setFeedback('Συνέχισε τη συνολική δοκιμή με τη σειρά.',false);return}if(v!=='Πληροφορική'){setFeedback('Διάλεξε «Πληροφορική».',false);return}testPhase=5;drawFinalTest();setFeedback('Βρήκες το βιβλίο. Τώρα άνοιξε το Κουίζ.',true);return}
+ if(s!==3){setFeedback('Ακολούθησε την οδηγία αυτού του βήματος.',false);return}
+ if(v!=='Πληροφορική'){setFeedback('Διάλεξε το μάθημα «Πληροφορική».',false);return}
+ setFeedback('Μπράβο! Βρήκες το βιβλίο χρησιμοποιώντας «Υλικό ανά τάξη».',true);nextAfter()
+}
+
+/* 5 */
+function stage5(){subjectPhase=0;document.getElementById('card').innerHTML=browserShell(subjectSelector(0),'biblion.edu')}
+function subjectPick(v){
+ if(s!==4){setFeedback('Ακολούθησε την οδηγία αυτού του βήματος.',false);return}
+ if(v!=='Πληροφορική'){setFeedback('Διάλεξε το μάθημα «Πληροφορική».',false);return}
+ subjectPhase=1;document.getElementById('card').innerHTML=browserShell(subjectSelector(1),'biblion.edu');setFeedback('Σωστά! Τώρα διάλεξε «Β΄ Δημοτικού».',true)
+}
+function subjectGrade(v){
+ if(s!==4){setFeedback('Ακολούθησε την οδηγία αυτού του βήματος.',false);return}
+ if(v!=='Β'){setFeedback('Διάλεξε «Β΄ Δημοτικού».',false);return}
+ setFeedback('Μπράβο! Βρήκες το ίδιο βιβλίο χρησιμοποιώντας «Υλικό ανά μάθημα».',true);nextAfter()
+}
+
+/* 6 */
+function stage6(){resourceDone=new Set();document.getElementById('card').innerHTML=browserShell(bookView(),'biblion.edu')}
+function openResource(type){if(s===6){if(type!=='quiz'){setFeedback('Στη συνολική δοκιμή άνοιξε το Κουίζ.',false);return}testPhase=6;drawFinalTest();return}const v=document.getElementById('viewer');if(!v)return;if(type==='video'){v.innerHTML='<h5>▶️ Βίντεο</h5><p>Μικρό εκπαιδευτικό βίντεο.</p><button class="play" onclick="playVideo()">▶ Αναπαραγωγή</button>'}if(type==='quiz'){v.innerHTML='<h5>❓ Κουίζ</h5><p><strong>Ποιο από αυτά είναι ψηφιακό εμπλουτισμένο περιεχόμενο;</strong></p><div class="quizopts"><button class="quizopt" onclick="answerQuiz(false)">Μόνο χαρτί</button><button class="quizopt" onclick="answerQuiz(true)">Βίντεο</button><button class="quizopt" onclick="answerQuiz(false)">Μολύβι</button></div>'}if(type==='image'){v.innerHTML='<h5>🖼️ Εικόνα</h5><div class="image-preview" aria-label="Εκπαιδευτική εικόνα με ουρανό, ήλιο, γρασίδι και σπίτι"></div><button class="play" style="margin-top:9px" onclick="confirmImage()">Άνοιξα την εικόνα</button>'}}
+function playVideo(){resourceDone.add('video');setFeedback('Το βίντεο ξεκίνησε. Αναγνώρισες ένα είδος εμπλουτισμένου περιεχομένου.',true);refreshResourceStage()}
+function answerQuiz(ok){if(!ok){setFeedback('Δοκίμασε ξανά. Το εμπλουτισμένο περιεχόμενο είναι ψηφιακό.',false);return}resourceDone.add('quiz');setFeedback('Σωστά! Ολοκλήρωσες το κουίζ.',true);refreshResourceStage()}
+function confirmImage(){resourceDone.add('image');setFeedback('Σωστά! Άνοιξες την εκπαιδευτική εικόνα.',true);refreshResourceStage()}
+function refreshResourceStage(){if(resourceDone.size===3){setFeedback('Μπράβο! Χρησιμοποίησες βίντεο, κουίζ και εικόνα μέσα στο διαδραστικό βιβλίο.',true);nextAfter(1050);return}const card=document.getElementById('card');if(card){const oldFeedback=document.getElementById('feedback').textContent;card.innerHTML=browserShell(bookView(),'biblion.edu');document.getElementById('feedback').textContent=oldFeedback}}
+
+/* 7 */
+function stage7(){testPhase=0;resourceDone=new Set();drawFinalTest()}
+function testChips(){const labels=['Ploigos','Biblion','Β΄ τάξη','Πληροφορική','Κουίζ'];const map=[1,2,4,5,7];return `<div class="test-progress">${labels.map((x,i)=>{const done=testPhase>=map[i];const now=!done&&(i===0?testPhase<1:testPhase>=map[i-1]);return `<span class="test-chip ${done?'done':now?'now':''}">${done?'✓ ':''}${x}</span>`}).join('')}</div>`}
+function drawFinalTest(){let content='';if(testPhase===0){content=desktop()}else if(testPhase===1){content=browserShell('<div class="hero"><h3>Κενή σελίδα</h3><p>Γράψε τη διεύθυνση του Biblion.</p></div>')}else if(testPhase===2){content=browserShell(biblionHome(),'biblion.edu')}else if(testPhase===3){content=browserShell(gradeSelector(0),'biblion.edu')}else if(testPhase===4){content=browserShell(gradeSelector(1),'biblion.edu')}else if(testPhase===5){content=browserShell(bookView(false),'biblion.edu')}else if(testPhase===6){content=browserShell(`<div class="biblion"><div class="bib-head"><div class="bib-brand"><span class="book-logo">📖</span><span>Biblion<div class="bib-sub">Κουίζ</div></span></div></div><div class="bib-content"><div class="viewer"><h5>❓ Κουίζ</h5><p><strong>Πώς μπορείς να βρεις βιβλία της τάξης σου;</strong></p><div class="quizopts"><button class="quizopt" onclick="finalQuiz(false)">Με τη Σβήστρα</button><button class="quizopt" onclick="finalQuiz(true)">Με «Υλικό ανά τάξη»</button><button class="quizopt" onclick="finalQuiz(false)">Με το Πινέλο</button></div></div></div></div>`,'biblion.edu')}document.getElementById('card').innerHTML=testChips()+content}
+function openPloigosFinal(){testPhase=1;drawFinalTest()}
+const oldOpenPloigos=openPloigos;openPloigos=function(){if(s===6&&testPhase===0){testPhase=1;drawFinalTest();document.getElementById('address')?.focus();setFeedback('Άνοιξες το Ploigos. Γράψε biblion.edu.',true);return}oldOpenPloigos()}
+function finalQuiz(ok){if(!ok){setFeedback('Δοκίμασε ξανά. Σκέψου ποια επιλογή οργανώνει τα βιβλία με βάση την τάξη.',false);return}setFeedback('Μπράβο! Ολοκλήρωσες όλη τη διαδρομή και χρησιμοποίησες το κουίζ του διαδραστικού βιβλίου.',true);nextAfter(1100)}
+
+/* 8 */
+function stage8(){selfChoice=null;document.getElementById('card').innerHTML=`<div class="finalBox"><div class="stars">⭐ ⭐ ⭐</div><div class="summary">Έμαθες να χρησιμοποιείς το Biblion για να βρίσκεις διαδραστικά σχολικά βιβλία και να ανοίγεις το εμπλουτισμένο περιεχόμενό τους.</div><div class="goal-list"><div>✓ Πλοηγούμαι στον δικτυακό τόπο με τα διαδραστικά βιβλία της τάξης μου.</div><div>✓ Εντοπίζω επιλεγμένες ενότητες και βιβλία της τάξης μου.</div><div>✓ Χρησιμοποιώ το εμπλουτισμένο περιεχόμενο των βιβλίων μου.</div></div><div class="faces"><button class="face" aria-pressed="false" onclick="selfPick(1,this)"><span>🙂</span>Θέλω λίγη εξάσκηση</button><button class="face" aria-pressed="false" onclick="selfPick(2,this)"><span>😊</span>Τα κατάφερα</button><button class="face" aria-pressed="false" onclick="selfPick(3,this)"><span>🤩</span>Τα κατάφερα πολύ καλά</button></div><button class="check" onclick="finish()">Ολοκλήρωση</button><button class="repeatBtn" onclick="restartAll()">↻ Επανάληψη δραστηριότητας</button></div>`}
+function selfPick(v,e){selfChoice=v;document.querySelectorAll('.face').forEach(x=>{x.classList.remove('sel');x.setAttribute('aria-pressed','false')});e.classList.add('sel');e.setAttribute('aria-pressed','true')}
+function finish(){if(!selfChoice){setFeedback('Διάλεξε πρώτα πώς νιώθεις για όσα έμαθες.',false);return}completeFinalDot();setFeedback('Μπράβο! Ολοκλήρωσες το Μάθημα 29.',true)}
+function restartAll(){s=0;selfChoice=null;conceptSel=new Set();openPhase=0;searchPhase=0;gradePhase=0;subjectPhase=0;resourceDone=new Set();testPhase=0;render()}
+
+render();
+</script>
+<footer class="nk-license" aria-label="Πληροφορίες δημιουργού και άδειας χρήσης">
+  <div><strong>Created by Nikos Kalakos · © 2026</strong></div>
+  <div>Original educational content and simulation design licensed under <a class="cc-badge" href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank" rel="license noopener noreferrer">CC BY-NC 4.0</a>.</div>
+  <div>Source code © 2026 Nikos Kalakos.</div>
+  <div>Third-party and textbook materials remain subject to the rights and licences of their respective copyright holders.</div>
+</footer>
+</body>
+</html>

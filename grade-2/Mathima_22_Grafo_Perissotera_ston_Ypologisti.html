@@ -1,0 +1,618 @@
+<!--
+ICT Educational Simulation
+Created by Nikos Kalakos
+Copyright © 2026 Nikos Kalakos
+
+Original educational content and simulation design licensed under CC BY-NC 4.0.
+Source code © 2026 Nikos Kalakos.
+Third-party and textbook materials remain subject to the rights and licences of their respective copyright holders.
+-->
+<!doctype html>
+<html lang="el">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="author" content="Nikos Kalakos">
+<meta name="copyright" content="© 2026 Nikos Kalakos">
+<meta name="license" content="Original educational content and simulation design: CC BY-NC 4.0; source code © 2026 Nikos Kalakos; third-party and textbook materials excluded.">
+<title>Μάθημα 22 - Γράφω περισσότερα στον υπολογιστή</title>
+<style>
+:root{
+  --unit-red:#D93A2E;
+  --unit-red-dark:#A92920;
+  --unit-red-soft:#FFF0EE;
+  --ink:#25334a;
+  --line:#d5dbe6;
+  --good:#eef7dc;
+  --bad:#fff0ed;
+  --athena:#5b4eb5;
+  --shadow:0 10px 28px rgba(37,51,74,.12);
+}
+*{box-sizing:border-box}
+body{margin:0;background:#f7f9fb;color:var(--ink);font-family:Arial,"Noto Sans",sans-serif}
+button,textarea{font:inherit}
+button{cursor:pointer}
+.app{max-width:1180px;margin:auto;padding:16px}
+.top{
+  background:#fff;border:3px solid #f0c3be;border-radius:24px;padding:14px 18px;
+  display:flex;align-items:center;justify-content:space-between;box-shadow:var(--shadow)
+}
+.top h1{margin:0;font-size:clamp(28px,4vw,40px)}
+.badge{
+  width:70px;height:70px;border-radius:22px;background:var(--unit-red);color:#fff;
+  display:grid;place-items:center;font-size:31px;font-weight:900;box-shadow:inset 0 -5px 0 rgba(0,0,0,.10)
+}
+.path{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin:16px 0}
+.dot{
+  width:44px;height:44px;border-radius:50%;display:grid;place-items:center;
+  border:3px solid #aeb7c7;background:#fff;color:#65718a;font-weight:900;font-size:20px
+}
+.dot.active{background:var(--unit-red);border-color:var(--unit-red-dark);color:#fff;transform:scale(1.1)}
+.dot.done{background:var(--unit-red);border-color:var(--unit-red-dark);color:#fff}
+.panel{
+  min-height:710px;background:#fff;border:3px solid #f0c3be;border-radius:28px;
+  padding:24px;box-shadow:var(--shadow)
+}
+.step-head{display:flex;justify-content:space-between;gap:12px;align-items:flex-start}
+.step-head h2{margin:0;font-size:clamp(25px,4vw,37px)}
+.help{
+  background:#fff3f2;color:#8c241d;border:3px solid #efaaa4;
+  border-radius:16px;padding:10px 17px;font-weight:900
+}
+.instruction{
+  max-width:970px;margin:14px auto 18px;text-align:center;font-size:clamp(19px,2.3vw,24px);
+  font-weight:900;line-height:1.38
+}
+.card{
+  max-width:1040px;margin:auto;border:3px solid #f0c3be;border-radius:28px;
+  background:#fff;padding:22px;min-height:500px
+}
+.feedback{
+  display:none;max-width:860px;margin:16px auto 0;padding:12px 18px;border-radius:17px;
+  text-align:center;font-weight:900;font-size:20px
+}
+.feedback.good{display:block;background:var(--good);border:2px solid #9dbd57}
+.feedback.bad{display:block;background:var(--bad);border:2px solid #e5a59b}
+.check{
+  display:block;margin:18px auto 0;padding:13px 28px;border:0;border-radius:16px;
+  background:var(--unit-red);color:#fff;font-size:21px;font-weight:900;
+  box-shadow:0 5px 0 var(--unit-red-dark)
+}
+.smallhelp{text-align:center;font-size:14px;color:#6d7890;font-weight:800;margin-top:10px}
+.taskbox{
+  max-width:800px;margin:0 auto 14px;border:4px solid var(--unit-red);background:#fff6f5;
+  border-radius:18px;padding:12px 16px;text-align:center;font-size:20px;font-weight:900
+}
+
+/* Keyboard */
+.keyboard-wrap{
+  max-width:930px;margin:auto;border:4px solid #59677a;border-radius:22px;background:#dce2e8;
+  padding:14px;box-shadow:0 7px 18px rgba(37,51,74,.18)
+}
+.krow{display:flex;gap:7px;margin-bottom:7px;justify-content:center}
+.key{
+  height:48px;min-width:51px;border:3px solid #8f9aa8;border-radius:9px;background:#fff;
+  box-shadow:0 3px 0 #a9b2bd;color:#28384e;font-weight:900;font-size:17px;
+  display:grid;place-items:center;padding:4px 8px;position:relative
+}
+.key:hover{background:#f3f8fb}
+.key:active{transform:translateY(2px);box-shadow:0 1px 0 #a9b2bd}
+.key.enter{min-width:108px}
+.key.space{min-width:330px}
+.key.backspace{min-width:118px}
+.key.caps{min-width:112px}
+.key.correct{outline:5px solid var(--unit-red);outline-offset:2px;background:#fff2f0}
+.key.flash{animation:keyflash .36s 2}
+@keyframes keyflash{50%{transform:translateY(-4px);box-shadow:0 7px 0 #a9b2bd}}
+
+/* Graphis */
+.graphis{
+  max-width:910px;margin:auto;border:5px solid #3f475c;border-radius:23px;overflow:hidden;background:#fff;
+  box-shadow:0 12px 28px rgba(20,28,45,.20)
+}
+.graphis-top{
+  height:42px;background:linear-gradient(90deg,var(--athena),#7d66d3);color:#fff;
+  display:flex;align-items:center;justify-content:space-between;padding:0 10px 0 14px;font-weight:900
+}
+.graphis-controls{display:flex;gap:4px}
+.graphis-controls button{
+  width:34px;height:29px;border:0;border-radius:6px;background:#f7f5ff;color:#443b81;font-weight:900
+}
+.graphis-menu{
+  height:38px;background:#f2f3f7;border-bottom:2px solid #d8dce4;
+  display:flex;align-items:center;gap:12px;padding:0 12px;font-size:14px;font-weight:800
+}
+.graphis-toolbar{
+  height:45px;background:#fafbfc;border-bottom:2px solid #e0e4ea;
+  display:flex;align-items:center;gap:8px;padding:0 10px
+}
+.graphis-tool{
+  width:38px;height:34px;border:2px solid #b8c0cc;border-radius:8px;background:#fff;
+  display:grid;place-items:center;font-weight:900
+}
+.graphis-page{min-height:315px;background:#e9edf2;padding:18px}
+.paper{
+  width:82%;min-height:275px;margin:auto;background:#fff;box-shadow:0 3px 9px rgba(0,0,0,.13);
+  padding:18px
+}
+.paper textarea{
+  width:100%;height:220px;border:2px solid #d7dce4;resize:none;padding:13px;
+  font-size:22px;line-height:1.55;color:#26354b;outline:none
+}
+.source-card{
+  max-width:760px;margin:0 auto 12px;border:3px solid #d1d8e2;border-radius:16px;background:#f9fafc;
+  padding:13px;text-align:center;font-weight:900;font-size:20px;line-height:1.55;
+  user-select:none;-webkit-user-select:none;-ms-user-select:none
+}
+
+/* App recognition */
+.apps-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;max-width:850px;margin:auto}
+.app-card{
+  min-height:145px;border:3px solid #d1d8e2;border-radius:20px;background:#fff;
+  display:grid;place-items:center;text-align:center;padding:13px;font-weight:900
+}
+.app-card .appico{
+  width:64px;height:64px;border-radius:15px;border:4px solid #46576c;background:#fff;
+  display:grid;place-items:center;font-size:32px;margin:auto
+}
+.app-card.selected{border-color:var(--unit-red);background:var(--unit-red-soft)}
+.doc-lines{
+  width:35px;height:42px;border:3px solid #46576c;border-radius:5px;background:#f8fbfd;position:relative
+}
+.doc-lines:before,.doc-lines:after{
+  content:"";position:absolute;left:6px;right:6px;height:3px;background:#788a9f;border-radius:3px
+}
+.doc-lines:before{top:12px}.doc-lines:after{top:23px}
+
+/* Free-writing requirements */
+.requirements{
+  max-width:760px;margin:0 auto 12px;display:grid;grid-template-columns:repeat(3,1fr);gap:10px
+}
+.req{
+  border:3px solid #d0d7e2;border-radius:14px;background:#fafbfd;padding:9px;
+  text-align:center;font-weight:900;font-size:14px
+}
+.req.ok{border-color:#8cab52;background:#f1f8e3}
+.req .mark{font-size:22px;display:block;margin-bottom:3px}
+
+/* Quiz/final */
+.quiz{
+  max-width:900px;margin:auto;border:4px solid var(--unit-red);border-radius:24px;
+  background:#fff9f8;padding:18px
+}
+.quiz-progress{height:14px;background:#e7edf1;border-radius:9px;overflow:hidden;max-width:540px;margin:0 auto 14px}
+.quiz-progress span{display:block;height:100%;background:var(--unit-red);width:0;transition:.25s}
+.quiz-q{text-align:center;font-size:23px;font-weight:900;margin-bottom:12px}
+.finalBox{max-width:780px;margin:auto;text-align:center}
+.stars{font-size:58px;margin:18px}
+.summary{
+  padding:20px;border:4px solid var(--unit-red);background:#fff4f2;border-radius:22px;
+  font-size:21px;font-weight:900;line-height:1.45
+}
+.faces{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:18px}
+.face{
+  min-height:130px;border:3px solid var(--line);border-radius:20px;background:#fff;
+  font-weight:900;font-size:17px
+}
+.face span{display:block;font-size:52px;margin-bottom:7px}
+.face.sel{border-color:var(--unit-red);background:var(--unit-red-soft)}
+.repeatBtn{
+  display:block;margin:15px auto 0;padding:12px 22px;border:0;border-radius:15px;
+  background:#4f6b86;color:#fff;font-size:19px;font-weight:900;box-shadow:0 5px 0 #31475b
+}
+.modal{
+  position:fixed;inset:0;background:#24344d99;display:none;place-items:center;padding:18px;z-index:60
+}
+.modal.show{display:grid}
+.modal-box{
+  max-width:620px;background:#fff;border-radius:24px;border:4px solid var(--unit-red);
+  padding:22px;text-align:center;font-size:20px
+}
+.modal-box button{
+  padding:10px 20px;border:0;border-radius:13px;background:var(--unit-red);color:#fff;font-weight:900
+}
+@media(max-width:850px){
+  .key{min-width:38px;height:43px;font-size:15px}
+  .key.space{min-width:220px}
+  .apps-grid,.requirements,.faces{grid-template-columns:1fr}
+}
+</style>
+
+
+<style id="nk-license-style">
+.nk-license{max-width:1100px;margin:14px auto 24px;padding:10px 16px;text-align:center;font:13px/1.45 Arial,"Noto Sans",sans-serif;color:#4e657c}
+.nk-license a{color:inherit;text-decoration:underline;text-underline-offset:2px}
+.nk-license .cc-badge{display:inline-block;margin:0 4px;padding:2px 7px;border:1px solid #8aa0b8;border-radius:6px;background:#fff;font-weight:700;white-space:nowrap}
+</style></head>
+<body>
+<div class="app">
+  <div class="top">
+    <h1>Γράφω περισσότερα στον υπολογιστή</h1>
+    <div class="badge">22</div>
+  </div>
+  <div class="path" id="path"></div>
+
+  <main class="panel">
+    <div class="step-head">
+      <h2 id="title"></h2>
+      <button class="help" onclick="help()">❓ Βοήθεια</button>
+    </div>
+    <div class="instruction" id="inst"></div>
+    <div class="card" id="card"></div>
+    <div class="feedback" id="feedback"></div>
+  </main>
+</div>
+
+<div class="modal" id="modal">
+  <div class="modal-box">
+    <h2>💡 Βοήθεια</h2>
+    <p id="helpText"></p>
+    <button onclick="closeHelp()">Εντάξει</button>
+  </div>
+</div>
+
+<script>
+const steps=[
+ {t:"Θυμάμαι το πληκτρολόγιο",i:"Ακολούθησε τις οκτώ οδηγίες και πάτησε κάθε φορά το σωστό πλήκτρο στο πραγματικό πληκτρολόγιο.",h:"Θα χρησιμοποιήσεις Space, Backspace, Caps Lock, τόνο, τελικό «ς», ENTER, κόμμα και τελεία. Πάτησε τα πλήκτρα στο πραγματικό πληκτρολόγιο, όχι στην εικόνα.",k:"review"},
+ {t:"Αναγνωρίζω εφαρμογές κειμένου",i:"Διάλεξε τα τρία εικονίδια που θα μπορούσαν να ανήκουν σε εφαρμογές συγγραφής κειμένου.",h:"Οι εφαρμογές κειμένου συνήθως χρησιμοποιούν σύμβολα όπως φύλλο, γραμμές κειμένου ή γράμματα.",k:"apps"},
+ {t:"Γράφω μία μικρή φράση",i:"Γράψε ακριβώς τη φράση στο Graphis. Πρόσεξε τόνο, κενό, κόμμα και τελεία.",h:"Η σωστή φράση είναι «Καλημέρα, Μαρία.» Η γραφή ελέγχεται ακριβώς.",k:"phrase"},
+ {t:"Αλλάζω παράγραφο",i:"Γράψε ακριβώς τις δύο προτάσεις στο Graphis, τη μία κάτω από την άλλη.",h:"Χρησιμοποίησε ENTER ανάμεσα στις δύο προτάσεις και βάλε τελεία στο τέλος καθεμιάς.",k:"paragraph"},
+ {t:"Γράφω πρόσκληση για πάρτι",i:"Γράψε ακριβώς την πρόσκληση στο Graphis. Χρησιμοποίησε όσα έμαθες για το πληκτρολόγιο.",h:"Πρόσεξε κεφαλαία, τόνους, κενά, ENTER, κόμμα και τελείες. Η γραφή ελέγχεται ακριβώς.",k:"invitation"},
+ {t:"Γράφω λίγα λόγια",i:"Γράψε δύο μικρές προτάσεις για εσένα. Βάλε τη δεύτερη σε νέα γραμμή και τελεία στο τέλος κάθε πρότασης.",h:"Γράψε δύο δικές σου προτάσεις. Χρησιμοποίησε ENTER ανάμεσά τους και βάλε τελεία στο τέλος καθεμιάς.",k:"freewrite"},
+ {t:"Τελική δοκιμή",i:"Διάβασε κάθε οδηγία και πάτησε το σωστό πλήκτρο στο πραγματικό πληκτρολόγιο.",h:"Θα χρειαστείς Space, Backspace, Caps Lock, τόνο, τελικό «ς», ENTER, κόμμα και τελεία. Χρησιμοποίησε το πραγματικό πληκτρολόγιο.",k:"quiz"},
+ {t:"Τα κατάφερες!",i:"Σκέψου τι έμαθες στο Μάθημα 22.",h:"Σκέψου πώς συνδυάζεις τα πλήκτρα του πληκτρολογίου για να γράψεις ένα μικρό κείμενο.",k:"final"}
+];
+
+let s=0,selfChoice=null;
+let reviewStep=0,appSelected=new Set();
+let quizIndex=0,quizOrder=[];
+
+const reviewTasks=[
+ {id:"space",code:"Space",text:"Πάτησε στο πραγματικό πληκτρολόγιο το πλήκτρο που αφήνει κενό ανάμεσα στις λέξεις."},
+ {id:"backspace",code:"Backspace",text:"Πάτησε στο πραγματικό πληκτρολόγιο το πλήκτρο που σβήνει χαρακτήρες."},
+ {id:"caps",code:"CapsLock",text:"Πάτησε στο πραγματικό πληκτρολόγιο το Caps Lock."},
+ {id:"accent",code:"Semicolon",text:"Πάτησε στο πραγματικό ελληνικό πληκτρολόγιο το πλήκτρο του τόνου."},
+ {id:"sigma",code:"KeyW",text:"Πάτησε στο πραγματικό ελληνικό πληκτρολόγιο το πλήκτρο με το τελικό «ς»."},
+ {id:"enter",code:"Enter",text:"Πάτησε στο πραγματικό πληκτρολόγιο το ENTER."},
+ {id:"comma",code:"Comma",text:"Πάτησε στο πραγματικό πληκτρολόγιο το πλήκτρο με το κόμμα (,)."},
+ {id:"period",code:"Period",text:"Πάτησε στο πραγματικό πληκτρολόγιο το πλήκτρο με την τελεία (.)."}
+];
+
+function nav(){
+ document.getElementById("path").innerHTML=steps.map((_,i)=>`<div class="dot ${i<s?'done':i===s?'active':''}">${i+1}</div>`).join("");
+}
+function completeFinalDot(){s=steps.length;nav()}
+function clearFeedback(){const f=document.getElementById("feedback");f.className="feedback";f.textContent=""}
+function setFeedback(t,ok){const f=document.getElementById("feedback");f.className="feedback "+(ok?"good":"bad");f.textContent=t}
+function nextAfter(ms=850){setTimeout(()=>{s++;render()},ms)}
+function shuffled(arr){
+ const a=[...arr];
+ for(let i=a.length-1;i>0;i--){
+  const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];
+ }
+ return a;
+}
+function render(){
+ nav();clearFeedback();
+ const x=steps[s];
+ document.getElementById("title").textContent=x.t;
+ document.getElementById("inst").textContent=x.i;
+ if(x.k==="review")stage1();
+ if(x.k==="apps")stage2();
+ if(x.k==="phrase")stage3();
+ if(x.k==="paragraph")stage4();
+ if(x.k==="invitation")stage5();
+ if(x.k==="freewrite")stage6();
+ if(x.k==="quiz")stage7();
+ if(x.k==="final")stage8();
+}
+function blockCopyShortcut(ev){
+ const k=(ev.key||"").toLowerCase();
+ if((ev.ctrlKey||ev.metaKey)&&(k==="c"||k==="x"||k==="a"||ev.key==="Insert")){
+  ev.preventDefault();return false;
+ }
+ return true;
+}
+function protectedSource(text){
+ return `<div class="source-card" oncontextmenu="return false" oncopy="return false" oncut="return false"
+  onkeydown="return blockCopyShortcut(event)" tabindex="0">${text}</div>`;
+}
+
+function key(label,id,cls=""){
+ return `<div class="key ${cls}" id="key_${id}" aria-hidden="true">${label}</div>`;
+}
+function keyboardHTML(){
+ return `<div class="keyboard-wrap">
+  <div class="krow">
+   ${key("1","1")}${key("2","2")}${key("3","3")}${key("4","4")}${key("5","5")}
+   ${key("6","6")}${key("7","7")}${key("8","8")}${key("9","9")}${key("0","0")}
+   ${key("Backspace","backspace","backspace")}
+  </div>
+  <div class="krow">
+   ${key(";","semicolon")}${key("ς","sigma")}${key("ε","epsilon")}${key("ρ","rho")}${key("τ","tau")}
+   ${key("υ","upsilon")}${key("θ","theta")}${key("ι","iota")}${key("ο","omicron")}${key("π","pi")}
+  </div>
+  <div class="krow">
+   ${key("Caps Lock","caps","caps")}${key("α","alpha")}${key("σ","s")}${key("δ","d")}${key("φ","f")}
+   ${key("γ","g")}${key("η","h")}${key("ξ","j")}${key("κ","k")}${key("λ","l")}${key("΄","accent")}
+   ${key("ENTER","enter","enter")}
+  </div>
+  <div class="krow">
+   ${key("ζ","z")}${key("χ","x")}${key("ψ","c")}${key("ω","v")}${key("β","b")}${key("ν","n")}${key("μ","m")}
+   ${key(",","comma")}${key(".","period")}
+  </div>
+  <div class="krow">${key("Space","space","space")}</div>
+ </div>`;
+}
+function flashVirtualKey(id,ok){
+ const el=document.getElementById("key_"+id);
+ if(!el)return;
+ if(ok){
+  el.classList.add("correct");
+ }else{
+  el.classList.add("flash");
+  setTimeout(()=>el.classList.remove("flash"),700);
+ }
+}
+
+function codeToVirtualId(code){
+ return {
+  Space:"space",
+  Backspace:"backspace",
+  CapsLock:"caps",
+  Semicolon:"accent",
+  KeyW:"sigma",
+  Enter:"enter",
+  Comma:"comma",
+  Period:"period"
+ }[code] || "";
+}
+
+function handleRealKeyboard(ev){
+ if(s===0){
+  const task=reviewTasks[reviewStep];
+  if(!task)return;
+  if(ev.code!==task.code){
+   flashVirtualKey(codeToVirtualId(ev.code),false);
+   setFeedback("Αυτό είναι διαφορετικό πλήκτρο. Δοκίμασε ξανά στο πραγματικό πληκτρολόγιο.",false);
+   return;
+  }
+  ev.preventDefault();
+  flashVirtualKey(task.id,true);
+  reviewStep++;
+  if(reviewStep<reviewTasks.length){
+   setFeedback("Σωστά! Πάμε στο επόμενο πλήκτρο.",true);
+   setTimeout(()=>{clearFeedback();drawReview()},600);
+  }else{
+   setFeedback("Μπράβο! Χρησιμοποίησες σωστά και τα οκτώ πλήκτρα στο πραγματικό πληκτρολόγιο.",true);
+   nextAfter();
+  }
+  return;
+ }
+
+ if(s===6){
+  const task=quizOrder[quizIndex];
+  if(!task)return;
+  if(ev.code!==task.code){
+   flashVirtualKey(codeToVirtualId(ev.code),false);
+   setFeedback("Αυτό είναι διαφορετικό πλήκτρο. Δοκίμασε ξανά στο πραγματικό πληκτρολόγιο.",false);
+   return;
+  }
+  ev.preventDefault();
+  flashVirtualKey(task.id,true);
+  quizIndex++;
+  if(quizIndex<quizOrder.length){
+   setFeedback("Σωστά! Πάμε στο επόμενο πλήκτρο.",true);
+   setTimeout(()=>{clearFeedback();drawQuiz()},600);
+  }else{
+   setFeedback("Μπράβο! Ολοκλήρωσες την τελική δοκιμή με το πραγματικό πληκτρολόγιο.",true);
+   nextAfter();
+  }
+ }
+}
+
+/* Stage 1 */
+function stage1(){reviewStep=0;drawReview()}
+function drawReview(){
+ document.getElementById("card").innerHTML=`
+  <div class="taskbox">${reviewTasks[reviewStep].text}</div>
+  ${keyboardHTML()}
+  <div class="smallhelp">Το πληκτρολόγιο στην οθόνη είναι μόνο οδηγός. Πάτησε το πραγματικό πλήκτρο.</div>
+  <div class="smallhelp">${reviewStep+1} από ${reviewTasks.length}</div>`;
+}
+
+/* Stage 2 */
+function stage2(){
+ appSelected=new Set();
+ const apps=shuffled([
+  {id:"doc1",ok:true,html:'<div class="appico"><div class="doc-lines"></div></div>',label:"Έγγραφο"},
+  {id:"doc2",ok:true,html:'<div class="appico">W</div>',label:"Κείμενο"},
+  {id:"doc3",ok:true,html:'<div class="appico">A▤</div>',label:"Κειμενογράφος"},
+  {id:"paint",ok:false,html:'<div class="appico">🎨</div>',label:"Ζωγραφική"}
+ ]);
+ window.appChoices=apps;
+ document.getElementById("card").innerHTML=`
+  <div class="apps-grid">
+   ${apps.map((a,i)=>`<button class="app-card" id="app${i}" onclick="toggleApp(${i})">${a.html}<span>${a.label}</span></button>`).join("")}
+  </div>
+  <button class="check" onclick="checkApps()">Έλεγχος</button>`;
+}
+function toggleApp(i){
+ appSelected.has(i)?appSelected.delete(i):appSelected.add(i);
+ document.getElementById("app"+i).classList.toggle("selected",appSelected.has(i));
+}
+function checkApps(){
+ const correct=window.appChoices.map((a,i)=>a.ok?i:-1).filter(i=>i>=0);
+ if(appSelected.size!==3||!correct.every(i=>appSelected.has(i))){
+  setFeedback("Διάλεξε τα τρία εικονίδια που ταιριάζουν σε εφαρμογές κειμένου.",false);return;
+ }
+ setFeedback("Σωστά! Οι εφαρμογές κειμένου συχνά χρησιμοποιούν φύλλα, γραμμές ή γράμματα στα εικονίδιά τους.",true);nextAfter();
+}
+
+/* Shared Graphis */
+function graphisHTML(id,placeholder="Γράψε εδώ..."){
+ return `<div class="graphis">
+  <div class="graphis-top"><span>Graphis — Νέο έγγραφο</span><span class="graphis-controls"><button>—</button><button>□</button><button>×</button></span></div>
+  <div class="graphis-menu"><span>Αρχείο</span><span>Επεξεργασία</span><span>Μορφοποίηση</span></div>
+  <div class="graphis-toolbar"><button class="graphis-tool">B</button><button class="graphis-tool">A</button><button class="graphis-tool">↶</button></div>
+  <div class="graphis-page"><div class="paper"><textarea id="${id}" spellcheck="false" placeholder="${placeholder}"></textarea></div></div>
+ </div>`;
+}
+
+/* Stage 3 */
+function stage3(){
+ document.getElementById("card").innerHTML=`
+  ${protectedSource("Καλημέρα, Μαρία.")}
+  ${graphisHTML("phraseText")}
+  <button class="check" onclick="checkPhrase()">Έλεγχος</button>`;
+ document.getElementById("phraseText").focus();
+}
+function checkPhrase(){
+ const v=document.getElementById("phraseText").value.replace(/\r\n/g,"\n").trim();
+ if(v!=="Καλημέρα, Μαρία."){
+  setFeedback("Γράψε ακριβώς «Καλημέρα, Μαρία.» Πρόσεξε τόνο, κόμμα, κενό και τελεία.",false);return;
+ }
+ setFeedback("Μπράβο! Χρησιμοποίησες σωστά τόνο, κόμμα, κενό και τελεία.",true);nextAfter();
+}
+
+/* Stage 4 */
+function stage4(){
+ document.getElementById("card").innerHTML=`
+  ${protectedSource("Το πάρτι είναι το Σάββατο.<br>Σε περιμένω.")}
+  ${graphisHTML("paragraphText")}
+  <button class="check" onclick="checkParagraph()">Έλεγχος</button>`;
+ document.getElementById("paragraphText").focus();
+}
+function checkParagraph(){
+ const v=document.getElementById("paragraphText").value.replace(/\r\n/g,"\n").trim();
+ const expected="Το πάρτι είναι το Σάββατο.\nΣε περιμένω.";
+ if(v!==expected){
+  setFeedback("Γράψε ακριβώς τις δύο προτάσεις, τη μία κάτω από την άλλη. Χρησιμοποίησε ENTER ανάμεσά τους.",false);return;
+ }
+ setFeedback("Σωστά! Χρησιμοποίησες ENTER για να αλλάξεις παράγραφο.",true);nextAfter();
+}
+
+/* Stage 5 */
+function stage5(){
+ document.getElementById("card").innerHTML=`
+  ${protectedSource("Σε προσκαλώ στο πάρτι μου.<br>Σάββατο, στις έξι.<br>Σε περιμένω.")}
+  ${graphisHTML("inviteText")}
+  <button class="check" onclick="checkInvitation()">Έλεγχος</button>`;
+ document.getElementById("inviteText").focus();
+}
+function checkInvitation(){
+ const v=document.getElementById("inviteText").value.replace(/\r\n/g,"\n").trim();
+ const expected="Σε προσκαλώ στο πάρτι μου.\nΣάββατο, στις έξι.\nΣε περιμένω.";
+ if(v!==expected){
+  setFeedback("Γράψε ακριβώς την πρόσκληση. Πρόσεξε κεφαλαία, τόνους, κενά, ENTER, κόμμα και τελείες.",false);return;
+ }
+ setFeedback("Μπράβο! Έγραψες σωστά μία μικρή πρόσκληση.",true);nextAfter();
+}
+
+/* Stage 6 */
+function stage6(){
+ document.getElementById("card").innerHTML=`
+  <div class="requirements">
+   <div class="req" id="rq1"><span class="mark">○</span>2 προτάσεις</div>
+   <div class="req" id="rq2"><span class="mark">○</span>ENTER ανάμεσά τους</div>
+   <div class="req" id="rq3"><span class="mark">○</span>Τελεία στο τέλος</div>
+  </div>
+  ${graphisHTML("freeText","Γράψε δύο μικρές προτάσεις για εσένα...")}
+  <button class="check" onclick="checkFreeWrite()">Έλεγχος</button>`;
+ document.getElementById("freeText").focus();
+}
+function markReq(id,ok){
+ const el=document.getElementById(id);
+ el.classList.toggle("ok",ok);
+ el.querySelector(".mark").textContent=ok?"✓":"○";
+}
+function checkFreeWrite(){
+ const raw=document.getElementById("freeText").value.replace(/\r\n/g,"\n").trim();
+ const lines=raw.split("\n").map(x=>x.trim()).filter(Boolean);
+ const two=lines.length===2;
+ const entered=raw.includes("\n");
+ const periods=two&&lines.every(x=>x.endsWith(".")&&x.length>2);
+ markReq("rq1",two);markReq("rq2",entered);markReq("rq3",periods);
+ if(!two||!entered||!periods){
+  setFeedback("Χρειάζονται δύο μικρές προτάσεις, σε δύο διαφορετικές γραμμές, με τελεία στο τέλος καθεμιάς.",false);return;
+ }
+ setFeedback("Μπράβο! Έγραψες ένα μικρό κείμενο με δύο προτάσεις.",true);nextAfter();
+}
+
+/* Stage 7 */
+const quizTasks=[
+ {id:"space",code:"Space",text:"Πάτησε το Space στο πραγματικό πληκτρολόγιο."},
+ {id:"backspace",code:"Backspace",text:"Πάτησε το Backspace στο πραγματικό πληκτρολόγιο."},
+ {id:"caps",code:"CapsLock",text:"Πάτησε το Caps Lock στο πραγματικό πληκτρολόγιο."},
+ {id:"accent",code:"Semicolon",text:"Πάτησε το πλήκτρο του τόνου στο πραγματικό ελληνικό πληκτρολόγιο."},
+ {id:"sigma",code:"KeyW",text:"Πάτησε το πλήκτρο με το τελικό «ς» στο πραγματικό ελληνικό πληκτρολόγιο."},
+ {id:"enter",code:"Enter",text:"Πάτησε το ENTER στο πραγματικό πληκτρολόγιο."},
+ {id:"comma",code:"Comma",text:"Πάτησε το κόμμα (,) στο πραγματικό πληκτρολόγιο."},
+ {id:"period",code:"Period",text:"Πάτησε την τελεία (.) στο πραγματικό πληκτρολόγιο."}
+];
+
+function stage7(){
+ quizIndex=0;
+ quizOrder=shuffled(quizTasks);
+ drawQuiz();
+}
+function drawQuiz(){
+ const q=quizOrder[quizIndex];
+ document.getElementById("card").innerHTML=`
+  <div class="quiz">
+   <div class="quiz-progress"><span style="width:${(quizIndex/quizOrder.length)*100}%"></span></div>
+   <div class="quiz-q">${q.text}</div>
+   ${keyboardHTML()}
+   <div class="smallhelp">Το πληκτρολόγιο στην οθόνη είναι μόνο οδηγός. Πάτησε το πραγματικό πλήκτρο.</div>
+   <div class="smallhelp">${quizIndex+1} από ${quizOrder.length}</div>
+  </div>`;
+}
+
+/* Stage 8 */
+function stage8(){
+ selfChoice=null;
+ document.getElementById("card").innerHTML=`
+  <div class="finalBox">
+   <div class="stars">⭐ ⭐ ⭐</div>
+   <div class="summary">
+    Έμαθες να συνδυάζεις τα πλήκτρα του πραγματικού πληκτρολογίου για να γράφεις μικρά κείμενα:
+    να αφήνεις κενά, να βάζεις τόνους, κόμμα και τελεία και να αλλάζεις παράγραφο με ENTER.
+   </div>
+   <div class="faces">
+    <button class="face" onclick="selfPick(1,this)"><span>🙂</span>Θέλω λίγη εξάσκηση</button>
+    <button class="face" onclick="selfPick(2,this)"><span>😊</span>Τα κατάφερα</button>
+    <button class="face" onclick="selfPick(3,this)"><span>🤩</span>Τα κατάφερα πολύ καλά</button>
+   </div>
+   <button class="check" onclick="finish()">Ολοκλήρωση</button>
+   <button class="repeatBtn" onclick="restartAll()">↻ Επανάληψη δραστηριότητας</button>
+  </div>`;
+}
+function selfPick(v,e){
+ selfChoice=v;document.querySelectorAll(".face").forEach(x=>x.classList.remove("sel"));e.classList.add("sel");
+}
+function finish(){
+ const f=document.getElementById("feedback");
+ if(!selfChoice){f.className="feedback bad";f.textContent="Διάλεξε πρώτα πώς νιώθεις για όσα έμαθες.";return}
+ completeFinalDot();f.className="feedback good";f.textContent="Μπράβο! Ολοκλήρωσες το Μάθημα 22.";
+}
+function restartAll(){
+ s=0;selfChoice=null;reviewStep=0;appSelected=new Set();quizIndex=0;quizOrder=[];render();
+}
+function help(){
+ const idx=Math.min(s,steps.length-1);
+ document.getElementById("helpText").textContent=steps[idx].h;
+ document.getElementById("modal").classList.add("show");
+}
+function closeHelp(){document.getElementById("modal").classList.remove("show")}
+window.addEventListener("keydown",handleRealKeyboard);
+render();
+</script>
+
+
+<footer class="nk-license" aria-label="Πληροφορίες δημιουργού και άδειας χρήσης">
+  <div><strong>Created by Nikos Kalakos · © 2026</strong></div>
+  <div>Original educational content and simulation design licensed under <a class="cc-badge" href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank" rel="license noopener noreferrer">CC BY-NC 4.0</a>.</div>
+  <div>Source code © 2026 Nikos Kalakos.</div>
+  <div>Third-party and textbook materials remain subject to the rights and licences of their respective copyright holders.</div>
+</footer></body>
+</html>

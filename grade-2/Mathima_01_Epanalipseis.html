@@ -1,0 +1,249 @@
+<!--
+ICT Educational Simulation
+Created by Nikos Kalakos
+Copyright © 2026 Nikos Kalakos
+
+Original educational content and simulation design licensed under CC BY-NC 4.0.
+Source code © 2026 Nikos Kalakos.
+Third-party and textbook materials remain subject to the rights and licences of their respective copyright holders.
+-->
+<!doctype html>
+<html lang="el">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="author" content="Nikos Kalakos">
+<meta name="copyright" content="© 2026 Nikos Kalakos">
+<meta name="license" content="Original educational content and simulation design: CC BY-NC 4.0; source code © 2026 Nikos Kalakos; third-party and textbook materials excluded.">
+<title>Μάθημα 1 - Επαναλήψεις</title>
+<style>
+:root{--ink:#17324d;--blue:#147ca8;--blue2:#0b648b;--soft:#eaf7fb;--lime:#9abd22;--lime2:#789b12;--line:#c9d8e7;--ok:#2f9b63;--bad:#d85c4b;--yellow:#f3c84a;--shadow:0 10px 28px rgba(23,50,77,.12)}
+*{box-sizing:border-box} body{margin:0;background:#f7fafc;color:var(--ink);font-family:Arial,"Noto Sans",sans-serif}
+button{font:inherit;cursor:pointer}.app{max-width:1160px;margin:auto;padding:16px}
+.top{background:#fff;border:3px solid #b8dfea;border-radius:24px;padding:14px 18px;display:flex;align-items:center;justify-content:space-between;box-shadow:var(--shadow)}
+.top h1{margin:0;font-size:clamp(28px,4vw,42px)}.top small{font-size:18px}.badge{width:68px;height:68px;border-radius:22px;background:var(--blue);display:grid;place-items:center;color:#fff;font-size:31px;font-weight:900}
+.path{display:flex;gap:10px;justify-content:center;margin:16px 0;flex-wrap:wrap}.dot{width:44px;height:44px;border-radius:50%;border:3px solid #aab9c9;background:#fff;color:#5e7389;display:grid;place-items:center;font-weight:900;font-size:20px}.dot.active{background:var(--blue);border-color:var(--blue);color:#fff;transform:scale(1.1)}.dot.done{background:var(--lime);border-color:var(--lime2);color:#fff}
+.panel{min-height:690px;background:#fff;border:3px solid #b8dfea;border-radius:28px;padding:24px;box-shadow:var(--shadow)}
+.step-head{display:flex;justify-content:space-between;gap:12px}.step-head h2{margin:0;font-size:clamp(26px,4vw,38px)}
+.help{background:#fff7d6;color:#624700;border:3px solid #dfbc44;border-radius:16px;padding:10px 17px;font-weight:900}
+.instruction{max-width:940px;margin:14px auto 18px;text-align:center;font-size:clamp(20px,2.4vw,25px);font-weight:900;line-height:1.35}
+.card{max-width:1000px;margin:auto;border:3px solid #c7e4ec;border-radius:28px;background:#fff;padding:22px;min-height:470px}
+.feedback{display:none;max-width:820px;margin:16px auto 0;padding:12px 18px;border-radius:17px;text-align:center;font-weight:900;font-size:20px}.feedback.good{display:block;background:#e5f8ef;border:2px solid #87cdae}.feedback.bad{display:block;background:#fff0ed;border:2px solid #e5a59b}
+.row{display:flex;gap:16px;justify-content:center;align-items:stretch;flex-wrap:wrap}.choice{min-width:190px;min-height:150px;border:3px solid var(--line);border-radius:22px;background:#fff;padding:14px;font-weight:900;font-size:19px;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:8px}.choice:hover{transform:translateY(-2px);box-shadow:var(--shadow)}.choice .pic{font-size:58px}
+.scene{display:grid;grid-template-columns:1fr 1fr;gap:22px;align-items:center}.people{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}.kid{border:3px solid #c9d8e7;border-radius:18px;padding:14px 6px;text-align:center;background:#f9fcfe;font-size:43px}.kid.done{border-color:#82c79f;background:#e9f8ef}.actions{display:flex;flex-direction:column;gap:10px}.act{padding:13px;border:3px solid #efb3b3;background:#fff6f6;border-radius:15px;font-size:19px;font-weight:900}.repeat{border:4px dashed #c86d72;border-radius:20px;padding:12px;background:#fffafa}.repeat-title{font-weight:900;color:#b4424c;margin-bottom:8px}
+.sequence{max-width:620px;margin:auto;display:flex;flex-direction:column;gap:10px}.seq{padding:14px;border:3px solid #cbd9e6;border-radius:16px;background:#fff;font-weight:900;font-size:19px}.seq.repeatbox{border:4px dashed #c86d72;background:#fffafa}.minirow{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}.nature{width:210px;height:175px;border:3px solid var(--line);border-radius:22px;background:#fff;display:grid;place-items:center;padding:10px;text-align:center;font-size:18px;font-weight:900}.nature span{font-size:65px}
+.dance-floor{max-width:720px;margin:auto;background:#f4fbfd;border:3px solid #b9dde8;border-radius:25px;padding:18px}.dancer{text-align:center;font-size:82px;min-height:105px}.moves{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}.move{padding:15px;border:3px solid #cbd9e6;border-radius:16px;background:white;font-size:18px;font-weight:900}.count{display:flex;align-items:center;justify-content:center;gap:16px;margin:15px}.count button{width:52px;height:52px;border-radius:15px;border:3px solid #9bc5d5;background:#fff;font-size:28px;font-weight:900}.num{font-size:35px;font-weight:900;min-width:40px;text-align:center}
+.check{display:block;margin:18px auto 0;padding:13px 28px;border:0;border-radius:16px;background:var(--lime);color:#fff;font-size:21px;font-weight:900;box-shadow:0 5px 0 var(--lime2)}.check:active{transform:translateY(3px);box-shadow:0 2px 0 var(--lime2)}
+
+.finalBox{max-width:760px;margin:auto;text-align:center}
+.finalBox .stars{font-size:58px;margin:18px}
+.summary{padding:20px;border:4px solid var(--blue);background:var(--soft);border-radius:22px;font-size:21px;font-weight:900;line-height:1.45}
+.faces{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:18px}
+.face{min-height:130px;border:3px solid var(--line);border-radius:20px;background:#fff;font-weight:900;font-size:17px}
+.face span{display:block;font-size:52px;margin-bottom:7px}
+.face.sel{border-color:var(--lime);background:#eef8d8}
+
+.modal{position:fixed;inset:0;background:#17324d99;display:none;place-items:center;padding:18px;z-index:5}.modal.show{display:grid}.modal-box{max-width:600px;background:#fff;border-radius:24px;border:4px solid #dfbc44;padding:22px;text-align:center;font-size:20px}.modal-box button{padding:10px 20px;border:0;border-radius:13px;background:#dfbc44;font-weight:900}
+.final{font-size:28px;text-align:center;padding:45px 10px}.stars{font-size:58px}
+@media(max-width:720px){.scene{grid-template-columns:1fr}.people{grid-template-columns:repeat(2,1fr)}.moves{grid-template-columns:1fr}}
+</style>
+
+<style id="nk-license-style">
+.nk-license{max-width:1100px;margin:14px auto 24px;padding:10px 16px;text-align:center;font:13px/1.45 Arial,"Noto Sans",sans-serif;color:#4e657c}
+.nk-license a{color:inherit;text-decoration:underline;text-underline-offset:2px}
+.nk-license .cc-badge{display:inline-block;margin:0 4px;padding:2px 7px;border:1px solid #8aa0b8;border-radius:6px;background:#fff;font-weight:700;white-space:nowrap}
+</style>
+</head>
+<body>
+<div class="app">
+ <div class="top"><div><h1>Επαναλήψεις</h1></div><div class="badge">1</div></div>
+ <div class="path" id="path"></div>
+ <main class="panel">
+  <div class="step-head"><h2 id="stepTitle"></h2><button class="help" onclick="help()">❓ Βοήθεια</button></div>
+  <div class="instruction" id="instruction"></div>
+  <div class="card" id="card"></div>
+  <div class="feedback" id="feedback"></div>
+ </main>
+</div>
+<div class="modal" id="modal"><div class="modal-box"><h2>💡 Βοήθεια</h2><p id="helpText"></p><button onclick="closeHelp()">Εντάξει</button></div></div>
+<script>
+const steps=[
+ {title:"Το ίδιο ξανά και ξανά",inst:"Ποια εικόνα δείχνει κάτι που επαναλαμβάνεται;",help:"Ψάξε κάτι που συμβαίνει ξανά και ξανά με τον ίδιο τρόπο.",type:"choose"},
+ {title:"Φτιάχνω την επανάληψη",inst:"Διάλεξε τις δύο ενέργειες που πρέπει να επαναλαμβάνονται για κάθε παιδί.",help:"Για κάθε παιδί επαναλαμβάνονται οι ίδιες βασικές ενέργειες.",type:"build"},
+ {title:"Βουρτσίζω τα δόντια",inst:"Βρες ποια δύο βήματα πρέπει να γίνουν πολλές φορές.",help:"Η οδοντόβουρτσα κινείται πάνω και κάτω πολλές φορές.",type:"teeth"},
+ {title:"Δημιουργώ μια επανάληψη",inst:"Φτιάξε τη δική σου επανάληψη: διάλεξε δύο κινήσεις και όρισε πόσες φορές θα επαναληφθούν.",help:"Διάλεξε δύο κινήσεις που θα γίνονται με την ίδια σειρά ξανά και ξανά.",type:"create"},
+ {title:"Βρίσκω τη σωστή επανάληψη",inst:"Ο χορός πρέπει να επαναλαμβάνεται 5 φορές. Ποια οδηγία τον περιγράφει σωστά;",help:"Ψάξε την οδηγία που βάζει όλα τα βήματα του χορού μέσα σε μία επανάληψη 5 φορές.",type:"dancecheck"},
+ {title:"Τα κατάφερες!",inst:"Σκέψου τι έμαθες για τις επαναλήψεις.",help:"Η επανάληψη μας βοηθά όταν τα ίδια βήματα πρέπει να γίνουν πολλές φορές.",type:"final"}
+]; let s=0, danceN=5, selfChoice=null;
+function path(){document.getElementById('path').innerHTML=steps.map((_,i)=>`<div class="dot ${i<s?'done':i===s?'active':''}">${i+1}</div>`).join('')}
+function fb(msg,ok){let f=document.getElementById('feedback');f.className='feedback '+(ok?'good':'bad');f.textContent=msg;if(ok)setTimeout(()=>{s++;render()},900)}
+function clearfb(){let f=document.getElementById('feedback');f.className='feedback';f.textContent=''}
+function render(){path();clearfb();if(s>=steps.length){document.getElementById('stepTitle').textContent="Μπράβο!";document.getElementById('instruction').textContent="Ολοκλήρωσες τη δραστηριότητα.";document.getElementById('card').innerHTML='<div class="final"><div class="stars">⭐ ⭐ ⭐</div><b>Έμαθες να αναγνωρίζεις και να χρησιμοποιείς την επανάληψη!</b></div>';return}
+ let x=steps[s];document.getElementById('stepTitle').textContent=x.title;document.getElementById('instruction').textContent=x.inst;
+ if(x.type==="choose") document.getElementById('card').innerHTML=`<div class="row">
+ <button class="choice" onclick="ans(false)"><span class="pic">🎈</span>Ένα μπαλόνι</button>
+ <button class="choice" onclick="ans(true)"><span class="pic">🌞🌙</span>Μέρα – νύχτα</button>
+ <button class="choice" onclick="ans(false)"><span class="pic">🍎</span>Ένα μήλο</button></div>`;
+ if(x.type==="build") buildRepeat();
+ if(x.type==="teeth") teeth();
+ if(x.type==="create") createRepeat();
+ if(x.type==="dancecheck") danceCheck();
+ if(x.type==="final") renderFinal();
+}
+function ans(ok){fb(ok?"Σωστά! Αυτό είναι επανάληψη.":"Δοκίμασε ξανά.",ok)}
+let buildSel=[];
+function buildRepeat(){
+ buildSel=[];
+ const acts=[
+   ["🍬","Δώσε ένα γλυκό"],
+   ["✉️","Δώσε μία πρόσκληση"],
+   ["👋","Χαιρέτησε"]
+ ];
+ document.getElementById('card').innerHTML=`
+ <div class="repeat" style="max-width:720px;margin:auto">
+   <div class="repeat-title">🔁 Επανάλαβε για κάθε παιδί</div>
+   <p style="font-weight:900;text-align:center">Πάτησε τις δύο ενέργειες που πρέπει να μπουν μέσα στην επανάληψη.</p>
+   <div class="row">
+     ${acts.map((a,i)=>`<button class="choice" id="b${i}" onclick="buildPick(${i})"><span class="pic">${a[0]}</span>${a[1]}</button>`).join('')}
+   </div>
+   <button class="check" onclick="checkBuild()">Έλεγχος</button>
+ </div>`;
+}
+function buildPick(i){
+ const p=buildSel.indexOf(i);
+ if(p>=0)buildSel.splice(p,1); else buildSel.push(i);
+ document.getElementById('b'+i).style.background=buildSel.includes(i)?'#eaf7fb':'#fff';
+}
+function checkBuild(){
+ const ok=buildSel.length===2&&buildSel.includes(0)&&buildSel.includes(1);
+ fb(ok?"Σωστά! Για κάθε παιδί επαναλαμβάνεις: γλυκό και πρόσκληση.":"Διάλεξε τις δύο βασικές ενέργειες που γίνονται για κάθε παιδί.",ok);
+}
+let toothSel=[];
+function teeth(){toothSel=[];let arr=["Βάλε οδοντόπαστα","Μετακίνησε την οδοντόβουρτσα πάνω","Μετακίνησε την οδοντόβουρτσα κάτω","Ξέπλυνε το στόμα","Ξέπλυνε την οδοντόβουρτσα"];document.getElementById('card').innerHTML=`<div class="sequence">${arr.map((t,i)=>`<button class="seq" id="t${i}" onclick="tooth(${i})">${i===1||i===2?'↕️ ':''}${t}</button>`).join('')}<button class="check" onclick="checkTeeth()">Έλεγχος</button></div>`}
+function tooth(i){let p=toothSel.indexOf(i);p>=0?toothSel.splice(p,1):toothSel.push(i);document.getElementById('t'+i).style.background=toothSel.includes(i)?'#eaf7fb':'#fff'}
+function checkTeeth(){let ok=toothSel.length===2&&toothSel.includes(1)&&toothSel.includes(2);fb(ok?"Σωστά! Πάνω και κάτω επαναλαμβάνονται πολλές φορές.":"Διάλεξε μόνο τα δύο βήματα που επαναλαμβάνονται.",ok)}
+let createMoves=[], createN=3;
+function createRepeat(){
+ createMoves=[];createN=3;
+ const moves=[["👏","Παλαμάκια"],["⬅️","Βήμα αριστερά"],["➡️","Βήμα δεξιά"],["🙆","Χέρια ψηλά"]];
+ document.getElementById('card').innerHTML=`
+ <div class="repeat" style="max-width:800px;margin:auto">
+   <div class="repeat-title">🔁 Φτιάξε τη δική σου επανάληψη</div>
+   <p style="text-align:center;font-weight:900">1. Διάλεξε ακριβώς δύο κινήσεις.</p>
+   <div class="row">
+     ${moves.map((m,i)=>`<button class="choice" id="cm${i}" onclick="createPick(${i})"><span class="pic">${m[0]}</span>${m[1]}</button>`).join('')}
+   </div>
+   <p style="text-align:center;font-weight:900;margin-top:18px">2. Διάλεξε πόσες φορές θα επαναληφθούν.</p>
+   <div class="count">
+     <button onclick="createChange(-1)">−</button>
+     <div class="num" id="createNum">${createN}</div>
+     <button onclick="createChange(1)">+</button>
+   </div>
+   <div id="createPreview" style="max-width:650px;margin:14px auto;padding:14px;border:3px solid #cbd9e6;border-radius:16px;text-align:center;font-weight:900;background:#f9fcfe">Διάλεξε δύο κινήσεις.</div>
+   <button class="check" onclick="checkCreate()">Έλεγχος</button>
+ </div>`;
+}
+function createPick(i){
+ const p=createMoves.indexOf(i);
+ if(p>=0)createMoves.splice(p,1);
+ else if(createMoves.length<2)createMoves.push(i);
+ else {fb("Μπορείς να διαλέξεις δύο κινήσεις.",false);return;}
+ document.getElementById('cm'+i).style.background=createMoves.includes(i)?'#eaf7fb':'#fff';
+ updateCreatePreview();
+}
+function createChange(d){
+ createN=Math.max(2,Math.min(6,createN+d));
+ document.getElementById('createNum').textContent=createN;
+ updateCreatePreview();
+}
+function updateCreatePreview(){
+ const icons=["👏","⬅️","➡️","🙆"];
+ const box=document.getElementById('createPreview');
+ if(createMoves.length<2){box.textContent="Διάλεξε δύο κινήσεις.";return;}
+ box.innerHTML=`🔁 Επανάλαβε <b>${createN}</b> φορές: &nbsp; ${icons[createMoves[0]]} → ${icons[createMoves[1]]}`;
+}
+function checkCreate(){
+ const ok=createMoves.length===2;
+ fb(ok?"Μπράβο! Δημιούργησες μόνος σου μία σωστή επανάληψη.":"Διάλεξε δύο κινήσεις για να δημιουργήσεις την επανάληψη.",ok);
+}
+function danceCheck(){
+ document.getElementById('card').innerHTML=`
+ <div style="max-width:860px;margin:auto">
+   <div class="task-strip" style="border-color:#9abd22;background:#f4f9df">
+     Ο χορός έχει τα βήματα: ⬅️ αριστερά → ➡️ δεξιά → 🙌 χέρια ψηλά → 👏 παλαμάκια
+   </div>
+   <div class="row" style="margin-top:20px">
+     <button class="choice" style="min-width:250px" onclick="danceAnswer(false)">
+       <span class="pic">5️⃣</span>
+       Κάνε μόνο το βήμα αριστερά 5 φορές και μετά τα υπόλοιπα μία φορά.
+     </button>
+     <button class="choice" style="min-width:250px" onclick="danceAnswer(true)">
+       <span class="pic">🔁</span>
+       Επανάλαβε 5 φορές:<br>⬅️ → ➡️ → 🙌 → 👏
+     </button>
+     <button class="choice" style="min-width:250px" onclick="danceAnswer(false)">
+       <span class="pic">1️⃣</span>
+       Κάνε όλα τα βήματα μία φορά.
+     </button>
+   </div>
+ </div>`;
+}
+function danceAnswer(ok){
+ fb(ok
+   ?"Σωστά! Όλα τα βήματα του χορού βρίσκονται μέσα στην επανάληψη και γίνονται 5 φορές."
+   :"Δοκίμασε ξανά. Θέλουμε να επαναλαμβάνονται όλα τα βήματα του χορού 5 φορές.",
+   ok);
+}
+function renderFinal(){
+ selfChoice=null;
+ document.getElementById('card').innerHTML=`
+ <div class="finalBox">
+   <div class="stars">⭐ ⭐ ⭐</div>
+   <div class="summary">
+     Έμαθες ότι πολλά πράγματα στη φύση και στη ζωή επαναλαμβάνονται,
+     να χρησιμοποιείς την επανάληψη όταν δίνεις οδηγίες
+     και να χρησιμοποιείς την επανάληψη σε ένα πρόβλημα.
+   </div>
+   <div class="faces">
+     <button class="face" onclick="selfPick(1,this)"><span>🙂</span>Θέλω λίγη εξάσκηση</button>
+     <button class="face" onclick="selfPick(2,this)"><span>😊</span>Τα κατάφερα</button>
+     <button class="face" onclick="selfPick(3,this)"><span>🤩</span>Τα κατάφερα πολύ καλά</button>
+   </div>
+   <button class="check" onclick="finish()">Ολοκλήρωση</button>
+   <button class="check" style="background:var(--blue);box-shadow:0 5px 0 var(--blue2)" onclick="restartAll()">↻ Επανάληψη δραστηριότητας</button>
+ </div>`;
+}
+function selfPick(v,el){
+ selfChoice=v;
+ document.querySelectorAll('.face').forEach(x=>x.classList.remove('sel'));
+ el.classList.add('sel');
+}
+function finish(){
+ if(!selfChoice){
+   const f=document.getElementById('feedback');
+   f.className='feedback bad';
+   f.textContent='Διάλεξε πρώτα πώς νιώθεις για όσα έμαθες.';
+   return;
+ }
+ const f=document.getElementById('feedback');
+ f.className='feedback good';
+ f.textContent='Μπράβο! Ολοκλήρωσες το Μάθημα 1.';
+}
+function restartAll(){
+ s=0;
+ danceN=5;
+ selfChoice=null;
+ render();
+}
+function help(){document.getElementById('helpText').textContent=steps[Math.min(s,steps.length-1)].help;document.getElementById('modal').classList.add('show')}
+function closeHelp(){document.getElementById('modal').classList.remove('show')}
+render();
+</script>
+
+<footer class="nk-license" aria-label="Πληροφορίες δημιουργού και άδειας χρήσης">
+  <div><strong>Created by Nikos Kalakos · © 2026</strong></div>
+  <div>Original educational content and simulation design licensed under <a class="cc-badge" href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank" rel="license noopener noreferrer">CC BY-NC 4.0</a>.</div>
+  <div>Source code © 2026 Nikos Kalakos.</div>
+  <div>Third-party and textbook materials remain subject to the rights and licences of their respective copyright holders.</div>
+</footer>
+</body></html>

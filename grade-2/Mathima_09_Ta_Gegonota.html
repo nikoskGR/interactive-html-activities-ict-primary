@@ -1,0 +1,472 @@
+<!--
+ICT Educational Simulation
+Created by Nikos Kalakos
+Copyright © 2026 Nikos Kalakos
+
+Original educational content and simulation design licensed under CC BY-NC 4.0.
+Source code © 2026 Nikos Kalakos.
+Third-party and textbook materials remain subject to the rights and licences of their respective copyright holders.
+-->
+<!doctype html>
+<html lang="el">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="author" content="Nikos Kalakos">
+<meta name="copyright" content="© 2026 Nikos Kalakos">
+<meta name="license" content="Original educational content and simulation design: CC BY-NC 4.0; source code © 2026 Nikos Kalakos; third-party and textbook materials excluded.">
+<title>Μάθημα 9 - Τα γεγονότα</title>
+<style>
+:root{
+  --ink:#17324d;--blue:#147ca8;--blue2:#0b648b;--soft:#eaf7fb;
+  --lime:#9abd22;--lime2:#789b12;--line:#c9d8e7;--purple:#7358c7;
+  --event:#b640b8;--event2:#842d87;--basic:#2788d2;--basic2:#16679f;
+  --red:#da3d4a;--shadow:0 10px 28px rgba(23,50,77,.12)
+}
+*{box-sizing:border-box}
+body{margin:0;background:#f7fafc;color:var(--ink);font-family:Arial,"Noto Sans",sans-serif}
+button,input{font:inherit} button{cursor:pointer}
+.app{max-width:1180px;margin:auto;padding:16px}
+.top{background:#fff;border:3px solid #b8dfea;border-radius:24px;padding:14px 18px;display:flex;align-items:center;justify-content:space-between;box-shadow:var(--shadow)}
+.top h1{margin:0;font-size:clamp(28px,4vw,42px)}
+.badge{width:68px;height:68px;border-radius:22px;background:var(--blue);display:grid;place-items:center;color:#fff;font-size:31px;font-weight:900}
+.path{display:flex;gap:10px;justify-content:center;margin:16px 0;flex-wrap:wrap}
+.dot{width:44px;height:44px;border-radius:50%;border:3px solid #aab9c9;background:#fff;color:#5e7389;display:grid;place-items:center;font-weight:900;font-size:20px}
+.dot.active{background:var(--blue);border-color:var(--blue);color:#fff;transform:scale(1.1)}
+.dot.done{background:var(--lime);border-color:var(--lime2);color:#fff}
+.panel{min-height:720px;background:#fff;border:3px solid #b8dfea;border-radius:28px;padding:24px;box-shadow:var(--shadow)}
+.step-head{display:flex;justify-content:space-between;gap:12px}
+.step-head h2{margin:0;font-size:clamp(26px,4vw,38px)}
+.help{background:#fff7d6;color:#624700;border:3px solid #dfbc44;border-radius:16px;padding:10px 17px;font-weight:900}
+.instruction{max-width:980px;margin:14px auto 18px;text-align:center;font-size:clamp(20px,2.35vw,25px);font-weight:900;line-height:1.35}
+.card{max-width:1040px;margin:auto;border:3px solid #c7e4ec;border-radius:28px;background:#fff;padding:22px;min-height:500px}
+.feedback{display:none;max-width:860px;margin:16px auto 0;padding:12px 18px;border-radius:17px;text-align:center;font-weight:900;font-size:20px}
+.feedback.good{display:block;background:#e5f8ef;border:2px solid #87cdae}
+.feedback.bad{display:block;background:#fff0ed;border:2px solid #e5a59b}
+.check{display:block;margin:18px auto 0;padding:13px 28px;border:0;border-radius:16px;background:var(--lime);color:#fff;font-size:21px;font-weight:900;box-shadow:0 5px 0 var(--lime2)}
+.row{display:flex;gap:14px;justify-content:center;align-items:stretch;flex-wrap:wrap}
+.choice{min-width:210px;min-height:135px;border:3px solid var(--line);border-radius:22px;background:#fff;padding:14px;font-weight:900;font-size:18px;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:10px}
+.choice:hover{transform:translateY(-2px);box-shadow:var(--shadow)}.choice.selectedAnswer{border-color:var(--lime);background:#eef8d8;box-shadow:inset 0 0 0 2px #b9d56a}
+.choice .big{font-size:48px}
+
+/* Noesis Blocks */
+.noesis{max-width:995px;margin:auto;border:4px solid var(--purple);border-radius:22px;background:#fff;overflow:hidden;box-shadow:0 10px 22px rgba(23,50,77,.16)}
+.ntitle{height:52px;background:linear-gradient(90deg,#6650c5,#875fda);color:#fff;display:flex;align-items:center;justify-content:space-between;padding:0 15px;font-size:21px;font-weight:900}
+.nbrand{display:flex;align-items:center;gap:10px}
+.nlogo{width:32px;height:32px;border-radius:10px;background:#fff;color:#6c54bf;display:grid;place-items:center;font-size:19px;font-weight:900}
+.nmenu{height:38px;background:#faf8ff;border-bottom:2px solid #e3d9ee;display:flex;align-items:center;gap:18px;padding:0 13px;font-size:14px}
+.nb{display:grid;grid-template-columns:270px 165px 1fr;min-height:480px}
+.simPane{padding:14px;background:#f6f8fa;border-right:2px solid #d7dde3}
+.catPane{padding:10px;background:#fff;border-right:2px solid #e2e2e2}
+.workPane{padding:12px;background:#f3f5f7;position:relative}
+.paneTitle{text-align:center;font-weight:900;margin-bottom:10px}
+.download{width:100%;margin-top:12px;border:0;border-radius:13px;background:#6c57c9;color:#fff;padding:10px 12px;font-weight:900}
+.board{width:232px;height:305px;margin:auto;background:#1f252b;border:7px solid #101418;border-radius:20px;position:relative;box-shadow:inset 0 0 0 3px #3b454d,0 6px 13px rgba(0,0,0,.18)}
+.ledPanel{position:absolute;left:50%;top:72px;transform:translateX(-50%);display:grid;grid-template-columns:repeat(5,25px);grid-template-rows:repeat(5,25px);gap:5px}
+.led{width:25px;height:25px;border-radius:5px;background:#39434b;box-shadow:inset 0 0 0 2px #4e5a64}
+.led.on{background:#ff4f68;box-shadow:0 0 8px #ff4f68,inset 0 0 0 2px #ff8291}
+.mbbtn{position:absolute;top:228px;width:42px;height:42px;border-radius:50%;background:#d9dde0;border:5px solid #7f8a92;color:#26323a;font-weight:900;display:grid;place-items:center}
+.mbbtn.a{left:28px}.mbbtn.b{right:28px}
+.logoTouch{position:absolute;left:50%;top:18px;transform:translateX(-50%);width:72px;height:37px;border-radius:19px;border:4px solid #8da0a7;background:#344a42;color:#8fe5ad;display:grid;place-items:center;font-size:22px}
+.clickable{cursor:pointer;transition:transform .12s ease,box-shadow .12s ease}
+.clickable:active{transform:scale(.92)}
+.mic{position:absolute;bottom:26px;left:50%;transform:translateX(-50%);width:10px;height:10px;border-radius:50%;background:#d9dde0;box-shadow:14px 0 #d9dde0,-14px 0 #d9dde0}
+.usb{position:absolute;left:50%;top:-15px;transform:translateX(-50%);width:65px;height:19px;border-radius:5px;background:#aeb7bd}
+.cat{width:100%;border:0;border-radius:10px;padding:11px 8px;margin:5px 0;text-align:left;font-weight:900;color:#fff}
+.cat.input{background:var(--event)}
+.cat.basic{background:var(--basic)}
+.cat.dim{opacity:.52}
+.blockPalette{margin-top:10px;display:none}.blockPalette.show{display:block}
+.blockBtn{border:0;background:transparent;padding:3px;display:block;width:100%}
+.block{border-radius:10px;padding:9px 10px;margin:6px auto;color:#fff;font-weight:900;min-width:125px;position:relative}
+.block.input{background:var(--event);box-shadow:0 3px 0 var(--event2)}
+.block.basic{background:var(--basic);box-shadow:0 3px 0 var(--basic2)}
+.workspace{min-height:410px;border:3px dashed #a9b4bd;border-radius:16px;background:#fff;padding:14px}
+.workspaceTitle{text-align:center;font-weight:900;color:#667581;margin-bottom:12px}
+.eventWork{background:var(--event);border-radius:14px;padding:12px 14px 15px;color:#fff;min-width:270px;box-shadow:0 4px 0 var(--event2);margin:10px 0}
+.eventHead{font-weight:900;display:flex;gap:8px;align-items:center;justify-content:space-between}
+.eventInside{margin-top:9px;min-height:70px;border:4px dashed rgba(255,255,255,.72);border-radius:9px;padding:8px;display:flex;gap:7px;flex-wrap:wrap}
+.basicWork{background:var(--basic);border-radius:11px;color:#fff;font-weight:900;padding:10px 12px;box-shadow:0 4px 0 var(--basic2);display:inline-flex;gap:8px;align-items:center}
+.eventSelect{background:#fff;color:#69306b;border:2px solid #9c5ba0;border-radius:9px;padding:3px 7px;font-weight:900}
+.iconSelector{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:8px}
+.iconOpt{border:3px solid #b8cbd7;border-radius:14px;background:#fff;padding:9px;font-size:30px}
+.iconOpt.selected{border-color:#7e65cc;background:#f0ebff}
+.removeHint{text-align:center;color:#6c7882;font-size:14px;font-weight:800;margin-top:12px}
+.projectDialog{max-width:570px;margin:30px auto;border:4px solid #7760cc;border-radius:22px;padding:22px;background:#fbfaff;box-shadow:var(--shadow)}
+.projectDialog h3{margin-top:0}.projectDialog input{width:100%;border:3px solid #a99bd4;border-radius:12px;padding:12px;font-size:20px}.projectDialog .create{margin-top:14px;border:0;border-radius:13px;background:#6f58c9;color:#fff;padding:11px 20px;font-weight:900}
+.testPanel{margin-top:12px;border:3px solid #c9d8e5;border-radius:15px;padding:12px;background:#fbfdff;text-align:center;font-weight:900}
+.statusMap{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin-top:10px}
+.status{padding:7px 11px;border:2px solid #c6d2de;border-radius:13px;background:#fff}
+.status.done{border-color:#7db78e;background:#eaf8ef}
+.finalBox{max-width:780px;margin:auto;text-align:center}.stars{font-size:58px;margin:18px}.summary{padding:20px;border:4px solid var(--blue);background:var(--soft);border-radius:22px;font-size:21px;font-weight:900;line-height:1.45}.faces{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:18px}.face{min-height:130px;border:3px solid var(--line);border-radius:20px;background:#fff;font-weight:900;font-size:17px}.face span{display:block;font-size:52px;margin-bottom:7px}.face.sel{border-color:var(--lime);background:#eef8d8}
+.modal{position:fixed;inset:0;background:#17324d99;display:none;place-items:center;padding:18px;z-index:20}.modal.show{display:grid}.modal-box{max-width:620px;background:#fff;border-radius:24px;border:4px solid #dfbc44;padding:22px;text-align:center;font-size:20px}.modal-box button{padding:10px 20px;border:0;border-radius:13px;background:#dfbc44;font-weight:900}
+@media(max-width:900px){.nb{grid-template-columns:1fr}.simPane,.catPane{border-right:0;border-bottom:2px solid #ddd}.faces{grid-template-columns:1fr}}
+</style>
+
+<style id="nk-license-style">
+.nk-license{max-width:1100px;margin:14px auto 24px;padding:10px 16px;text-align:center;font:13px/1.45 Arial,"Noto Sans",sans-serif;color:#4e657c}
+.nk-license a{color:inherit;text-decoration:underline;text-underline-offset:2px}
+.nk-license .cc-badge{display:inline-block;margin:0 4px;padding:2px 7px;border:1px solid #8aa0b8;border-radius:6px;background:#fff;font-weight:700;white-space:nowrap}
+</style>
+</head>
+<body>
+<div class="app">
+ <div class="top"><h1>Τα γεγονότα</h1><div class="badge">9</div></div>
+ <div class="path" id="path"></div>
+ <main class="panel">
+  <div class="step-head"><h2 id="title"></h2><button class="help" onclick="help()">❓ Βοήθεια</button></div>
+  <div class="instruction" id="inst"></div>
+  <div class="card" id="card"></div>
+  <div class="feedback" id="feedback"></div>
+ </main>
+</div>
+<div class="modal" id="modal"><div class="modal-box"><h2>💡 Βοήθεια</h2><p id="helpText"></p><button onclick="closeHelp()">Εντάξει</button></div></div>
+
+<script>
+const steps=[
+ {t:"Τι είναι ένα γεγονός;",i:"Ποιο παράδειγμα είναι γεγονός που μπορεί να ξεκινήσει ένα πρόγραμμα;",h:"Ένα γεγονός είναι κάτι που συμβαίνει, όπως το πάτημα ενός κουμπιού ή ένας δυνατός ήχος.",k:"eventConcept"},
+ {t:"Ξεκινώ το παιχνίδι",i:"Δημιούργησε νέο έργο με όνομα «Πέτρα-Ψαλίδι-Χαρτί» και αφαίρεσε τις δύο αρχικές εντολές που δεν χρειάζονται.",h:"Το βιβλίο ζητά να αφαιρεθούν και η «κατά την έναρξη» και η «για πάντα».",k:"newProject"},
+ {t:"Το κουμπί Α",i:"Φτιάξε το γεγονός «όταν πιεστεί το κουμπί Α» και όρισε να εμφανίζεται το ψαλίδι.",h:"Πρώτα χρειάζεσαι το ροζ γεγονός για το κουμπί Α και μέσα του μία μπλε εντολή εμφάνισης εικονιδίου.",k:"buttonA"},
+ {t:"Το κουμπί Β",i:"Δημιούργησε δεύτερο γεγονός για το κουμπί Β και επίλεξε το χαρτί.",h:"Το δεύτερο γεγονός πρέπει να αφορά το Β και να εμφανίζει διαφορετικό εικονίδιο από το Α.",k:"buttonB"},
+ {t:"Το λογότυπο",i:"Πρόσθεσε γεγονός για το λογότυπο και όρισε να εμφανίζεται η πέτρα.",h:"Το οβάλ λογότυπο στο πάνω μέρος της συσκευής λειτουργεί και αυτό σαν κουμπί.",k:"logo"},
+ {t:"Δοκιμάζω το παιχνίδι",i:"Πάτησε το Α, το Β και το λογότυπο στον προσομοιωτή. Έλεγξε ότι κάθε γεγονός εμφανίζει το σωστό σύμβολο.",h:"Δοκίμασε και τα τρία γεγονότα. Το Α πρέπει να δείχνει ψαλίδι, το Β χαρτί και το λογότυπο πέτρα.",k:"test"},
+ {t:"Καταλαβαίνω τα γεγονότα",i:"Ποια πρόταση περιγράφει σωστά τον τρόπο που λειτουργεί το πρόγραμμα;",h:"Κάθε ξεχωριστό γεγονός εκτελεί το δικό του πρόγραμμα όταν συμβεί.",k:"understand"},
+ {t:"Τα κατάφερες!",i:"Σκέψου τι έμαθες για τα γεγονότα.",h:"Σκέψου πώς τα κουμπιά και το λογότυπο μπορούν να ξεκινούν διαφορετικά προγράμματα.",k:"final"}
+];
+let s=0,selfChoice=null,projectName="",defaultBlocks={start:true,forever:true},
+eventA=null,eventB=null,eventLogo=null,tested=new Set(),answerOrders={},conceptSelected=new Set();
+
+const patt={
+ scissors:[
+  [0,0],[0,1],[0,4],
+  [1,0],[1,1],[1,3],
+  [2,2],
+  [3,0],[3,1],[3,3],
+  [4,0],[4,1],[4,4]
+ ],
+ paper:[
+  [0,0],[0,1],[0,2],[0,3],[0,4],
+  [1,0],[1,4],
+  [2,0],[2,4],
+  [3,0],[3,4],
+  [4,0],[4,1],[4,2],[4,3],[4,4]
+ ],
+ rock:[
+  [0,2],
+  [1,1],[1,3],
+  [2,0],[2,4],
+  [3,1],[3,3],
+  [4,2]
+ ]
+};
+
+function shuffled(arr){
+ const a=[...arr];
+ for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}
+ return a;
+}
+function nav(){
+ document.getElementById("path").innerHTML=steps.map((_,i)=>`<div class="dot ${i<s?'done':i===s?'active':''}">${i+1}</div>`).join("");
+}
+function completeFinalDot(){s=steps.length;nav()}
+function clearFeedback(){const f=document.getElementById("feedback");f.className="feedback";f.textContent=""}
+function setFeedback(t,ok){const f=document.getElementById("feedback");f.className="feedback "+(ok?"good":"bad");f.textContent=t}
+function render(){
+ nav();clearFeedback();
+ const x=steps[s];
+ document.getElementById("title").textContent=x.t;
+ document.getElementById("inst").textContent=x.i;
+ if(x.k==="eventConcept")stage1();
+ if(x.k==="newProject")stage2();
+ if(x.k==="buttonA")stage3();
+ if(x.k==="buttonB")stage4();
+ if(x.k==="logo")stage5();
+ if(x.k==="test")stage6();
+ if(x.k==="understand")stage7();
+ if(x.k==="final")stage8();
+}
+
+function boardHTML(clickable=false){
+ return `<div class="board">
+   <button class="logoTouch ${clickable?'clickable':''}" onclick="triggerEvent('logo')">◉</button>
+   <div class="ledPanel" id="ledPanel">${Array.from({length:25},(_,i)=>`<span class="led" id="led${i}"></span>`).join("")}</div>
+   <button class="mbbtn a ${clickable?'clickable':''}" onclick="triggerEvent('A')">A</button>
+   <button class="mbbtn b ${clickable?'clickable':''}" onclick="triggerEvent('B')">B</button>
+   <div class="mic"></div>
+ </div>`;
+}
+function showPattern(p){
+ for(let i=0;i<25;i++)document.getElementById("led"+i)?.classList.remove("on");
+ p.forEach(([r,c])=>document.getElementById("led"+(r*5+c))?.classList.add("on"));
+}
+function catsHTML(showInput=true,showBasic=true){
+ const inputBtn=showInput ? `<button class="cat input" onclick="togglePalette('inputPal')">Είσοδος</button>` : `<button class="cat input dim">Είσοδος</button>`;
+ const basicBtn=showBasic ? `<button class="cat basic" onclick="togglePalette('basicPal')">Βασικά</button>` : `<button class="cat basic dim">Βασικά</button>`;
+ return `${inputBtn}${basicBtn}
+ <div class="blockPalette" id="inputPal">
+   <button class="blockBtn" onclick="addEventBlock()"><div class="block input">όταν πιεστεί κουμπί</div></button>
+   <button class="blockBtn" onclick="addLogoEventBlock()"><div class="block input">όταν αγγιχτεί λογότυπο</div></button>
+ </div>
+ <div class="blockPalette" id="basicPal">
+   <button class="blockBtn" onclick="addBasicIcon()"><div class="block basic">εμφάνιση εικονιδίου</div></button>
+ </div>`;
+}
+function noesis(work,clickable=false){
+ return `<div class="noesis">
+  <div class="ntitle"><div class="nbrand"><span class="nlogo">Ν</span><span>Noesis Blocks</span></div><span>— □ ×</span></div>
+  <div class="nmenu"><span>Αρχείο</span><span>Έργο: ${projectName||"Νέο έργο"}</span><span>Βοήθεια</span></div>
+  <div class="nb">
+   <div class="simPane"><div class="paneTitle">Προσομοιωτής micro:bit</div>${boardHTML(clickable)}<button class="download">⬇ Λήψη</button></div>
+   <div class="catPane"><div class="paneTitle">Εντολές</div>${catsHTML()}</div>
+   <div class="workPane"><div class="paneTitle">Χώρος προγράμματος</div><div class="workspace">${work}</div></div>
+  </div>
+ </div>`;
+}
+function togglePalette(id){document.getElementById(id)?.classList.toggle("show")}
+function eventWork(type,icon){
+ const label=type==="A"?"κουμπί A":type==="B"?"κουμπί B":"λογότυπο";
+ return `<div class="eventWork">
+   <div class="eventHead"><span>όταν ${type==="logo"?"αγγιχτεί":"πιεστεί"} ${label}</span></div>
+   <div class="eventInside">${icon?`<div class="basicWork"><span style="font-size:26px">${icon==="scissors"?"✂️":icon==="paper"?"📄":"🪨"}</span><span>εμφάνιση εικονιδίου</span></div>`:""}</div>
+ </div>`;
+}
+function renderCurrentEvents(){
+ const bits=[];
+ if(eventA)bits.push(eventWork("A",eventA));
+ if(eventB)bits.push(eventWork("B",eventB));
+ if(eventLogo)bits.push(eventWork("logo",eventLogo));
+ return bits.join("") || '<div class="removeHint">Δεν έχεις προσθέσει ακόμη γεγονός.</div>';
+}
+
+/* Stage 1 */
+function stage1(){
+ conceptSelected=new Set();
+ const options=shuffled([
+  {ok:true,icon:"🔘",txt:"Πατάω ένα κουμπί"},
+  {ok:true,icon:"🔊",txt:"Ακούγεται δυνατός ήχος"},
+  {ok:false,icon:"📦",txt:"Ένα κουτί βρίσκεται στο τραπέζι"}
+ ]);
+ answerOrders.s1=options;
+ document.getElementById("card").innerHTML=`<div class="row">${options.map((o,i)=>`<button class="choice" id="concept${i}" onclick="conceptAns(${i})"><span class="big">${o.icon}</span>${o.txt}</button>`).join("")}</div>`;
+}
+function conceptAns(i){
+ if(!answerOrders.s1[i].ok){
+  setFeedback("Αυτό δεν είναι κάτι που συμβαίνει και ξεκινά μια ενέργεια.",false);
+  return;
+ }
+ conceptSelected.add(i);
+ document.getElementById("concept"+i)?.classList.add("selectedAnswer");
+ if(conceptSelected.size<2){
+  setFeedback("Σωστά! Υπάρχει ακόμη ένα παράδειγμα γεγονότος. Βρες το κι αυτό.",true);
+  return;
+ }
+ setFeedback("Μπράβο! Εντόπισες και τα δύο γεγονότα.",true);
+ setTimeout(()=>{s++;render()},850);
+}
+
+/* Stage 2 */
+function stage2(){
+ defaultBlocks={start:true,forever:true};
+ document.getElementById("card").innerHTML=`
+ <div class="projectDialog">
+  <h3>Νέο έργο</h3>
+  <input id="projectInput" placeholder="Γράψε το όνομα του έργου">
+  <button class="create" onclick="createGameProject()">Δημιουργία</button>
+ </div>`;
+}
+function createGameProject(){
+ const v=document.getElementById("projectInput").value.trim();
+ if(v!=="Πέτρα-Ψαλίδι-Χαρτί"){setFeedback("Γράψε το όνομα «Πέτρα-Ψαλίδι-Χαρτί».",false);return}
+ projectName=v;
+ document.getElementById("card").innerHTML=noesis(`
+  <div class="workrow" id="defaults">
+   <button class="blockBtn" onclick="removeDefault('start')"><div class="eventWork" id="defStart"><div class="eventHead">κατά την έναρξη</div></div></button>
+   <button class="blockBtn" onclick="removeDefault('forever')"><div class="eventWork" id="defForever"><div class="eventHead">για πάντα</div><div class="eventInside"></div></div></button>
+  </div>
+  <div class="removeHint">Πάτησε και τις δύο εντολές για να τις αφαιρέσεις.</div>`);
+}
+function removeDefault(which){
+ defaultBlocks[which]=false;
+ document.getElementById(which==="start"?"defStart":"defForever")?.remove();
+ if(!defaultBlocks.start&&!defaultBlocks.forever){
+  setFeedback("Σωστά! Αφαίρεσες τις δύο εντολές που δεν χρειάζονται.",true);
+  setTimeout(()=>{s++;render()},900);
+ }
+}
+
+/* Common event building */
+let workingEvent=null,workingIcon=null;
+function eventBuilderText(title){
+ return `<div class="removeHint">${title}</div>${renderCurrentEvents()}
+ <div id="builderArea" class="testPanel">Άνοιξε τις κατηγορίες και πρόσθεσε τις σωστές εντολές.</div>`;
+}
+function addEventBlock(){
+ if(s===2){workingEvent="A";workingIcon=null;drawBuilder()}
+ if(s===3){workingEvent="A";workingIcon=null;drawBuilder()}
+}
+function addLogoEventBlock(){
+ if(s===4){workingEvent="logo";workingIcon=null;drawBuilder()}
+}
+function addBasicIcon(){
+ if(!workingEvent){setFeedback("Πρόσθεσε πρώτα το γεγονός.",false);return}
+ const defaults = s===2 ? "happy" : s===3 ? "rock" : "paper";
+ workingIcon=defaults; // intentionally not the requested correct choice
+ drawBuilder();
+}
+function iconChoices(correct){
+ const opts=shuffled([
+  {v:"scissors",e:"✂️"},
+  {v:"paper",e:"📄"},
+  {v:"rock",e:"🪨"}
+ ]);
+ return opts.map(o=>`<button class="iconOpt ${workingIcon===o.v?'selected':''}" onclick="chooseIcon('${o.v}')">${o.e}</button>`).join("");
+}
+function chooseIcon(v){workingIcon=v;drawBuilder()}
+function drawBuilder(){
+ const target=s===2?"scissors":s===3?"paper":"rock";
+ const eventTarget=s===2?"A":s===3?"B":"logo";
+ document.getElementById("builderArea").innerHTML=`
+  <div style="font-weight:900;margin-bottom:8px">Πρόχειρη κατασκευή</div>
+  ${workingEvent?eventWork(workingEvent,null):""}
+  ${workingIcon?`<div class="basicWork" style="margin-top:8px"><span style="font-size:26px">${workingIcon==="scissors"?"✂️":workingIcon==="paper"?"📄":"🪨"}</span><span>εμφάνιση εικονιδίου</span></div>`:""}
+  ${workingIcon?`<div class="iconSelector">${iconChoices(target)}</div>`:""}
+  <button class="check" onclick="saveBuiltEvent('${eventTarget}','${target}')">Έλεγχος</button>`;
+}
+function saveBuiltEvent(eventTarget,iconTarget){
+ if(!workingEvent){setFeedback("Πρόσθεσε πρώτα το γεγονός.",false);return}
+ if(eventTarget==="B"&&workingEvent==="A"){workingEvent="B"} // stage 4 duplication/change behavior
+ if(workingEvent!==eventTarget){setFeedback("Έλεγξε ποιο κουμπί ή ποιο λογότυπο πρέπει να χρησιμοποιείται.",false);return}
+ if(!workingIcon){setFeedback("Πρόσθεσε και την εντολή εμφάνισης εικονιδίου.",false);return}
+ if(workingIcon!==iconTarget){setFeedback("Διάλεξε το σωστό σύμβολο για αυτό το γεγονός.",false);return}
+ if(eventTarget==="A")eventA=iconTarget;
+ if(eventTarget==="B")eventB=iconTarget;
+ if(eventTarget==="logo")eventLogo=iconTarget;
+ showPattern(patt[iconTarget]);
+ setFeedback("Σωστά! Το γεγονός συνδέθηκε με τη σωστή εντολή.",true);
+ setTimeout(()=>{s++;render()},1000);
+}
+
+/* Stage 3 */
+function stage3(){
+ workingEvent=null;workingIcon=null;
+ document.getElementById("card").innerHTML=noesis(eventBuilderText("Φτιάξε το γεγονός για το κουμπί Α."));
+}
+
+/* Stage 4 */
+function stage4(){
+ workingEvent=null;workingIcon=null;
+ document.getElementById("card").innerHTML=noesis(`
+  ${renderCurrentEvents()}
+  <div class="testPanel" id="builderArea">
+   <div style="font-weight:900">Φτιάξε αντίγραφο για το κουμπί Β.</div>
+   <button class="check" onclick="duplicateForB()">Δημιουργία αντιγράφου</button>
+  </div>`);
+}
+function duplicateForB(){
+ workingEvent="B";
+ workingIcon="rock"; // deliberately wrong default
+ drawBuilder();
+}
+
+/* Stage 5 */
+function stage5(){
+ workingEvent=null;workingIcon=null;
+ document.getElementById("card").innerHTML=noesis(eventBuilderText("Πρόσθεσε γεγονός για το λογότυπο."));
+}
+
+/* Stage 6 */
+function stage6(){
+ tested=new Set();
+ document.getElementById("card").innerHTML=noesis(`
+  ${renderCurrentEvents()}
+  <div class="testPanel">
+    Πάτησε και τα τρία σημεία στον προσομοιωτή.
+    <div class="statusMap">
+      <span class="status" id="statusA">Κουμπί Α</span>
+      <span class="status" id="statusB">Κουμπί Β</span>
+      <span class="status" id="statuslogo">Λογότυπο</span>
+    </div>
+  </div>`,true);
+}
+function triggerEvent(which){
+ let icon=null;
+ if(which==="A")icon=eventA;
+ if(which==="B")icon=eventB;
+ if(which==="logo")icon=eventLogo;
+ if(!icon){setFeedback("Δεν υπάρχει πρόγραμμα για αυτό το γεγονός.",false);return}
+ showPattern(patt[icon]);
+ tested.add(which);
+ document.getElementById("status"+which)?.classList.add("done");
+ if(tested.size===3){
+  setFeedback("Μπράβο! Δοκίμασες και τα τρία γεγονότα.",true);
+  setTimeout(()=>{s++;render()},1100);
+ }
+}
+
+/* Stage 7 */
+function stage7(){
+ const options=shuffled([
+  {ok:true,txt:"Κάθε γεγονός εκτελεί το δικό του πρόγραμμα όταν συμβεί."},
+  {ok:false,txt:"Όλα τα προγράμματα εκτελούνται συνέχεια, χωρίς να συμβεί κάτι."},
+  {ok:false,txt:"Το micro:bit εκτελεί πάντα μόνο το πρόγραμμα του κουμπιού Α."}
+ ]);
+ answerOrders.s7=options;
+ document.getElementById("card").innerHTML=`<div class="row">${options.map((o,i)=>`<button class="choice" onclick="understandAns(${i})">${o.txt}</button>`).join("")}</div>`;
+}
+function understandAns(i){
+ if(!answerOrders.s7[i].ok){setFeedback("Θυμήσου ότι το πρόγραμμα περιμένει να συμβεί ένα συγκεκριμένο γεγονός.",false);return}
+ setFeedback("Σωστά! Κάθε γεγονός ξεκινά το δικό του πρόγραμμα.",true);
+ setTimeout(()=>{s++;render()},900);
+}
+
+/* Stage 8 */
+function stage8(){
+ selfChoice=null;
+ document.getElementById("card").innerHTML=`
+ <div class="finalBox">
+   <div class="stars">⭐ ⭐ ⭐</div>
+   <div class="summary">
+     Έμαθες τι είναι ένα γεγονός, να χρησιμοποιείς το κουμπί Α, το κουμπί Β και το λογότυπο ως γεγονότα
+     και να φτιάχνεις απλά προγράμματα που εκτελούνται όταν συμβεί κάθε γεγονός.
+   </div>
+   <div class="faces">
+     <button class="face" onclick="selfPick(1,this)"><span>🙂</span>Θέλω λίγη εξάσκηση</button>
+     <button class="face" onclick="selfPick(2,this)"><span>😊</span>Τα κατάφερα</button>
+     <button class="face" onclick="selfPick(3,this)"><span>🤩</span>Τα κατάφερα πολύ καλά</button>
+   </div>
+   <button class="check" onclick="finish()">Ολοκλήρωση</button>
+   <button class="check" style="background:var(--blue);box-shadow:0 5px 0 var(--blue2)" onclick="restartAll()">↻ Επανάληψη δραστηριότητας</button>
+ </div>`;
+}
+function selfPick(v,e){
+ selfChoice=v;
+ document.querySelectorAll(".face").forEach(x=>x.classList.remove("sel"));
+ e.classList.add("sel");
+}
+function finish(){
+ const f=document.getElementById("feedback");
+ if(!selfChoice){f.className="feedback bad";f.textContent="Διάλεξε πρώτα πώς νιώθεις για όσα έμαθες.";return}
+ completeFinalDot();
+ f.className="feedback good";
+ f.textContent="Μπράβο! Ολοκλήρωσες το Μάθημα 9.";
+}
+function restartAll(){
+ s=0;selfChoice=null;projectName="";defaultBlocks={start:true,forever:true};
+ eventA=null;eventB=null;eventLogo=null;tested=new Set();workingEvent=null;workingIcon=null;answerOrders={};conceptSelected=new Set();render();
+}
+function help(){
+ document.getElementById("helpText").textContent=steps[Math.min(s,steps.length-1)].h;
+ document.getElementById("modal").classList.add("show");
+}
+function closeHelp(){document.getElementById("modal").classList.remove("show")}
+render();
+</script>
+
+<footer class="nk-license" aria-label="Πληροφορίες δημιουργού και άδειας χρήσης">
+  <div><strong>Created by Nikos Kalakos · © 2026</strong></div>
+  <div>Original educational content and simulation design licensed under <a class="cc-badge" href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank" rel="license noopener noreferrer">CC BY-NC 4.0</a>.</div>
+  <div>Source code © 2026 Nikos Kalakos.</div>
+  <div>Third-party and textbook materials remain subject to the rights and licences of their respective copyright holders.</div>
+</footer>
+</body>
+</html>

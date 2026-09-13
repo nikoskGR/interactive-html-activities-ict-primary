@@ -1,0 +1,712 @@
+<!--
+ICT Educational Simulation
+Created by Nikos Kalakos
+Copyright © 2026 Nikos Kalakos
+
+Original educational content and simulation design licensed under CC BY-NC 4.0.
+Source code © 2026 Nikos Kalakos.
+Third-party and textbook materials remain subject to the rights and licences of their respective copyright holders.
+-->
+<!doctype html>
+<html lang="el">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="author" content="Nikos Kalakos">
+<meta name="copyright" content="© 2026 Nikos Kalakos">
+<meta name="license" content="Original educational content and simulation design: CC BY-NC 4.0; source code © 2026 Nikos Kalakos; third-party and textbook materials excluded.">
+<title>Μάθημα 13 - Πώς χρησιμοποιώ τις εφαρμογές του υπολογιστή;</title>
+<style>
+:root{
+  --unit-lime:#B8BE25;
+  --unit-lime-dark:#8f9615;
+  --unit-indigo:#545F99;
+  --unit-indigo-dark:#3f4878;
+  --ink:#24344d;
+  --line:#d5dbe6;
+  --soft:#f7f8ef;
+  --good:#eef5d6;
+  --bad:#fff0ed;
+  --athena:#5b4eb5;
+  --athena-dark:#453996;
+  --shadow:0 10px 28px rgba(36,52,77,.12);
+}
+*{box-sizing:border-box}
+body{margin:0;background:#f7f8fb;color:var(--ink);font-family:Arial,"Noto Sans",sans-serif}
+button,input{font:inherit}button{cursor:pointer}
+.app{max-width:1180px;margin:auto;padding:16px}
+.top{
+  background:#fff;border:3px solid #dde1c4;border-radius:24px;padding:14px 18px;
+  display:flex;align-items:center;justify-content:space-between;box-shadow:var(--shadow)
+}
+.top h1{margin:0;font-size:clamp(27px,4vw,40px)}
+.badge{
+  width:70px;height:70px;border-radius:22px;background:var(--unit-lime);color:#fff;
+  display:grid;place-items:center;font-size:31px;font-weight:900;box-shadow:inset 0 -5px 0 rgba(0,0,0,.1)
+}
+.path{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin:16px 0}
+.dot{
+  width:44px;height:44px;border-radius:50%;display:grid;place-items:center;
+  border:3px solid #aeb7c7;background:#fff;color:#65718a;font-weight:900;font-size:20px
+}
+.dot.active{background:var(--unit-indigo);border-color:var(--unit-indigo);color:#fff;transform:scale(1.1)}
+.dot.done{background:var(--unit-lime);border-color:var(--unit-lime-dark);color:#fff}
+.panel{
+  min-height:710px;background:#fff;border:3px solid #d7dcc0;border-radius:28px;
+  padding:24px;box-shadow:var(--shadow)
+}
+.step-head{display:flex;justify-content:space-between;gap:12px;align-items:flex-start}
+.step-head h2{margin:0;font-size:clamp(25px,4vw,37px)}
+.help{
+  background:#f2f0fb;color:var(--unit-indigo-dark);border:3px solid #9ba3cf;
+  border-radius:16px;padding:10px 17px;font-weight:900
+}
+.instruction{
+  max-width:970px;margin:14px auto 18px;text-align:center;font-size:clamp(19px,2.3vw,24px);
+  font-weight:900;line-height:1.38
+}
+.card{
+  max-width:1040px;margin:auto;border:3px solid #d8ddbf;border-radius:28px;
+  background:#fff;padding:22px;min-height:500px
+}
+.feedback{
+  display:none;max-width:860px;margin:16px auto 0;padding:12px 18px;border-radius:17px;
+  text-align:center;font-weight:900;font-size:20px
+}
+.feedback.good{display:block;background:var(--good);border:2px solid #9ab35b}
+.feedback.bad{display:block;background:var(--bad);border:2px solid #e5a59b}
+.check{
+  display:block;margin:18px auto 0;padding:13px 28px;border:0;border-radius:16px;
+  background:var(--unit-lime);color:#fff;font-size:21px;font-weight:900;
+  box-shadow:0 5px 0 var(--unit-lime-dark)
+}
+.row{display:flex;gap:14px;justify-content:center;align-items:stretch;flex-wrap:wrap}
+.choice{
+  min-width:205px;max-width:285px;min-height:135px;border:3px solid var(--line);
+  border-radius:22px;background:#fff;padding:15px;font-weight:900;font-size:18px;
+  display:flex;flex-direction:column;justify-content:center;align-items:center;gap:10px
+}
+.choice:hover{transform:translateY(-2px);box-shadow:var(--shadow)}
+.choice.selected{border-color:var(--unit-lime);background:#f3f6d7;box-shadow:inset 0 0 0 2px #d9df83}
+.choice .big{font-size:50px}
+.smallhelp{text-align:center;font-size:14px;color:#6d7890;font-weight:800;margin-top:10px}
+.note{
+  max-width:760px;margin:15px auto;padding:13px 17px;border-left:8px solid var(--unit-lime);
+  border-radius:12px;background:#f6f7df;font-weight:900
+}
+
+/* AthenaOS */
+.os{
+  max-width:920px;margin:auto;border:5px solid #3f475c;border-radius:24px;overflow:hidden;
+  background:#1f2940;box-shadow:0 12px 28px rgba(20,28,45,.24)
+}
+.os-top{
+  height:38px;background:#20283b;color:#fff;display:flex;align-items:center;justify-content:space-between;
+  padding:0 12px;font-size:14px;font-weight:900
+}
+.brand{display:flex;align-items:center;gap:8px}
+.owl{
+  width:25px;height:25px;border-radius:9px 9px 12px 12px;background:var(--athena);position:relative
+}
+.owl:before,.owl:after{
+  content:"";position:absolute;top:6px;width:6px;height:6px;border-radius:50%;background:#fff
+}
+.owl:before{left:5px}.owl:after{right:5px}
+.owl span{position:absolute;left:10px;top:13px;width:0;height:0;border-left:3px solid transparent;border-right:3px solid transparent;border-top:6px solid #f2c84a}
+.desktop{
+  position:relative;height:490px;overflow:hidden;
+  background:
+    radial-gradient(circle at 70% 18%,rgba(255,255,255,.11),transparent 26%),
+    linear-gradient(140deg,#5964a6 0%,#3f477b 50%,#273453 100%)
+}
+.taskbar{
+  position:absolute;left:0;right:0;bottom:0;height:50px;background:rgba(28,34,50,.93);
+  display:flex;align-items:center;gap:9px;padding:0 12px;z-index:20
+}
+.task-item{
+  height:36px;min-width:45px;border:2px solid #737d9b;border-radius:10px;background:#414b67;color:#fff;
+  display:grid;place-items:center;padding:0 8px;font-weight:900
+}
+.desktop-icons{
+  position:absolute;left:18px;top:20px;display:grid;grid-template-columns:repeat(2,105px);gap:18px 15px
+}
+.desk-icon{
+  width:98px;min-height:95px;border:2px solid transparent;border-radius:14px;background:transparent;color:#fff;
+  padding:6px;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;gap:7px;
+  font-size:14px;font-weight:900;text-shadow:0 1px 2px #1f2940
+}
+.desk-icon:hover,.desk-icon.selected{background:rgba(255,255,255,.12);border-color:rgba(255,255,255,.35)}
+.icon-art{width:48px;height:48px;border-radius:14px;display:grid;place-items:center;font-size:28px;background:#fff;color:#384056;box-shadow:0 3px 8px rgba(0,0,0,.2)}
+.icon-art.graphis{background:#f4f0ff;color:var(--athena);font-size:26px}
+.icon-art.folder{background:#e8c54e;color:#725b00;border-radius:9px}
+.icon-art.file{background:#fff;color:#4b5c8f;border-radius:7px}
+.icon-art.chroma{background:linear-gradient(135deg,#f29e5b,#7ac4d8);color:#fff}
+.icon-art.ploigos{background:#e7f3ff;color:#3275a8}
+
+/* app window */
+.window{
+  position:absolute;left:260px;top:70px;width:540px;height:330px;background:#fff;border:4px solid #313b54;
+  border-radius:14px;overflow:hidden;box-shadow:0 13px 28px rgba(0,0,0,.28);z-index:12
+}
+.window.maxed{left:4px!important;top:4px!important;width:calc(100% - 8px)!important;height:calc(100% - 58px)!important;border-radius:6px}
+.titlebar{
+  height:42px;background:var(--athena);color:#fff;display:flex;align-items:center;justify-content:space-between;
+  padding:0 8px 0 13px;font-weight:900;cursor:move;user-select:none
+}
+.window-buttons{display:flex;gap:5px}
+.winbtn{
+  width:34px;height:29px;border:0;border-radius:7px;background:#f6f4ff;color:#443b81;font-weight:900;
+  display:grid;place-items:center
+}
+.winbtn.close{background:#f7d9df;color:#9c2f40}
+.toolbar{
+  height:38px;background:#f2f3f7;border-bottom:2px solid #d8dce4;display:flex;align-items:center;gap:8px;padding:0 10px;color:#596579;font-size:13px
+}
+.document{
+  height:calc(100% - 80px);background:#eceff4;padding:18px;overflow:hidden
+}
+.paper{
+  width:78%;height:92%;margin:auto;background:#fff;box-shadow:0 3px 8px rgba(0,0,0,.12);padding:24px;
+  font-size:20px;color:#35445d
+}
+.resize-handle{
+  position:absolute;right:0;bottom:0;width:28px;height:28px;cursor:nwse-resize;z-index:15;
+  background:linear-gradient(135deg,transparent 0 50%,#8d97aa 51% 58%,transparent 59% 68%,#8d97aa 69% 76%,transparent 77%)
+}
+.target-zone{
+  position:absolute;border:5px dashed var(--unit-lime);
+  border-radius:20px;background:rgba(246,247,223,.14);display:grid;place-items:center;color:#fff;font-weight:900;
+  z-index:4
+}
+.stage5-window{left:24px;top:100px;width:360px;height:250px}
+.stage5-target{right:24px;top:100px;width:360px;height:250px}
+.stage6-window{left:30px;top:24px;width:455px;height:290px}
+.stage7-window{left:245px;top:55px;width:540px;height:330px}
+.hidden{display:none!important}
+
+/* classification desktop icons */
+.classify{
+  display:grid;grid-template-columns:1fr 1.25fr;gap:18px;align-items:start
+}
+.tray{
+  border:3px solid #cbd1df;border-radius:20px;padding:14px;background:#f9fafe;min-height:330px
+}
+.tray h3,.zones h3{text-align:center;margin:0 0 12px;color:var(--unit-indigo-dark)}
+.dragitem{
+  user-select:none;touch-action:none;border:3px solid #9ea8ca;border-radius:15px;background:#fff;
+  padding:10px 12px;margin:8px 0;font-weight:900;box-shadow:0 3px 0 #d5d9e8;cursor:grab;
+  display:flex;gap:9px;align-items:center
+}
+.dragitem .ico{font-size:28px}
+.dragitem.selectedDrag{outline:4px solid var(--unit-lime);background:#f5f7db}
+.dragitem.locked{opacity:.42;cursor:default}
+.zones{display:grid;gap:12px}
+.zone{
+  min-height:95px;border:4px dashed #9ca6c9;border-radius:20px;background:#fbfbfe;padding:12px;
+  display:flex;align-items:center;gap:12px
+}
+.zone.over{background:#f2f4ff;border-color:var(--unit-indigo)}
+.zone.correct{border-style:solid;border-color:var(--unit-lime);background:#f5f7df}
+.zone-icon{font-size:38px}.zone-label{min-width:120px;font-weight:900}.zone-answer{font-weight:800}
+
+/* label window areas */
+.label-layout{display:grid;grid-template-columns:300px 1fr;gap:20px;align-items:start}
+.label-tray{border:3px solid #cbd1df;border-radius:18px;padding:12px;background:#f9fafe}
+.label-chip{
+  border:3px solid #9ea8ca;border-radius:14px;background:#fff;padding:11px;margin:9px 0;font-weight:900;
+  cursor:grab;user-select:none
+}
+.label-chip.sel{outline:4px solid var(--unit-lime);background:#f5f7db}
+.label-chip.lock{opacity:.45}
+.mock-window{
+  position:relative;height:340px;border:4px solid #444e63;border-radius:16px;background:#fff;overflow:hidden
+}
+.mock-title{
+  height:48px;background:var(--athena);color:#fff;display:flex;align-items:center;justify-content:space-between;padding:0 12px;font-weight:900
+}
+.mock-controls{display:flex;gap:5px}.mock-control{width:32px;height:27px;border-radius:7px;background:#fff;color:#4c4187;display:grid;place-items:center}
+.mock-body{height:292px;background:#eceff4;padding:25px}.mock-paper{height:100%;background:#fff;border:2px solid #d7dbe3}
+.label-drop{
+  position:absolute;border:4px dashed var(--unit-lime);border-radius:12px;z-index:8;
+  background:rgba(246,247,223,.16);display:grid;place-items:center;font-size:13px;font-weight:900;color:#2f3b53
+}
+.label-drop.correct{border-style:solid;background:#f5f7df}
+.drop-title{left:70px;top:4px;width:250px;height:40px}
+.drop-buttons{right:5px;top:4px;width:115px;height:40px}
+.drop-window{left:95px;top:120px;width:300px;height:110px}
+
+/* window controls stage */
+.control-checklist{
+  position:absolute;left:15px;right:auto;top:60px;width:205px;background:rgba(255,255,255,.95);border:3px solid #d6dbe4;
+  border-radius:15px;padding:10px;z-index:25;color:#2e3d54
+}
+.checkitem{padding:7px 9px;margin:5px 0;border:2px solid #ccd3df;border-radius:10px;background:#fff;font-weight:900;font-size:14px}
+.checkitem.done{border-color:var(--unit-lime);background:#f2f5d4}
+.restore-tip{
+  position:absolute;left:50%;bottom:58px;transform:translateX(-50%);background:#fff;border:3px solid var(--unit-lime);
+  border-radius:14px;padding:10px 15px;font-weight:900;z-index:25
+}
+
+/* final */
+.finalBox{max-width:780px;margin:auto;text-align:center}
+.stars{font-size:58px;margin:18px}
+.summary{
+  padding:20px;border:4px solid var(--unit-indigo);background:#f4f5fb;border-radius:22px;
+  font-size:21px;font-weight:900;line-height:1.45
+}
+.faces{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:18px}
+.face{
+  min-height:130px;border:3px solid var(--line);border-radius:20px;background:#fff;
+  font-weight:900;font-size:17px
+}
+.face span{display:block;font-size:52px;margin-bottom:7px}
+.face.sel{border-color:var(--unit-lime);background:#f2f5d4}
+.repeatBtn{
+  display:block;margin:15px auto 0;padding:12px 22px;border:0;border-radius:15px;
+  background:var(--unit-indigo);color:#fff;font-size:19px;font-weight:900;
+  box-shadow:0 5px 0 var(--unit-indigo-dark)
+}
+.modal{
+  position:fixed;inset:0;background:#24344d99;display:none;place-items:center;padding:18px;z-index:40
+}
+.modal.show{display:grid}
+.modal-box{
+  max-width:620px;background:#fff;border-radius:24px;border:4px solid var(--unit-lime);
+  padding:22px;text-align:center;font-size:20px
+}
+.modal-box button{
+  padding:10px 20px;border:0;border-radius:13px;background:var(--unit-lime);
+  color:#fff;font-weight:900
+}
+@media(max-width:850px){
+  .classify,.label-layout{grid-template-columns:1fr}
+  .faces{grid-template-columns:1fr}
+  .desktop{height:540px}
+  .window{left:80px;top:100px;width:78%;height:320px}
+}
+</style>
+
+
+<style id="nk-license-style">
+.nk-license{max-width:1100px;margin:14px auto 24px;padding:10px 16px;text-align:center;font:13px/1.45 Arial,"Noto Sans",sans-serif;color:#4e657c}
+.nk-license a{color:inherit;text-decoration:underline;text-underline-offset:2px}
+.nk-license .cc-badge{display:inline-block;margin:0 4px;padding:2px 7px;border:1px solid #8aa0b8;border-radius:6px;background:#fff;font-weight:700;white-space:nowrap}
+</style></head>
+<body>
+<div class="app">
+  <div class="top">
+    <h1>Πώς χρησιμοποιώ τις εφαρμογές του υπολογιστή;</h1>
+    <div class="badge">13</div>
+  </div>
+  <div class="path" id="path"></div>
+
+  <main class="panel">
+    <div class="step-head">
+      <h2 id="title"></h2>
+      <button class="help" onclick="help()">❓ Βοήθεια</button>
+    </div>
+    <div class="instruction" id="inst"></div>
+    <div class="card" id="card"></div>
+    <div class="feedback" id="feedback"></div>
+  </main>
+</div>
+
+<div class="modal" id="modal">
+  <div class="modal-box">
+    <h2>💡 Βοήθεια</h2>
+    <p id="helpText"></p>
+    <button onclick="closeHelp()">Εντάξει</button>
+  </div>
+</div>
+
+<script>
+const steps=[
+ {t:"Τι είναι μια εφαρμογή;",i:"Διάλεξε τι χρησιμοποιούμε για να κάνουμε μια εργασία στον υπολογιστή.",h:"Για να κάνουμε μία εργασία χρησιμοποιούμε μία εφαρμογή.",k:"appConcept"},
+ {t:"Ανοίγω μια εφαρμογή",i:"Στην επιφάνεια εργασίας του AthenaOS άνοιξε το Graphis με διπλό κλικ.",h:"Σε υπολογιστή γραφείου ή φορητό ανοίγουμε μια εφαρμογή με διπλό κλικ στο εικονίδιό της.",k:"openApp"},
+ {t:"Τι υπάρχει στην επιφάνεια εργασίας;",i:"Τοποθέτησε κάθε εικονίδιο στη σωστή κατηγορία: εφαρμογή, φάκελος ή αρχείο.",h:"Η επιφάνεια εργασίας μπορεί να έχει εικονίδια εφαρμογών, φακέλων και αρχείων.",k:"desktopIcons"},
+ {t:"Γνωρίζω το παράθυρο",i:"Τοποθέτησε τις τρεις ετικέτες στα σωστά σημεία του παραθύρου.",h:"Βρες τη γραμμή τίτλου, τα κουμπιά παραθύρου και το ίδιο το παράθυρο της εφαρμογής.",k:"windowParts"},
+ {t:"Μετακινώ το παράθυρο",i:"Σύρε το παράθυρο από τη γραμμή τίτλου και τοποθέτησέ το μέσα στο πράσινο πλαίσιο.",h:"Το παράθυρο μετακινείται όταν σύρουμε τη γραμμή τίτλου.",k:"moveWindow"},
+ {t:"Αλλάζω το μέγεθος",i:"Σύρε την κάτω δεξιά γωνία του παραθύρου για να το κάνεις μεγαλύτερο.",h:"Αλλάζουμε το μέγεθος σύροντας μια πλευρά ή μια γωνία του παραθύρου.",k:"resizeWindow"},
+ {t:"Χρησιμοποιώ τα κουμπιά του παραθύρου",i:"Κάνε με τη σειρά: ελαχιστοποίηση, επαναφορά από τη γραμμή εργασιών, μεγιστοποίηση και κλείσιμο.",h:"Τα κουμπιά του παραθύρου μπορούν να το μικρύνουν στη γραμμή εργασιών, να το μεγαλώσουν σε όλη την οθόνη και να το κλείσουν.",k:"windowButtons"},
+ {t:"Τα κατάφερες!",i:"Σκέψου τι έμαθες στο Μάθημα 13.",h:"Σκέψου πώς ανοίγουμε εφαρμογές και πώς μετακινούμε, αλλάζουμε μέγεθος και κλείνουμε τα παράθυρά τους.",k:"final"}
+];
+
+let s=0,selfChoice=null;
+let answerOrders={};
+let graphisClicks=0,graphisClickTimer=null;
+let selectedDrag=null,classState={};
+let labelState={locked:new Set(),items:[]};
+let moveState={dragging:false,offX:0,offY:0};
+let resizeState={dragging:false,startX:0,startY:0,startW:0,startH:0};
+let controlState={min:false,restore:false,max:false,close:false};
+
+function shuffled(arr){
+ const a=[...arr];
+ for(let i=a.length-1;i>0;i--){
+  const j=Math.floor(Math.random()*(i+1));
+  [a[i],a[j]]=[a[j],a[i]];
+ }
+ return a;
+}
+function nav(){
+ document.getElementById("path").innerHTML=steps.map((_,i)=>`<div class="dot ${i<s?'done':i===s?'active':''}">${i+1}</div>`).join("");
+}
+function completeFinalDot(){s=steps.length;nav()}
+function clearFeedback(){const f=document.getElementById("feedback");f.className="feedback";f.textContent=""}
+function setFeedback(t,ok){const f=document.getElementById("feedback");f.className="feedback "+(ok?"good":"bad");f.textContent=t}
+function nextAfter(ms=900){setTimeout(()=>{s++;render()},ms)}
+function render(){
+ nav();clearFeedback();selectedDrag=null;
+ const x=steps[s];
+ document.getElementById("title").textContent=x.t;
+ document.getElementById("inst").textContent=x.i;
+ if(x.k==="appConcept")stage1();
+ if(x.k==="openApp")stage2();
+ if(x.k==="desktopIcons")stage3();
+ if(x.k==="windowParts")stage4();
+ if(x.k==="moveWindow")stage5();
+ if(x.k==="resizeWindow")stage6();
+ if(x.k==="windowButtons")stage7();
+ if(x.k==="final")stage8();
+}
+
+function owlHTML(){return `<span class="owl"><span></span></span>`}
+function graphisIcon(){return `<span class="icon-art graphis">✎</span>`}
+function folderIcon(){return `<span class="icon-art folder">▰</span>`}
+function fileIcon(){return `<span class="icon-art file">▤</span>`}
+
+function osShell(inner,task=""){
+ return `<div class="os">
+   <div class="os-top"><span class="brand">${owlHTML()} AthenaOS</span><span>12:30</span></div>
+   <div class="desktop">${inner}<div class="taskbar"><div class="task-item">Α</div>${task}</div></div>
+  </div>`;
+}
+function graphisWindow(id="appWindow",extraClass="",buttons=true,resize=false){
+ return `<div class="window ${extraClass}" id="${id}">
+   <div class="titlebar" id="${id}_title">
+    <span>Graphis — Νέο έγγραφο</span>
+    ${buttons?`<span class="window-buttons">
+      <button class="winbtn" onclick="minimizeWindow()">—</button>
+      <button class="winbtn" onclick="maximizeWindow()">□</button>
+      <button class="winbtn close" onclick="closeWindow()">×</button>
+    </span>`:""}
+   </div>
+   <div class="toolbar"><span>Αρχείο</span><span>Επεξεργασία</span><span>Μορφοποίηση</span><span>Βοήθεια</span></div>
+   <div class="document"><div class="paper">Γράψε εδώ...</div></div>
+   ${resize?'<div class="resize-handle" id="resizeHandle"></div>':""}
+  </div>`;
+}
+
+/* Stage 1 */
+function stage1(){
+ const opts=shuffled([
+  {ok:true,icon:"▣",txt:"Μία εφαρμογή"},
+  {ok:false,icon:"⌨️",txt:"Μόνο το πληκτρολόγιο"},
+  {ok:false,icon:"🔌",txt:"Μόνο το καλώδιο ρεύματος"}
+ ]);
+ answerOrders.appConcept=opts;
+ document.getElementById("card").innerHTML=`<div class="note">Θέλω να γράψω, να ζωγραφίσω ή να βρω πληροφορίες.</div><div class="row">${opts.map((o,i)=>`<button class="choice" onclick="appConceptAns(${i})"><span class="big">${o.icon}</span>${o.txt}</button>`).join("")}</div>`;
+}
+function appConceptAns(i){
+ if(!answerOrders.appConcept[i].ok){setFeedback("Αυτό δεν είναι η εφαρμογή που εκτελεί την εργασία.",false);return}
+ setFeedback("Σωστά! Για να κάνουμε μια εργασία χρησιμοποιούμε μια εφαρμογή.",true);nextAfter();
+}
+
+/* Stage 2 */
+function stage2(){
+ graphisClicks=0;
+ const icons=[
+  `<button class="desk-icon" ondblclick="wrongDesktopIcon()"><span class="icon-art chroma">🎨</span>Chroma</button>`,
+  `<button class="desk-icon" id="graphisDesk" onclick="graphisSingleClick(event)" ondblclick="openGraphis(event)">${graphisIcon()}Graphis</button>`,
+  `<button class="desk-icon" ondblclick="wrongDesktopIcon()"><span class="icon-art ploigos">⌁</span>Ploigos</button>`,
+  `<button class="desk-icon" ondblclick="wrongDesktopIcon()">${folderIcon()}Εργασίες</button>`
+ ];
+ document.getElementById("card").innerHTML=osShell(`<div class="desktop-icons">${shuffled(icons).join("")}</div>`);
+}
+function graphisSingleClick(ev){
+ ev.currentTarget.classList.add("selected");
+ setFeedback("Ένα κλικ επιλέγει το εικονίδιο. Για να ανοίξεις το Graphis χρειάζεται διπλό κλικ.",true);
+}
+function openGraphis(ev){
+ ev.preventDefault();
+ const desktop=document.querySelector(".desktop");
+ desktop.insertAdjacentHTML("beforeend",graphisWindow("openedGraphis","",true,false));
+ setFeedback("Σωστά! Το Graphis άνοιξε και εμφανίστηκε το παράθυρό του.",true);nextAfter(1100);
+}
+function wrongDesktopIcon(){setFeedback("Άνοιξε την εφαρμογή Graphis.",false)}
+
+/* Stage 3 */
+const iconClassItems=[
+ {id:"app",target:"application",html:graphisIcon(),txt:"Graphis"},
+ {id:"folder",target:"folder",html:folderIcon(),txt:"Εργασίες"},
+ {id:"file",target:"file",html:fileIcon(),txt:"Κείμενο για το σχολείο"}
+];
+function stage3(){
+ classState={locked:new Set(),items:iconClassItems};
+ const order=shuffled(iconClassItems);
+ document.getElementById("card").innerHTML=`
+  <div class="classify">
+   <div class="tray"><h3>Εικονίδια</h3>
+    ${order.map(o=>`<div class="dragitem" id="ic_${o.id}" draggable="true" ondragstart="dragStart(event,'${o.id}')" ondragend="dragEnd(event)" onclick="pickDrag('${o.id}')"><span class="ico">${o.html}</span><span>${o.txt}</span></div>`).join("")}
+    <div class="smallhelp">Σύρε ένα εικονίδιο ή πάτησέ το και μετά πάτησε τη σωστή κατηγορία.</div>
+   </div>
+   <div class="zones">
+    ${classZone("application","▣","Εφαρμογή")}
+    ${classZone("folder","▰","Φάκελος")}
+    ${classZone("file","▤","Αρχείο")}
+   </div>
+  </div>`;
+}
+function classZone(id,icon,label){
+ return `<div class="zone" id="zone_${id}" ondragover="allowDrop(event)" ondragleave="leaveDrop(event)" ondrop="dropClass(event,'${id}')" onclick="tapClass('${id}')"><span class="zone-icon">${icon}</span><span class="zone-label">${label}</span><span class="zone-answer" id="ans_${id}"></span></div>`;
+}
+function dragStart(ev,id){
+ selectedDrag=id;ev.currentTarget.classList.add("selectedDrag");
+ if(ev.dataTransfer){ev.dataTransfer.setData("text/plain",id);ev.dataTransfer.effectAllowed="move"}
+}
+function dragEnd(ev){ev.currentTarget.classList.remove("selectedDrag")}
+function pickDrag(id){
+ if(classState.locked?.has(id)||labelState.locked?.has(id))return;
+ document.querySelectorAll(".dragitem,.label-chip").forEach(x=>x.classList.remove("selectedDrag","sel"));
+ selectedDrag=selectedDrag===id?null:id;
+ if(selectedDrag){
+  document.getElementById("ic_"+id)?.classList.add("selectedDrag");
+  document.getElementById("lab_"+id)?.classList.add("sel");
+ }
+}
+function allowDrop(ev){ev.preventDefault();ev.currentTarget.classList.add("over")}
+function leaveDrop(ev){ev.currentTarget.classList.remove("over")}
+function dropClass(ev,target){
+ ev.preventDefault();ev.currentTarget.classList.remove("over");
+ const id=(ev.dataTransfer&&ev.dataTransfer.getData("text/plain"))||selectedDrag;
+ if(id)placeClass(id,target);
+}
+function tapClass(target){if(selectedDrag)placeClass(selectedDrag,target)}
+function placeClass(id,target){
+ const item=classState.items.find(x=>x.id===id);
+ if(!item||classState.locked.has(id))return;
+ document.querySelectorAll(".dragitem").forEach(x=>x.classList.remove("selectedDrag"));
+ selectedDrag=null;
+ if(item.target!==target){setFeedback("Αυτό το εικονίδιο ανήκει σε άλλη κατηγορία.",false);return}
+ classState.locked.add(id);
+ document.getElementById("ic_"+id).classList.add("locked");
+ document.getElementById("zone_"+target).classList.add("correct");
+ document.getElementById("ans_"+target).textContent=item.txt;
+ if(classState.locked.size===3){setFeedback("Μπράβο! Ξεχώρισες εφαρμογή, φάκελο και αρχείο.",true);nextAfter(1050)}
+ else setFeedback("Σωστά! Συνέχισε.",true);
+}
+
+/* Stage 4 */
+const labelItems=[
+ {id:"title",target:"title",txt:"Γραμμή τίτλου"},
+ {id:"buttons",target:"buttons",txt:"Κουμπιά παραθύρου"},
+ {id:"window",target:"window",txt:"Παράθυρο εφαρμογής"}
+];
+function stage4(){
+ labelState={locked:new Set(),items:labelItems};
+ const order=shuffled(labelItems);
+ document.getElementById("card").innerHTML=`
+  <div class="label-layout">
+   <div class="label-tray">
+    ${order.map(o=>`<div class="label-chip" id="lab_${o.id}" draggable="true" ondragstart="labelDragStart(event,'${o.id}')" ondragend="labelDragEnd(event)" onclick="pickDrag('${o.id}')">${o.txt}</div>`).join("")}
+    <div class="smallhelp">Σύρε κάθε ετικέτα ή πάτησέ την και μετά πάτησε το σωστό σημείο.</div>
+   </div>
+   <div class="mock-window">
+    <div class="mock-title"><span>Graphis — Νέο έγγραφο</span><span class="mock-controls"><span class="mock-control">—</span><span class="mock-control">□</span><span class="mock-control">×</span></span></div>
+    <div class="mock-body"><div class="mock-paper"></div></div>
+    <div class="label-drop drop-title" id="ld_title" ondragover="allowDrop(event)" ondragleave="leaveDrop(event)" ondrop="dropLabel(event,'title')" onclick="tapLabel('title')"></div>
+    <div class="label-drop drop-buttons" id="ld_buttons" ondragover="allowDrop(event)" ondragleave="leaveDrop(event)" ondrop="dropLabel(event,'buttons')" onclick="tapLabel('buttons')"></div>
+    <div class="label-drop drop-window" id="ld_window" ondragover="allowDrop(event)" ondragleave="leaveDrop(event)" ondrop="dropLabel(event,'window')" onclick="tapLabel('window')"></div>
+   </div>
+  </div>`;
+}
+function labelDragStart(ev,id){
+ selectedDrag=id;ev.currentTarget.classList.add("sel");
+ if(ev.dataTransfer){ev.dataTransfer.setData("text/plain",id)}
+}
+function labelDragEnd(ev){ev.currentTarget.classList.remove("sel")}
+function dropLabel(ev,target){
+ ev.preventDefault();ev.currentTarget.classList.remove("over");
+ const id=(ev.dataTransfer&&ev.dataTransfer.getData("text/plain"))||selectedDrag;
+ if(id)placeLabel(id,target);
+}
+function tapLabel(target){if(selectedDrag)placeLabel(selectedDrag,target)}
+function placeLabel(id,target){
+ const item=labelState.items.find(x=>x.id===id);
+ if(!item||labelState.locked.has(id))return;
+ document.querySelectorAll(".label-chip").forEach(x=>x.classList.remove("sel"));
+ selectedDrag=null;
+ if(item.target!==target){setFeedback("Αυτή η ετικέτα ταιριάζει σε άλλο σημείο.",false);return}
+ labelState.locked.add(id);
+ document.getElementById("lab_"+id).classList.add("lock");
+ const d=document.getElementById("ld_"+target);d.classList.add("correct");d.textContent=item.txt;
+ if(labelState.locked.size===3){setFeedback("Σωστά! Αναγνώρισες τα βασικά μέρη του παραθύρου.",true);nextAfter(1000)}
+ else setFeedback("Σωστά! Συνέχισε.",true);
+}
+
+/* Stage 5 */
+function stage5(){
+ document.getElementById("card").innerHTML=osShell(`<div class="target-zone stage5-target">Τοποθέτησε εδώ το παράθυρο</div>${graphisWindow("moveWin","stage5-window",false,false)}`);
+ setTimeout(enableMoveWindow,50);
+}
+function enableWindowDrag(id,onRelease=null){
+ const win=document.getElementById(id),bar=document.getElementById(id+"_title"),desk=win?.parentElement;
+ if(!win||!bar||!desk)return;
+ bar.addEventListener("pointerdown",e=>{
+  if(e.target.closest(".window-buttons"))return;
+  if(win.classList.contains("maxed"))return;
+  moveState.dragging=true;
+  bar.setPointerCapture(e.pointerId);
+  const r=win.getBoundingClientRect();
+  moveState.offX=e.clientX-r.left;
+  moveState.offY=e.clientY-r.top;
+ });
+ bar.addEventListener("pointermove",e=>{
+  if(!moveState.dragging)return;
+  const dr=desk.getBoundingClientRect();
+  let x=e.clientX-dr.left-moveState.offX;
+  let y=e.clientY-dr.top-moveState.offY;
+  x=Math.max(0,Math.min(x,desk.clientWidth-win.offsetWidth));
+  y=Math.max(0,Math.min(y,desk.clientHeight-50-win.offsetHeight));
+  win.style.left=x+"px";
+  win.style.top=y+"px";
+ });
+ bar.addEventListener("pointerup",()=>{
+  if(!moveState.dragging)return;
+  moveState.dragging=false;
+  if(onRelease)onRelease(win);
+ });
+}
+function enableMoveWindow(){
+ enableWindowDrag("moveWin",win=>{
+  const target=document.querySelector(".target-zone");
+  const wr=win.getBoundingClientRect(),tr=target.getBoundingClientRect();
+  const cx=wr.left+wr.width/2,cy=wr.top+wr.height/2;
+  if(cx>tr.left&&cx<tr.right&&cy>tr.top&&cy<tr.bottom){
+   setFeedback("Μπράβο! Μετακίνησες το παράθυρο σύροντας τη γραμμή τίτλου.",true);
+   nextAfter(1000);
+  }else{
+   setFeedback("Συνέχισε να σύρεις το παράθυρο μέχρι να βρεθεί μέσα στο πράσινο πλαίσιο.",false);
+  }
+ });
+}
+
+/* Stage 6 */
+function stage6(){
+ document.getElementById("card").innerHTML=osShell(`${graphisWindow("resizeWin","stage6-window",false,true)}<div class="control-checklist"><div class="checkitem">Στόχος: κάνε το παράθυρο αρκετά μεγαλύτερο.</div></div>`);
+ setTimeout(()=>{enableResize();enableWindowDrag("resizeWin")},50);
+}
+function enableResize(){
+ const win=document.getElementById("resizeWin"),handle=document.getElementById("resizeHandle");
+ if(!win||!handle)return;
+ const startArea=win.offsetWidth*win.offsetHeight;
+ handle.addEventListener("pointerdown",e=>{
+  resizeState.dragging=true;handle.setPointerCapture(e.pointerId);
+  resizeState.startX=e.clientX;resizeState.startY=e.clientY;resizeState.startW=win.offsetWidth;resizeState.startH=win.offsetHeight;
+ });
+ handle.addEventListener("pointermove",e=>{
+  if(!resizeState.dragging)return;
+  const nw=Math.max(400,Math.min(760,resizeState.startW+(e.clientX-resizeState.startX)));
+  const nh=Math.max(260,Math.min(400,resizeState.startH+(e.clientY-resizeState.startY)));
+  win.style.width=nw+"px";win.style.height=nh+"px";
+ });
+ handle.addEventListener("pointerup",e=>{
+  resizeState.dragging=false;
+  const area=win.offsetWidth*win.offsetHeight;
+  if(area>startArea*1.22){
+   setFeedback("Σωστά! Άλλαξες το μέγεθος του παραθύρου σύροντας τη γωνία του.",true);nextAfter(950);
+  }else setFeedback("Κάνε το παράθυρο λίγο μεγαλύτερο σύροντας την κάτω δεξιά γωνία.",false);
+ });
+}
+
+/* Stage 7 */
+function stage7(){
+ controlState={min:false,restore:false,max:false,close:false};
+ document.getElementById("card").innerHTML=osShell(`${graphisWindow("controlWin","stage7-window",true,false)}
+  <div class="control-checklist">
+   <div class="checkitem" id="cMin">1. Ελαχιστοποίηση</div>
+   <div class="checkitem" id="cRestore">2. Επαναφορά</div>
+   <div class="checkitem" id="cMax">3. Μεγιστοποίηση</div>
+   <div class="checkitem" id="cClose">4. Κλείσιμο</div>
+  </div>`,`<button class="task-item hidden" id="graphisTask" onclick="restoreWindow()">Graphis</button>`);
+ setTimeout(()=>enableWindowDrag("controlWin"),50);
+}
+function minimizeWindow(){
+ if(s!==6)return;
+ if(controlState.min){setFeedback("Έχεις ήδη ελαχιστοποιήσει το παράθυρο. Επανέφερέ το από τη γραμμή εργασιών.",false);return}
+ document.getElementById("controlWin").classList.add("hidden");
+ document.getElementById("graphisTask").classList.remove("hidden");
+ controlState.min=true;document.getElementById("cMin").classList.add("done");
+ setFeedback("Σωστά! Το παράθυρο βρίσκεται τώρα στη γραμμή εργασιών. Πάτησε Graphis για επαναφορά.",true);
+}
+function restoreWindow(){
+ if(s!==6||!controlState.min||controlState.restore)return;
+ document.getElementById("controlWin").classList.remove("hidden");
+ document.getElementById("graphisTask").classList.add("hidden");
+ controlState.restore=true;document.getElementById("cRestore").classList.add("done");
+ setFeedback("Σωστά! Τώρα μεγιστοποίησε το παράθυρο.",true);
+}
+function maximizeWindow(){
+ if(s!==6)return;
+ if(!controlState.restore){setFeedback("Ακολούθησε πρώτα τα δύο προηγούμενα βήματα.",false);return}
+ if(controlState.max){setFeedback("Το παράθυρο είναι ήδη μεγιστοποιημένο. Τώρα κλείσ' το.",true);return}
+ document.getElementById("controlWin").classList.add("maxed");
+ controlState.max=true;document.getElementById("cMax").classList.add("done");
+ setFeedback("Σωστά! Το παράθυρο μεγάλωσε όσο η οθόνη. Τώρα κλείσ' το.",true);
+}
+function closeWindow(){
+ if(s!==6)return;
+ if(!controlState.max){setFeedback("Ακολούθησε πρώτα τα προηγούμενα βήματα.",false);return}
+ document.getElementById("controlWin").classList.add("hidden");
+ controlState.close=true;document.getElementById("cClose").classList.add("done");
+ setFeedback("Μπράβο! Χρησιμοποίησες σωστά τα κουμπιά του παραθύρου.",true);nextAfter(1000);
+}
+
+/* Stage 8 */
+function stage8(){
+ selfChoice=null;
+ document.getElementById("card").innerHTML=`
+  <div class="finalBox">
+   <div class="stars">⭐ ⭐ ⭐</div>
+   <div class="summary">
+    Έμαθες ότι μια εφαρμογή έχει όνομα και εικονίδιο, ότι ανοίγει σε παράθυρο και ότι μπορείς
+    να μετακινείς, να αλλάζεις μέγεθος, να ελαχιστοποιείς, να μεγιστοποιείς και να κλείνεις το παράθυρό της.
+   </div>
+   <div class="faces">
+    <button class="face" onclick="selfPick(1,this)"><span>🙂</span>Θέλω λίγη εξάσκηση</button>
+    <button class="face" onclick="selfPick(2,this)"><span>😊</span>Τα κατάφερα</button>
+    <button class="face" onclick="selfPick(3,this)"><span>🤩</span>Τα κατάφερα πολύ καλά</button>
+   </div>
+   <button class="check" onclick="finish()">Ολοκλήρωση</button>
+   <button class="repeatBtn" onclick="restartAll()">↻ Επανάληψη δραστηριότητας</button>
+  </div>`;
+}
+function selfPick(v,e){
+ selfChoice=v;document.querySelectorAll(".face").forEach(x=>x.classList.remove("sel"));e.classList.add("sel");
+}
+function finish(){
+ const f=document.getElementById("feedback");
+ if(!selfChoice){f.className="feedback bad";f.textContent="Διάλεξε πρώτα πώς νιώθεις για όσα έμαθες.";return}
+ completeFinalDot();f.className="feedback good";f.textContent="Μπράβο! Ολοκλήρωσες το Μάθημα 13.";
+}
+function restartAll(){
+ s=0;selfChoice=null;answerOrders={};graphisClicks=0;selectedDrag=null;classState={};
+ labelState={locked:new Set(),items:[]};moveState={dragging:false,offX:0,offY:0};
+ resizeState={dragging:false,startX:0,startY:0,startW:0,startH:0};controlState={min:false,restore:false,max:false,close:false};render();
+}
+function help(){
+ const idx=Math.min(s,steps.length-1);
+ document.getElementById("helpText").textContent=steps[idx].h;document.getElementById("modal").classList.add("show");
+}
+function closeHelp(){document.getElementById("modal").classList.remove("show")}
+render();
+</script>
+
+
+<footer class="nk-license" aria-label="Πληροφορίες δημιουργού και άδειας χρήσης">
+  <div><strong>Created by Nikos Kalakos · © 2026</strong></div>
+  <div>Original educational content and simulation design licensed under <a class="cc-badge" href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank" rel="license noopener noreferrer">CC BY-NC 4.0</a>.</div>
+  <div>Source code © 2026 Nikos Kalakos.</div>
+  <div>Third-party and textbook materials remain subject to the rights and licences of their respective copyright holders.</div>
+</footer></body>
+</html>

@@ -1,0 +1,654 @@
+<!--
+ICT Educational Simulation
+Created by Nikos Kalakos
+Copyright © 2026 Nikos Kalakos
+
+Original educational content and simulation design licensed under CC BY-NC 4.0.
+Source code © 2026 Nikos Kalakos.
+Third-party and textbook materials remain subject to the rights and licences of their respective copyright holders.
+-->
+<!doctype html>
+<html lang="el">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="author" content="Nikos Kalakos">
+<meta name="copyright" content="© 2026 Nikos Kalakos">
+<meta name="license" content="Original educational content and simulation design: CC BY-NC 4.0; source code © 2026 Nikos Kalakos; third-party and textbook materials excluded.">
+<title>Μάθημα 30 - Ψηφιακή πολιτειότητα</title>
+<style>
+:root{
+  --unit-purple:#84648F;
+  --unit-purple-dark:#674B73;
+  --unit-purple-soft:#F1E8F4;
+  --unit-cream:#FCF0E1;
+  --ink:#25334a;
+  --line:#d4d9e2;
+  --good:#eef7dc;
+  --bad:#fff0ed;
+  --shadow:0 10px 28px rgba(37,51,74,.12);
+}
+*{box-sizing:border-box}
+body{
+  margin:0;background:#f7f8fa;color:var(--ink);
+  font-family:Arial,"Noto Sans",sans-serif
+}
+button{font:inherit;cursor:pointer}
+.app{max-width:1180px;margin:auto;padding:16px}
+.top{
+  background:var(--unit-cream);border:3px solid #dfcfe2;border-radius:24px;padding:14px 18px;
+  display:flex;align-items:center;justify-content:space-between;box-shadow:var(--shadow)
+}
+.top h1{margin:0;font-size:clamp(28px,4vw,41px)}
+.badge{
+  width:70px;height:70px;border-radius:22px;background:var(--unit-purple);color:#fff;
+  display:grid;place-items:center;font-size:31px;font-weight:900;
+  box-shadow:inset 0 -5px 0 rgba(0,0,0,.10)
+}
+.path{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin:16px 0}
+.dot{
+  width:44px;height:44px;border-radius:50%;display:grid;place-items:center;
+  border:3px solid #aeb7c7;background:#fff;color:#65718a;font-weight:900;font-size:20px
+}
+.dot.active{background:var(--unit-purple);border-color:var(--unit-purple-dark);color:#fff;transform:scale(1.1)}
+.dot.done{background:var(--unit-purple);border-color:var(--unit-purple-dark);color:#fff}
+.panel{
+  min-height:710px;background:#fff;border:3px solid #dfcfe2;border-radius:28px;
+  padding:24px;box-shadow:var(--shadow)
+}
+.step-head{display:flex;justify-content:space-between;gap:12px;align-items:flex-start}
+.step-head h2{margin:0;font-size:clamp(25px,4vw,37px)}
+.help{
+  background:var(--unit-cream);color:#5e4567;border:3px solid #c9aecf;
+  border-radius:16px;padding:10px 17px;font-weight:900
+}
+.instruction{
+  max-width:970px;margin:14px auto 18px;text-align:center;font-size:clamp(19px,2.3vw,24px);
+  font-weight:900;line-height:1.38
+}
+.card{
+  max-width:1040px;margin:auto;border:3px solid #dfcfe2;border-radius:28px;
+  background:#fff;padding:22px;min-height:500px
+}
+.feedback{
+  display:none;max-width:860px;margin:16px auto 0;padding:12px 18px;border-radius:17px;
+  text-align:center;font-weight:900;font-size:20px
+}
+.feedback.good{display:block;background:var(--good);border:2px solid #9dbd57}
+.feedback.bad{display:block;background:var(--bad);border:2px solid #e5a59b}
+.check{
+  display:block;margin:18px auto 0;padding:13px 28px;border:0;border-radius:16px;
+  background:var(--unit-purple);color:#fff;font-size:21px;font-weight:900;
+  box-shadow:0 5px 0 var(--unit-purple-dark)
+}
+.smallhelp{text-align:center;font-size:14px;color:#6d7890;font-weight:800;margin-top:10px}
+.row{display:flex;gap:14px;justify-content:center;align-items:stretch;flex-wrap:wrap}
+
+/* Common cards */
+.options-grid{
+  display:grid;grid-template-columns:repeat(3,1fr);gap:14px;max-width:900px;margin:auto
+}
+.option-card{
+  min-height:145px;border:3px solid var(--line);border-radius:20px;background:#fff;
+  padding:14px;text-align:center;font-weight:900;font-size:17px;
+  display:grid;place-items:center;gap:7px
+}
+.option-card:hover{transform:translateY(-2px);box-shadow:var(--shadow)}
+.option-card.sel{border-color:var(--unit-purple);background:var(--unit-purple-soft)}
+.ico{font-size:48px;display:block}
+
+/* Stage 1 */
+.definition{
+  max-width:860px;margin:auto;border:4px solid var(--unit-purple);border-radius:24px;
+  background:var(--unit-cream);padding:20px
+}
+.definition-icon{
+  width:92px;height:92px;border-radius:50%;margin:0 auto 14px;
+  background:var(--unit-purple);color:#fff;display:grid;place-items:center;font-size:50px
+}
+.definition .options-grid{grid-template-columns:1fr;max-width:760px}
+.definition .option-card{min-height:82px}
+
+/* Stage 2 rules */
+.rule-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;max-width:900px;margin:auto}
+.rule-card{
+  min-height:130px;border:3px solid #d1d7e0;border-radius:20px;background:#fff;
+  padding:15px;text-align:center;font-weight:900;display:grid;place-items:center
+}
+.rule-card.sel{border-color:var(--unit-purple);background:var(--unit-purple-soft)}
+.rule-symbol{font-size:42px;display:block;margin-bottom:7px}
+
+/* Stage 3 share panel */
+.share-panel{
+  max-width:760px;margin:auto;border:5px solid #46546b;border-radius:22px;overflow:hidden;
+  box-shadow:var(--shadow)
+}
+.share-top{
+  height:44px;background:#46546b;color:#fff;display:flex;align-items:center;justify-content:space-between;
+  padding:0 14px;font-weight:900
+}
+.share-body{padding:22px;background:#fbfcfd}
+.profile{
+  display:flex;align-items:center;gap:12px;border-bottom:2px solid #e0e5ea;padding-bottom:13px
+}
+.avatar{
+  width:52px;height:52px;border-radius:50%;background:var(--unit-cream);border:3px solid #cbb6d0;
+  display:grid;place-items:center;font-size:28px
+}
+.share-box{
+  margin-top:18px;border:3px solid #cbd3dc;border-radius:16px;background:#fff;padding:16px
+}
+.personal-data{
+  margin:12px 0;border:3px dashed var(--unit-purple);border-radius:13px;background:var(--unit-purple-soft);
+  padding:14px;text-align:center;font-weight:900
+}
+.share-actions{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:17px}
+.share-btn{
+  border:3px solid #aeb8c5;border-radius:14px;background:#fff;padding:13px;font-weight:900
+}
+.share-btn.primary{background:var(--unit-purple);border-color:var(--unit-purple-dark);color:#fff}
+
+/* Stage 4 access */
+.globe-box{
+  max-width:900px;margin:auto;border:4px solid var(--unit-purple);border-radius:24px;
+  background:linear-gradient(180deg,var(--unit-cream),#fff);padding:18px
+}
+.globe{
+  width:125px;height:125px;border-radius:50%;margin:0 auto 15px;background:#5bb6d5;
+  border:6px solid #fff;box-shadow:0 0 0 4px #61778d;position:relative
+}
+.globe:before,.globe:after{
+  content:"";position:absolute;background:#77c36b;border-radius:50%
+}
+.globe:before{width:45px;height:29px;left:18px;top:20px;transform:rotate(-20deg)}
+.globe:after{width:38px;height:49px;right:16px;bottom:17px;transform:rotate(20deg)}
+.group-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.group-card{
+  min-height:115px;border:3px solid #d2d8e1;border-radius:18px;background:#fff;
+  display:grid;place-items:center;text-align:center;padding:12px;font-weight:900
+}
+.group-card.sel{border-color:var(--unit-purple);background:var(--unit-purple-soft)}
+.group-card .ico{font-size:39px}
+
+/* Stage 5 rights / obligations */
+.classify{
+  display:grid;grid-template-columns:260px 1fr;gap:18px;max-width:930px;margin:auto
+}
+.tray{
+  border:3px solid #d4dae3;border-radius:18px;background:#f8fafc;padding:12px
+}
+.tray h3{text-align:center;margin:2px 0 9px}
+.drag-token{
+  border:3px solid #9ca8b7;border-radius:13px;background:#fff;padding:11px;margin:9px 0;
+  font-weight:900;text-align:center;cursor:grab;user-select:none
+}
+.drag-token.selectedDrag{outline:4px solid var(--unit-purple);background:var(--unit-purple-soft)}
+.drag-token.locked{opacity:.34}
+.drop-columns{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.drop-zone{
+  min-height:330px;border:4px dashed #a9b2bf;border-radius:20px;background:#fbfcfd;padding:12px
+}
+.drop-zone.over{border-color:var(--unit-purple);background:var(--unit-purple-soft)}
+.drop-zone h3{
+  margin:0 0 12px;text-align:center;background:var(--unit-cream);border:3px solid #d9c8b4;
+  border-radius:12px;padding:8px
+}
+.placed{
+  border:3px solid #9faaba;border-radius:12px;background:#fff;padding:10px;margin:8px 0;font-weight:900
+}
+
+/* Stage 6 responsible choices */
+.scenario{
+  max-width:790px;margin:auto;border:4px solid var(--unit-purple);border-radius:24px;
+  background:var(--unit-cream);padding:20px
+}
+.scenario-count{text-align:center;font-size:14px;font-weight:900;color:#6c5874;margin-bottom:9px}
+.scenario-card{
+  min-height:170px;border:3px solid #d6ccd9;border-radius:18px;background:#fff;
+  display:grid;place-items:center;text-align:center;padding:20px;font-size:22px;font-weight:900
+}
+.scenario-icon{font-size:62px;display:block;margin-bottom:8px}
+.scenario-options{display:grid;grid-template-columns:1fr 1fr;gap:13px;margin-top:15px}
+.scenario-btn{
+  border:3px solid #aeb8c5;border-radius:14px;background:#fff;padding:13px;font-weight:900
+}
+
+/* Quiz */
+.quiz{
+  max-width:880px;margin:auto;border:4px solid var(--unit-purple);border-radius:24px;
+  background:#fbf7fc;padding:20px;text-align:center
+}
+.quiz-progress{height:14px;background:#e7e9ed;border-radius:9px;overflow:hidden;max-width:520px;margin:0 auto 18px}
+.quiz-progress span{display:block;height:100%;background:var(--unit-purple);width:0;transition:.25s}
+.quiz-q{font-size:24px;font-weight:900;margin-bottom:18px}
+.quiz-choice{
+  min-width:210px;max-width:280px;min-height:110px;border:3px solid #d0d6df;border-radius:18px;
+  background:#fff;font-weight:900;font-size:17px;padding:13px
+}
+
+/* Final */
+.finalBox{max-width:790px;margin:auto;text-align:center}
+.stars{font-size:58px;margin:18px}
+.summary{
+  padding:20px;border:4px solid var(--unit-purple);background:var(--unit-cream);
+  border-radius:22px;font-size:21px;font-weight:900;line-height:1.45
+}
+.faces{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:18px}
+.face{
+  min-height:130px;border:3px solid var(--line);border-radius:20px;background:#fff;
+  font-weight:900;font-size:17px
+}
+.face span{display:block;font-size:52px;margin-bottom:7px}
+.face.sel{border-color:var(--unit-purple);background:var(--unit-purple-soft)}
+.repeatBtn{
+  display:block;margin:15px auto 0;padding:12px 22px;border:0;border-radius:15px;
+  background:#56677e;color:#fff;font-size:19px;font-weight:900;box-shadow:0 5px 0 #39495c
+}
+
+/* Help */
+.modal{
+  position:fixed;inset:0;background:#24344d99;display:none;place-items:center;padding:18px;z-index:60
+}
+.modal.show{display:grid}
+.modal-box{
+  max-width:620px;background:#fff;border-radius:24px;border:4px solid var(--unit-purple);
+  padding:22px;text-align:center;font-size:20px
+}
+.modal-box button{
+  padding:10px 20px;border:0;border-radius:13px;background:var(--unit-purple);color:#fff;font-weight:900
+}
+@media(max-width:850px){
+  .options-grid,.rule-grid,.group-grid,.drop-columns,.scenario-options,.faces{grid-template-columns:1fr}
+  .classify{grid-template-columns:1fr}
+}
+</style>
+
+
+<style id="nk-license-style">
+.nk-license{max-width:1100px;margin:14px auto 24px;padding:10px 16px;text-align:center;font:13px/1.45 Arial,"Noto Sans",sans-serif;color:#4e657c}
+.nk-license a{color:inherit;text-decoration:underline;text-underline-offset:2px}
+.nk-license .cc-badge{display:inline-block;margin:0 4px;padding:2px 7px;border:1px solid #8aa0b8;border-radius:6px;background:#fff;font-weight:700;white-space:nowrap}
+</style></head>
+<body>
+<div class="app">
+  <div class="top">
+    <h1>Ψηφιακή πολιτειότητα</h1>
+    <div class="badge">30</div>
+  </div>
+  <div class="path" id="path"></div>
+
+  <main class="panel">
+    <div class="step-head">
+      <h2 id="title"></h2>
+      <button class="help" onclick="help()">❓ Βοήθεια</button>
+    </div>
+    <div class="instruction" id="inst"></div>
+    <div class="card" id="card"></div>
+    <div class="feedback" id="feedback"></div>
+  </main>
+</div>
+
+<div class="modal" id="modal">
+  <div class="modal-box">
+    <h2>💡 Βοήθεια</h2>
+    <p id="helpText"></p>
+    <button onclick="closeHelp()">Εντάξει</button>
+  </div>
+</div>
+
+<script>
+const steps=[
+ {t:"Τι είναι ψηφιακός πολίτης;",i:"Διάλεξε την πρόταση που περιγράφει καλύτερα έναν ψηφιακό πολίτη.",h:"Ο ψηφιακός πολίτης χρησιμοποιεί την τεχνολογία υπεύθυνα, προστατεύει τα δικαιώματα και τις πληροφορίες του και σέβεται τα δικαιώματα των άλλων.",k:"definition"},
+ {t:"Τρεις βασικοί κανόνες",i:"Διάλεξε και τους τρεις σωστούς κανόνες για τη χρήση του διαδικτύου.",h:"Σκέφτομαι πριν κοινοποιήσω προσωπικά δεδομένα, ελέγχω τον χρόνο που περνώ στο διαδίκτυο και αντιμετωπίζω τους άλλους με σεβασμό.",k:"rules"},
+ {t:"Πριν κοινοποιήσω",i:"Το πλαίσιο περιέχει προσωπικά δεδομένα. Διάλεξε την υπεύθυνη ενέργεια.",h:"Σκεφτόμαστε δύο φορές πριν κοινοποιήσουμε προσωπικά δεδομένα στο διαδίκτυο.",k:"share"},
+ {t:"Το διαδίκτυο είναι για όλους",i:"Διάλεξε όλες τις ομάδες παιδιών που πρέπει να μπορούν να συμμετέχουν στο διαδίκτυο.",h:"Τα δικαιώματα όλων πρέπει να γίνονται σεβαστά και όλοι πρέπει να μπορούν να συμμετέχουν στο διαδίκτυο.",k:"access"},
+ {t:"Δικαιώματα και υποχρεώσεις",i:"Τοποθέτησε κάθε πρόταση στη σωστή κατηγορία.",h:"Δικαίωμα είναι, για παράδειγμα, να μπορώ να συμμετέχω. Υποχρέωση είναι να σέβομαι τους άλλους και να μην τους προσβάλλω.",k:"classify"},
+ {t:"Επιλέγω υπεύθυνα",i:"Διάβασε κάθε περίπτωση και διάλεξε την υπεύθυνη συμπεριφορά.",h:"Οι τρεις βασικοί κανόνες είναι: προστατεύω τα προσωπικά δεδομένα, ελέγχω τον χρόνο μου και φέρομαι με σεβασμό.",k:"scenarios"},
+ {t:"Τελική δοκιμή",i:"Απάντησε σωστά και στις πέντε ερωτήσεις.",h:"Θυμήσου τι είναι ο ψηφιακός πολίτης, τους βασικούς κανόνες, τα δικαιώματα και τις υποχρεώσεις.",k:"quiz"},
+ {t:"Τα κατάφερες!",i:"Σκέψου τι έμαθες στο Μάθημα 30.",h:"Σκέψου πώς χρησιμοποιείς το διαδίκτυο υπεύθυνα και με σεβασμό στα δικαιώματα όλων.",k:"final"}
+];
+
+let s=0,selfChoice=null;
+let selected=new Set(),optionOrder=[];
+let dragSelected=null,dragLocked=new Set(),dragItems=[];
+let scenarioIndex=0,scenarioOrder=[];
+let quizIndex=0,quizOrder=[],quizOptions=[];
+
+function shuffled(arr){
+ const a=[...arr];
+ for(let i=a.length-1;i>0;i--){
+  const j=Math.floor(Math.random()*(i+1));
+  [a[i],a[j]]=[a[j],a[i]];
+ }
+ return a;
+}
+function nav(){
+ document.getElementById("path").innerHTML=steps.map((_,i)=>`<div class="dot ${i<s?'done':i===s?'active':''}">${i+1}</div>`).join("");
+}
+function completeFinalDot(){s=steps.length;nav()}
+function clearFeedback(){
+ const f=document.getElementById("feedback");
+ f.className="feedback";f.textContent="";
+}
+function setFeedback(t,ok){
+ const f=document.getElementById("feedback");
+ f.className="feedback "+(ok?"good":"bad");f.textContent=t;
+}
+function nextAfter(ms=850){setTimeout(()=>{s++;render()},ms)}
+function render(){
+ nav();clearFeedback();
+ const x=steps[s];
+ document.getElementById("title").textContent=x.t;
+ document.getElementById("inst").textContent=x.i;
+ if(x.k==="definition")stage1();
+ if(x.k==="rules")stage2();
+ if(x.k==="share")stage3();
+ if(x.k==="access")stage4();
+ if(x.k==="classify")stage5();
+ if(x.k==="scenarios")stage6();
+ if(x.k==="quiz")stage7();
+ if(x.k==="final")stage8();
+}
+
+/* Stage 1 */
+function stage1(){
+ optionOrder=shuffled([
+  {ok:true,txt:"Χρησιμοποιεί υπεύθυνα την τεχνολογία, προστατεύει τα δικαιώματά του και σέβεται τα δικαιώματα των άλλων."},
+  {ok:false,txt:"Χρησιμοποιεί το διαδίκτυο χωρίς κανόνες, αρκεί να περνά καλά."},
+  {ok:false,txt:"Μοιράζεται πάντα όλες τις πληροφορίες του για να τον γνωρίζουν όλοι."}
+ ]);
+ document.getElementById("card").innerHTML=`
+  <div class="definition">
+   <div class="definition-icon">🌐</div>
+   <div class="options-grid">
+    ${optionOrder.map((o,i)=>`<button class="option-card" onclick="definitionAnswer(${i})">${o.txt}</button>`).join("")}
+   </div>
+  </div>`;
+}
+function definitionAnswer(i){
+ if(!optionOrder[i].ok){setFeedback("Δοκίμασε ξανά. Ο ψηφιακός πολίτης χρησιμοποιεί την τεχνολογία υπεύθυνα.",false);return}
+ setFeedback("Σωστά! Ο ψηφιακός πολίτης χρησιμοποιεί την τεχνολογία υπεύθυνα και σέβεται τα δικαιώματα όλων.",true);
+ nextAfter();
+}
+
+/* Stage 2 */
+function stage2(){
+ selected=new Set();
+ optionOrder=shuffled([
+  {ok:true,icon:"🔐",txt:"Σκέφτομαι δύο φορές πριν κοινοποιήσω προσωπικά δεδομένα."},
+  {ok:true,icon:"⏱️",txt:"Ελέγχω τον χρόνο που ξοδεύω στο διαδίκτυο."},
+  {ok:true,icon:"🤝",txt:"Αντιμετωπίζω τους άλλους πάντοτε με σεβασμό."},
+  {ok:false,icon:"📣",txt:"Κοινοποιώ αμέσως ό,τι θέλω χωρίς να σκέφτομαι."},
+  {ok:false,icon:"∞",txt:"Μένω στο διαδίκτυο όσο περισσότερο μπορώ."},
+  {ok:false,icon:"😠",txt:"Μιλάω όπως θέλω, ακόμη κι αν προσβάλλω κάποιον."}
+ ]);
+ document.getElementById("card").innerHTML=`
+  <div class="rule-grid">
+   ${optionOrder.map((o,i)=>`<button class="rule-card" id="rule${i}" onclick="toggleSelected(${i},'rule')">
+    <span><span class="rule-symbol">${o.icon}</span>${o.txt}</span>
+   </button>`).join("")}
+  </div>
+  <button class="check" onclick="checkRules()">Έλεγχος</button>`;
+}
+function toggleSelected(i,prefix){
+ selected.has(i)?selected.delete(i):selected.add(i);
+ document.getElementById(prefix+i).classList.toggle("sel",selected.has(i));
+}
+function checkRules(){
+ const good=optionOrder.map((o,i)=>o.ok?i:-1).filter(i=>i>=0);
+ if(selected.size!==3||!good.every(i=>selected.has(i))){
+  setFeedback("Διάλεξε ακριβώς τους τρεις βασικούς κανόνες.",false);return;
+ }
+ setFeedback("Μπράβο! Βρήκες και τους τρεις βασικούς κανόνες.",true);nextAfter();
+}
+
+/* Stage 3 */
+function stage3(){
+ document.getElementById("card").innerHTML=`
+  <div class="share-panel">
+   <div class="share-top"><span>🌐 Διαδίκτυο</span><span>— □ ×</span></div>
+   <div class="share-body">
+    <div class="profile"><div class="avatar">🙂</div><strong>Νέα κοινοποίηση</strong></div>
+    <div class="share-box">
+     <div>Πρόκειται να κοινοποιηθούν:</div>
+     <div class="personal-data">Προσωπικά δεδομένα</div>
+     <div class="share-actions">
+      <button class="share-btn primary" onclick="shareAnswer('share')">Κοινοποίηση τώρα</button>
+      <button class="share-btn" onclick="shareAnswer('think')">Σταματώ και σκέφτομαι πρώτα</button>
+     </div>
+    </div>
+   </div>
+  </div>`;
+}
+function shareAnswer(a){
+ if(a!=="think"){
+  setFeedback("Πριν κοινοποιήσεις προσωπικά δεδομένα, πρέπει πρώτα να σκεφτείς προσεκτικά.",false);return;
+ }
+ setFeedback("Σωστά! Σκεφτόμαστε δύο φορές πριν κοινοποιήσουμε προσωπικά δεδομένα.",true);nextAfter();
+}
+
+/* Stage 4 */
+function stage4(){
+ selected=new Set();
+ optionOrder=shuffled([
+  {ok:true,icon:"♿",txt:"Άτομα με ειδικές ανάγκες / αναπηρία"},
+  {ok:true,icon:"👧👦",txt:"Αγόρια και κορίτσια"},
+  {ok:true,icon:"👦",txt:"Παιδιά με οικονομικά προβλήματα"},
+  {ok:true,icon:"🌍",txt:"Παιδιά από όλο τον κόσμο"},
+  {ok:false,icon:"💻",txt:"Μόνο παιδιά με καινούριο υπολογιστή"},
+  {ok:false,icon:"⭐",txt:"Μόνο παιδιά που είναι πολύ καλά στην τεχνολογία"}
+ ]);
+ document.getElementById("card").innerHTML=`
+  <div class="globe-box">
+   <div class="globe"></div>
+   <div class="group-grid">
+    ${optionOrder.map((o,i)=>`<button class="group-card" id="group${i}" onclick="toggleSelected(${i},'group')">
+      <span><span class="ico">${o.icon}</span>${o.txt}</span>
+    </button>`).join("")}
+   </div>
+   <button class="check" onclick="checkAccess()">Έλεγχος</button>
+  </div>`;
+}
+function checkAccess(){
+ const good=optionOrder.map((o,i)=>o.ok?i:-1).filter(i=>i>=0);
+ if(selected.size!==4||!good.every(i=>selected.has(i))){
+  setFeedback("Όλοι πρέπει να μπορούν να συμμετέχουν στο διαδίκτυο. Διάλεξε τις τέσσερις ομάδες παιδιών.",false);return;
+ }
+ setFeedback("Σωστά! Τα δικαιώματα όλων πρέπει να γίνονται σεβαστά και όλοι πρέπει να μπορούν να συμμετέχουν.",true);
+ nextAfter();
+}
+
+/* Stage 5 */
+function stage5(){
+ dragSelected=null;dragLocked=new Set();
+ dragItems=shuffled([
+  {id:"r1",label:"Να μπορώ να συμμετέχω στο διαδίκτυο.",target:"rights"},
+  {id:"r2",label:"Να γίνονται σεβαστά τα δικαιώματά μου.",target:"rights"},
+  {id:"o1",label:"Να σέβομαι τους άλλους στο διαδίκτυο.",target:"duties"},
+  {id:"o2",label:"Να μην προσβάλλω τους άλλους.",target:"duties"}
+ ]);
+ document.getElementById("card").innerHTML=`
+  <div class="classify">
+   <div class="tray">
+    <h3>Προτάσεις</h3>
+    ${dragItems.map(x=>`<div class="drag-token" id="dt_${x.id}" draggable="true"
+      ondragstart="dragStart(event,'${x.id}')" ondragend="dragEnd(event)"
+      onclick="dragPick('${x.id}')">${x.label}</div>`).join("")}
+    <div class="smallhelp">Σύρε μία πρόταση ή πάτησέ τη και μετά πάτησε τη σωστή κατηγορία.</div>
+   </div>
+   <div class="drop-columns">
+    <div class="drop-zone" id="dz_rights" ondragover="dragOver(event)" ondragleave="dragLeave(event)"
+      ondrop="dragDrop(event,'rights')" onclick="dropTap('rights')">
+      <h3>Δικαιώματα</h3><div id="placed_rights"></div>
+    </div>
+    <div class="drop-zone" id="dz_duties" ondragover="dragOver(event)" ondragleave="dragLeave(event)"
+      ondrop="dragDrop(event,'duties')" onclick="dropTap('duties')">
+      <h3>Υποχρεώσεις</h3><div id="placed_duties"></div>
+    </div>
+   </div>
+  </div>`;
+}
+function dragStart(ev,id){
+ dragSelected=id;document.getElementById("dt_"+id)?.classList.add("selectedDrag");
+ ev.dataTransfer?.setData("text/plain",id);
+}
+function dragEnd(ev){ev.currentTarget.classList.remove("selectedDrag")}
+function dragPick(id){
+ if(dragLocked.has(id))return;
+ document.querySelectorAll(".drag-token").forEach(x=>x.classList.remove("selectedDrag"));
+ dragSelected=dragSelected===id?null:id;
+ if(dragSelected)document.getElementById("dt_"+id)?.classList.add("selectedDrag");
+}
+function dragOver(ev){ev.preventDefault();ev.currentTarget.classList.add("over")}
+function dragLeave(ev){ev.currentTarget.classList.remove("over")}
+function dragDrop(ev,target){
+ ev.preventDefault();ev.currentTarget.classList.remove("over");
+ const id=(ev.dataTransfer&&ev.dataTransfer.getData("text/plain"))||dragSelected;
+ if(id)placeClassified(id,target);
+}
+function dropTap(target){if(dragSelected)placeClassified(dragSelected,target)}
+function placeClassified(id,target){
+ const item=dragItems.find(x=>x.id===id);
+ if(!item||dragLocked.has(id))return;
+ if(item.target!==target){
+  setFeedback("Αυτή η πρόταση ανήκει στην άλλη κατηγορία.",false);return;
+ }
+ dragLocked.add(id);dragSelected=null;
+ document.getElementById("dt_"+id).classList.add("locked");
+ document.getElementById("placed_"+target).insertAdjacentHTML("beforeend",`<div class="placed">${item.label}</div>`);
+ if(dragLocked.size===dragItems.length){
+  setFeedback("Μπράβο! Ξεχώρισες τα δικαιώματα από τις υποχρεώσεις.",true);nextAfter();
+ }else setFeedback("Σωστά! Συνέχισε.",true);
+}
+
+/* Stage 6 */
+const scenarios=[
+ {icon:"🔐",text:"Πρόκειται να κοινοποιήσεις προσωπικά δεδομένα.",correct:"Σκέφτομαι πρώτα προσεκτικά.",wrong:"Τα κοινοποιώ αμέσως."},
+ {icon:"⏱️",text:"Έχεις περάσει αρκετή ώρα στο διαδίκτυο.",correct:"Ελέγχω τον χρόνο μου.",wrong:"Συνεχίζω χωρίς να με ενδιαφέρει ο χρόνος."},
+ {icon:"🤝",text:"Διαφωνείς με κάποιον στο διαδίκτυο.",correct:"Μιλάω με σεβασμό.",wrong:"Τον προσβάλλω επειδή διαφωνούμε."}
+];
+function stage6(){
+ scenarioIndex=0;scenarioOrder=shuffled(scenarios);drawScenario();
+}
+function drawScenario(){
+ const q=scenarioOrder[scenarioIndex];
+ const opts=shuffled([{ok:true,txt:q.correct},{ok:false,txt:q.wrong}]);
+ window.scenarioOpts=opts;
+ document.getElementById("card").innerHTML=`
+  <div class="scenario">
+   <div class="scenario-count">${scenarioIndex+1} από ${scenarioOrder.length}</div>
+   <div class="scenario-card"><span><span class="scenario-icon">${q.icon}</span>${q.text}</span></div>
+   <div class="scenario-options">
+    ${opts.map((o,i)=>`<button class="scenario-btn" onclick="scenarioAnswer(${i})">${o.txt}</button>`).join("")}
+   </div>
+  </div>`;
+}
+function scenarioAnswer(i){
+ if(!window.scenarioOpts[i].ok){
+  setFeedback("Αυτή δεν είναι υπεύθυνη συμπεριφορά στο διαδίκτυο.",false);return;
+ }
+ scenarioIndex++;
+ if(scenarioIndex<scenarioOrder.length){
+  setFeedback("Σωστά!",true);
+  setTimeout(()=>{clearFeedback();drawScenario()},650);
+ }else{
+  setFeedback("Μπράβο! Εφάρμοσες και τους τρεις βασικούς κανόνες.",true);nextAfter();
+ }
+}
+
+/* Stage 7 */
+const quizQs=[
+ {q:"Τι χαρακτηρίζει έναν ψηφιακό πολίτη;",correct:"Χρησιμοποιεί υπεύθυνα την τεχνολογία.",wrong:["Δεν ακολουθεί κανόνες.","Κοινοποιεί πάντα τα προσωπικά του δεδομένα."]},
+ {q:"Τι κάνουμε πριν κοινοποιήσουμε προσωπικά δεδομένα;",correct:"Σκεφτόμαστε δύο φορές.",wrong:["Τα κοινοποιούμε αμέσως.","Δεν μας ενδιαφέρει ποιος θα τα δει."]},
+ {q:"Τι κάνουμε με τον χρόνο που περνάμε στο διαδίκτυο;",correct:"Τον ελέγχουμε.",wrong:["Δεν τον ελέγχουμε ποτέ.","Προσπαθούμε να μένουμε όσο περισσότερο γίνεται."]},
+ {q:"Ποιοι πρέπει να μπορούν να συμμετέχουν στο διαδίκτυο;",correct:"Όλοι.",wrong:["Μόνο όσοι έχουν νέο υπολογιστή.","Μόνο όσοι ξέρουν πολλά για την τεχνολογία."]},
+ {q:"Πώς πρέπει να φερόμαστε στους άλλους στο διαδίκτυο;",correct:"Με σεβασμό.",wrong:["Μπορούμε να τους προσβάλλουμε.","Δεν χρειάζεται να προσέχουμε τη συμπεριφορά μας."]}
+];
+function stage7(){
+ quizIndex=0;quizOrder=shuffled(quizQs);drawQuiz();
+}
+function drawQuiz(){
+ const q=quizOrder[quizIndex];
+ quizOptions=shuffled([{ok:true,txt:q.correct},...q.wrong.map(txt=>({ok:false,txt}))]);
+ document.getElementById("card").innerHTML=`
+  <div class="quiz">
+   <div class="quiz-progress"><span style="width:${(quizIndex/quizOrder.length)*100}%"></span></div>
+   <div class="quiz-q">${q.q}</div>
+   <div class="row">
+    ${quizOptions.map((o,i)=>`<button class="quiz-choice" onclick="quizAnswer(${i})">${o.txt}</button>`).join("")}
+   </div>
+   <div class="smallhelp">${quizIndex+1} από ${quizOrder.length}</div>
+  </div>`;
+}
+function quizAnswer(i){
+ if(!quizOptions[i].ok){setFeedback("Δοκίμασε ξανά.",false);return}
+ quizIndex++;
+ if(quizIndex<quizOrder.length){
+  setFeedback("Σωστά! Πάμε στην επόμενη ερώτηση.",true);
+  setTimeout(()=>{clearFeedback();drawQuiz()},600);
+ }else{
+  setFeedback("Μπράβο! Ολοκλήρωσες την τελική δοκιμή.",true);nextAfter();
+ }
+}
+
+/* Stage 8 */
+function stage8(){
+ selfChoice=null;
+ document.getElementById("card").innerHTML=`
+  <div class="finalBox">
+   <div class="stars">⭐ ⭐ ⭐</div>
+   <div class="summary">
+    Έμαθες τι είναι ο ψηφιακός πολίτης και πώς χρησιμοποιούμε το διαδίκτυο υπεύθυνα:
+    προστατεύουμε τα προσωπικά δεδομένα, ελέγχουμε τον χρόνο μας, σεβόμαστε τους άλλους
+    και θυμόμαστε ότι τα δικαιώματα όλων πρέπει να γίνονται σεβαστά.
+   </div>
+   <div class="faces">
+    <button class="face" onclick="selfPick(1,this)"><span>🙂</span>Θέλω λίγη εξάσκηση</button>
+    <button class="face" onclick="selfPick(2,this)"><span>😊</span>Τα κατάφερα</button>
+    <button class="face" onclick="selfPick(3,this)"><span>🤩</span>Τα κατάφερα πολύ καλά</button>
+   </div>
+   <button class="check" onclick="finish()">Ολοκλήρωση</button>
+   <button class="repeatBtn" onclick="restartAll()">↻ Επανάληψη δραστηριότητας</button>
+  </div>`;
+}
+function selfPick(v,e){
+ selfChoice=v;
+ document.querySelectorAll(".face").forEach(x=>x.classList.remove("sel"));
+ e.classList.add("sel");
+}
+function finish(){
+ const f=document.getElementById("feedback");
+ if(!selfChoice){
+  f.className="feedback bad";
+  f.textContent="Διάλεξε πρώτα πώς νιώθεις για όσα έμαθες.";
+  return;
+ }
+ completeFinalDot();
+ f.className="feedback good";
+ f.textContent="Μπράβο! Ολοκλήρωσες το Μάθημα 30.";
+}
+function restartAll(){
+ s=0;selfChoice=null;
+ selected=new Set();optionOrder=[];
+ dragSelected=null;dragLocked=new Set();dragItems=[];
+ scenarioIndex=0;scenarioOrder=[];
+ quizIndex=0;quizOrder=[];quizOptions=[];
+ render();
+}
+function help(){
+ const idx=Math.min(s,steps.length-1);
+ document.getElementById("helpText").textContent=steps[idx].h;
+ document.getElementById("modal").classList.add("show");
+}
+function closeHelp(){document.getElementById("modal").classList.remove("show")}
+render();
+</script>
+
+
+<footer class="nk-license" aria-label="Πληροφορίες δημιουργού και άδειας χρήσης">
+  <div><strong>Created by Nikos Kalakos · © 2026</strong></div>
+  <div>Original educational content and simulation design licensed under <a class="cc-badge" href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank" rel="license noopener noreferrer">CC BY-NC 4.0</a>.</div>
+  <div>Source code © 2026 Nikos Kalakos.</div>
+  <div>Third-party and textbook materials remain subject to the rights and licences of their respective copyright holders.</div>
+</footer></body>
+</html>

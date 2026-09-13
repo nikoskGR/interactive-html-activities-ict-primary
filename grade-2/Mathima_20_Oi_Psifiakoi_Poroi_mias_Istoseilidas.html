@@ -1,0 +1,827 @@
+<!--
+ICT Educational Simulation
+Created by Nikos Kalakos
+Copyright © 2026 Nikos Kalakos
+
+Original educational content and simulation design licensed under CC BY-NC 4.0.
+Source code © 2026 Nikos Kalakos.
+Third-party and textbook materials remain subject to the rights and licences of their respective copyright holders.
+-->
+<!doctype html>
+<html lang="el">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="author" content="Nikos Kalakos">
+<meta name="copyright" content="© 2026 Nikos Kalakos">
+<meta name="license" content="Original educational content and simulation design: CC BY-NC 4.0; source code © 2026 Nikos Kalakos; third-party and textbook materials excluded.">
+<title>Μάθημα 20 - Οι ψηφιακοί πόροι μιας ιστοσελίδας</title>
+<style>
+:root{
+  --unit-red:#D93A2E;
+  --unit-red-dark:#A92920;
+  --unit-red-soft:#FFF0EE;
+  --ink:#25334a;
+  --line:#d5dbe6;
+  --good:#eef7dc;
+  --bad:#fff0ed;
+  --athena:#5b4eb5;
+  --browser:#4f6b86;
+  --browser-dark:#2f4053;
+  --shadow:0 10px 28px rgba(37,51,74,.12);
+}
+*{box-sizing:border-box}
+body{margin:0;background:#f7f9fb;color:var(--ink);font-family:Arial,"Noto Sans",sans-serif}
+button{font:inherit;cursor:pointer}
+.app{max-width:1180px;margin:auto;padding:16px}
+.top{
+  background:#fff;border:3px solid #f0c3be;border-radius:24px;padding:14px 18px;
+  display:flex;align-items:center;justify-content:space-between;box-shadow:var(--shadow)
+}
+.top h1{margin:0;font-size:clamp(27px,4vw,40px)}
+.badge{
+  width:70px;height:70px;border-radius:22px;background:var(--unit-red);color:#fff;
+  display:grid;place-items:center;font-size:31px;font-weight:900;box-shadow:inset 0 -5px 0 rgba(0,0,0,.10)
+}
+.path{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin:16px 0}
+.dot{
+  width:44px;height:44px;border-radius:50%;display:grid;place-items:center;
+  border:3px solid #aeb7c7;background:#fff;color:#65718a;font-weight:900;font-size:20px
+}
+.dot.active{background:var(--unit-red);border-color:var(--unit-red-dark);color:#fff;transform:scale(1.1)}
+.dot.done{background:var(--unit-red);border-color:var(--unit-red-dark);color:#fff}
+.panel{
+  min-height:710px;background:#fff;border:3px solid #f0c3be;border-radius:28px;
+  padding:24px;box-shadow:var(--shadow)
+}
+.step-head{display:flex;justify-content:space-between;gap:12px;align-items:flex-start}
+.step-head h2{margin:0;font-size:clamp(25px,4vw,37px)}
+.help{
+  background:#fff3f2;color:#8c241d;border:3px solid #efaaa4;
+  border-radius:16px;padding:10px 17px;font-weight:900
+}
+.instruction{
+  max-width:970px;margin:14px auto 18px;text-align:center;font-size:clamp(19px,2.3vw,24px);
+  font-weight:900;line-height:1.38
+}
+.card{
+  max-width:1040px;margin:auto;border:3px solid #f0c3be;border-radius:28px;
+  background:#fff;padding:22px;min-height:500px
+}
+.feedback{
+  display:none;max-width:860px;margin:16px auto 0;padding:12px 18px;border-radius:17px;
+  text-align:center;font-weight:900;font-size:20px
+}
+.feedback.good{display:block;background:var(--good);border:2px solid #9dbd57}
+.feedback.bad{display:block;background:var(--bad);border:2px solid #e5a59b}
+.check{
+  display:block;margin:18px auto 0;padding:13px 28px;border:0;border-radius:16px;
+  background:var(--unit-red);color:#fff;font-size:21px;font-weight:900;box-shadow:0 5px 0 var(--unit-red-dark)
+}
+.smallhelp{text-align:center;font-size:14px;color:#6d7890;font-weight:800;margin-top:10px}
+.row{display:flex;gap:14px;justify-content:center;align-items:stretch;flex-wrap:wrap}
+.choice{
+  min-width:205px;max-width:285px;min-height:125px;border:3px solid var(--line);
+  border-radius:22px;background:#fff;padding:15px;font-weight:900;font-size:18px;
+  display:flex;flex-direction:column;justify-content:center;align-items:center;gap:10px
+}
+.choice:hover{transform:translateY(-2px);box-shadow:var(--shadow)}
+.choice.selected{border-color:var(--unit-red);background:var(--unit-red-soft)}
+.choice .big{font-size:48px}
+
+/* Ploigos */
+.browser{
+  max-width:940px;margin:auto;border:5px solid #3f475c;border-radius:23px;overflow:hidden;background:#fff;
+  box-shadow:0 12px 28px rgba(20,28,45,.20)
+}
+.browser-top{
+  height:42px;background:linear-gradient(90deg,#4f6b86,#6e89a2);color:#fff;
+  display:flex;align-items:center;justify-content:space-between;padding:0 7px 0 12px;font-weight:900
+}
+.browser-brand{display:flex;align-items:center;gap:9px}
+.mini-globe{
+  width:25px;height:25px;border-radius:50%;background:#77c4e4;border:3px solid #e8f7ff;position:relative
+}
+.mini-globe:before{
+  content:"";position:absolute;left:9px;top:1px;width:3px;height:17px;background:#397b9d;border-radius:3px
+}
+.window-controls{display:flex;align-items:center;gap:4px}
+.window-control{
+  width:34px;height:29px;border:0;border-radius:6px;background:rgba(255,255,255,.92);
+  color:#405268;font-weight:900;display:grid;place-items:center
+}
+.window-control.close{background:#ffe7e9;color:#a32836;border:2px solid #d95a65}
+.tab-row{
+  height:42px;background:#eef1f5;border-bottom:2px solid #ccd3dd;
+  display:flex;align-items:end;gap:5px;padding:0 8px
+}
+.tab{
+  height:34px;min-width:175px;max-width:220px;background:#fff;border:2px solid #b9c2ce;border-bottom:0;
+  border-radius:10px 10px 0 0;padding:5px 6px 5px 12px;font-weight:900;
+  display:flex;align-items:center;justify-content:space-between
+}
+.tab-close{
+  width:24px;height:24px;border:0;border-radius:6px;background:#eef1f5;color:#66758a;font-weight:900;
+  display:grid;place-items:center
+}
+.new-tab{
+  width:34px;height:31px;margin-bottom:1px;border:2px solid #aeb8c5;border-radius:9px;
+  background:#fff;color:#42566d;font-weight:900;position:relative;padding:0;overflow:hidden
+}
+.new-tab .plus-glyph{
+  position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);
+  display:block;font-size:22px;line-height:1;font-weight:900;width:22px;height:22px;text-align:center
+}
+.toolbar{
+  height:53px;background:#f7f9fb;border-bottom:2px solid #d8dde4;display:flex;align-items:center;gap:7px;padding:0 10px
+}
+.bbtn{
+  width:39px;height:38px;border:2px solid #b9c2ce;border-radius:9px;background:#fff;
+  display:grid;place-items:center;font-size:22px;font-weight:900;color:#44566b
+}
+.address{
+  height:38px;flex:1;border:3px solid #aeb8c5;border-radius:10px;background:#fff;padding:7px 12px;
+  font-size:14px;font-weight:800;color:#45556b;white-space:nowrap;overflow:hidden
+}
+.bookmark{
+  width:39px;height:38px;border:2px solid #b9c2ce;border-radius:9px;background:#fff;
+  display:grid;place-items:center;font-size:24px;color:#61738a;font-weight:900
+}
+.webpage{min-height:345px;background:#f9fbfd;padding:16px;position:relative}
+.site-head{
+  background:#dbe98c;border-radius:16px;padding:11px 15px;font-size:23px;font-weight:900;
+  display:flex;align-items:center;justify-content:space-between;margin-bottom:12px
+}
+
+/* Stage 1 */
+.resource-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;max-width:880px;margin:auto}
+.resource-choice{
+  min-height:135px;border:3px solid #d0d7e2;border-radius:20px;background:#fff;padding:13px;
+  display:grid;place-items:center;text-align:center;font-weight:900;font-size:17px
+}
+.resource-choice .ico{font-size:46px;display:block;margin-bottom:7px}
+.resource-choice.sel{border-color:var(--unit-red);background:var(--unit-red-soft)}
+
+/* Stage 2 classification */
+.class-layout{display:grid;grid-template-columns:270px 1fr;gap:18px}
+.tray{
+  border:3px solid #d4dae4;border-radius:18px;background:#f7f9fc;padding:12px
+}
+.tray h3{text-align:center;margin:0 0 10px}
+.drag-token{
+  border:3px solid #9ca8b7;border-radius:12px;background:#fff;padding:9px 10px;margin:8px 0;
+  font-weight:900;text-align:center;cursor:grab;user-select:none
+}
+.drag-token.selectedDrag{outline:4px solid var(--unit-red);background:var(--unit-red-soft)}
+.drag-token.locked{opacity:.35}
+.media-targets{display:grid;grid-template-columns:repeat(2,1fr);gap:13px}
+.media-target{
+  min-height:165px;border:4px dashed #aeb8c5;border-radius:20px;background:#fafbfd;padding:10px;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:9px
+}
+.media-target.over{background:#fff0ee;border-color:var(--unit-red)}
+.media-target.filled{border-style:solid;border-color:#8190a5}
+.preview-video{
+  width:165px;height:92px;border-radius:13px;background:linear-gradient(#86c7ec 0 55%,#8ac66e 55%);
+  position:relative;overflow:hidden;border:3px solid #66768a
+}
+.preview-video:before{content:"🐕";position:absolute;left:60px;top:25px;font-size:37px}
+.preview-video:after{
+  content:"▶";position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);
+  width:40px;height:40px;border-radius:50%;background:#25334acc;color:#fff;display:grid;place-items:center;font-size:20px
+}
+.preview-audio{
+  width:165px;height:92px;border-radius:13px;background:
+    repeating-linear-gradient(90deg,#e7ecf1 0 8px,#f8fafc 8px 16px);
+  border:3px solid #66768a;display:grid;place-items:center;font-size:38px;color:#45566b
+}
+.preview-image{
+  width:165px;height:92px;border-radius:13px;background:linear-gradient(#a9d8f0 0 55%,#79b66c 55%);
+  border:3px solid #66768a;display:grid;place-items:center;font-size:45px
+}
+.preview-text{
+  width:165px;height:92px;border-radius:13px;background:#fff;border:3px solid #66768a;padding:13px;
+  display:grid;gap:7px
+}
+.preview-text span{height:6px;border-radius:4px;background:#8896a8}
+
+/* media player */
+.media-page{
+  display:grid;grid-template-columns:1fr 1fr;gap:14px
+}
+.web-card{
+  border:3px solid #d1d8e1;border-radius:17px;background:#fff;padding:12px;position:relative
+}
+.web-card h3{margin:0 0 8px}
+.video-screen{
+  height:205px;border-radius:14px;border:3px solid #657487;overflow:hidden;position:relative;
+  background:linear-gradient(#87c9ec 0 58%,#80ba69 58%)
+}
+.video-scene{position:absolute;inset:0;display:grid;place-items:center;font-size:80px}
+.big-play{
+  position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);
+  width:64px;height:64px;border:0;border-radius:50%;background:#26354bd9;color:#fff;font-size:30px;
+  display:grid;place-items:center;padding:0
+}
+.controls{
+  height:54px;border-radius:0 0 12px 12px;background:#26354b;color:#fff;
+  display:flex;align-items:center;gap:9px;padding:8px 11px
+}
+.control-button{
+  width:38px;height:36px;border:2px solid #fff9;border-radius:8px;background:#fff1;color:#fff;
+  display:grid;place-items:center;font-size:19px;padding:0
+}
+.progress{
+  flex:1;height:10px;background:#ffffff4a;border-radius:8px;overflow:hidden
+}
+.progress span{display:block;height:100%;width:0;background:#fff;transition:.2s}
+.time{font-size:12px;font-weight:900;min-width:58px}
+.taskbox{
+  max-width:760px;margin:0 auto 12px;border:4px solid var(--unit-red);background:#fff6f5;
+  border-radius:18px;padding:12px 16px;text-align:center;font-size:20px;font-weight:900
+}
+
+/* Audio */
+.audio-card{
+  max-width:650px;margin:auto;border:3px solid #d1d8e1;border-radius:18px;background:#fff;padding:17px
+}
+.audio-visual{
+  height:145px;border:3px solid #657487;border-radius:15px;background:
+    repeating-linear-gradient(90deg,#e7ecf1 0 10px,#f8fafc 10px 20px);
+  display:grid;place-items:center
+}
+.wave{font-size:56px;color:#50637b;letter-spacing:3px}
+.audio-controls{
+  margin-top:10px;display:flex;align-items:center;gap:10px;background:#26354b;color:#fff;
+  border-radius:13px;padding:10px
+}
+.audio-controls .control-button{flex:0 0 42px}
+.audio-title{text-align:center;font-weight:900;margin:0 0 10px}
+
+/* Image */
+.image-task{max-width:750px;margin:auto}
+.bear-thumb{
+  width:430px;height:245px;margin:auto;border-radius:18px;border:4px solid #657487;position:relative;
+  background:linear-gradient(#9ed1ea 0 52%,#78ae65 52%);display:grid;place-items:center;font-size:105px;
+  overflow:hidden
+}
+.image-link{
+  position:absolute;left:50%;bottom:14px;transform:translateX(-50%);
+  border:3px solid #fff;background:#26354be6;color:#fff;border-radius:12px;padding:8px 13px;font-weight:900;
+  opacity:0;pointer-events:none;transition:.18s
+}
+.bear-thumb.reveal .image-link,.bear-thumb:hover .image-link{opacity:1;pointer-events:auto}
+.lightbox{
+  position:fixed;inset:0;background:#1b2940c9;z-index:80;display:none;place-items:center;padding:25px
+}
+.lightbox.show{display:grid}
+.lightbox-box{
+  width:min(820px,92vw);height:min(540px,76vh);border-radius:24px;background:#fff;border:5px solid #fff;
+  position:relative;display:grid;place-items:center;
+  background-image:linear-gradient(#9ed1ea 0 52%,#78ae65 52%);font-size:190px
+}
+.lightbox-close{
+  position:absolute;right:12px;top:12px;width:43px;height:43px;border-radius:50%;border:3px solid #a52f3e;
+  background:#fff;color:#a52f3e;font-size:23px;font-weight:900;display:grid;place-items:center;padding:0
+}
+
+/* Integrated */
+.school-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.school-resource{
+  border:3px solid #d0d7e1;border-radius:16px;background:#fff;padding:10px;min-height:205px
+}
+.school-resource h3{margin:0 0 7px;font-size:17px}
+.mini-video,.mini-audio,.mini-image{
+  height:128px;border:3px solid #657487;border-radius:12px;position:relative;overflow:hidden
+}
+.mini-video{background:linear-gradient(#87c9ec 0 58%,#80ba69 58%);display:grid;place-items:center;font-size:53px}
+.mini-audio{
+  background:repeating-linear-gradient(90deg,#e7ecf1 0 9px,#f8fafc 9px 18px);
+  display:grid;place-items:center;color:#50637b;font-size:38px
+}
+.mini-image{background:linear-gradient(#9ed1ea 0 52%,#78ae65 52%);display:grid;place-items:center;font-size:58px}
+.mini-play{
+  position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);
+  width:46px;height:46px;border-radius:50%;border:0;background:#26354bdc;color:#fff;
+  display:grid;place-items:center;font-size:21px;padding:0
+}
+.mini-controls{display:flex;align-items:center;justify-content:center;gap:7px;margin-top:7px}
+.mini-btn{
+  height:34px;min-width:38px;border:2px solid #aeb8c5;border-radius:8px;background:#fff;font-weight:900;color:#45566b
+}
+.school-resource.active-task{outline:5px solid var(--unit-red);outline-offset:3px}
+
+/* quiz/final */
+.quiz{
+  max-width:850px;margin:auto;border:4px solid var(--unit-red);border-radius:24px;
+  background:#fff9f8;padding:20px;text-align:center
+}
+.quiz-progress{height:14px;background:#e7edf1;border-radius:9px;overflow:hidden;max-width:520px;margin:0 auto 18px}
+.quiz-progress span{display:block;height:100%;background:var(--unit-red);width:0;transition:.25s}
+.quiz-q{font-size:24px;font-weight:900;margin-bottom:18px}
+.finalBox{max-width:780px;margin:auto;text-align:center}
+.stars{font-size:58px;margin:18px}
+.summary{
+  padding:20px;border:4px solid var(--unit-red);background:#fff4f2;border-radius:22px;
+  font-size:21px;font-weight:900;line-height:1.45
+}
+.faces{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:18px}
+.face{
+  min-height:130px;border:3px solid var(--line);border-radius:20px;background:#fff;
+  font-weight:900;font-size:17px
+}
+.face span{display:block;font-size:52px;margin-bottom:7px}
+.face.sel{border-color:var(--unit-red);background:var(--unit-red-soft)}
+.repeatBtn{
+  display:block;margin:15px auto 0;padding:12px 22px;border:0;border-radius:15px;
+  background:#4f6b86;color:#fff;font-size:19px;font-weight:900;box-shadow:0 5px 0 #31475b
+}
+.modal{
+  position:fixed;inset:0;background:#24344d99;display:none;place-items:center;padding:18px;z-index:60
+}
+.modal.show{display:grid}
+.modal-box{
+  max-width:620px;background:#fff;border-radius:24px;border:4px solid var(--unit-red);
+  padding:22px;text-align:center;font-size:20px
+}
+.modal-box button{
+  padding:10px 20px;border:0;border-radius:13px;background:var(--unit-red);color:#fff;font-weight:900
+}
+.flash{animation:flash .45s 2}
+@keyframes flash{50%{box-shadow:0 0 0 7px rgba(217,58,46,.22)}}
+@media(max-width:850px){
+  .resource-grid,.media-targets,.school-grid,.faces{grid-template-columns:1fr}
+  .class-layout{grid-template-columns:1fr}
+  .bear-thumb{width:100%}
+}
+</style>
+
+
+<style id="nk-license-style">
+.nk-license{max-width:1100px;margin:14px auto 24px;padding:10px 16px;text-align:center;font:13px/1.45 Arial,"Noto Sans",sans-serif;color:#4e657c}
+.nk-license a{color:inherit;text-decoration:underline;text-underline-offset:2px}
+.nk-license .cc-badge{display:inline-block;margin:0 4px;padding:2px 7px;border:1px solid #8aa0b8;border-radius:6px;background:#fff;font-weight:700;white-space:nowrap}
+</style></head>
+<body>
+<div class="app">
+  <div class="top"><h1>Οι ψηφιακοί πόροι μιας ιστοσελίδας</h1><div class="badge">20</div></div>
+  <div class="path" id="path"></div>
+
+  <main class="panel">
+    <div class="step-head">
+      <h2 id="title"></h2>
+      <button class="help" onclick="help()">❓ Βοήθεια</button>
+    </div>
+    <div class="instruction" id="inst"></div>
+    <div class="card" id="card"></div>
+    <div class="feedback" id="feedback"></div>
+  </main>
+</div>
+
+<div class="modal" id="modal">
+  <div class="modal-box"><h2>💡 Βοήθεια</h2><p id="helpText"></p><button onclick="closeHelp()">Εντάξει</button></div>
+</div>
+<div class="lightbox" id="lightbox">
+  <div class="lightbox-box">🐻<button class="lightbox-close" onclick="closeLightbox()">×</button></div>
+</div>
+
+<script>
+const steps=[
+ {t:"Τι μπορεί να περιέχει μια ιστοσελίδα;",i:"Διάλεξε και τους τέσσερις ψηφιακούς πόρους που μπορεί να περιέχει μια ιστοσελίδα.",h:"Μια ιστοσελίδα μπορεί να περιέχει κείμενο, βίντεο, ήχους και εικόνες.",k:"resources"},
+ {t:"Αναγνωρίζω τους πόρους",i:"Ταίριαξε κάθε όνομα με τον σωστό ψηφιακό πόρο.",h:"Το βίντεο έχει εικόνα και κουμπί αναπαραγωγής. Ο ήχος έχει κουμπί αναπαραγωγής αλλά δεν έχει εικόνα πίσω. Η εικόνα δεν έχει κουμπιά αναπαραγωγής. Το κείμενο αποτελείται από γραμμές λέξεων.",k:"recognize"},
+ {t:"Χειρίζομαι ένα βίντεο",i:"Πάτησε μία φορά για αναπαραγωγή και άλλη μία φορά για παύση.",h:"Με ένα κλικ το βίντεο ξεκινά. Πατώντας ξανά το κουμπί αναπαραγωγής/παύσης, το βίντεο σταματά προσωρινά.",k:"video"},
+ {t:"Χειρίζομαι έναν ήχο",i:"Ξεκίνησε τον ήχο, κάνε σίγαση, ενεργοποίησε ξανά την ένταση και στο τέλος σταμάτησέ τον.",h:"Ο ήχος έχει κουμπί αναπαραγωγής χωρίς εικόνα πίσω. Το κουμπί έντασης αλλάζει ανάμεσα σε ήχο και σίγαση.",k:"audio"},
+ {t:"Ανοίγω μία εικόνα",i:"Πέρασε τον δείκτη ή πάτησε πάνω στην εικόνα της αρκούδας. Όταν εμφανιστεί ο σύνδεσμος, άνοιξε την εικόνα μεγαλύτερη.",h:"Όταν εμφανιστεί ο υπερσύνδεσμος πάνω στην εικόνα, πάτησέ τον για να ανοίξει η εικόνα σε μεγαλύτερο μέγεθος.",k:"image"},
+ {t:"Δοκιμάζω σε μία ιστοσελίδα",i:"Χρησιμοποίησε διαδοχικά το βίντεο, τον ήχο και την εικόνα στη σελίδα του σχολείου.",h:"Ακολούθησε κάθε οδηγία. Το κόκκινο περίγραμμα δείχνει μόνο ποιον πόρο χρειάζεται να χειριστείς εκείνη τη στιγμή.",k:"integrated"},
+ {t:"Τελική δοκιμή",i:"Απάντησε σωστά και στις τέσσερις ερωτήσεις.",h:"Θυμήσου πώς αναγνωρίζουμε βίντεο, ήχο και εικόνα και πώς τα χειριζόμαστε.",k:"quiz"},
+ {t:"Τα κατάφερες!",i:"Σκέψου τι έμαθες στο Μάθημα 20.",h:"Σκέψου πώς αναγνωρίζουμε τους ψηφιακούς πόρους μιας ιστοσελίδας και πώς ξεκινάμε, σταματάμε ή ανοίγουμε τους διαφορετικούς πόρους.",k:"final"}
+];
+
+let s=0,selfChoice=null,answerOrders={},resSelected=new Set();
+let dragSelected=null,dragLocked=new Set(),dragItems=[];
+let videoPlaying=false,videoProgress=0,videoTimer=null,videoTask=0;
+let audioPlaying=false,audioMuted=false,audioProgress=0,audioTimer=null,audioTask=0;
+let imageRevealed=false,imageOpened=false;
+let integratedStep=0,intVideoPlaying=false,intAudioPlaying=false,intAudioMuted=false;
+let quizIndex=0,quizOrder=[];
+
+function shuffled(arr){
+ const a=[...arr];
+ for(let i=a.length-1;i>0;i--){
+  const j=Math.floor(Math.random()*(i+1));
+  [a[i],a[j]]=[a[j],a[i]];
+ }
+ return a;
+}
+function nav(){
+ document.getElementById("path").innerHTML=steps.map((_,i)=>`<div class="dot ${i<s?'done':i===s?'active':''}">${i+1}</div>`).join("");
+}
+function completeFinalDot(){s=steps.length;nav()}
+function clearFeedback(){const f=document.getElementById("feedback");f.className="feedback";f.textContent=""}
+function setFeedback(t,ok){const f=document.getElementById("feedback");f.className="feedback "+(ok?"good":"bad");f.textContent=t}
+function nextAfter(ms=900){setTimeout(()=>{stopTimers();s++;render()},ms)}
+function stopTimers(){
+ if(videoTimer){clearInterval(videoTimer);videoTimer=null}
+ if(audioTimer){clearInterval(audioTimer);audioTimer=null}
+}
+function render(){
+ stopTimers();nav();clearFeedback();
+ const x=steps[s];
+ document.getElementById("title").textContent=x.t;
+ document.getElementById("inst").textContent=x.i;
+ if(x.k==="resources")stage1();
+ if(x.k==="recognize")stage2();
+ if(x.k==="video")stage3();
+ if(x.k==="audio")stage4();
+ if(x.k==="image")stage5();
+ if(x.k==="integrated")stage6();
+ if(x.k==="quiz")stage7();
+ if(x.k==="final")stage8();
+}
+
+function browserShell(content){
+ return `<div class="browser">
+  <div class="browser-top">
+   <span class="browser-brand"><span class="mini-globe"></span>Ploigos</span>
+   <span class="window-controls"><button class="window-control">—</button><button class="window-control">□</button><button class="window-control close">×</button></span>
+  </div>
+  <div class="tab-row">
+   <div class="tab"><span>Η ιστοσελίδα του σχολείου</span><button class="tab-close">×</button></div>
+   <button class="new-tab"><span class="plus-glyph">+</span></button>
+  </div>
+  <div class="toolbar">
+   <button class="bbtn">←</button><button class="bbtn">↻</button>
+   <div class="address">https://sxoleio.example/psifiakoi-poroi</div>
+   <button class="bookmark">★</button>
+  </div>
+  <div class="webpage">
+   <div class="site-head">Η ιστοσελίδα του σχολείου <span>🏫</span></div>
+   ${content}
+  </div>
+ </div>`;
+}
+
+/* Stage 1 */
+function stage1(){
+ resSelected=new Set();
+ answerOrders.resources=shuffled([
+  {ok:true,icon:"📝",txt:"Κείμενο"},
+  {ok:true,icon:"🎬",txt:"Βίντεο"},
+  {ok:true,icon:"🔊",txt:"Ήχοι"},
+  {ok:true,icon:"🖼️",txt:"Εικόνες"},
+  {ok:false,icon:"🖨️",txt:"Εκτυπωτής"},
+  {ok:false,icon:"⌨️",txt:"Πληκτρολόγιο"}
+ ]);
+ document.getElementById("card").innerHTML=`
+  <div class="resource-grid">
+   ${answerOrders.resources.map((o,i)=>`<button class="resource-choice" id="rc${i}" onclick="toggleResource(${i})"><span><span class="ico">${o.icon}</span>${o.txt}</span></button>`).join("")}
+  </div>
+  <button class="check" onclick="checkResources()">Έλεγχος</button>`;
+}
+function toggleResource(i){
+ resSelected.has(i)?resSelected.delete(i):resSelected.add(i);
+ document.getElementById("rc"+i).classList.toggle("sel",resSelected.has(i));
+}
+function checkResources(){
+ const good=answerOrders.resources.map((x,i)=>x.ok?i:-1).filter(i=>i>=0);
+ if(resSelected.size!==4||!good.every(i=>resSelected.has(i))){
+  setFeedback("Χρειάζονται τέσσερις ψηφιακοί πόροι.",false);return;
+ }
+ setFeedback("Σωστά! Μια ιστοσελίδα μπορεί να περιέχει κείμενο, βίντεο, ήχους και εικόνες.",true);nextAfter();
+}
+
+/* Stage 2 */
+function stage2(){
+ dragSelected=null;dragLocked=new Set();
+ dragItems=shuffled([
+  {id:"video",label:"Βίντεο",target:"video"},
+  {id:"audio",label:"Ήχος",target:"audio"},
+  {id:"image",label:"Εικόνα",target:"image"},
+  {id:"text",label:"Κείμενο",target:"text"}
+ ]);
+ document.getElementById("card").innerHTML=`
+  <div class="class-layout">
+   <div class="tray"><h3>Ονόματα</h3>
+    ${dragItems.map(x=>`<div class="drag-token" id="dt_${x.id}" draggable="true" ondragstart="dragStart(event,'${x.id}')" ondragend="dragEnd(event)" onclick="dragPick('${x.id}')">${x.label}</div>`).join("")}
+    <div class="smallhelp">Σύρε ένα όνομα ή πάτησέ το και μετά πάτησε τον σωστό πόρο.</div>
+   </div>
+   <div class="media-targets">
+    ${mediaTarget("video",'<div class="preview-video"></div>')}
+    ${mediaTarget("audio",'<div class="preview-audio">▶</div>')}
+    ${mediaTarget("image",'<div class="preview-image">🐻</div>')}
+    ${mediaTarget("text",'<div class="preview-text"><span></span><span></span><span></span><span></span></div>')}
+   </div>
+  </div>`;
+}
+function mediaTarget(id,preview){
+ return `<div class="media-target" id="mt_${id}" ondragover="dragOver(event)" ondragleave="dragLeave(event)" ondrop="dropMedia(event,'${id}')" onclick="tapMedia('${id}')">${preview}<strong id="ma_${id}">Ψηφιακός πόρος</strong></div>`;
+}
+function dragStart(ev,id){dragSelected=id;document.getElementById("dt_"+id)?.classList.add("selectedDrag");if(ev.dataTransfer)ev.dataTransfer.setData("text/plain",id)}
+function dragEnd(ev){ev.currentTarget.classList.remove("selectedDrag")}
+function dragPick(id){
+ if(dragLocked.has(id))return;
+ document.querySelectorAll(".drag-token").forEach(x=>x.classList.remove("selectedDrag"));
+ dragSelected=dragSelected===id?null:id;
+ if(dragSelected)document.getElementById("dt_"+id)?.classList.add("selectedDrag");
+}
+function dragOver(ev){ev.preventDefault();ev.currentTarget.classList.add("over")}
+function dragLeave(ev){ev.currentTarget.classList.remove("over")}
+function dropMedia(ev,target){ev.preventDefault();ev.currentTarget.classList.remove("over");const id=(ev.dataTransfer&&ev.dataTransfer.getData("text/plain"))||dragSelected;if(id)placeMedia(id,target)}
+function tapMedia(target){if(dragSelected)placeMedia(dragSelected,target)}
+function placeMedia(id,target){
+ const item=dragItems.find(x=>x.id===id);
+ if(!item||dragLocked.has(id))return;
+ if(item.target!==target){setFeedback("Αυτό το όνομα ταιριάζει σε διαφορετικό πόρο.",false);return}
+ dragLocked.add(id);dragSelected=null;
+ document.getElementById("dt_"+id).classList.add("locked");
+ document.getElementById("mt_"+target).classList.add("filled");
+ document.getElementById("ma_"+target).textContent=item.label;
+ if(dragLocked.size===4){setFeedback("Μπράβο! Αναγνώρισες και τους τέσσερις ψηφιακούς πόρους.",true);nextAfter()}
+ else setFeedback("Σωστά! Συνέχισε.",true);
+}
+
+/* Stage 3 video */
+function stage3(){
+ videoPlaying=false;videoProgress=0;videoTask=0;
+ drawVideoStage();
+}
+function drawVideoStage(){
+ document.getElementById("card").innerHTML=`
+  <div class="taskbox">${videoTask===0?"Πάτησε ▶ για να ξεκινήσει το βίντεο.":"Τώρα πάτησε ❚❚ για να σταματήσει προσωρινά."}</div>
+  ${browserShell(`
+   <div class="web-card">
+    <h3>Βίντεο: Ο σκύλος στην αυλή</h3>
+    <div class="video-screen">
+     <div class="video-scene">🐕</div>
+     <button class="big-play" id="videoCenter" onclick="toggleVideo()">${videoPlaying?"❚❚":"▶"}</button>
+    </div>
+    <div class="controls">
+     <button class="control-button" id="videoControl" onclick="toggleVideo()">${videoPlaying?"❚❚":"▶"}</button>
+     <div class="progress"><span id="videoProgress" style="width:${videoProgress}%"></span></div>
+     <div class="time" id="videoTime">${Math.floor(videoProgress*.21/100)} / 21 δ.</div>
+    </div>
+   </div>`)}
+ `;
+}
+function toggleVideo(){
+ if(videoTask===0&&!videoPlaying){
+  videoPlaying=true;startVideoTimer();
+  document.getElementById("videoCenter").textContent="❚❚";
+  document.getElementById("videoControl").textContent="❚❚";
+  setFeedback("Σωστά! Το βίντεο ξεκίνησε. Εμφανίστηκαν η διάρκεια και η θέση αναπαραγωγής.",true);
+  videoTask=1;
+  document.querySelector(".taskbox").textContent="Τώρα πάτησε ❚❚ για να σταματήσει προσωρινά.";
+  return;
+ }
+ if(videoTask===1&&videoPlaying){
+  videoPlaying=false;if(videoTimer){clearInterval(videoTimer);videoTimer=null}
+  document.getElementById("videoCenter").textContent="▶";
+  document.getElementById("videoControl").textContent="▶";
+  setFeedback("Μπράβο! Με δεύτερο πάτημα σταμάτησες προσωρινά το βίντεο.",true);nextAfter(1000);
+ }
+}
+function startVideoTimer(){
+ if(videoTimer)clearInterval(videoTimer);
+ videoTimer=setInterval(()=>{
+  if(!videoPlaying)return;
+  videoProgress=Math.min(95,videoProgress+2);
+  const bar=document.getElementById("videoProgress"),time=document.getElementById("videoTime");
+  if(bar)bar.style.width=videoProgress+"%";
+  if(time)time.textContent=Math.floor(videoProgress*.21)+" / 21 δ.";
+ },250);
+}
+
+/* Stage 4 audio */
+function stage4(){
+ audioPlaying=false;audioMuted=false;audioProgress=0;audioTask=0;drawAudioStage();
+}
+function drawAudioStage(){
+ const tasks=[
+  "Πάτησε ▶ για να ξεκινήσει ο ήχος.",
+  "Πάτησε 🔊 για να κάνεις σίγαση.",
+  "Πάτησε 🔇 για να ενεργοποιήσεις ξανά την ένταση.",
+  "Πάτησε ❚❚ για να σταματήσεις προσωρινά τον ήχο."
+ ];
+ document.getElementById("card").innerHTML=`
+  <div class="taskbox">${tasks[audioTask]}</div>
+  ${browserShell(`
+   <div class="audio-card">
+    <h3 class="audio-title">Ήχος: Γάτα</h3>
+    <div class="audio-visual"><div class="wave">▂ ▅ ▃ ▆ ▂ ▇ ▄</div></div>
+    <div class="audio-controls">
+     <button class="control-button" id="audioPlay" onclick="audioAction('play')">${audioPlaying?"❚❚":"▶"}</button>
+     <button class="control-button" id="audioVolume" onclick="audioAction('volume')">${audioMuted?"🔇":"🔊"}</button>
+     <div class="progress"><span id="audioProgress" style="width:${audioProgress}%"></span></div>
+     <div class="time" id="audioTime">${Math.floor(audioProgress*.09)} / 9 δ.</div>
+    </div>
+   </div>`)}
+ `;
+}
+function audioAction(kind){
+ if(audioTask===0){
+  if(kind!=="play"){setFeedback("Πρώτα ξεκίνησε τον ήχο.",false);return}
+  audioPlaying=true;audioTask=1;startAudioTimer();setFeedback("Σωστά! Ο ήχος ξεκίνησε.",true);drawAudioStage();return;
+ }
+ if(audioTask===1){
+  if(kind!=="volume"){setFeedback("Τώρα πάτησε το εικονίδιο έντασης.",false);return}
+  audioMuted=true;audioTask=2;setFeedback("Σωστά! Η ένταση απενεργοποιήθηκε και εμφανίστηκε η σίγαση.",true);drawAudioStage();return;
+ }
+ if(audioTask===2){
+  if(kind!=="volume"){setFeedback("Πάτησε ξανά το εικονίδιο της σίγασης.",false);return}
+  audioMuted=false;audioTask=3;setFeedback("Σωστά! Η ένταση ενεργοποιήθηκε ξανά.",true);drawAudioStage();return;
+ }
+ if(audioTask===3){
+  if(kind!=="play"){setFeedback("Τώρα σταμάτησε προσωρινά τον ήχο.",false);return}
+  audioPlaying=false;if(audioTimer){clearInterval(audioTimer);audioTimer=null}
+  setFeedback("Μπράβο! Σταμάτησες προσωρινά τον ήχο.",true);nextAfter(1000);
+ }
+}
+function startAudioTimer(){
+ if(audioTimer)clearInterval(audioTimer);
+ audioTimer=setInterval(()=>{
+  if(!audioPlaying)return;
+  audioProgress=Math.min(95,audioProgress+2);
+  const bar=document.getElementById("audioProgress"),time=document.getElementById("audioTime");
+  if(bar)bar.style.width=audioProgress+"%";
+  if(time)time.textContent=Math.floor(audioProgress*.09)+" / 9 δ.";
+ },250);
+}
+
+/* Stage 5 image */
+function stage5(){
+ imageRevealed=false;imageOpened=false;
+ document.getElementById("card").innerHTML=browserShell(`
+  <div class="image-task">
+   <div class="bear-thumb" id="bearThumb" onmouseenter="revealImageLink()" onclick="revealImageLink()">
+    🐻
+    <button class="image-link" id="imageLink" onclick="event.stopPropagation();openImage()">Άνοιγμα εικόνας</button>
+   </div>
+   <div class="smallhelp">Πέρασε τον δείκτη ή πάτησε πάνω στην εικόνα.</div>
+  </div>`);
+}
+function revealImageLink(){
+ if(imageRevealed)return;
+ imageRevealed=true;document.getElementById("bearThumb")?.classList.add("reveal");
+ setFeedback("Εμφανίστηκε ο υπερσύνδεσμος. Πάτησέ τον για να ανοίξεις την εικόνα μεγαλύτερη.",true);
+}
+function openImage(){
+ if(!imageRevealed)return;
+ imageOpened=true;document.getElementById("lightbox").classList.add("show");
+ setFeedback("Σωστά! Άνοιξες την εικόνα σε μεγαλύτερο μέγεθος.",true);
+}
+function closeLightbox(){
+ document.getElementById("lightbox").classList.remove("show");
+ if(s===4&&imageOpened)nextAfter(600);
+}
+
+/* Stage 6 integrated */
+const integratedTasks=[
+ {id:"videoPlay",text:"Ξεκίνησε το βίντεο."},
+ {id:"videoPause",text:"Σταμάτησε προσωρινά το βίντεο."},
+ {id:"audioPlay",text:"Ξεκίνησε τον ήχο."},
+ {id:"audioMute",text:"Κάνε σίγαση του ήχου."},
+ {id:"audioUnmute",text:"Ενεργοποίησε ξανά την ένταση."},
+ {id:"audioPause",text:"Σταμάτησε προσωρινά τον ήχο."},
+ {id:"imageOpen",text:"Άνοιξε την εικόνα της αρκούδας μεγαλύτερη."}
+];
+function stage6(){
+ integratedStep=0;intVideoPlaying=false;intAudioPlaying=false;intAudioMuted=false;drawIntegrated();
+}
+function drawIntegrated(){
+ const task=integratedTasks[integratedStep];
+ document.getElementById("card").innerHTML=`
+  <div class="taskbox">${task.text}</div>
+  ${browserShell(`
+   <div class="school-grid">
+    <div class="school-resource ${task.id.startsWith("video")?"active-task":""}" id="intVideoCard">
+     <h3>Βίντεο</h3>
+     <div class="mini-video">🐕<button class="mini-play" onclick="integratedAction('video')">${intVideoPlaying?"❚❚":"▶"}</button></div>
+    </div>
+    <div class="school-resource ${task.id.startsWith("audio")?"active-task":""}" id="intAudioCard">
+     <h3>Ήχος</h3>
+     <div class="mini-audio">▂ ▅ ▃ ▆ ▂</div>
+     <div class="mini-controls">
+      <button class="mini-btn" onclick="integratedAction('audioPlay')">${intAudioPlaying?"❚❚":"▶"}</button>
+      <button class="mini-btn" onclick="integratedAction('audioVolume')">${intAudioMuted?"🔇":"🔊"}</button>
+     </div>
+    </div>
+    <div class="school-resource ${task.id==="imageOpen"?"active-task":""}" id="intImageCard">
+     <h3>Εικόνα</h3>
+     <div class="mini-image">🐻</div>
+     <div class="mini-controls"><button class="mini-btn" onclick="integratedAction('image')">Άνοιγμα</button></div>
+    </div>
+   </div>`)}
+ `;
+}
+function integratedAction(kind){
+ const expected=integratedTasks[integratedStep].id;
+ let ok=false;
+ if(expected==="videoPlay"&&kind==="video"&&!intVideoPlaying){intVideoPlaying=true;ok=true}
+ else if(expected==="videoPause"&&kind==="video"&&intVideoPlaying){intVideoPlaying=false;ok=true}
+ else if(expected==="audioPlay"&&kind==="audioPlay"&&!intAudioPlaying){intAudioPlaying=true;ok=true}
+ else if(expected==="audioMute"&&kind==="audioVolume"&&intAudioPlaying&&!intAudioMuted){intAudioMuted=true;ok=true}
+ else if(expected==="audioUnmute"&&kind==="audioVolume"&&intAudioMuted){intAudioMuted=false;ok=true}
+ else if(expected==="audioPause"&&kind==="audioPlay"&&intAudioPlaying){intAudioPlaying=false;ok=true}
+ else if(expected==="imageOpen"&&kind==="image"){ok=true;document.getElementById("lightbox").classList.add("show")}
+ if(!ok){setFeedback("Ακολούθησε την τρέχουσα οδηγία.",false);return}
+ setFeedback("Σωστά!",true);
+ integratedStep++;
+ if(expected==="imageOpen"){
+  imageOpened=false;
+  const oldClose=closeLightbox;
+  window.closeLightbox=function(){
+   document.getElementById("lightbox").classList.remove("show");
+   window.closeLightbox=oldClose;
+   setFeedback("Μπράβο! Χειρίστηκες σωστά τους ψηφιακούς πόρους της ιστοσελίδας.",true);
+   nextAfter(700);
+  };
+ }else{
+  setTimeout(()=>{clearFeedback();drawIntegrated()},650);
+ }
+}
+
+/* Stage 7 */
+const quizQs=[
+ {q:"Πώς αναγνωρίζεις εύκολα ένα βίντεο;",correct:"Έχει εικόνα και εικονίδιο αναπαραγωγής",wrong:["Δεν έχει εικόνα και δεν έχει κουμπιά","Έχει μόνο κείμενο"]},
+ {q:"Τι διαφέρει συνήθως στον ήχο από το βίντεο;",correct:"Έχει αναπαραγωγή αλλά δεν φαίνεται εικόνα πίσω",wrong:["Δεν έχει ποτέ κουμπί αναπαραγωγής","Έχει πάντα φωτογραφία πίσω"]},
+ {q:"Τι κάνει το εικονίδιο έντασης στον ήχο;",correct:"Ενεργοποιεί ή απενεργοποιεί την ένταση",wrong:["Μεγαλώνει την εικόνα","Ανανεώνει την ιστοσελίδα"]},
+ {q:"Πώς ανοίγεις μια εικόνα μεγαλύτερη στο παράδειγμα του μαθήματος;",correct:"Πατάς τον υπερσύνδεσμο που εμφανίζεται πάνω στην εικόνα",wrong:["Πατάς το κουμπί Πίσω","Πατάς τον σελιδοδείκτη"]}
+];
+function stage7(){quizIndex=0;quizOrder=shuffled(quizQs);drawQuiz()}
+function drawQuiz(){
+ const q=quizOrder[quizIndex];
+ const opts=shuffled([{ok:true,txt:q.correct},...q.wrong.map(txt=>({ok:false,txt}))]);
+ answerOrders.quiz=opts;
+ document.getElementById("card").innerHTML=`
+  <div class="quiz">
+   <div class="quiz-progress"><span style="width:${(quizIndex/quizOrder.length)*100}%"></span></div>
+   <div class="quiz-q">${q.q}</div>
+   <div class="row">${opts.map((o,i)=>`<button class="choice" onclick="quizAns(${i})">${o.txt}</button>`).join("")}</div>
+   <div class="smallhelp">${quizIndex+1} από ${quizOrder.length}</div>
+  </div>`;
+}
+function quizAns(i){
+ if(!answerOrders.quiz[i].ok){setFeedback("Δοκίμασε ξανά.",false);return}
+ quizIndex++;
+ if(quizIndex<quizOrder.length){
+  setFeedback("Σωστά! Πάμε στην επόμενη ερώτηση.",true);
+  setTimeout(()=>{clearFeedback();drawQuiz()},650);
+ }else{
+  setFeedback("Μπράβο! Ολοκλήρωσες την τελική δοκιμή.",true);nextAfter(900);
+ }
+}
+
+/* Stage 8 */
+function stage8(){
+ selfChoice=null;
+ document.getElementById("card").innerHTML=`
+  <div class="finalBox">
+   <div class="stars">⭐ ⭐ ⭐</div>
+   <div class="summary">
+    Έμαθες να αναγνωρίζεις κείμενο, βίντεο, ήχο και εικόνες σε μια ιστοσελίδα.
+    Επίσης έμαθες να ξεκινάς και να σταματάς βίντεο και ήχο, να χρησιμοποιείς
+    την ένταση του ήχου και να ανοίγεις μια εικόνα σε μεγαλύτερο μέγεθος.
+   </div>
+   <div class="faces">
+    <button class="face" onclick="selfPick(1,this)"><span>🙂</span>Θέλω λίγη εξάσκηση</button>
+    <button class="face" onclick="selfPick(2,this)"><span>😊</span>Τα κατάφερα</button>
+    <button class="face" onclick="selfPick(3,this)"><span>🤩</span>Τα κατάφερα πολύ καλά</button>
+   </div>
+   <button class="check" onclick="finish()">Ολοκλήρωση</button>
+   <button class="repeatBtn" onclick="restartAll()">↻ Επανάληψη δραστηριότητας</button>
+  </div>`;
+}
+function selfPick(v,e){
+ selfChoice=v;document.querySelectorAll(".face").forEach(x=>x.classList.remove("sel"));e.classList.add("sel")
+}
+function finish(){
+ const f=document.getElementById("feedback");
+ if(!selfChoice){f.className="feedback bad";f.textContent="Διάλεξε πρώτα πώς νιώθεις για όσα έμαθες.";return}
+ completeFinalDot();f.className="feedback good";f.textContent="Μπράβο! Ολοκλήρωσες το Μάθημα 20.";
+}
+function restartAll(){
+ stopTimers();s=0;selfChoice=null;answerOrders={};resSelected=new Set();
+ dragSelected=null;dragLocked=new Set();dragItems=[];
+ videoPlaying=false;videoProgress=0;videoTask=0;
+ audioPlaying=false;audioMuted=false;audioProgress=0;audioTask=0;
+ imageRevealed=false;imageOpened=false;
+ integratedStep=0;intVideoPlaying=false;intAudioPlaying=false;intAudioMuted=false;
+ quizIndex=0;quizOrder=[];document.getElementById("lightbox").classList.remove("show");render();
+}
+function help(){
+ const idx=Math.min(s,steps.length-1);
+ document.getElementById("helpText").textContent=steps[idx].h;
+ document.getElementById("modal").classList.add("show")
+}
+function closeHelp(){document.getElementById("modal").classList.remove("show")}
+render();
+</script>
+
+
+<footer class="nk-license" aria-label="Πληροφορίες δημιουργού και άδειας χρήσης">
+  <div><strong>Created by Nikos Kalakos · © 2026</strong></div>
+  <div>Original educational content and simulation design licensed under <a class="cc-badge" href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank" rel="license noopener noreferrer">CC BY-NC 4.0</a>.</div>
+  <div>Source code © 2026 Nikos Kalakos.</div>
+  <div>Third-party and textbook materials remain subject to the rights and licences of their respective copyright holders.</div>
+</footer></body>
+</html>

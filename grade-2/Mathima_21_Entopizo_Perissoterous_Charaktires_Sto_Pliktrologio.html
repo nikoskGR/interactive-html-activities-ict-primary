@@ -1,0 +1,581 @@
+<!--
+ICT Educational Simulation
+Created by Nikos Kalakos
+Copyright © 2026 Nikos Kalakos
+
+Original educational content and simulation design licensed under CC BY-NC 4.0.
+Source code © 2026 Nikos Kalakos.
+Third-party and textbook materials remain subject to the rights and licences of their respective copyright holders.
+-->
+<!doctype html>
+<html lang="el">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="author" content="Nikos Kalakos">
+<meta name="copyright" content="© 2026 Nikos Kalakos">
+<meta name="license" content="Original educational content and simulation design: CC BY-NC 4.0; source code © 2026 Nikos Kalakos; third-party and textbook materials excluded.">
+<title>Μάθημα 21 - Εντοπίζω περισσότερους χαρακτήρες στο πληκτρολόγιο</title>
+<style>
+:root{
+  --unit-red:#D93A2E;
+  --unit-red-dark:#A92920;
+  --unit-red-soft:#FFF0EE;
+  --ink:#25334a;
+  --line:#d5dbe6;
+  --good:#eef7dc;
+  --bad:#fff0ed;
+  --athena:#5b4eb5;
+  --shadow:0 10px 28px rgba(37,51,74,.12);
+}
+*{box-sizing:border-box}
+body{margin:0;background:#f7f9fb;color:var(--ink);font-family:Arial,"Noto Sans",sans-serif}
+button,textarea{font:inherit}
+button{cursor:pointer}
+.app{max-width:1180px;margin:auto;padding:16px}
+.top{
+  background:#fff;border:3px solid #f0c3be;border-radius:24px;padding:14px 18px;
+  display:flex;align-items:center;justify-content:space-between;box-shadow:var(--shadow)
+}
+.top h1{margin:0;font-size:clamp(27px,4vw,39px)}
+.badge{
+  width:70px;height:70px;border-radius:22px;background:var(--unit-red);color:#fff;
+  display:grid;place-items:center;font-size:31px;font-weight:900;box-shadow:inset 0 -5px 0 rgba(0,0,0,.10)
+}
+.path{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin:16px 0}
+.dot{
+  width:44px;height:44px;border-radius:50%;display:grid;place-items:center;
+  border:3px solid #aeb7c7;background:#fff;color:#65718a;font-weight:900;font-size:20px
+}
+.dot.active{background:var(--unit-red);border-color:var(--unit-red-dark);color:#fff;transform:scale(1.1)}
+.dot.done{background:var(--unit-red);border-color:var(--unit-red-dark);color:#fff}
+.panel{
+  min-height:710px;background:#fff;border:3px solid #f0c3be;border-radius:28px;
+  padding:24px;box-shadow:var(--shadow)
+}
+.step-head{display:flex;justify-content:space-between;gap:12px;align-items:flex-start}
+.step-head h2{margin:0;font-size:clamp(25px,4vw,36px)}
+.help{
+  background:#fff3f2;color:#8c241d;border:3px solid #efaaa4;
+  border-radius:16px;padding:10px 17px;font-weight:900
+}
+.instruction{
+  max-width:970px;margin:14px auto 18px;text-align:center;font-size:clamp(19px,2.3vw,24px);
+  font-weight:900;line-height:1.38
+}
+.card{
+  max-width:1040px;margin:auto;border:3px solid #f0c3be;border-radius:28px;
+  background:#fff;padding:22px;min-height:500px
+}
+.feedback{
+  display:none;max-width:860px;margin:16px auto 0;padding:12px 18px;border-radius:17px;
+  text-align:center;font-weight:900;font-size:20px
+}
+.feedback.good{display:block;background:var(--good);border:2px solid #9dbd57}
+.feedback.bad{display:block;background:var(--bad);border:2px solid #e5a59b}
+.check{
+  display:block;margin:18px auto 0;padding:13px 28px;border:0;border-radius:16px;
+  background:var(--unit-red);color:#fff;font-size:21px;font-weight:900;
+  box-shadow:0 5px 0 var(--unit-red-dark)
+}
+.smallhelp{text-align:center;font-size:14px;color:#6d7890;font-weight:800;margin-top:10px}
+.taskbox{
+  max-width:790px;margin:0 auto 14px;border:4px solid var(--unit-red);background:#fff6f5;
+  border-radius:18px;padding:12px 16px;text-align:center;font-size:20px;font-weight:900
+}
+.demo{
+  max-width:760px;margin:0 auto 16px;border:3px solid #d3dae4;background:#f8fafc;
+  border-radius:18px;padding:15px;text-align:center;font-size:23px;font-weight:900;
+  min-height:66px;display:grid;place-items:center
+}
+
+/* Keyboard */
+.keyboard-wrap{
+  max-width:930px;margin:auto;border:4px solid #59677a;border-radius:22px;background:#dce2e8;
+  padding:14px;box-shadow:0 7px 18px rgba(37,51,74,.18)
+}
+.krow{display:flex;gap:7px;margin-bottom:7px;justify-content:center}
+.key{
+  height:48px;min-width:51px;border:3px solid #8f9aa8;border-radius:9px;background:#fff;
+  box-shadow:0 3px 0 #a9b2bd;color:#28384e;font-weight:900;font-size:17px;
+  display:grid;place-items:center;padding:4px 8px;position:relative
+}
+.key:hover{background:#f3f8fb}
+.key:active{transform:translateY(2px);box-shadow:0 1px 0 #a9b2bd}
+.key.wide{min-width:94px}
+.key.enter{min-width:108px}
+.key.space{min-width:330px}
+.key.backspace{min-width:118px}
+.key.caps{min-width:112px}
+.key.correct{
+  outline:5px solid var(--unit-red);outline-offset:2px;background:#fff2f0
+}
+.key.flash{animation:keyflash .36s 2}
+@keyframes keyflash{50%{transform:translateY(-4px);box-shadow:0 7px 0 #a9b2bd}}
+.key-note{
+  position:absolute;top:-20px;left:50%;transform:translateX(-50%);
+  background:#26354b;color:#fff;border-radius:8px;padding:2px 7px;font-size:11px;white-space:nowrap
+}
+.zoom-strip{
+  max-width:620px;margin:14px auto;display:flex;gap:10px;justify-content:center;align-items:center
+}
+.zoom-key{
+  min-width:88px;height:74px;border:4px solid #778496;border-radius:14px;background:#fff;
+  display:grid;place-items:center;font-size:28px;font-weight:900;box-shadow:0 5px 0 #aeb7c2
+}
+.zoom-key.special{border-color:var(--unit-red);background:#fff5f3}
+
+/* Accent sequence */
+.sequence{
+  max-width:760px;margin:0 auto 14px;display:grid;grid-template-columns:1fr auto 1fr auto 1fr;
+  gap:12px;align-items:center
+}
+.seqbox{
+  min-height:80px;border:3px solid #cbd3de;border-radius:16px;background:#fafbfd;
+  display:grid;place-items:center;text-align:center;padding:10px;font-weight:900;font-size:20px
+}
+.seqbox.output{border-color:var(--unit-red);background:#fff4f2;font-size:36px}
+.arrow{font-size:32px;font-weight:900;color:#67768a}
+
+/* Graphis */
+.graphis{
+  max-width:900px;margin:auto;border:5px solid #3f475c;border-radius:23px;overflow:hidden;background:#fff;
+  box-shadow:0 12px 28px rgba(20,28,45,.20)
+}
+.graphis-top{
+  height:42px;background:linear-gradient(90deg,var(--athena),#7d66d3);color:#fff;
+  display:flex;align-items:center;justify-content:space-between;padding:0 10px 0 14px;font-weight:900
+}
+.graphis-controls{display:flex;gap:4px}
+.graphis-controls button{
+  width:34px;height:29px;border:0;border-radius:6px;background:#f7f5ff;color:#443b81;font-weight:900
+}
+.graphis-menu{
+  height:38px;background:#f2f3f7;border-bottom:2px solid #d8dce4;
+  display:flex;align-items:center;gap:12px;padding:0 12px;font-size:14px;font-weight:800
+}
+.graphis-toolbar{
+  height:45px;background:#fafbfc;border-bottom:2px solid #e0e4ea;
+  display:flex;align-items:center;gap:8px;padding:0 10px
+}
+.graphis-tool{
+  width:38px;height:34px;border:2px solid #b8c0cc;border-radius:8px;background:#fff;
+  display:grid;place-items:center;font-weight:900
+}
+.graphis-page{
+  min-height:315px;background:#e9edf2;padding:18px
+}
+.paper{
+  width:80%;min-height:275px;margin:auto;background:#fff;box-shadow:0 3px 9px rgba(0,0,0,.13);
+  padding:18px
+}
+.paper textarea{
+  width:100%;height:215px;border:2px solid #d7dce4;resize:none;padding:13px;
+  font-size:22px;line-height:1.55;color:#26354b;outline:none
+}
+.copy-sample{
+  max-width:720px;margin:0 auto 12px;border:3px solid #d1d8e2;border-radius:16px;background:#f9fafc;
+  padding:12px;text-align:center;font-weight:900;font-size:20px;line-height:1.5;
+  user-select:none;-webkit-user-select:none;-ms-user-select:none
+}
+
+/* Quiz */
+.quiz{
+  max-width:920px;margin:auto;border:4px solid var(--unit-red);border-radius:24px;
+  background:#fff9f8;padding:18px
+}
+.quiz-progress{height:14px;background:#e7edf1;border-radius:9px;overflow:hidden;max-width:540px;margin:0 auto 14px}
+.quiz-progress span{display:block;height:100%;background:var(--unit-red);width:0;transition:.25s}
+.quiz-q{text-align:center;font-size:23px;font-weight:900;margin-bottom:12px}
+
+/* Final */
+.finalBox{max-width:780px;margin:auto;text-align:center}
+.stars{font-size:58px;margin:18px}
+.summary{
+  padding:20px;border:4px solid var(--unit-red);background:#fff4f2;border-radius:22px;
+  font-size:21px;font-weight:900;line-height:1.45
+}
+.faces{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:18px}
+.face{
+  min-height:130px;border:3px solid var(--line);border-radius:20px;background:#fff;
+  font-weight:900;font-size:17px
+}
+.face span{display:block;font-size:52px;margin-bottom:7px}
+.face.sel{border-color:var(--unit-red);background:var(--unit-red-soft)}
+.repeatBtn{
+  display:block;margin:15px auto 0;padding:12px 22px;border:0;border-radius:15px;
+  background:#4f6b86;color:#fff;font-size:19px;font-weight:900;box-shadow:0 5px 0 #31475b
+}
+.modal{
+  position:fixed;inset:0;background:#24344d99;display:none;place-items:center;padding:18px;z-index:60
+}
+.modal.show{display:grid}
+.modal-box{
+  max-width:620px;background:#fff;border-radius:24px;border:4px solid var(--unit-red);
+  padding:22px;text-align:center;font-size:20px
+}
+.modal-box button{
+  padding:10px 20px;border:0;border-radius:13px;background:var(--unit-red);color:#fff;font-weight:900
+}
+@media(max-width:850px){
+  .key{min-width:38px;height:43px;font-size:15px}
+  .key.space{min-width:220px}
+  .faces{grid-template-columns:1fr}
+  .sequence{grid-template-columns:1fr}
+  .arrow{transform:rotate(90deg)}
+}
+</style>
+
+
+<style id="nk-license-style">
+.nk-license{max-width:1100px;margin:14px auto 24px;padding:10px 16px;text-align:center;font:13px/1.45 Arial,"Noto Sans",sans-serif;color:#4e657c}
+.nk-license a{color:inherit;text-decoration:underline;text-underline-offset:2px}
+.nk-license .cc-badge{display:inline-block;margin:0 4px;padding:2px 7px;border:1px solid #8aa0b8;border-radius:6px;background:#fff;font-weight:700;white-space:nowrap}
+</style></head>
+<body>
+<div class="app">
+  <div class="top">
+    <h1>Εντοπίζω περισσότερους χαρακτήρες στο πληκτρολόγιο</h1>
+    <div class="badge">21</div>
+  </div>
+  <div class="path" id="path"></div>
+
+  <main class="panel">
+    <div class="step-head">
+      <h2 id="title"></h2>
+      <button class="help" onclick="help()">❓ Βοήθεια</button>
+    </div>
+    <div class="instruction" id="inst"></div>
+    <div class="card" id="card"></div>
+    <div class="feedback" id="feedback"></div>
+  </main>
+</div>
+
+<div class="modal" id="modal">
+  <div class="modal-box">
+    <h2>💡 Βοήθεια</h2>
+    <p id="helpText"></p>
+    <button onclick="closeHelp()">Εντάξει</button>
+  </div>
+</div>
+
+<script>
+const steps=[
+ {t:"Θυμάμαι τα βασικά πλήκτρα",i:"Ακολούθησε τις τρεις οδηγίες και πάτησε κάθε φορά το σωστό πλήκτρο.",h:"Θυμήσου: το Space αφήνει κενό, το Backspace σβήνει και το Caps Lock κλειδώνει τα κεφαλαία γράμματα.",k:"recall"},
+ {t:"Αλλάζω παράγραφο",i:"Πάτησε το πλήκτρο που σε πηγαίνει από κάτω, σε νέα παράγραφο.",h:"Για να αλλάξεις παράγραφο πατάς μία φορά το ENTER.",k:"enter"},
+ {t:"Βρίσκω το κόμμα και την τελεία",i:"Πάτησε πρώτα το κόμμα και μετά την τελεία.",h:"Το κόμμα βρίσκεται μετά το «Μ» και η τελεία ακριβώς δεξιά από το κόμμα.",k:"punctuation"},
+ {t:"Βάζω τόνο",i:"Για να γράψεις «ά», πάτησε πρώτα το πλήκτρο του τόνου και μετά το γράμμα «α».",h:"Στον υπολογιστή ο τόνος μπαίνει πρώτα και μετά πατάς το γράμμα.",k:"accent"},
+ {t:"Βρίσκω το τελικό ς",i:"Πάτησε το πλήκτρο με το τελικό «ς».",h:"Όταν γράφεις με μικρά γράμματα, το τελικό «ς» βρίσκεται στο πλήκτρο αριστερά από το «Ε».",k:"sigma"},
+ {t:"Γράφω ονόματα το ένα κάτω από το άλλο",i:"Γράψε ακριβώς τα τρία ονόματα στο Graphis, το ένα κάτω από το άλλο.",h:"Γράψε ακριβώς «Μάριος», «Ελένη», «Νίκος». Χρησιμοποίησε ENTER για να αλλάζεις γραμμή. Η γραφή ελέγχεται με τα σωστά κεφαλαία, πεζά και τόνους.",k:"copy"},
+ {t:"Γράφω τα ονόματα σε μία γραμμή",i:"Γράψε τα ίδια τρία ονόματα σε μία γραμμή. Χώρισέ τα με κόμμα και κενό και βάλε τελεία στο τέλος.",h:"Η σωστή μορφή είναι: «Μάριος, Ελένη, Νίκος.» Πρόσεξε το κόμμα, το κενό μετά από κάθε κόμμα και την τελεία στο τέλος.",k:"singleLine"},
+ {t:"Τελική δοκιμή",i:"Εντόπισε σωστά τα επτά πλήκτρα που ζητούνται.",h:"Θα χρειαστείς: τόνο, ENTER, Caps Lock, Backspace, Space, κόμμα και τελεία.",k:"quiz"},
+ {t:"Τα κατάφερες!",i:"Σκέψου τι έμαθες στο Μάθημα 21.",h:"Σκέψου πώς αλλάζεις παράγραφο, βάζεις κόμμα, τελεία και τόνο και πού βρίσκεται το τελικό «ς».",k:"final"}
+];
+
+let s=0,selfChoice=null;
+let recallStep=0,punctStep=0,accentStep=0;
+let quizIndex=0,quizOrder=[];
+
+function nav(){
+ document.getElementById("path").innerHTML=steps.map((_,i)=>`<div class="dot ${i<s?'done':i===s?'active':''}">${i+1}</div>`).join("");
+}
+function completeFinalDot(){s=steps.length;nav()}
+function clearFeedback(){const f=document.getElementById("feedback");f.className="feedback";f.textContent=""}
+function setFeedback(t,ok){const f=document.getElementById("feedback");f.className="feedback "+(ok?"good":"bad");f.textContent=t}
+function nextAfter(ms=850){setTimeout(()=>{s++;render()},ms)}
+function shuffled(arr){
+ const a=[...arr];
+ for(let i=a.length-1;i>0;i--){
+  const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];
+ }
+ return a;
+}
+function render(){
+ nav();clearFeedback();
+ const x=steps[s];
+ document.getElementById("title").textContent=x.t;
+ document.getElementById("inst").textContent=x.i;
+ if(x.k==="recall")stage1();
+ if(x.k==="enter")stage2();
+ if(x.k==="punctuation")stage3();
+ if(x.k==="accent")stage4();
+ if(x.k==="sigma")stage5();
+ if(x.k==="copy")stage6();
+ if(x.k==="singleLine")stage7();
+ if(x.k==="quiz")stage8();
+ if(x.k==="final")stage9();
+}
+
+function key(label,id,cls=""){
+ return `<button class="key ${cls}" id="key_${id}" onclick="keyPressed('${id}')">${label}</button>`;
+}
+function keyboardHTML(){
+ return `<div class="keyboard-wrap">
+  <div class="krow">
+   ${key("1","1")}${key("2","2")}${key("3","3")}${key("4","4")}${key("5","5")}
+   ${key("6","6")}${key("7","7")}${key("8","8")}${key("9","9")}${key("0","0")}
+   ${key("Backspace","backspace","backspace")}
+  </div>
+  <div class="krow">
+   ${key(";","semicolon")}${key("ς","sigma")}${key("ε","epsilon")}${key("ρ","rho")}${key("τ","tau")}
+   ${key("υ","upsilon")}${key("θ","theta")}${key("ι","iota")}${key("ο","omicron")}${key("π","pi")}
+  </div>
+  <div class="krow">
+   ${key("Caps Lock","caps","caps")}${key("α","alpha")}${key("σ","s")}${key("δ","d")}${key("φ","f")}
+   ${key("γ","g")}${key("η","h")}${key("ξ","j")}${key("κ","k")}${key("λ","l")}${key("΄","accent")}
+   ${key("ENTER","enter","enter")}
+  </div>
+  <div class="krow">
+   ${key("ζ","z")}${key("χ","x")}${key("ψ","c")}${key("ω","v")}${key("β","b")}${key("ν","n")}${key("μ","m")}
+   ${key(",","comma")}${key(".","period")}
+  </div>
+  <div class="krow">${key("Space","space","space")}</div>
+ </div>`;
+}
+function blockCopyShortcut(ev){
+ const copyShortcut=(ev.ctrlKey||ev.metaKey)&&(ev.key.toLowerCase()==="c"||ev.key==="Insert");
+ if(copyShortcut){ev.preventDefault();return false}
+ return true;
+}
+
+function wrongKey(id){
+ const el=document.getElementById("key_"+id);if(el){el.classList.add("flash");setTimeout(()=>el.classList.remove("flash"),700)}
+ setFeedback("Δοκίμασε ξανά.",false);
+}
+
+/* Stage 1 */
+const recallTasks=[
+ {id:"space",text:"Πάτησε το πλήκτρο που αφήνει κενό ανάμεσα στις λέξεις.",ok:"Space"},
+ {id:"backspace",text:"Πάτησε το πλήκτρο που σβήνει έναν ή περισσότερους χαρακτήρες.",ok:"Backspace"},
+ {id:"caps",text:"Πάτησε το πλήκτρο που κλειδώνει τα κεφαλαία γράμματα.",ok:"Caps Lock"}
+];
+function stage1(){recallStep=0;drawRecall()}
+function drawRecall(){
+ document.getElementById("card").innerHTML=`<div class="taskbox">${recallTasks[recallStep].text}</div>${keyboardHTML()}`;
+}
+function keyPressed(id){
+ if(s===0)return recallPress(id);
+ if(s===1)return enterPress(id);
+ if(s===2)return punctuationPress(id);
+ if(s===3)return accentPress(id);
+ if(s===4)return sigmaPress(id);
+ if(s===7)return quizPress(id);
+}
+function recallPress(id){
+ const t=recallTasks[recallStep];
+ if(id!==t.id){wrongKey(id);return}
+ document.getElementById("key_"+id).classList.add("correct");
+ setFeedback(`Σωστά! ${t.ok}.`,true);
+ recallStep++;
+ if(recallStep<recallTasks.length)setTimeout(()=>{clearFeedback();drawRecall()},650);
+ else nextAfter(850);
+}
+
+/* Stage 2 */
+function stage2(){
+ document.getElementById("card").innerHTML=`
+  <div class="demo">Πρώτη παράγραφος<span style="display:block;width:100%"></span>▌</div>
+  ${keyboardHTML()}`;
+}
+function enterPress(id){
+ if(id!=="enter"){wrongKey(id);return}
+ document.getElementById("key_enter").classList.add("correct");
+ document.querySelector(".demo").innerHTML=`Πρώτη παράγραφος<br><br>Δεύτερη παράγραφος`;
+ setFeedback("Σωστά! Με μία φορά ENTER πήγες σε νέα παράγραφο.",true);nextAfter();
+}
+
+/* Stage 3 */
+function stage3(){punctStep=0;drawPunctuation()}
+function drawPunctuation(){
+ const msg=punctStep===0?"Πάτησε το κόμμα (,).":"Τώρα πάτησε την τελεία (.).";
+ document.getElementById("card").innerHTML=`
+  <div class="taskbox">${msg}</div>
+  <div class="zoom-strip">
+   <div class="zoom-key">μ</div><div class="zoom-key special">,</div><div class="zoom-key special">.</div>
+  </div>
+  ${keyboardHTML()}`;
+}
+function punctuationPress(id){
+ const expected=punctStep===0?"comma":"period";
+ if(id!==expected){wrongKey(id);return}
+ document.getElementById("key_"+id).classList.add("correct");
+ setFeedback(punctStep===0?"Σωστά! Βρήκες το κόμμα.":"Σωστά! Η τελεία βρίσκεται ακριβώς δεξιά από το κόμμα.",true);
+ punctStep++;
+ if(punctStep<2)setTimeout(()=>{clearFeedback();drawPunctuation()},650);
+ else nextAfter();
+}
+
+/* Stage 4 */
+function stage4(){
+ accentStep=0;
+ document.getElementById("card").innerHTML=`
+  <div class="sequence">
+   <div class="seqbox">1. Πλήκτρο τόνου<br><strong>΄</strong></div>
+   <div class="arrow">→</div>
+   <div class="seqbox">2. Γράμμα<br><strong>α</strong></div>
+   <div class="arrow">→</div>
+   <div class="seqbox output" id="accentOutput">;</div>
+  </div>
+  ${keyboardHTML()}`;
+}
+function accentPress(id){
+ if(accentStep===0){
+  if(id!=="accent"){wrongKey(id);setFeedback("Πρώτα πάτησε το πλήκτρο του τόνου.",false);return}
+  accentStep=1;document.getElementById("key_accent").classList.add("correct");
+  document.getElementById("accentOutput").textContent="΄";
+  setFeedback("Σωστά! Τώρα πάτησε το «α».",true);return;
+ }
+ if(accentStep===1){
+  if(id!=="alpha"){wrongKey(id);setFeedback("Μετά τον τόνο, πάτησε το γράμμα «α».",false);return}
+  document.getElementById("key_alpha").classList.add("correct");
+  document.getElementById("accentOutput").textContent="ά";
+  setFeedback("Μπράβο! Τόνος πρώτα και μετά «α» = «ά».",true);nextAfter(950);
+ }
+}
+
+/* Stage 5 */
+function stage5(){
+ document.getElementById("card").innerHTML=`
+  <div class="taskbox">Το τελικό «ς» βρίσκεται αριστερά από το «ε». Βρες το και πάτησέ το.</div>
+  <div class="zoom-strip"><div class="zoom-key">;</div><div class="zoom-key special">ς</div><div class="zoom-key">ε</div><div class="zoom-key">ρ</div></div>
+  ${keyboardHTML()}`;
+}
+function sigmaPress(id){
+ if(id!=="sigma"){wrongKey(id);return}
+ document.getElementById("key_sigma").classList.add("correct");
+ setFeedback("Σωστά! Το τελικό «ς» βρίσκεται αριστερά από το «ε».",true);nextAfter();
+}
+
+/* Stage 6 */
+function stage6(){
+ document.getElementById("card").innerHTML=`
+  <div class="copy-sample" oncontextmenu="return false" oncopy="return false" oncut="return false"
+       onkeydown="return blockCopyShortcut(event)" tabindex="0">Μάριος<br>Ελένη<br>Νίκος</div>
+  <div class="graphis">
+   <div class="graphis-top"><span>Graphis — Νέο έγγραφο</span><span class="graphis-controls"><button>—</button><button>□</button><button>×</button></span></div>
+   <div class="graphis-menu"><span>Αρχείο</span><span>Επεξεργασία</span><span>Μορφοποίηση</span></div>
+   <div class="graphis-toolbar"><button class="graphis-tool">B</button><button class="graphis-tool">A</button><button class="graphis-tool">↶</button></div>
+   <div class="graphis-page"><div class="paper"><textarea id="copyText" spellcheck="false" placeholder="Γράψε εδώ..."></textarea></div></div>
+  </div>
+  <button class="check" onclick="checkCopy()">Έλεγχος</button>`;
+ document.getElementById("copyText").focus();
+}
+function checkCopy(){
+ const val=document.getElementById("copyText").value.replace(/\r\n/g,"\n").trim();
+ const expected="Μάριος\nΕλένη\nΝίκος";
+ if(val!==expected){
+  setFeedback("Γράψε ακριβώς τα τρία ονόματα, με τα σωστά κεφαλαία και τους τόνους, το ένα κάτω από το άλλο.",false);return;
+ }
+ setFeedback("Μπράβο! Χρησιμοποίησες σωστά γράμματα, τόνους και αλλαγή γραμμής.",true);nextAfter();
+}
+
+/* Stage 7 */
+function stage7(){
+ document.getElementById("card").innerHTML=`
+  <div class="copy-sample" oncontextmenu="return false" oncopy="return false" oncut="return false"
+       onkeydown="return blockCopyShortcut(event)" tabindex="0">
+   Μάριος &nbsp;&nbsp; Ελένη &nbsp;&nbsp; Νίκος
+  </div>
+  <div class="graphis">
+   <div class="graphis-top"><span>Graphis — Νέο έγγραφο</span><span class="graphis-controls"><button>—</button><button>□</button><button>×</button></span></div>
+   <div class="graphis-menu"><span>Αρχείο</span><span>Επεξεργασία</span><span>Μορφοποίηση</span></div>
+   <div class="graphis-toolbar"><button class="graphis-tool">B</button><button class="graphis-tool">A</button><button class="graphis-tool">↶</button></div>
+   <div class="graphis-page"><div class="paper"><textarea id="singleLineText" spellcheck="false" placeholder="Γράψε εδώ..."></textarea></div></div>
+  </div>
+  <button class="check" onclick="checkSingleLine()">Έλεγχος</button>`;
+ document.getElementById("singleLineText").focus();
+}
+function checkSingleLine(){
+ const val=document.getElementById("singleLineText").value.replace(/\r\n/g,"\n").trim();
+ const expected="Μάριος, Ελένη, Νίκος.";
+ if(val!==expected){
+  setFeedback("Γράψε ακριβώς: «Μάριος, Ελένη, Νίκος.» Χρησιμοποίησε κόμμα και κενό ανάμεσα στα ονόματα και τελεία στο τέλος.",false);return;
+ }
+ setFeedback("Μπράβο! Χρησιμοποίησες σωστά κόμμα, κενό και τελεία.",true);nextAfter();
+}
+
+/* Stage 8 */
+const quizTasks=[
+ {id:"accent",text:"Πάτησε το πλήκτρο του τόνου."},
+ {id:"enter",text:"Πάτησε το πλήκτρο που αλλάζει παράγραφο."},
+ {id:"caps",text:"Πάτησε το Caps Lock."},
+ {id:"backspace",text:"Πάτησε το πλήκτρο που σβήνει."},
+ {id:"space",text:"Πάτησε το πλήκτρο του κενού."},
+ {id:"comma",text:"Πάτησε το κόμμα."},
+ {id:"period",text:"Πάτησε την τελεία."}
+];
+function stage8(){
+ quizIndex=0;quizOrder=shuffled(quizTasks);drawQuiz();
+}
+function drawQuiz(){
+ const q=quizOrder[quizIndex];
+ document.getElementById("card").innerHTML=`
+  <div class="quiz">
+   <div class="quiz-progress"><span style="width:${(quizIndex/quizOrder.length)*100}%"></span></div>
+   <div class="quiz-q">${q.text}</div>
+   ${keyboardHTML()}
+   <div class="smallhelp">${quizIndex+1} από ${quizOrder.length}</div>
+  </div>`;
+}
+function quizPress(id){
+ const expected=quizOrder[quizIndex].id;
+ if(id!==expected){wrongKey(id);setFeedback("Αυτό είναι διαφορετικό πλήκτρο.",false);return}
+ document.getElementById("key_"+id).classList.add("correct");
+ quizIndex++;
+ if(quizIndex<quizOrder.length){
+  setFeedback("Σωστά! Πάμε στο επόμενο πλήκτρο.",true);
+  setTimeout(()=>{clearFeedback();drawQuiz()},600);
+ }else{
+  setFeedback("Μπράβο! Εντόπισες σωστά και τα επτά πλήκτρα.",true);nextAfter();
+ }
+}
+
+/* Stage 9 */
+function stage9(){
+ selfChoice=null;
+ document.getElementById("card").innerHTML=`
+  <div class="finalBox">
+   <div class="stars">⭐ ⭐ ⭐</div>
+   <div class="summary">
+    Έμαθες να χρησιμοποιείς το ENTER για αλλαγή παραγράφου, να βρίσκεις το κόμμα και την τελεία,
+    να βάζεις τόνο πατώντας πρώτα το πλήκτρο του τόνου και μετά το γράμμα,
+    να εντοπίζεις το τελικό «ς» και να γράφεις ονόματα είτε σε διαφορετικές γραμμές
+    είτε στην ίδια γραμμή με κόμμα, κενό και τελεία.
+   </div>
+   <div class="faces">
+    <button class="face" onclick="selfPick(1,this)"><span>🙂</span>Θέλω λίγη εξάσκηση</button>
+    <button class="face" onclick="selfPick(2,this)"><span>😊</span>Τα κατάφερα</button>
+    <button class="face" onclick="selfPick(3,this)"><span>🤩</span>Τα κατάφερα πολύ καλά</button>
+   </div>
+   <button class="check" onclick="finish()">Ολοκλήρωση</button>
+   <button class="repeatBtn" onclick="restartAll()">↻ Επανάληψη δραστηριότητας</button>
+  </div>`;
+}
+function selfPick(v,e){
+ selfChoice=v;document.querySelectorAll(".face").forEach(x=>x.classList.remove("sel"));e.classList.add("sel");
+}
+function finish(){
+ const f=document.getElementById("feedback");
+ if(!selfChoice){f.className="feedback bad";f.textContent="Διάλεξε πρώτα πώς νιώθεις για όσα έμαθες.";return}
+ completeFinalDot();f.className="feedback good";f.textContent="Μπράβο! Ολοκλήρωσες το Μάθημα 21.";
+}
+function restartAll(){
+ s=0;selfChoice=null;recallStep=0;punctStep=0;accentStep=0;quizIndex=0;quizOrder=[];render();
+}
+function help(){
+ const idx=Math.min(s,steps.length-1);
+ document.getElementById("helpText").textContent=steps[idx].h;
+ document.getElementById("modal").classList.add("show");
+}
+function closeHelp(){document.getElementById("modal").classList.remove("show")}
+render();
+</script>
+
+
+<footer class="nk-license" aria-label="Πληροφορίες δημιουργού και άδειας χρήσης">
+  <div><strong>Created by Nikos Kalakos · © 2026</strong></div>
+  <div>Original educational content and simulation design licensed under <a class="cc-badge" href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank" rel="license noopener noreferrer">CC BY-NC 4.0</a>.</div>
+  <div>Source code © 2026 Nikos Kalakos.</div>
+  <div>Third-party and textbook materials remain subject to the rights and licences of their respective copyright holders.</div>
+</footer></body>
+</html>

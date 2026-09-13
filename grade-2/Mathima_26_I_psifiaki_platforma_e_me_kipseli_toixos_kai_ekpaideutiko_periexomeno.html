@@ -1,0 +1,194 @@
+<!--
+ICT Educational Simulation
+Created by Nikos Kalakos
+Copyright © 2026 Nikos Kalakos
+
+Original educational content and simulation design licensed under CC BY-NC 4.0.
+Source code © 2026 Nikos Kalakos.
+Third-party and textbook materials remain subject to the rights and licences of their respective copyright holders.
+-->
+<!doctype html>
+<html lang="el">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="author" content="Nikos Kalakos">
+<meta name="copyright" content="© 2026 Nikos Kalakos">
+<meta name="license" content="Original educational content and simulation design: CC BY-NC 4.0; source code © 2026 Nikos Kalakos; third-party and textbook materials excluded.">
+<title>Μάθημα 26 - Agora: Kykloi, τοίχος και εκπαιδευτικό περιεχόμενο</title>
+<style>
+:root{
+  --unit-red:#D93A2E;--unit-red-dark:#A92920;--unit-red-soft:#FFF0EE;
+  --ink:#25334a;--line:#d5dbe6;--good:#eef7dc;--bad:#fff0ed;
+  --agora:#356a86;--agora-dark:#23495f;--agora-soft:#eef7fb;--athena:#5b4eb5;
+  --gold:#f1c84b;--shadow:0 10px 28px rgba(37,51,74,.12)
+}
+*{box-sizing:border-box}
+body{margin:0;background:#f7f9fb;color:var(--ink);font-family:Arial,"Noto Sans",sans-serif}
+button,input{font:inherit}button{cursor:pointer}
+.app{max-width:1180px;margin:auto;padding:16px}
+.top{background:#fff;border:3px solid #f0c3be;border-radius:24px;padding:14px 18px;display:flex;align-items:center;justify-content:space-between;box-shadow:var(--shadow)}
+.top h1{margin:0;font-size:clamp(27px,4vw,40px)}
+.badge{width:70px;height:70px;border-radius:22px;background:var(--unit-red);color:#fff;display:grid;place-items:center;font-size:31px;font-weight:900;box-shadow:inset 0 -5px 0 rgba(0,0,0,.10)}
+.path{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin:16px 0}
+.dot{width:44px;height:44px;border-radius:50%;display:grid;place-items:center;border:3px solid #aeb7c7;background:#fff;color:#65718a;font-weight:900;font-size:20px}
+.dot.active{background:var(--unit-red);border-color:var(--unit-red-dark);color:#fff;transform:scale(1.1)}
+.dot.done{background:var(--unit-red);border-color:var(--unit-red-dark);color:#fff}
+.panel{min-height:710px;background:#fff;border:3px solid #f0c3be;border-radius:28px;padding:24px;box-shadow:var(--shadow)}
+.step-head{display:flex;justify-content:space-between;gap:12px;align-items:flex-start}.step-head h2{margin:0;font-size:clamp(25px,4vw,37px)}
+.help{background:#fff3f2;color:#8c241d;border:3px solid #efaaa4;border-radius:16px;padding:10px 17px;font-weight:900}
+.instruction{max-width:970px;margin:14px auto 18px;text-align:center;font-size:clamp(19px,2.3vw,24px);font-weight:900;line-height:1.38}
+.card{max-width:1040px;margin:auto;border:3px solid #f0c3be;border-radius:28px;background:#fff;padding:22px;min-height:500px}
+.feedback{display:none;max-width:860px;margin:16px auto 0;padding:12px 18px;border-radius:17px;text-align:center;font-weight:900;font-size:20px}
+.feedback.good{display:block;background:var(--good);border:2px solid #9dbd57}.feedback.bad{display:block;background:var(--bad);border:2px solid #e5a59b}
+.check{display:block;margin:18px auto 0;padding:13px 28px;border:0;border-radius:16px;background:var(--unit-red);color:#fff;font-size:21px;font-weight:900;box-shadow:0 5px 0 var(--unit-red-dark)}
+.smallhelp{text-align:center;font-size:14px;color:#6d7890;font-weight:800;margin-top:10px}
+.taskbox{max-width:870px;margin:0 auto 16px;border:4px solid var(--unit-red);background:#fff6f5;border-radius:18px;padding:12px 16px;text-align:center;font-size:20px;font-weight:900}
+
+/* Agora shell */
+.agora{max-width:940px;margin:auto;border:5px solid #3f475c;border-radius:23px;overflow:hidden;background:#eef3f6;box-shadow:0 12px 28px rgba(20,28,45,.20)}
+.agora-top{height:62px;background:var(--agora-dark);color:#fff;display:flex;align-items:center;gap:12px;padding:0 14px}
+.agora-mini{width:42px;height:42px;border-radius:13px;background:#fff;color:var(--agora);display:grid;place-items:center;font-size:26px;font-weight:900}.agora-title{font-size:22px;font-weight:900;margin-right:auto}
+.top-tool{position:relative;width:44px;height:44px;border:0;border-radius:13px;background:#fff;color:#26354b;font-size:22px}.counter{position:absolute;right:-5px;top:-7px;min-width:22px;height:22px;border-radius:50%;display:grid;place-items:center;background:var(--unit-red);color:#fff;font-size:12px;font-weight:900;border:2px solid #fff}
+.profile-pill{border:0;border-radius:16px;background:#fff;color:#26354b;padding:6px 10px;display:flex;align-items:center;gap:7px;font-weight:900}.avatar{width:31px;height:31px;border-radius:50%;background:#ffe9b8;display:grid;place-items:center}
+.agora-body{display:grid;grid-template-columns:180px 1fr;min-height:470px}.side{background:#fff;border-right:3px solid #d7e0e6;padding:14px}.side h4{margin:0 0 10px;color:#607287}.side-item{width:100%;border:0;border-radius:12px;padding:11px 10px;margin:5px 0;text-align:left;background:#f5f8fa;font-weight:900;color:#34485d}.side-item.active{background:#e5f2f8;color:var(--agora-dark);outline:3px solid #b8d7e4}
+.mainarea{padding:18px;background:#eef3f6;min-width:0}
+
+/* Kykloi */
+.kykloi-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:14px}.kykloi-head h3{margin:0;font-size:25px;color:var(--agora-dark)}.newbtn{border:0;border-radius:12px;background:var(--agora);color:#fff;padding:10px 14px;font-weight:900}
+.kykloi-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.ky-card{border:3px solid #cbd7df;border-radius:18px;background:#fff;padding:14px;text-align:left;min-height:170px;position:relative}.ky-card:hover{border-color:var(--agora)}.ky-ico{width:62px;height:62px;border-radius:18px;display:grid;place-items:center;font-size:38px;background:#e8f4f8;margin-bottom:10px}.ky-name{font-size:20px;font-weight:900;color:var(--agora-dark)}.ky-sub{font-size:14px;font-weight:800;color:#6d7b8a;margin-top:4px}.owner{margin-top:9px;font-size:13px;font-weight:800;color:#5b6675}.pill{display:inline-block;margin-top:8px;padding:5px 8px;border-radius:999px;background:#fff4d5;border:2px solid #e8c85d;font-size:12px;font-weight:900}
+
+/* Concept */
+.choice-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;max-width:900px;margin:20px auto}.choice{min-height:210px;border:3px solid #cfd7e2;border-radius:22px;background:#fff;padding:18px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;text-align:center;font-weight:900;font-size:19px}.choice .ico{font-size:62px}.choice:hover{border-color:var(--unit-red)}
+
+/* Parts */
+.parts-mission{max-width:830px;margin:0 auto 14px;padding:12px 16px;border:3px solid var(--agora);background:#f0f8fb;border-radius:16px;text-align:center;font-size:20px;font-weight:900}.parts-row{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-bottom:13px}.partchip{padding:7px 11px;border:2px solid #bcc8d2;border-radius:999px;background:#fff;font-weight:900}.partchip.done{background:#eaf7e3;border-color:#8fba68;color:#365c20}
+.ky-detail{border:4px solid #cbd7df;border-radius:20px;background:#fff;overflow:hidden}.ky-cover{height:118px;background:linear-gradient(135deg,#6a9dc0,#d5edf5);display:flex;align-items:center;gap:18px;padding:16px 22px}.ky-cover .bigico{font-size:62px}.ky-cover h3{margin:0;font-size:29px;color:#183e56}.ky-tabs{display:flex;background:#f5f8fa;border-bottom:3px solid #d6e0e7}.ky-tabs button{flex:1;border:0;background:transparent;padding:13px 8px;font-weight:900}.ky-tabs button:hover,.ky-tabs button.sel{background:#e7f3f8;color:#173e57}.ky-info{padding:18px;display:grid;grid-template-columns:repeat(2,1fr);gap:14px}.info-card{border:3px solid #d4dde4;border-radius:16px;background:#fff;padding:16px;min-height:110px;text-align:center}.info-card button{border:0;background:transparent;width:100%;height:100%;font-weight:900;color:#2b4053}.info-card .big{display:block;font-size:42px;margin-bottom:5px}
+
+/* Wall */
+.wall{display:grid;grid-template-columns:1fr 210px;gap:16px}.wall-main{display:flex;flex-direction:column;gap:13px}.wall-side{border:3px solid #d6e0e7;border-radius:16px;background:#fff;padding:12px;height:max-content}.wall-side h4{margin:0 0 8px}.member{display:flex;align-items:center;gap:8px;margin:8px 0;font-weight:900}.member .mavatar{width:30px;height:30px;border-radius:50%;background:#ffe9b8;display:grid;place-items:center}
+.post{border:3px solid #d6e0e7;border-radius:18px;background:#fff;padding:14px}.post-head{display:flex;align-items:center;gap:9px;font-weight:900}.post-avatar{width:38px;height:38px;border-radius:50%;background:#dff0f7;display:grid;place-items:center}.post-text{font-size:17px;line-height:1.45;margin:10px 0;font-weight:800}.post-content{border:3px solid #e0e5e9;border-radius:14px;padding:12px;background:#f9fbfc;margin:8px 0;display:flex;align-items:center;gap:12px;font-weight:900}.content-ico{font-size:38px}.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:9px}.action{border:2px solid #bdc9d3;background:#fff;border-radius:11px;padding:8px 10px;font-weight:900}.action:hover{border-color:var(--agora)}.action.heart.on{background:#fff0f3;border-color:#df7891;color:#a82143}.comment-box{margin-top:10px;border-top:2px dashed #d4dde4;padding-top:10px}.comment-row{display:flex;gap:8px}.comment-input{flex:1;border:3px solid #aeb9c6;border-radius:11px;padding:9px 11px;font-weight:900}.comment-send{border:0;border-radius:11px;background:var(--agora);color:#fff;padding:9px 14px;font-weight:900}.comments{margin-top:8px;display:grid;gap:6px}.comment{background:#f3f7f9;border-radius:10px;padding:8px 10px;font-weight:800;font-size:14px}.new-post{border:3px dashed #9db6c3;border-radius:16px;background:#f9fcfd;padding:11px;text-align:center;font-weight:900;color:#526979}
+
+/* Wall action trainer */
+.action-trainer{max-width:860px;margin:auto}.trainer-toolbar{display:grid;grid-template-columns:repeat(5,1fr);gap:10px}.trainer-tool{min-height:120px;border:3px solid #d0d9e1;border-radius:17px;background:#fff;padding:10px;font-weight:900}.trainer-tool .big{display:block;font-size:40px;margin-bottom:6px}.trainer-tool.done{background:#eaf7e3;border-color:#8fba68}.trainer-tool:hover{border-color:var(--agora)}
+
+/* Physical-digital matching */
+.matching-wrap{position:relative;max-width:900px;height:410px;margin:0 auto;display:grid;grid-template-columns:1fr 1fr;gap:180px;padding:10px 18px}.match-col{display:flex;flex-direction:column;justify-content:space-around;z-index:2}.match-item{position:relative;min-height:70px;border:3px solid #c7d1db;border-radius:16px;background:#fff;display:flex;align-items:center;justify-content:center;text-align:center;padding:10px;font-weight:900;user-select:none;touch-action:none}.match-item.left{cursor:crosshair}.match-item.correct{background:#eaf7e3;border-color:#8fba68}.dot-handle{position:absolute;width:18px;height:18px;border-radius:50%;background:var(--unit-red);top:50%;transform:translateY(-50%);border:3px solid #fff;box-shadow:0 0 0 2px var(--unit-red)}.left .dot-handle{right:-10px}.right .dot-handle{left:-10px}.match-svg{position:absolute;inset:0;width:100%;height:100%;z-index:1;pointer-events:none}.match-line{stroke:var(--agora);stroke-width:5;stroke-linecap:round}.temp-line{stroke:#8398a8;stroke-width:4;stroke-dasharray:8 7;stroke-linecap:round}
+
+/* Final */
+.final-shell{max-width:900px;margin:auto}.missionbar{padding:11px 14px;border:4px solid var(--unit-red);background:#fff5f3;border-radius:16px;text-align:center;font-size:20px;font-weight:900;margin-bottom:14px}.final-status{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-bottom:12px}.final-chip{padding:7px 10px;border:2px solid #c7d0da;border-radius:999px;background:#fff;font-weight:900}.final-chip.done{background:#eaf7e3;border-color:#8fba68}.finalBox{max-width:780px;margin:auto;text-align:center}.stars{font-size:58px;margin:18px}.summary{padding:20px;border:4px solid var(--unit-red);background:#fff4f2;border-radius:22px;font-size:21px;font-weight:900;line-height:1.45;text-align:left}.summary ul{margin:10px 0 0}.faces{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:18px}.face{min-height:130px;border:3px solid var(--line);border-radius:20px;background:#fff;font-weight:900;font-size:17px}.face span{display:block;font-size:52px;margin-bottom:7px}.face.sel{border-color:var(--unit-red);background:var(--unit-red-soft)}.repeatBtn{display:block;margin:15px auto 0;padding:12px 22px;border:0;border-radius:15px;background:#4f6b86;color:#fff;font-size:19px;font-weight:900;box-shadow:0 5px 0 #31475b}
+.modal{position:fixed;inset:0;background:#24344d99;display:none;place-items:center;padding:18px;z-index:60}.modal.show{display:grid}.modal-box{max-width:620px;background:#fff;border-radius:24px;border:4px solid var(--unit-red);padding:22px;text-align:center;font-size:20px}.modal-box button{padding:10px 20px;border:0;border-radius:13px;background:var(--unit-red);color:#fff;font-weight:900}
+@media(max-width:850px){.choice-grid,.kykloi-grid,.faces{grid-template-columns:1fr}.agora-body{grid-template-columns:130px 1fr}.wall{grid-template-columns:1fr}.trainer-toolbar{grid-template-columns:1fr 1fr}.matching-wrap{gap:70px}}
+</style>
+<style id="nk-license-style">
+.nk-license{max-width:1100px;margin:14px auto 24px;padding:10px 16px;text-align:center;font:13px/1.45 Arial,"Noto Sans",sans-serif;color:#4e657c}
+.nk-license a{color:inherit;text-decoration:underline;text-underline-offset:2px}
+.nk-license .cc-badge{display:inline-block;margin:0 4px;padding:2px 7px;border:1px solid #8aa0b8;border-radius:6px;background:#fff;font-weight:700;white-space:nowrap}
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="top"><h1>Agora: Kykloi, τοίχος και εκπαιδευτικό περιεχόμενο</h1><div class="badge">26</div></div>
+  <div class="path" id="path"></div>
+  <main class="panel">
+    <div class="step-head"><h2 id="title"></h2><button class="help" onclick="help()">❓ Βοήθεια</button></div>
+    <div class="instruction" id="inst"></div>
+    <div class="card" id="card"></div>
+    <div class="feedback" id="feedback"></div>
+  </main>
+</div>
+<div class="modal" id="modal"><div class="modal-box"><h2>💡 Βοήθεια</h2><p id="helpText"></p><button onclick="closeHelp()">Εντάξει</button></div></div>
+<script>
+const steps=[
+ {t:"Τι είναι οι Kykloi;",i:"Διάλεξε τι περιγράφει καλύτερα τους Kykloi μέσα στην Agora.",h:"Οι Kykloi είναι χώροι συνεργασίας μέσα στην Agora. Μπορείς να συμμετέχεις σε περισσότερους από έναν, όπως έχεις περισσότερα μαθήματα.",k:"concept"},
+ {t:"Γνωρίζω έναν Kykloi χώρο",i:"Εντόπισε τα μέλη, τον υπεύθυνο, τον τοίχο και τις εφαρμογές του Kykloi χώρου.",h:"Κάθε Kykloi χώρος έχει μέλη, έναν υπεύθυνο, έναν τοίχο και μπορεί να έχει εφαρμογές.",k:"parts"},
+ {t:"Μπαίνω στον Kykloi χώρο",i:"Άνοιξε τον Kykloi χώρο «Ζώα» και μετά τον τοίχο του.",h:"Για να μπεις σε έναν Kykloi χώρο, πάτησε την κάρτα του. Έπειτα επίλεξε «Τοίχος».",k:"enter"},
+ {t:"Τι μπορώ να κάνω στον τοίχο;",i:"Βρες μία-μία τις βασικές ενέργειες που μπορείς να κάνεις σε μια ανάρτηση.",h:"Στον τοίχο μπορείς να δημιουργήσεις ανάρτηση, να διαβάσεις περισσότερα, να σχολιάσεις, να αντιδράσεις και να δεις σχόλια.",k:"actions"},
+ {t:"Βρίσκω εκπαιδευτικό περιεχόμενο",i:"Εντόπισε την ανάρτηση που περιέχει εκπαιδευτικό περιεχόμενο για τον κύκλο του νερού.",h:"Το εκπαιδευτικό περιεχόμενο μπορεί να είναι βίντεο, εικόνα, παρουσίαση, αρχείο ή διαδραστική άσκηση.",k:"content"},
+ {t:"Φυσική τάξη και ψηφιακή τάξη",i:"Σύρε γραμμές για να ταιριάξεις κάθε έννοια της τάξης με την αντίστοιχη έννοια στους Kykloi.",h:"Σκέψου: το μάθημα αντιστοιχεί σε Kykloi χώρο, η αίθουσα στον τοίχο, οι συμμαθητές στα μέλη και ο εκπαιδευτικός στον υπεύθυνο.",k:"match"},
+ {t:"Συνολική δοκιμή",i:"Μπες στον Kykloi χώρο «Ζώα», άνοιξε τον τοίχο, βρες εκπαιδευτικό περιεχόμενο και άφησε σχόλιο.",h:"Ολοκλήρωσε την αποστολή με τη σειρά: Kykloi → Ζώα → Τοίχος → εκπαιδευτικό περιεχόμενο → σχόλιο.",k:"final"},
+ {t:"Τα κατάφερες!",i:"Σκέψου τι έμαθες στο Μάθημα 26.",h:"Σκέψου αν μπορείς να αναγνωρίζεις έναν Kykloi χώρο, τα μέλη, τον υπεύθυνο, τον τοίχο, το εκπαιδευτικό περιεχόμενο και να σχολιάζεις μια ανάρτηση.",k:"self"}
+];
+let s=0,selfChoice=null,partsIndex=0,actionIndex=0,finalPhase=0;
+const partTasks=[
+ {id:"members",txt:"Πάτησε εκεί όπου βρίσκονται τα μέλη."},
+ {id:"owner",txt:"Πάτησε εκεί όπου φαίνεται ο υπεύθυνος."},
+ {id:"wall",txt:"Πάτησε το κουμπί που ανοίγει τον τοίχο."},
+ {id:"apps",txt:"Πάτησε εκεί όπου βρίσκονται οι εφαρμογές."}
+];
+const actionTasks=[
+ {id:"new",txt:"Δημιουργία νέας ανάρτησης"},{id:"read",txt:"Διαβάζω περισσότερα"},{id:"comment",txt:"Σχολιάζω ανάρτηση"},{id:"heart",txt:"Αντιδρώ στην ανάρτηση"},{id:"comments",txt:"Βλέπω τα σχόλια"}
+];
+function nav(){document.getElementById("path").innerHTML=steps.map((_,i)=>`<div class="dot ${i<s?'done':i===s?'active':''}">${i<s?'✓':i+1}</div>`).join("")}
+function completeFinalDot(){s=steps.length;nav()}
+function clearFeedback(){const f=document.getElementById("feedback");f.className="feedback";f.textContent=""}
+function setFeedback(t,ok){const f=document.getElementById("feedback");f.className="feedback "+(ok?"good":"bad");f.textContent=t}
+function nextAfter(ms=850){setTimeout(()=>{s++;render()},ms)}
+function render(){nav();clearFeedback();const x=steps[s];document.getElementById("title").textContent=x.t;document.getElementById("inst").textContent=x.i;({concept:stage1,parts:stage2,enter:stage3,actions:stage4,content:stage5,match:stage6,final:stage7,self:stage8}[x.k])()}
+function help(){document.getElementById("helpText").textContent=steps[Math.min(s,steps.length-1)].h;document.getElementById("modal").classList.add("show")}
+function closeHelp(){document.getElementById("modal").classList.remove("show")}
+function agoraTop(){return `<div class="agora-top"><div class="agora-mini">A</div><div class="agora-title">Agora</div><button class="top-tool">✉️<span class="counter">2</span></button><button class="top-tool">🔔<span class="counter">1</span></button><button class="profile-pill"><span class="avatar">🙂</span><span>paidi2</span></button></div>`}
+function side(active="kykloi"){return `<div class="side"><h4>Εργαλεία</h4><button class="side-item ${active==='kykloi'?'active':''}">⭕ Kykloi</button><button class="side-item ${active==='contacts'?'active':''}">👥 Επαφές</button><button class="side-item ${active==='messages'?'active':''}">✉️ Μηνύματα</button></div>`}
+function agoraShell(main,active="kykloi"){return `<div class="agora">${agoraTop()}<div class="agora-body">${side(active)}<div class="mainarea">${main}</div></div></div>`}
+function kykloiGrid(handler="openKy",finalMode=false){return `<div class="kykloi-head"><h3>Kykloi</h3><button class="newbtn">+ Νέα</button></div><div class="kykloi-grid"><button class="ky-card" onclick="${handler}('animals')"><div class="ky-ico">🐾</div><div class="ky-name">Ζώα</div><div class="ky-sub">Μελέτη ζώων και περιβάλλοντος</div><div class="owner">Υπεύθυνη: κα Ελένη</div><span class="pill">6 μέλη</span></button><button class="ky-card" onclick="${handler}('math')"><div class="ky-ico">➗</div><div class="ky-name">Μαθηματικά</div><div class="ky-sub">Αριθμοί και πράξεις</div><div class="owner">Υπεύθυνος: κ. Νίκος</div><span class="pill">7 μέλη</span></button><button class="ky-card" onclick="${handler}('art')"><div class="ky-ico">🎨</div><div class="ky-name">Τέχνη</div><div class="ky-sub">Χρώματα και κατασκευές</div><div class="owner">Υπεύθυνη: κα Άννα</div><span class="pill">5 μέλη</span></button></div>${finalMode?'<div class="smallhelp">Διάλεξε τον σωστό Kykloi χώρο.</div>':''}`}
+function detailShell(tabHandler="partClick",tabSelected="info",finalMode=false){return `<div class="ky-detail"><div class="ky-cover"><div class="bigico">🐾</div><div><h3>Ζώα</h3><div><strong>Υπεύθυνη:</strong> κα Ελένη · <strong>Μέλη:</strong> 6</div></div></div><div class="ky-tabs"><button class="${tabSelected==='info'?'sel':''}" onclick="${tabHandler}('info')">🏠 Αρχική</button><button class="${tabSelected==='wall'?'sel':''}" onclick="${tabHandler}('wall')">🧱 Τοίχος</button><button onclick="${tabHandler}('members')">👥 Μέλη</button><button onclick="${tabHandler}('apps')">🧩 Εφαρμογές</button></div>${finalMode?'':'<div class="ky-info"><div class="info-card"><button onclick="partClick(\'members\')"><span class="big">👥</span>Μέλη<br><small>6 συμμαθητές/συμμαθήτριες</small></button></div><div class="info-card"><button onclick="partClick(\'owner\')"><span class="big">👩‍🏫</span>Υπεύθυνη<br><small>κα Ελένη</small></button></div><div class="info-card"><button onclick="partClick(\'wall\')"><span class="big">🧱</span>Τοίχος<br><small>Αναρτήσεις και σχόλια</small></button></div><div class="info-card"><button onclick="partClick(\'apps\')"><span class="big">🧩</span>Εφαρμογές<br><small>Εργαλεία του χώρου</small></button></div></div>'}</div>`}
+function wallShell(mode="normal",handlerPrefix="wallAction"){return `<div class="wall"><div class="wall-main"><div class="new-post" onclick="${handlerPrefix}('new')">➕ Νέα ανάρτηση</div><div class="post" id="postWater"><div class="post-head"><div class="post-avatar">👩‍🏫</div><div>κα Ελένη · Υπεύθυνη</div></div><div class="post-text">Σήμερα μαθαίνουμε για τον κύκλο του νερού.</div><button class="post-content" onclick="${handlerPrefix}('content')"><span class="content-ico">🎬</span><span>Εκπαιδευτικό βίντεο: Ο κύκλος του νερού</span></button><div class="actions"><button class="action" onclick="${handlerPrefix}('read')">▼ Περισσότερα</button><button class="action" onclick="${handlerPrefix}('comment')">💬 Σχόλιο</button><button class="action heart" id="heartBtn" onclick="${handlerPrefix}('heart')">♡ Μου αρέσει</button><button class="action" onclick="${handlerPrefix}('comments')">👥 2 σχόλια</button></div><div class="comment-box" id="commentBox" style="display:${mode==='comment'?'block':'none'}"><div class="comment-row"><input id="commentInput" class="comment-input" autocomplete="off" placeholder="Γράψε σχόλιο"><button class="comment-send" onclick="${handlerPrefix}('send')">Αποστολή</button></div><div class="smallhelp">Γράψε ακριβώς: <strong>Μου άρεσε!</strong></div></div><div class="comments" id="commentsList" style="display:none"><div class="comment">🙂 paidi3: Πολύ ενδιαφέρον!</div><div class="comment">🙂 paidi4: Έμαθα κάτι καινούργιο.</div></div><div id="moreText" style="display:none" class="post-text">Το νερό κινείται συνεχώς ανάμεσα στη γη, τη θάλασσα και τον ουρανό.</div></div><div class="post"><div class="post-head"><div class="post-avatar">🙂</div><div>paidi5</div></div><div class="post-text">Ζωγράφισα ένα δελφίνι!</div><div class="post-content"><span class="content-ico">🖼️</span><span>Εικόνα: Δελφίνι</span></div></div></div><aside class="wall-side"><h4>Μέλη</h4><div class="member"><span class="mavatar">👩‍🏫</span>κα Ελένη</div><div class="member"><span class="mavatar">🙂</span>paidi2</div><div class="member"><span class="mavatar">🙂</span>paidi3</div><div class="member"><span class="mavatar">🙂</span>paidi4</div></aside></div>`}
+
+/* Stage 1 */
+function stage1(){document.getElementById("card").innerHTML=`<div class="choice-grid"><button class="choice" onclick="concept(false)"><span class="ico">🎮</span><span>Ένα μόνο παιχνίδι</span></button><button class="choice" onclick="concept(true)"><span class="ico">⭕</span><span>Χώροι συνεργασίας για μαθήματα και ομάδες μέσα στην Agora</span></button><button class="choice" onclick="concept(false)"><span class="ico">📁</span><span>Ένας φάκελος αρχείων</span></button></div>`}
+function concept(ok){if(!ok){setFeedback("Δοκίμασε ξανά. Οι Kykloi είναι χώροι συνεργασίας μέσα στην Agora.",false);return}setFeedback("Σωστά! Μπορείς να συμμετέχεις σε περισσότερους Kykloi χώρους.",true);nextAfter()}
+
+/* Stage 2 */
+function stage2(){partsIndex=0;drawParts()}
+function drawParts(){const chips=partTasks.map((x,i)=>`<span class="partchip ${i<partsIndex?'done':''}">${i<partsIndex?'✓ ':''}${x.id==='members'?'Μέλη':x.id==='owner'?'Υπεύθυνος':x.id==='wall'?'Τοίχος':'Εφαρμογές'}</span>`).join("");document.getElementById("card").innerHTML=`<div class="parts-mission">${partTasks[partsIndex]?.txt||''}</div><div class="parts-row">${chips}</div>${agoraShell(detailShell("partClick","info",false))}`}
+function partClick(id){const t=partTasks[partsIndex];if(!t)return;if(id!==t.id){setFeedback("Δοκίμασε άλλο σημείο του Kykloi χώρου.",false);return}partsIndex++;if(partsIndex<partTasks.length){setFeedback("Σωστά! Πάμε στο επόμενο μέρος.",true);setTimeout(()=>{clearFeedback();drawParts()},550)}else{setFeedback("Μπράβο! Εντόπισες τα βασικά μέρη ενός Kykloi χώρου.",true);nextAfter(950)}}
+
+/* Stage 3 */
+function stage3(){document.getElementById("card").innerHTML=agoraShell(kykloiGrid("openKy"))}
+function openKy(id){if(id!=="animals"){setFeedback("Η αποστολή ζητά τον Kykloi χώρο «Ζώα».",false);return}document.getElementById("card").innerHTML=agoraShell(detailShell("openKyTab","info",true));setFeedback("Σωστά! Μπήκες στον Kykloi χώρο «Ζώα». Τώρα άνοιξε τον Τοίχο.",true)}
+function openKyTab(id){if(id!=="wall"){setFeedback("Επίλεξε «Τοίχος».",false);return}document.getElementById("card").innerHTML=agoraShell(wallShell("normal","noopWall"));setFeedback("Μπράβο! Άνοιξες τον τοίχο του Kykloi χώρου.",true);nextAfter(950)}
+function noopWall(){setFeedback("Σε λίγο θα δοκιμάσεις αυτές τις ενέργειες.",true)}
+
+/* Stage 4 */
+function stage4(){actionIndex=0;drawActionTrainer()}
+function drawActionTrainer(){const t=actionTasks[actionIndex];document.getElementById("card").innerHTML=`<div class="parts-mission">Βρες: <strong>${t.txt}</strong></div><div class="action-trainer"><div class="trainer-toolbar"><button class="trainer-tool" onclick="trainer('new')"><span class="big">➕</span>Νέα ανάρτηση</button><button class="trainer-tool" onclick="trainer('read')"><span class="big">▼</span>Περισσότερα</button><button class="trainer-tool" onclick="trainer('comment')"><span class="big">💬</span>Σχόλιο</button><button class="trainer-tool" onclick="trainer('heart')"><span class="big">♡</span>Αντίδραση</button><button class="trainer-tool" onclick="trainer('comments')"><span class="big">👥</span>Σχόλια άλλων</button></div></div><div class="smallhelp">Ενέργεια ${actionIndex+1} από ${actionTasks.length}</div>`}
+function trainer(id){if(id!==actionTasks[actionIndex].id){setFeedback("Αυτό είναι διαφορετική ενέργεια. Δοκίμασε ξανά.",false);return}actionIndex++;if(actionIndex<actionTasks.length){setFeedback("Σωστά!",true);setTimeout(()=>{clearFeedback();drawActionTrainer()},500)}else{setFeedback("Μπράβο! Ξέρεις τις βασικές ενέργειες του τοίχου.",true);nextAfter(900)}}
+
+/* Stage 5 */
+function stage5(){document.getElementById("card").innerHTML=agoraShell(`<div class="taskbox">Πάτησε το εκπαιδευτικό περιεχόμενο για τον κύκλο του νερού.</div>${wallShell("normal","contentPick")}`)}
+function contentPick(id){if(id!=="content"){setFeedback("Βρες την κάρτα που γράφει «Εκπαιδευτικό βίντεο: Ο κύκλος του νερού».",false);return}setFeedback("Σωστά! Εντόπισες εκπαιδευτικό περιεχόμενο στον τοίχο.",true);nextAfter(900)}
+
+/* Stage 6 matching */
+const pairs={lesson:"ky",room:"wall",classmates:"members",teacher:"owner"};
+let matchDone=new Set(),dragKey=null,tempLine=null;
+function stage6(){matchDone=new Set();drawMatching()}
+function drawMatching(){document.getElementById("card").innerHTML=`<div class="matching-wrap" id="matchWrap"><svg class="match-svg" id="matchSvg"></svg><div class="match-col"><div class="match-item left" data-key="lesson">Μάθημα<span class="dot-handle"></span></div><div class="match-item left" data-key="room">Αίθουσα τάξης<span class="dot-handle"></span></div><div class="match-item left" data-key="classmates">Συμμαθητές / συμμαθήτριες<span class="dot-handle"></span></div><div class="match-item left" data-key="teacher">Εκπαιδευτικός<span class="dot-handle"></span></div></div><div class="match-col"><div class="match-item right" data-target="wall"><span class="dot-handle"></span>Τοίχος</div><div class="match-item right" data-target="owner"><span class="dot-handle"></span>Υπεύθυνος</div><div class="match-item right" data-target="ky"><span class="dot-handle"></span>Kykloi χώρος</div><div class="match-item right" data-target="members"><span class="dot-handle"></span>Μέλη</div></div></div><div class="smallhelp">Σύρε από τον κόκκινο κύκλο αριστερά προς τον αντίστοιχο κύκλο δεξιά.</div>`;bindMatching();redrawMatchLines()}
+function centerOf(el){const w=document.getElementById("matchWrap").getBoundingClientRect(),r=el.querySelector('.dot-handle').getBoundingClientRect();return{x:r.left+r.width/2-w.left,y:r.top+r.height/2-w.top}}
+function bindMatching(){document.querySelectorAll('.match-item.left').forEach(el=>{el.onpointerdown=e=>{if(matchDone.has(el.dataset.key))return;dragKey=el.dataset.key;const svg=document.getElementById('matchSvg'),p=centerOf(el);tempLine=document.createElementNS('http://www.w3.org/2000/svg','line');tempLine.setAttribute('class','temp-line');tempLine.setAttribute('x1',p.x);tempLine.setAttribute('y1',p.y);tempLine.setAttribute('x2',p.x);tempLine.setAttribute('y2',p.y);svg.appendChild(tempLine);el.setPointerCapture?.(e.pointerId)}});document.getElementById('matchWrap').onpointermove=e=>{if(!dragKey||!tempLine)return;const r=e.currentTarget.getBoundingClientRect();tempLine.setAttribute('x2',e.clientX-r.left);tempLine.setAttribute('y2',e.clientY-r.top)};document.getElementById('matchWrap').onpointerup=e=>{if(!dragKey)return;const target=document.elementFromPoint(e.clientX,e.clientY)?.closest('.match-item.right');tempLine?.remove();tempLine=null;const key=dragKey;dragKey=null;if(!target){setFeedback('Άφησε τη γραμμή πάνω σε μία επιλογή της δεξιάς στήλης.',false);return}if(target.dataset.target!==pairs[key]){setFeedback('Δεν ταιριάζουν. Η λανθασμένη γραμμή εξαφανίστηκε.',false);return}matchDone.add(key);setFeedback('Σωστά! Η γραμμή μένει στη θέση της.',true);document.querySelector(`.match-item.left[data-key="${key}"]`)?.classList.add('correct');target.classList.add('correct');redrawMatchLines();if(matchDone.size===4){setFeedback('Μπράβο! Ταίριαξες τη φυσική με την ψηφιακή τάξη.',true);nextAfter(1000)}}}
+function redrawMatchLines(){const svg=document.getElementById('matchSvg');if(!svg)return;svg.innerHTML='';for(const key of matchDone){const a=document.querySelector(`.match-item.left[data-key="${key}"]`),b=document.querySelector(`.match-item.right[data-target="${pairs[key]}"]`);if(!a||!b)continue;const p1=centerOf(a),p2=centerOf(b),ln=document.createElementNS('http://www.w3.org/2000/svg','line');ln.setAttribute('class','match-line');ln.setAttribute('x1',p1.x);ln.setAttribute('y1',p1.y);ln.setAttribute('x2',p2.x);ln.setAttribute('y2',p2.y);svg.appendChild(ln)}}
+
+/* Stage 7 final */
+function stage7(){finalPhase=0;drawFinal()}
+function finalChips(){const labels=['Kykloi','Ζώα','Τοίχος','Περιεχόμενο','Σχόλιο'];return `<div class="final-status">${labels.map((x,i)=>`<span class="final-chip ${i<finalPhase?'done':''}">${i<finalPhase?'✓ ':''}${x}</span>`).join('')}</div>`}
+function drawFinal(){clearFeedback();const c=document.getElementById('card');if(finalPhase===0){c.innerHTML=`<div class="final-shell"><div class="missionbar">1. Άνοιξε τους Kykloi.</div>${finalChips()}${agoraShell(`<div style="display:grid;place-items:center;min-height:380px"><button class="choice" style="width:260px" onclick="finalOpenKykloi()"><span class="ico">⭕</span><span>Kykloi</span></button></div>`)}</div>`;return}if(finalPhase===1){c.innerHTML=`<div class="final-shell"><div class="missionbar">2. Άνοιξε τον Kykloi χώρο «Ζώα».</div>${finalChips()}${agoraShell(kykloiGrid('finalPickKy',true))}</div>`;return}if(finalPhase===2){c.innerHTML=`<div class="final-shell"><div class="missionbar">3. Άνοιξε τον Τοίχο.</div>${finalChips()}${agoraShell(detailShell('finalTab','info',true))}</div>`;return}if(finalPhase===3){c.innerHTML=`<div class="final-shell"><div class="missionbar">4. Πάτησε το εκπαιδευτικό βίντεο για τον κύκλο του νερού.</div>${finalChips()}${agoraShell(wallShell('normal','finalWall'))}</div>`;return}c.innerHTML=`<div class="final-shell"><div class="missionbar">5. Σχολίασε την ανάρτηση γράφοντας ακριβώς «Μου άρεσε!».</div>${finalChips()}${agoraShell(wallShell('comment','finalWall'))}</div>`;document.getElementById('commentInput')?.focus()}
+function finalOpenKykloi(){finalPhase=1;setFeedback('Σωστά!',true);setTimeout(drawFinal,500)}
+function finalPickKy(id){if(id!=='animals'){setFeedback('Διάλεξε τον Kykloi χώρο «Ζώα».',false);return}finalPhase=2;setFeedback('Σωστά!',true);setTimeout(drawFinal,500)}
+function finalTab(id){if(id!=='wall'){setFeedback('Επίλεξε «Τοίχος».',false);return}finalPhase=3;setFeedback('Σωστά!',true);setTimeout(drawFinal,500)}
+function finalWall(id){if(finalPhase===3){if(id!=='content'){setFeedback('Πάτησε το εκπαιδευτικό βίντεο για τον κύκλο του νερού.',false);return}finalPhase=4;setFeedback('Σωστά! Τώρα άφησε σχόλιο.',true);setTimeout(drawFinal,600);return}if(finalPhase===4){if(id==='comment'){document.getElementById('commentBox').style.display='block';document.getElementById('commentInput')?.focus();return}if(id==='send'){const inp=document.getElementById('commentInput');if(!inp||inp.value!=='Μου άρεσε!'){setFeedback('Γράψε ακριβώς «Μου άρεσε!» με κεφαλαίο Μ και θαυμαστικό.',false);return}finalPhase=5;setFeedback('Μπράβο! Βρήκες εκπαιδευτικό περιεχόμενο και σχολίασες την ανάρτηση.',true);nextAfter(1100);return}setFeedback('Χρησιμοποίησε το πεδίο σχολίου και μετά πάτησε «Αποστολή».',false)}}
+
+/* Stage 8 */
+function stage8(){selfChoice=null;document.getElementById("card").innerHTML=`<div class="finalBox"><div class="stars">⭐ ⭐ ⭐</div><div class="summary">Έμαθες:<ul><li>τι είναι οι Kykloi μέσα στην Agora,</li><li>ποιοι είναι τα μέλη και ο υπεύθυνος ενός Kykloi χώρου,</li><li>τι είναι ο τοίχος και ποιες ενέργειες προσφέρει,</li><li>να εντοπίζεις εκπαιδευτικό περιεχόμενο,</li><li>να σχολιάζεις μία ανάρτηση.</li></ul></div><div class="faces"><button class="face" onclick="selfPick(1,this)"><span>🙂</span>Θέλω λίγη εξάσκηση</button><button class="face" onclick="selfPick(2,this)"><span>😊</span>Τα κατάφερα</button><button class="face" onclick="selfPick(3,this)"><span>🤩</span>Τα κατάφερα πολύ καλά</button></div><button class="check" onclick="finish()">Ολοκλήρωση</button><button class="repeatBtn" onclick="restartAll()">↻ Επανάληψη δραστηριότητας</button></div>`}
+function selfPick(v,e){selfChoice=v;document.querySelectorAll('.face').forEach(x=>x.classList.remove('sel'));e.classList.add('sel')}
+function finish(){if(!selfChoice){setFeedback('Διάλεξε πρώτα πώς νιώθεις για όσα έμαθες.',false);return}completeFinalDot();setFeedback('Μπράβο! Ολοκλήρωσες το Μάθημα 26.',true)}
+function restartAll(){s=0;selfChoice=null;partsIndex=0;actionIndex=0;finalPhase=0;matchDone=new Set();render()}
+render();
+</script>
+<footer class="nk-license" aria-label="Πληροφορίες δημιουργού και άδειας χρήσης">
+  <div><strong>Created by Nikos Kalakos · © 2026</strong></div>
+  <div>Original educational content and simulation design licensed under <a class="cc-badge" href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank" rel="license noopener noreferrer">CC BY-NC 4.0</a>.</div>
+  <div>Source code © 2026 Nikos Kalakos.</div>
+  <div>Third-party and textbook materials remain subject to the rights and licences of their respective copyright holders.</div>
+</footer>
+</body>
+</html>

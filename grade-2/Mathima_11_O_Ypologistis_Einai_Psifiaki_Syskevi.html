@@ -1,0 +1,578 @@
+<!--
+ICT Educational Simulation
+Created by Nikos Kalakos
+Copyright © 2026 Nikos Kalakos
+
+Original educational content and simulation design licensed under CC BY-NC 4.0.
+Source code © 2026 Nikos Kalakos.
+Third-party and textbook materials remain subject to the rights and licences of their respective copyright holders.
+-->
+<!doctype html>
+<html lang="el">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="author" content="Nikos Kalakos">
+<meta name="copyright" content="© 2026 Nikos Kalakos">
+<meta name="license" content="Original educational content and simulation design: CC BY-NC 4.0; source code © 2026 Nikos Kalakos; third-party and textbook materials excluded.">
+<title>Μάθημα 11 - Ο υπολογιστής είναι ψηφιακή συσκευή</title>
+<style>
+:root{
+  --unit-lime:#B8BE25;
+  --unit-lime-dark:#8f9615;
+  --unit-indigo:#545F99;
+  --unit-indigo-dark:#3f4878;
+  --ink:#24344d;
+  --line:#d5dbe6;
+  --soft:#f7f8ef;
+  --good:#eef5d6;
+  --bad:#fff0ed;
+  --shadow:0 10px 28px rgba(36,52,77,.12);
+}
+*{box-sizing:border-box}
+body{margin:0;background:#f7f8fb;color:var(--ink);font-family:Arial,"Noto Sans",sans-serif}
+button,input{font:inherit}button{cursor:pointer}
+.app{max-width:1180px;margin:auto;padding:16px}
+.top{
+  background:#fff;border:3px solid #dde1c4;border-radius:24px;padding:14px 18px;
+  display:flex;align-items:center;justify-content:space-between;box-shadow:var(--shadow)
+}
+.top h1{margin:0;font-size:clamp(27px,4vw,41px)}
+.badge{
+  width:70px;height:70px;border-radius:22px;background:var(--unit-lime);color:#fff;
+  display:grid;place-items:center;font-size:31px;font-weight:900;box-shadow:inset 0 -5px 0 rgba(0,0,0,.1)
+}
+.path{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin:16px 0}
+.dot{
+  width:44px;height:44px;border-radius:50%;display:grid;place-items:center;
+  border:3px solid #aeb7c7;background:#fff;color:#65718a;font-weight:900;font-size:20px
+}
+.dot.active{background:var(--unit-indigo);border-color:var(--unit-indigo);color:#fff;transform:scale(1.1)}
+.dot.done{background:var(--unit-lime);border-color:var(--unit-lime-dark);color:#fff}
+.panel{
+  min-height:710px;background:#fff;border:3px solid #d7dcc0;border-radius:28px;
+  padding:24px;box-shadow:var(--shadow)
+}
+.step-head{display:flex;justify-content:space-between;gap:12px;align-items:flex-start}
+.step-head h2{margin:0;font-size:clamp(25px,4vw,37px)}
+.help{
+  background:#f2f0fb;color:var(--unit-indigo-dark);border:3px solid #9ba3cf;
+  border-radius:16px;padding:10px 17px;font-weight:900
+}
+.instruction{
+  max-width:960px;margin:14px auto 18px;text-align:center;font-size:clamp(19px,2.3vw,24px);
+  font-weight:900;line-height:1.38
+}
+.card{
+  max-width:1040px;margin:auto;border:3px solid #d8ddbf;border-radius:28px;
+  background:#fff;padding:22px;min-height:500px
+}
+.feedback{
+  display:none;max-width:860px;margin:16px auto 0;padding:12px 18px;border-radius:17px;
+  text-align:center;font-weight:900;font-size:20px
+}
+.feedback.good{display:block;background:var(--good);border:2px solid #9ab35b}
+.feedback.bad{display:block;background:var(--bad);border:2px solid #e5a59b}
+.check{
+  display:block;margin:18px auto 0;padding:13px 28px;border:0;border-radius:16px;
+  background:var(--unit-lime);color:#fff;font-size:21px;font-weight:900;
+  box-shadow:0 5px 0 var(--unit-lime-dark)
+}
+.row{display:flex;gap:14px;justify-content:center;align-items:stretch;flex-wrap:wrap}
+.choice{
+  min-width:205px;max-width:275px;min-height:135px;border:3px solid var(--line);
+  border-radius:22px;background:#fff;padding:15px;font-weight:900;font-size:18px;
+  display:flex;flex-direction:column;justify-content:center;align-items:center;gap:10px
+}
+.choice:hover{transform:translateY(-2px);box-shadow:var(--shadow)}
+.choice.selected{border-color:var(--unit-lime);background:#f3f6d7;box-shadow:inset 0 0 0 2px #d9df83}
+.choice .big{font-size:50px}
+
+/* Stage 1 switch */
+.switch-board{
+  max-width:760px;margin:auto;background:#f7f8fd;border:4px solid var(--unit-indigo);
+  border-radius:26px;padding:24px;text-align:center
+}
+.light-wrap{display:flex;justify-content:center;gap:50px;align-items:center;flex-wrap:wrap}
+.bulb{
+  width:150px;height:150px;border-radius:50%;display:grid;place-items:center;
+  font-size:74px;background:#d9dde4;border:8px solid #b9c0cb;transition:.25s ease
+}
+.bulb.on{background:#fff5b1;border-color:#e2c74d;box-shadow:0 0 28px #f2dc58}
+.switch{
+  width:145px;height:80px;border:5px solid #8792a1;border-radius:20px;background:#e5e8ec;
+  display:flex;align-items:center;padding:8px;position:relative;margin:auto
+}
+.switch-knob{
+  width:52px;height:52px;border-radius:12px;background:var(--unit-indigo);
+  transition:.25s ease;transform:translateX(0)
+}
+.switch.on .switch-knob{transform:translateX(65px);background:var(--unit-lime)}
+.digit-box{
+  margin:18px auto 0;width:110px;height:84px;border:4px solid #b4bdcb;border-radius:20px;
+  display:grid;place-items:center;font-size:48px;font-weight:900;background:#fff
+}
+.action-row{display:flex;justify-content:center;gap:14px;flex-wrap:wrap;margin-top:18px}
+.action{
+  border:0;border-radius:15px;padding:12px 22px;font-weight:900;color:#fff;
+  background:var(--unit-indigo);box-shadow:0 4px 0 var(--unit-indigo-dark)
+}
+
+/* IPO stages */
+.ipo{
+  display:grid;grid-template-columns:1fr auto 1fr auto 1fr;gap:12px;align-items:center;
+  max-width:900px;margin:0 auto 20px
+}
+.ipoBox{
+  min-height:180px;border:4px solid #cfd5e1;border-radius:22px;padding:15px;
+  display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;
+  background:#fff;font-weight:900
+}
+.ipoBox .ico{font-size:56px;margin-bottom:8px}
+.arrow{font-size:42px;color:var(--unit-indigo);font-weight:900}
+.ipoLabel{
+  display:inline-block;margin-bottom:8px;background:var(--unit-lime);color:#fff;
+  border-radius:13px;padding:6px 12px;font-weight:900
+}
+.tray{
+  display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin:18px auto
+}
+.dragitem{
+  user-select:none;touch-action:none;border:3px solid #9ea8ca;border-radius:15px;background:#fff;
+  padding:11px 14px;font-weight:900;box-shadow:0 3px 0 #d5d9e8;cursor:grab
+}
+.dragitem.selectedDrag{outline:4px solid var(--unit-lime);background:#f5f7db}
+.dragitem.locked{opacity:.45;cursor:default}
+.drop{
+  min-height:78px;min-width:160px;border:3px dashed #9ca6c9;border-radius:15px;
+  display:grid;place-items:center;padding:10px;color:#6b7588
+}
+.drop.correct{border-style:solid;border-color:var(--unit-lime);background:#f5f7df;color:var(--ink)}
+.smallhelp{text-align:center;font-size:14px;color:#6d7890;font-weight:800;margin-top:10px}
+
+/* bit */
+.bit-card{
+  max-width:780px;margin:auto;padding:20px;border:4px solid var(--unit-lime);
+  border-radius:24px;background:#fbfce8;text-align:center
+}
+.bits{display:flex;justify-content:center;gap:22px;flex-wrap:wrap;margin:20px 0}
+.bit{
+  width:110px;height:110px;border-radius:22px;border:5px solid var(--unit-indigo);
+  color:var(--unit-indigo);background:#fff;display:grid;place-items:center;
+  font-size:58px;font-weight:900
+}
+
+/* data types */
+.data-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:13px}
+.data-card{
+  border:3px solid #cfd6e3;border-radius:20px;background:#fff;padding:14px;text-align:center;
+  min-height:150px;font-weight:900
+}
+.data-card .big{display:block;font-size:52px;margin-bottom:9px}
+.data-card.selected{border-color:var(--unit-lime);background:#f2f5d4}
+
+/* information card */
+.info-wrap{
+  max-width:780px;margin:auto;border:4px solid var(--unit-indigo);border-radius:24px;
+  background:#f7f8fd;padding:22px
+}
+.person{
+  width:100px;height:100px;border-radius:50%;margin:0 auto 15px;background:#e7e9f4;
+  display:grid;place-items:center;font-size:56px
+}
+.info-row{
+  display:grid;grid-template-columns:130px 1fr;gap:10px;align-items:center;margin:10px 0
+}
+.info-label{font-weight:900;color:var(--unit-indigo-dark)}
+.info-options{display:flex;gap:8px;flex-wrap:wrap}
+.info-option{
+  border:3px solid #c9cfdd;border-radius:13px;background:#fff;padding:8px 11px;font-weight:900
+}
+.info-option.sel{border-color:var(--unit-lime);background:#f2f5d4}
+
+/* final */
+.finalBox{max-width:780px;margin:auto;text-align:center}
+.stars{font-size:58px;margin:18px}
+.summary{
+  padding:20px;border:4px solid var(--unit-indigo);background:#f4f5fb;border-radius:22px;
+  font-size:21px;font-weight:900;line-height:1.45
+}
+.faces{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:18px}
+.face{
+  min-height:130px;border:3px solid var(--line);border-radius:20px;background:#fff;
+  font-weight:900;font-size:17px
+}
+.face span{display:block;font-size:52px;margin-bottom:7px}
+.face.sel{border-color:var(--unit-lime);background:#f2f5d4}
+.repeatBtn{
+  display:block;margin:15px auto 0;padding:12px 22px;border:0;border-radius:15px;
+  background:var(--unit-indigo);color:#fff;font-size:19px;font-weight:900;
+  box-shadow:0 5px 0 var(--unit-indigo-dark)
+}
+.modal{
+  position:fixed;inset:0;background:#24344d99;display:none;place-items:center;padding:18px;z-index:20
+}
+.modal.show{display:grid}
+.modal-box{
+  max-width:620px;background:#fff;border-radius:24px;border:4px solid var(--unit-lime);
+  padding:22px;text-align:center;font-size:20px
+}
+.modal-box button{
+  padding:10px 20px;border:0;border-radius:13px;background:var(--unit-lime);
+  color:#fff;font-weight:900
+}
+@media(max-width:820px){
+  .ipo{grid-template-columns:1fr}
+  .arrow{transform:rotate(90deg)}
+  .data-grid,.faces{grid-template-columns:1fr}
+  .info-row{grid-template-columns:1fr}
+}
+</style>
+
+
+<style id="nk-license-style">
+.nk-license{max-width:1100px;margin:14px auto 24px;padding:10px 16px;text-align:center;font:13px/1.45 Arial,"Noto Sans",sans-serif;color:#4e657c}
+.nk-license a{color:inherit;text-decoration:underline;text-underline-offset:2px}
+.nk-license .cc-badge{display:inline-block;margin:0 4px;padding:2px 7px;border:1px solid #8aa0b8;border-radius:6px;background:#fff;font-weight:700;white-space:nowrap}
+</style></head>
+<body>
+<div class="app">
+  <div class="top">
+    <h1>Ο υπολογιστής είναι ψηφιακή συσκευή</h1>
+    <div class="badge">11</div>
+  </div>
+  <div class="path" id="path"></div>
+
+  <main class="panel">
+    <div class="step-head">
+      <h2 id="title"></h2>
+      <button class="help" onclick="help()">❓ Βοήθεια</button>
+    </div>
+    <div class="instruction" id="inst"></div>
+    <div class="card" id="card"></div>
+    <div class="feedback" id="feedback"></div>
+  </main>
+</div>
+
+<div class="modal" id="modal">
+  <div class="modal-box">
+    <h2>💡 Βοήθεια</h2>
+    <p id="helpText"></p>
+    <button onclick="closeHelp()">Εντάξει</button>
+  </div>
+</div>
+
+<script>
+const steps=[
+ {t:"Ανάβω και σβήνω",i:"Χρησιμοποίησε τον διακόπτη και σύνδεσε σωστά το αναμμένο και το σβηστό με τα ψηφία 1 και 0.",h:"Όταν περνά ηλεκτρικό ρεύμα η λάμπα ανάβει και το γράφουμε με 1. Όταν δεν περνά, η λάμπα σβήνει και το γράφουμε με 0.",k:"switch"},
+ {t:"Είσοδος – Επεξεργασία – Έξοδος",i:"Τοποθέτησε σωστά τα τρία μέρη για το μηχάνημα που φτιάχνει χυμό.",h:"Πρώτα μπαίνουν τα φρούτα, μετά το μηχάνημα τα επεξεργάζεται και στο τέλος βγαίνει ο χυμός.",k:"juice"},
+ {t:"Ένα ακόμη μηχάνημα",i:"Τοποθέτησε σωστά τα τρία μέρη για το πλυντήριο.",h:"Σκέψου τι βάζουμε μέσα, τι κάνει το πλυντήριο και τι παίρνουμε στο τέλος.",k:"washer"},
+ {t:"Τι είναι το bit;",i:"Διάλεξε και τα δύο δυαδικά ψηφία.",h:"Τα ηλεκτρικά σήματα γράφονται με δύο ψηφία: 0 και 1. Κάθε 0 ή 1 είναι ένα δυαδικό ψηφίο, δηλαδή bit.",k:"bit"},
+ {t:"Ο υπολογιστής επεξεργάζεται δεδομένα",i:"Διάλεξε όλα τα είδη δεδομένων που μπορεί να πάρει ως είσοδο ένας υπολογιστής.",h:"Ο υπολογιστής μπορεί να παίρνει κείμενα, αριθμούς, εικόνες και ήχους.",k:"data"},
+ {t:"Πώς αποθηκεύονται τα δεδομένα;",i:"Διάλεξε τη σωστή απάντηση.",h:"Μέσα στον υπολογιστή τα δεδομένα αποθηκεύονται με ηλεκτρικά σήματα που γράφουμε ως 0 και 1.",k:"storage"},
+ {t:"Από δεδομένα σε πληροφορίες",i:"Συμπλήρωσε σωστά τις πληροφορίες για τον Ήρωνα χρησιμοποιώντας τα δεδομένα που δίνονται.",h:"Τα δεδομένα μπορεί να είναι όνομα, ηλικία και τάξη. Όταν οργανωθούν, μας δίνουν πληροφορίες για ένα πρόσωπο.",k:"info"},
+ {t:"Τα κατάφερες!",i:"Σκέψου τι έμαθες στο Μάθημα 11.",h:"Σκέψου τα 0 και 1, το δυαδικό ψηφίο και το πώς ο υπολογιστής παίρνει, επεξεργάζεται και αποθηκεύει δεδομένα.",k:"final"}
+];
+
+let s=0,selfChoice=null;
+let switchSeen={on:false,off:false};
+let selectedDrag=null,matchState={};
+let selections={},answerOrders={};
+let infoSel={name:null,age:null,class:null};
+
+function shuffled(arr){
+ const a=[...arr];
+ for(let i=a.length-1;i>0;i--){
+  const j=Math.floor(Math.random()*(i+1));
+  [a[i],a[j]]=[a[j],a[i]];
+ }
+ return a;
+}
+function nav(){
+ document.getElementById("path").innerHTML=steps.map((_,i)=>
+  `<div class="dot ${i<s?'done':i===s?'active':''}">${i+1}</div>`
+ ).join("");
+}
+function completeFinalDot(){s=steps.length;nav()}
+function clearFeedback(){const f=document.getElementById("feedback");f.className="feedback";f.textContent=""}
+function setFeedback(t,ok){const f=document.getElementById("feedback");f.className="feedback "+(ok?"good":"bad");f.textContent=t}
+function nextAfter(ms=900){setTimeout(()=>{s++;render()},ms)}
+function render(){
+ selectedDrag=null;nav();clearFeedback();
+ const x=steps[s];
+ document.getElementById("title").textContent=x.t;
+ document.getElementById("inst").textContent=x.i;
+ if(x.k==="switch")stage1();
+ if(x.k==="juice")stage2();
+ if(x.k==="washer")stage3();
+ if(x.k==="bit")stage4();
+ if(x.k==="data")stage5();
+ if(x.k==="storage")stage6();
+ if(x.k==="info")stage7();
+ if(x.k==="final")stage8();
+}
+
+/* Stage 1 */
+function stage1(){
+ switchSeen={on:false,off:false};
+ document.getElementById("card").innerHTML=`
+  <div class="switch-board">
+   <div class="light-wrap">
+    <div><div class="bulb" id="bulb">💡</div><div class="digit-box" id="digit">?</div></div>
+    <div>
+      <button class="switch" id="switchBtn" onclick="toggleSwitch()"><span class="switch-knob"></span></button>
+      <div style="font-weight:900;margin-top:12px">Διακόπτης</div>
+    </div>
+   </div>
+   <div class="action-row">
+    <button class="action" onclick="setSwitch(false)">Σβηστό</button>
+    <button class="action" onclick="setSwitch(true)">Αναμμένο</button>
+   </div>
+   <div class="smallhelp">Δοκίμασε και τις δύο καταστάσεις.</div>
+  </div>`;
+}
+function setSwitch(on){
+ const sw=document.getElementById("switchBtn"),bulb=document.getElementById("bulb"),digit=document.getElementById("digit");
+ sw.classList.toggle("on",on);bulb.classList.toggle("on",on);digit.textContent=on?"1":"0";
+ switchSeen[on?"on":"off"]=true;
+ if(switchSeen.on&&switchSeen.off){
+  setFeedback("Σωστά! Αναμμένο = 1 και σβηστό = 0.",true);nextAfter(1050);
+ }else{
+  setFeedback(on?"Όταν περνά ρεύμα, η λάμπα ανάβει και γράφουμε 1.":"Όταν δεν περνά ρεύμα, η λάμπα σβήνει και γράφουμε 0.",true);
+ }
+}
+function toggleSwitch(){
+ const on=!document.getElementById("switchBtn").classList.contains("on");
+ setSwitch(on);
+}
+
+/* Drag helpers */
+function dragStart(ev,id){
+ selectedDrag=id;
+ ev.currentTarget.classList.add("selectedDrag");
+ if(ev.dataTransfer){ev.dataTransfer.setData("text/plain",id);ev.dataTransfer.effectAllowed="move"}
+}
+function dragEnd(ev){ev.currentTarget.classList.remove("selectedDrag")}
+function pickDrag(id){
+ if(matchState.locked?.has(id))return;
+ document.querySelectorAll(".dragitem").forEach(x=>x.classList.remove("selectedDrag"));
+ selectedDrag=(selectedDrag===id)?null:id;
+ if(selectedDrag)document.getElementById(id)?.classList.add("selectedDrag");
+}
+function allowDrop(ev){ev.preventDefault()}
+function dropOn(ev,target){
+ ev.preventDefault();
+ const id=(ev.dataTransfer&&ev.dataTransfer.getData("text/plain"))||selectedDrag;
+ if(id)placeIPO(id,target);
+}
+function tapDrop(target){if(selectedDrag)placeIPO(selectedDrag,target)}
+
+/* Stages 2-3 */
+function buildIPO(kind){
+ const juice=[
+  {id:"fruit",target:"input",icon:"🍎🍐",txt:"Φρούτα"},
+  {id:"blend",target:"process",icon:"🥤",txt:"Ανάμειξη / στύψιμο"},
+  {id:"juice",target:"output",icon:"🧃",txt:"Χυμός"}
+ ];
+ const washer=[
+  {id:"dirty",target:"input",icon:"👕",txt:"Λερωμένο ρούχο"},
+  {id:"wash",target:"process",icon:"🫧",txt:"Πλύσιμο"},
+  {id:"clean",target:"output",icon:"✨👕",txt:"Καθαρό ρούχο"}
+ ];
+ const items=kind==="juice"?juice:washer;
+ matchState={locked:new Set(),items};
+ const order=shuffled(items);
+ document.getElementById("card").innerHTML=`
+   <div class="tray">
+    ${order.map(o=>`<div class="dragitem" id="${o.id}" draggable="true"
+      ondragstart="dragStart(event,'${o.id}')" ondragend="dragEnd(event)" onclick="pickDrag('${o.id}')">${o.icon} ${o.txt}</div>`).join("")}
+   </div>
+   <div class="ipo">
+    ${ipoZone("input","Είσοδος")}
+    <div class="arrow">→</div>
+    ${ipoZone("process","Επεξεργασία")}
+    <div class="arrow">→</div>
+    ${ipoZone("output","Έξοδος")}
+   </div>
+   <div class="smallhelp">Σύρε ένα πλακίδιο ή πάτησέ το και μετά πάτησε τη σωστή θέση.</div>`;
+}
+function ipoZone(id,label){
+ return `<div class="ipoBox"><span class="ipoLabel">${label}</span><div class="drop" id="drop_${id}"
+  ondragover="allowDrop(event)" ondrop="dropOn(event,'${id}')" onclick="tapDrop('${id}')">Τοποθέτησε εδώ</div></div>`;
+}
+function placeIPO(itemId,target){
+ const item=matchState.items.find(x=>x.id===itemId);
+ if(!item||matchState.locked.has(itemId))return;
+ document.querySelectorAll(".dragitem").forEach(x=>x.classList.remove("selectedDrag"));
+ selectedDrag=null;
+ if(item.target!==target){setFeedback("Δοκίμασε διαφορετική θέση.",false);return}
+ matchState.locked.add(itemId);
+ document.getElementById(itemId).classList.add("locked");
+ const drop=document.getElementById("drop_"+target);
+ drop.classList.add("correct");drop.innerHTML=`<strong>${item.icon}<br>${item.txt}</strong>`;
+ if(matchState.locked.size===3){setFeedback("Μπράβο! Έφτιαξες σωστά τη σειρά Είσοδος – Επεξεργασία – Έξοδος.",true);nextAfter(1100)}
+ else setFeedback("Σωστά! Συνέχισε με το επόμενο μέρος.",true);
+}
+function stage2(){buildIPO("juice")}
+function stage3(){buildIPO("washer")}
+
+/* Generic multi-select */
+function drawMulti(key,items,checkFn,gridClass="row"){
+ selections[key]=new Set();
+ answerOrders[key]=shuffled(items);
+ document.getElementById("card").innerHTML=`
+  <div class="${gridClass}">
+   ${answerOrders[key].map((o,i)=>`<button class="${gridClass==='data-grid'?'data-card':'choice'}" id="${key}${i}" onclick="toggleMulti('${key}',${i})">
+    ${gridClass==='data-grid'?`<span class="big">${o.icon}</span>${o.txt}`:`<span class="big">${o.icon}</span>${o.txt}`}
+   </button>`).join("")}
+  </div>
+  <button class="check" onclick="${checkFn}()">Έλεγχος</button>`;
+}
+function toggleMulti(key,i){
+ const set=selections[key];set.has(i)?set.delete(i):set.add(i);
+ document.getElementById(key+i)?.classList.toggle("selected",set.has(i));
+}
+function allCorrectSelected(key){
+ const arr=answerOrders[key],set=selections[key];
+ const correct=arr.map((o,i)=>o.ok?i:-1).filter(i=>i>=0);
+ return set.size===correct.length&&correct.every(i=>set.has(i));
+}
+
+/* Stage 4 */
+function stage4(){
+ document.getElementById("card").innerHTML=`
+  <div class="bit-card">
+   <div style="font-size:22px;font-weight:900">Κάθε ψηφίο 0 ή 1 λέγεται δυαδικό ψηφίο (bit).</div>
+   <div id="bitChoices"></div>
+  </div>`;
+ selections.bit=new Set();
+ answerOrders.bit=shuffled([
+  {ok:true,icon:"0",txt:"δυαδικό ψηφίο"},
+  {ok:true,icon:"1",txt:"δυαδικό ψηφίο"},
+  {ok:false,icon:"2",txt:"όχι δυαδικό ψηφίο"},
+  {ok:false,icon:"5",txt:"όχι δυαδικό ψηφίο"}
+ ]);
+ document.getElementById("bitChoices").innerHTML=`
+  <div class="row">${answerOrders.bit.map((o,i)=>`<button class="choice" id="bit${i}" onclick="toggleMulti('bit',${i})"><span class="big">${o.icon}</span>${o.txt}</button>`).join("")}</div>
+  <button class="check" onclick="checkBit()">Έλεγχος</button>`;
+}
+function checkBit(){
+ if(!allCorrectSelected("bit")){setFeedback("Διάλεξε μόνο τα δύο ψηφία που χρησιμοποιούνται στα ηλεκτρικά σήματα.",false);return}
+ setFeedback("Σωστά! Τα δυαδικά ψηφία είναι το 0 και το 1.",true);nextAfter();
+}
+
+/* Stage 5 */
+function stage5(){
+ drawMulti("data",[
+  {ok:true,icon:"📝",txt:"Κείμενα"},
+  {ok:true,icon:"123",txt:"Αριθμοί"},
+  {ok:true,icon:"🖼️",txt:"Εικόνες"},
+  {ok:true,icon:"🔊",txt:"Ήχοι"},
+  {ok:false,icon:"🪑",txt:"Καρέκλα"},
+  {ok:false,icon:"🍎",txt:"Μήλο"}
+ ],"checkData","data-grid");
+}
+function checkData(){
+ if(!allCorrectSelected("data")){setFeedback("Διάλεξε τα τέσσερα είδη δεδομένων που αναφέρονται στο μάθημα.",false);return}
+ setFeedback("Σωστά! Ο υπολογιστής μπορεί να πάρει διαφορετικά είδη δεδομένων.",true);nextAfter();
+}
+
+/* Stage 6 */
+function stage6(){
+ const opts=shuffled([
+  {ok:true,icon:"01",txt:"Με ηλεκτρικά σήματα, 0 και 1"},
+  {ok:false,icon:"ΑΒ",txt:"Μόνο με γράμματα και αριθμούς"},
+  {ok:false,icon:"📄",txt:"Σαν να είναι γραμμένα σε χαρτί"}
+ ]);
+ answerOrders.storage=opts;
+ document.getElementById("card").innerHTML=`<div class="row">${opts.map((o,i)=>`<button class="choice" onclick="storageAns(${i})"><span class="big">${o.icon}</span>${o.txt}</button>`).join("")}</div>`;
+}
+function storageAns(i){
+ if(!answerOrders.storage[i].ok){setFeedback("Θυμήσου ότι μέσα στον υπολογιστή τα δεδομένα μετατρέπονται σε ηλεκτρικά σήματα.",false);return}
+ setFeedback("Σωστά! Τα δεδομένα αποθηκεύονται με ηλεκτρικά σήματα που γράφουμε ως 0 και 1.",true);nextAfter();
+}
+
+/* Stage 7 */
+function stage7(){
+ infoSel={name:null,age:null,class:null};
+ const names=shuffled(["Ήρωνας","Υπατία","Νίκος"]);
+ const ages=shuffled(["6 ετών","7 ετών","8 ετών"]);
+ const classes=shuffled(["Α΄ Δημοτικού","Β΄ Δημοτικού","Γ΄ Δημοτικού"]);
+ document.getElementById("card").innerHTML=`
+  <div class="info-wrap">
+   <div class="person">🧒</div>
+   ${infoRow("name","Όνομα",names)}
+   ${infoRow("age","Ηλικία",ages)}
+   ${infoRow("class","Τάξη",classes)}
+   <button class="check" onclick="checkInfo()">Έλεγχος</button>
+  </div>`;
+}
+function infoRow(key,label,opts){
+ return `<div class="info-row"><div class="info-label">${label}</div><div class="info-options">
+  ${opts.map((v,i)=>`<button class="info-option" onclick="pickInfo('${key}','${v}',this)">${v}</button>`).join("")}
+ </div></div>`;
+}
+function pickInfo(key,val,el){
+ infoSel[key]=val;
+ el.parentElement.querySelectorAll(".info-option").forEach(x=>x.classList.remove("sel"));
+ el.classList.add("sel");
+}
+function checkInfo(){
+ if(infoSel.name!=="Ήρωνας"||infoSel.age!=="7 ετών"||infoSel.class!=="Β΄ Δημοτικού"){
+  setFeedback("Χρησιμοποίησε τα δεδομένα του μαθήματος: Ήρωνας, 7 ετών, Β΄ Δημοτικού.",false);return;
+ }
+ setFeedback("Σωστά! Οργάνωσες τα δεδομένα σε πληροφορίες για τον Ήρωνα.",true);nextAfter();
+}
+
+/* Stage 8 */
+function stage8(){
+ selfChoice=null;
+ document.getElementById("card").innerHTML=`
+ <div class="finalBox">
+  <div class="stars">⭐ ⭐ ⭐</div>
+  <div class="summary">
+   Έμαθες ότι ο υπολογιστής είναι ψηφιακή συσκευή, ότι τα ηλεκτρικά σήματα γράφονται με 0 και 1,
+   ότι κάθε 0 ή 1 είναι ένα bit και ότι τα δεδομένα αποθηκεύονται μέσα στον υπολογιστή με αυτά τα σήματα.
+  </div>
+  <div class="faces">
+   <button class="face" onclick="selfPick(1,this)"><span>🙂</span>Θέλω λίγη εξάσκηση</button>
+   <button class="face" onclick="selfPick(2,this)"><span>😊</span>Τα κατάφερα</button>
+   <button class="face" onclick="selfPick(3,this)"><span>🤩</span>Τα κατάφερα πολύ καλά</button>
+  </div>
+  <button class="check" onclick="finish()">Ολοκλήρωση</button>
+  <button class="repeatBtn" onclick="restartAll()">↻ Επανάληψη δραστηριότητας</button>
+ </div>`;
+}
+function selfPick(v,e){
+ selfChoice=v;
+ document.querySelectorAll(".face").forEach(x=>x.classList.remove("sel"));
+ e.classList.add("sel");
+}
+function finish(){
+ const f=document.getElementById("feedback");
+ if(!selfChoice){f.className="feedback bad";f.textContent="Διάλεξε πρώτα πώς νιώθεις για όσα έμαθες.";return}
+ completeFinalDot();
+ f.className="feedback good";
+ f.textContent="Μπράβο! Ολοκλήρωσες το Μάθημα 11.";
+}
+function restartAll(){
+ s=0;selfChoice=null;switchSeen={on:false,off:false};selectedDrag=null;matchState={};
+ selections={};answerOrders={};infoSel={name:null,age:null,class:null};render();
+}
+function help(){
+ const idx=Math.min(s,steps.length-1);
+ document.getElementById("helpText").textContent=steps[idx].h;
+ document.getElementById("modal").classList.add("show");
+}
+function closeHelp(){document.getElementById("modal").classList.remove("show")}
+render();
+</script>
+
+
+<footer class="nk-license" aria-label="Πληροφορίες δημιουργού και άδειας χρήσης">
+  <div><strong>Created by Nikos Kalakos · © 2026</strong></div>
+  <div>Original educational content and simulation design licensed under <a class="cc-badge" href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank" rel="license noopener noreferrer">CC BY-NC 4.0</a>.</div>
+  <div>Source code © 2026 Nikos Kalakos.</div>
+  <div>Third-party and textbook materials remain subject to the rights and licences of their respective copyright holders.</div>
+</footer></body>
+</html>

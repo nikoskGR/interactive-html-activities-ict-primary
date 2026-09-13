@@ -1,0 +1,140 @@
+<!--
+ICT Educational Simulation
+Created by Nikos Kalakos
+Copyright © 2026 Nikos Kalakos
+
+Original educational content and simulation design licensed under CC BY-NC 4.0.
+Source code © 2026 Nikos Kalakos.
+Third-party and textbook materials remain subject to the rights and licences of their respective copyright holders.
+-->
+<!doctype html>
+<html lang="el">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="author" content="Nikos Kalakos">
+<meta name="copyright" content="© 2026 Nikos Kalakos">
+<meta name="license" content="Original educational content and simulation design: CC BY-NC 4.0; source code © 2026 Nikos Kalakos; third-party and textbook materials excluded.">
+<title>Μάθημα 8 - Γνωρίζω το micro:bit</title>
+<style>
+:root{--ink:#17324d;--blue:#147ca8;--blue2:#0b648b;--soft:#eaf7fb;--lime:#9abd22;--lime2:#789b12;--line:#c9d8e7;--purple:#7358c7;--dark:#24323e;--red:#da3d4a;--shadow:0 10px 28px rgba(23,50,77,.12)}
+*{box-sizing:border-box}body{margin:0;background:#f7fafc;color:var(--ink);font-family:Arial,"Noto Sans",sans-serif}button,input{font:inherit}button{cursor:pointer}.app{max-width:1180px;margin:auto;padding:16px}.top{background:#fff;border:3px solid #b8dfea;border-radius:24px;padding:14px 18px;display:flex;align-items:center;justify-content:space-between;box-shadow:var(--shadow)}.top h1{margin:0;font-size:clamp(28px,4vw,42px)}.badge{width:68px;height:68px;border-radius:22px;background:var(--blue);display:grid;place-items:center;color:#fff;font-size:31px;font-weight:900}.path{display:flex;gap:10px;justify-content:center;margin:16px 0;flex-wrap:wrap}.dot{width:44px;height:44px;border-radius:50%;border:3px solid #aab9c9;background:#fff;color:#5e7389;display:grid;place-items:center;font-weight:900;font-size:20px}.dot.active{background:var(--blue);border-color:var(--blue);color:#fff;transform:scale(1.1)}.dot.done{background:var(--lime);border-color:var(--lime2);color:#fff}.panel{min-height:720px;background:#fff;border:3px solid #b8dfea;border-radius:28px;padding:24px;box-shadow:var(--shadow)}.step-head{display:flex;justify-content:space-between;gap:12px}.step-head h2{margin:0;font-size:clamp(26px,4vw,38px)}.help{background:#fff7d6;color:#624700;border:3px solid #dfbc44;border-radius:16px;padding:10px 17px;font-weight:900}.instruction{max-width:980px;margin:14px auto 18px;text-align:center;font-size:clamp(20px,2.35vw,25px);font-weight:900;line-height:1.35}.card{max-width:1040px;margin:auto;border:3px solid #c7e4ec;border-radius:28px;background:#fff;padding:22px;min-height:500px}.feedback{display:none;max-width:860px;margin:16px auto 0;padding:12px 18px;border-radius:17px;text-align:center;font-weight:900;font-size:20px}.feedback.good{display:block;background:#e5f8ef;border:2px solid #87cdae}.feedback.bad{display:block;background:#fff0ed;border:2px solid #e5a59b}.check{display:block;margin:18px auto 0;padding:13px 28px;border:0;border-radius:16px;background:var(--lime);color:#fff;font-size:21px;font-weight:900;box-shadow:0 5px 0 var(--lime2)}.row{display:flex;gap:14px;justify-content:center;align-items:stretch;flex-wrap:wrap}.choice{min-width:205px;min-height:138px;border:3px solid var(--line);border-radius:22px;background:#fff;padding:14px;font-weight:900;font-size:18px;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:10px}.choice:hover{transform:translateY(-2px);box-shadow:var(--shadow)}.choice .big{font-size:50px}
+.noesis{max-width:990px;margin:auto;border:4px solid var(--purple);border-radius:22px;background:#fff;overflow:hidden;box-shadow:0 10px 22px rgba(23,50,77,.16)}.ntitle{height:52px;background:linear-gradient(90deg,#6650c5,#875fda);color:#fff;display:flex;align-items:center;justify-content:space-between;padding:0 15px;font-size:21px;font-weight:900}.nbrand{display:flex;align-items:center;gap:10px}.nlogo{width:32px;height:32px;border-radius:10px;background:#fff;color:#6c54bf;display:grid;place-items:center;font-size:19px;font-weight:900}.nmenu{height:38px;background:#faf8ff;border-bottom:2px solid #e3d9ee;display:flex;align-items:center;gap:18px;padding:0 13px;font-size:14px}.nb{display:grid;grid-template-columns:270px 160px 1fr;min-height:470px}.simPane{padding:14px;background:#f6f8fa;border-right:2px solid #d7dde3}.catPane{padding:10px;background:#fff;border-right:2px solid #e2e2e2}.workPane{padding:12px;background:#f3f5f7}.paneTitle{text-align:center;font-weight:900;margin-bottom:10px}.download{width:100%;margin-top:12px;border:0;border-radius:13px;background:#6c57c9;color:#fff;padding:10px 12px;font-weight:900}.board{width:232px;height:305px;margin:auto;background:#1f252b;border:7px solid #101418;border-radius:20px;position:relative;box-shadow:inset 0 0 0 3px #3b454d,0 6px 13px rgba(0,0,0,.18)}.ledPanel{position:absolute;left:50%;top:72px;transform:translateX(-50%);display:grid;grid-template-columns:repeat(5,25px);grid-template-rows:repeat(5,25px);gap:5px}.led{width:25px;height:25px;border-radius:5px;background:#39434b;box-shadow:inset 0 0 0 2px #4e5a64}.led.on{background:#ff4f68;box-shadow:0 0 8px #ff4f68,inset 0 0 0 2px #ff8291}.mbbtn{position:absolute;top:228px;width:42px;height:42px;border-radius:50%;background:#d9dde0;border:5px solid #7f8a92;color:#26323a;font-weight:900;display:grid;place-items:center}.mbbtn.a{left:28px}.mbbtn.b{right:28px}.mic{position:absolute;bottom:26px;left:50%;transform:translateX(-50%);width:10px;height:10px;border-radius:50%;background:#d9dde0;box-shadow:14px 0 #d9dde0,-14px 0 #d9dde0}.usb{position:absolute;left:50%;top:-15px;transform:translateX(-50%);width:65px;height:19px;border-radius:5px;background:#aeb7bd}.cat{width:100%;border:0;border-radius:10px;padding:11px 8px;margin:5px 0;text-align:left;font-weight:900;color:#fff}.cat.basic{background:#2788d2}.cat.input{background:#b143c0}.cat.music{background:#e8427f}.cat.leds{background:#3c9f67}.cat.dim{opacity:.55}.blockPalette{margin-top:10px;display:none}.blockPalette.show{display:block}.blockBtn{border:0;background:transparent;padding:3px;display:block;width:100%}.block{border-radius:10px;padding:9px 10px;margin:6px auto;background:#2788d2;color:#fff;font-weight:900;min-width:120px;box-shadow:0 3px 0 #16679f}.workspace{min-height:405px;border:3px dashed #a9b4bd;border-radius:16px;background:#fff;padding:14px}.workrow{display:flex;gap:12px;align-items:flex-start;flex-wrap:wrap}.foreverWork{background:#1d6fb1;border-radius:14px;padding:13px 14px 16px;color:#fff;min-width:240px;box-shadow:0 4px 0 #134f7d}.foreverHead{font-weight:900;margin-bottom:8px}.foreverInside{min-height:86px;border:4px dashed rgba(255,255,255,.74);border-radius:9px;padding:8px;display:flex;gap:8px;align-items:flex-start;flex-wrap:wrap}.startWork{background:#5281b3;border-radius:12px;color:#fff;font-weight:900;padding:12px 15px;box-shadow:0 4px 0 #355e86}.iconWork{background:#2788d2;border-radius:12px;color:#fff;font-weight:900;padding:10px;box-shadow:0 4px 0 #16679f;min-width:105px;text-align:center;cursor:pointer}.iconEmoji{font-size:29px;display:block;font-family:"Segoe UI Emoji","Apple Color Emoji","Noto Color Emoji",sans-serif}.removeHint{text-align:center;color:#6c7882;font-size:14px;font-weight:800;margin-top:12px}.envChoice{width:100%;margin-top:12px;border:3px solid #9bc5d5;border-radius:14px;background:#fff;padding:10px 12px;font-weight:900;color:#24445f}.envChoice:hover{background:#eef8fc}.envChoice.done{background:#e8f8ef;border-color:#71b78e;color:#155a39}.envTaskTray{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin:0 auto 16px;padding:12px;border:3px solid #c8d9e6;border-radius:18px;background:#f8fbfd}.envDrag{max-width:280px;border:3px solid #8fb8ce;border-radius:14px;background:#fff;padding:10px 13px;font-weight:900;color:#24445f;box-shadow:0 3px 0 #c6dce8;cursor:grab}.envDrag:active{cursor:grabbing}.envDrag.placed{opacity:.38;cursor:default}.envDrop{min-height:62px;margin-top:12px;border:3px dashed #8ba6ba;border-radius:14px;background:#fff;display:flex;align-items:center;justify-content:center;padding:9px;text-align:center;font-weight:900;color:#65798a}.envDrop.over{background:#eaf7fb;border-color:#147ca8}.envDrop.correct{background:#e8f8ef;border-style:solid;border-color:#71b78e;color:#155a39}.envDrop .placedLabel{pointer-events:none}.catPane .envDrop{margin-top:14px}.simPane .envDrop{margin-top:14px}.workPane .envDrop{margin-top:14px}.projectDialog{max-width:570px;margin:30px auto;border:4px solid #7760cc;border-radius:22px;padding:22px;background:#fbfaff;box-shadow:var(--shadow)}.projectDialog h3{margin-top:0}.projectDialog input{width:100%;border:3px solid #a99bd4;border-radius:12px;padding:12px;font-size:20px}.projectDialog .create{margin-top:14px;border:0;border-radius:13px;background:#6f58c9;color:#fff;padding:11px 20px;font-weight:900}.componentGrid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}.component{border:3px solid #c8d6e3;border-radius:20px;background:#fff;padding:15px;text-align:center;font-weight:900;min-height:155px}.component span{font-size:50px;display:block;margin-bottom:9px}.finalBox{max-width:780px;margin:auto;text-align:center}.stars{font-size:58px;margin:18px}.summary{padding:20px;border:4px solid var(--blue);background:var(--soft);border-radius:22px;font-size:21px;font-weight:900;line-height:1.45}.faces{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:18px}.face{min-height:130px;border:3px solid var(--line);border-radius:20px;background:#fff;font-weight:900;font-size:17px}.face span{display:block;font-size:52px;margin-bottom:7px}.face.sel{border-color:var(--lime);background:#eef8d8}.modal{position:fixed;inset:0;background:#17324d99;display:none;place-items:center;padding:18px;z-index:20}.modal.show{display:grid}.modal-box{max-width:620px;background:#fff;border-radius:24px;border:4px solid #dfbc44;padding:22px;text-align:center;font-size:20px}.modal-box button{padding:10px 20px;border:0;border-radius:13px;background:#dfbc44;font-weight:900}@media(max-width:900px){.nb{grid-template-columns:1fr}.simPane,.catPane{border-right:0;border-bottom:2px solid #ddd}.componentGrid,.faces{grid-template-columns:1fr}}
+</style>
+
+<style id="nk-license-style">
+.nk-license{max-width:1100px;margin:14px auto 24px;padding:10px 16px;text-align:center;font:13px/1.45 Arial,"Noto Sans",sans-serif;color:#4e657c}
+.nk-license a{color:inherit;text-decoration:underline;text-underline-offset:2px}
+.nk-license .cc-badge{display:inline-block;margin:0 4px;padding:2px 7px;border:1px solid #8aa0b8;border-radius:6px;background:#fff;font-weight:700;white-space:nowrap}
+</style>
+</head>
+<body>
+<div class="app"><div class="top"><h1>Γνωρίζω το micro:bit</h1><div class="badge">8</div></div><div class="path" id="path"></div><main class="panel"><div class="step-head"><h2 id="title"></h2><button class="help" onclick="help()">❓ Βοήθεια</button></div><div class="instruction" id="inst"></div><div class="card" id="card"></div><div class="feedback" id="feedback"></div></main></div>
+<div class="modal" id="modal"><div class="modal-box"><h2>💡 Βοήθεια</h2><p id="helpText"></p><button onclick="closeHelp()">Εντάξει</button></div></div>
+<script>
+const steps=[
+ {t:"Γνωρίζω τη μικρή συσκευή",i:"Ποια χαρακτηριστικά μπορεί να έχει ένα micro:bit σύμφωνα με το μάθημα; Διάλεξε όλα τα σωστά.",h:"Θυμήσου ότι η συσκευή έχει φωτάκια, κουμπιά, μικρόφωνο και ηχείο, αλλά δεν έχει δική της οθόνη και πληκτρολόγιο υπολογιστή.",k:"parts"},
+ {t:"Δημιουργώ νέο έργο",i:"Δώσε ένα όνομα στο νέο έργο σου και δημιούργησέ το.",h:"Γράψε έναν μικρό τίτλο για το έργο σου και πάτησε Δημιουργία.",k:"project"},
+ {t:"Γνωρίζω το Noesis Blocks",i:"Σύρε κάθε περιγραφή στο σωστό μέρος του περιβάλλοντος: προσομοιωτή, περιοχή εντολών και χώρο προγράμματος.",h:"Ο προσομοιωτής δείχνει τι συμβαίνει στη συσκευή, η περιοχή εντολών περιέχει τα διαθέσιμα μπλοκ και ο χώρος προγράμματος είναι εκεί όπου χτίζεις το πρόγραμμα.",k:"env"},
+ {t:"Αφαιρώ ό,τι δεν χρειάζομαι",i:"Στο έργο αυτό δεν χρειάζεσαι την εντολή «κατά την έναρξη». Πάτησέ την για να την αφαιρέσεις.",h:"Η εντολή «για πάντα» πρέπει να μείνει, γιατί θα χρησιμοποιηθεί για επανάληψη.",k:"remove"},
+ {t:"Εμφανίζω ένα εικονίδιο",i:"Άνοιξε τα Βασικά και πρόσθεσε την εντολή «εμφάνιση εικονιδίου» μέσα στο «για πάντα». Διάλεξε την καρδιά και παρατήρησε το micro:bit.",h:"Η εντολή πρέπει να βρίσκεται μέσα στο πλαίσιο «για πάντα» ώστε να εκτελείται συνεχώς.",k:"heart"},
+ {t:"Αλλάζω διάθεση",i:"Άλλαξε το πρώτο εικονίδιο σε χαρωπό προσωπάκι και πρόσθεσε δεύτερη «εμφάνιση εικονιδίου» με λυπημένο προσωπάκι.",h:"Βάλε δύο εικονίδια μέσα στο «για πάντα»: χαρωπό και λυπημένο. Θα εμφανίζονται το ένα μετά το άλλο.",k:"moods"},
+ {t:"Τι κάνει το πρόγραμμα;",i:"Ποια περιγραφή ταιριάζει στο πρόγραμμα που έφτιαξες;",h:"Επειδή οι δύο εντολές βρίσκονται μέσα στο «για πάντα», εκτελούνται ξανά και ξανά με την ίδια σειρά.",k:"describe"},
+ {t:"Τα κατάφερες!",i:"Σκέψου τι έμαθες για το micro:bit.",h:"Σκέψου το νέο έργο, την εμφάνιση εικονιδίων και την επανάληψη «για πάντα».",k:"final"}
+];
+let s=0,selfChoice=null,partSel=new Set(),projectName='',hasStart=true,iconBlocks=[],moodTimer=null,envChosen=new Set(),finalCompleted=false;
+const heart=[[0,1],[0,3],[1,0],[1,2],[1,4],[2,0],[2,4],[3,1],[3,3],[4,2]];
+const happy=[[1,1],[1,3],[3,0],[3,4],[4,1],[4,2],[4,3]];
+const sad=[[1,1],[1,3],[3,1],[3,2],[3,3],[4,0],[4,4]];
+function nav(){document.getElementById('path').innerHTML=steps.map((_,i)=>`<div class="dot ${(i<s||(finalCompleted&&i===steps.length-1))?'done':(i===s&&!finalCompleted)?'active':''}">${i+1}</div>`).join('')}
+function clearFeedback(){const f=document.getElementById('feedback');f.className='feedback';f.textContent=''}
+function setFeedback(t,ok){const f=document.getElementById('feedback');f.className='feedback '+(ok?'good':'bad');f.textContent=t}
+function stopMood(){if(moodTimer){clearInterval(moodTimer);moodTimer=null}}
+function render(){stopMood();nav();clearFeedback();const x=steps[s];document.getElementById('title').textContent=x.t;document.getElementById('inst').textContent=x.i;if(x.k==='parts')stage1();if(x.k==='project')stage2();if(x.k==='env')stage3();if(x.k==='remove')stage4();if(x.k==='heart')stage5();if(x.k==='moods')stage6();if(x.k==='describe')stage7();if(x.k==='final')stage8()}
+function boardHTML(){return `<div class="board"><div class="usb"></div><div class="ledPanel">${Array.from({length:25},(_,i)=>`<span class="led" id="led${i}"></span>`).join('')}</div><div class="mbbtn a">A</div><div class="mbbtn b">B</div><div class="mic"></div></div>`}
+function showPattern(p){for(let i=0;i<25;i++)document.getElementById('led'+i)?.classList.remove('on');p.forEach(([r,c])=>document.getElementById('led'+(r*5+c))?.classList.add('on'))}
+function catsHTML(){return `<button class="cat basic" onclick="toggleBasic()">Βασικά</button><button class="cat input dim">Είσοδος</button><button class="cat music dim">Μουσική</button><button class="cat leds dim">LED</button><div class="blockPalette" id="basicPalette"><button class="blockBtn" onclick="addIconBlock()"><div class="block">εμφάνιση εικονιδίου</div></button></div>`}
+function noesis(work){return `<div class="noesis"><div class="ntitle"><div class="nbrand"><span class="nlogo">Ν</span><span>Noesis Blocks</span></div><span>— □ ×</span></div><div class="nmenu"><span>Αρχείο</span><span>Έργο: ${projectName||'Νέο έργο'}</span><span>Βοήθεια</span></div><div class="nb"><div class="simPane"><div class="paneTitle">Προσομοιωτής micro:bit</div>${boardHTML()}<button class="download">⬇ Λήψη</button></div><div class="catPane"><div class="paneTitle">Εντολές</div>${catsHTML()}</div><div class="workPane"><div class="paneTitle">Χώρος προγράμματος</div><div class="workspace">${work}</div></div></div></div>`}
+function toggleBasic(){document.getElementById('basicPalette')?.classList.toggle('show')}
+function stage1(){partSel=new Set();const opts=[['💡','Φωτάκια',1],['🔘','Κουμπιά',1],['🎙️','Μικρόφωνο',1],['🔊','Ηχείο',1],['⌨️','Πληκτρολόγιο πάνω στη συσκευή',0],['🖥️','Οθόνη υπολογιστή πάνω στη συσκευή',0]];document.getElementById('card').innerHTML=`<div class="componentGrid">${opts.map((o,i)=>`<button class="component" id="part${i}" onclick="pickPart(${i})"><span>${o[0]}</span>${o[1]}</button>`).join('')}</div><button class="check" onclick="checkParts()">Έλεγχος</button>`}
+function pickPart(i){partSel.has(i)?partSel.delete(i):partSel.add(i);document.getElementById('part'+i).style.background=partSel.has(i)?'#eef8d8':'#fff'}
+function checkParts(){const ok=partSel.size===4&&[0,1,2,3].every(i=>partSel.has(i));if(!ok){setFeedback('Διάλεξε μόνο τα χαρακτηριστικά που αναφέρονται ότι υπάρχουν πάνω στη συσκευή.',false);return}setFeedback('Σωστά! Γνώρισες βασικά μέρη του micro:bit.',true);setTimeout(()=>{s++;render()},900)}
+function stage2(){document.getElementById('card').innerHTML=`<div class="projectDialog"><h3>Νέο έργο στο Noesis Blocks</h3><p>Όνομα έργου</p><input id="projectInput" maxlength="28" placeholder="π.χ. Οι διαθέσεις μου"><button class="create" onclick="createProject()">Δημιουργία</button></div>`}
+function createProject(){const v=document.getElementById('projectInput').value.trim();if(v.length<2){setFeedback('Γράψε πρώτα ένα όνομα για το έργο σου.',false);return}projectName=v;setFeedback('Το νέο έργο δημιουργήθηκε.',true);setTimeout(()=>{s++;render()},800)}
+function shuffleItems(items){
+ const a=[...items];
+ for(let i=a.length-1;i>0;i--){
+   const j=Math.floor(Math.random()*(i+1));
+   [a[i],a[j]]=[a[j],a[i]];
+ }
+ return a;
+}
+function stage3(){
+ envChosen=new Set();
+ const envItems=shuffleItems([
+   {id:"dragSim",kind:"sim",label:"📟 Εδώ παρατηρώ τι συμβαίνει στη συσκευή"},
+   {id:"dragBlocks",kind:"blocks",label:"🧩 Εδώ βρίσκω τις διαθέσιμες εντολές"},
+   {id:"dragWork",kind:"work",label:"🛠️ Εδώ χτίζω το πρόγραμμα"}
+ ]);
+ const tray=`<div class="envTaskTray" id="envTaskTray">${envItems.map(x=>`<div class="envDrag" id="${x.id}" draggable="true" data-kind="${x.kind}" ondragstart="envDragStart(event)">${x.label}</div>`).join("")}</div>`;
+ document.getElementById('card').innerHTML=tray+noesis(`<div class="workrow"><div class="startWork">κατά την έναρξη</div><div class="foreverWork"><div class="foreverHead">για πάντα</div><div class="foreverInside"></div></div></div>`);
+ document.querySelector('.simPane').insertAdjacentHTML('beforeend',`<div class="envDrop" id="dropSim" data-kind="sim" ondragover="envAllowDrop(event)" ondragleave="envLeave(event)" ondrop="envDrop(event)">Σύρε εδώ τη σωστή περιγραφή</div>`);
+ document.querySelector('.catPane').insertAdjacentHTML('beforeend',`<div class="envDrop" id="dropBlocks" data-kind="blocks" ondragover="envAllowDrop(event)" ondragleave="envLeave(event)" ondrop="envDrop(event)">Σύρε εδώ τη σωστή περιγραφή</div>`);
+ document.querySelector('.workPane').insertAdjacentHTML('beforeend',`<div class="envDrop" id="dropWork" data-kind="work" ondragover="envAllowDrop(event)" ondragleave="envLeave(event)" ondrop="envDrop(event)">Σύρε εδώ τη σωστή περιγραφή</div>`);
+}
+function envDragStart(e){
+ const el=e.currentTarget;
+ if(el.classList.contains('placed')){e.preventDefault();return;}
+ e.dataTransfer.setData('text/plain',el.dataset.kind);
+ e.dataTransfer.effectAllowed='move';
+}
+function envAllowDrop(e){e.preventDefault();e.currentTarget.classList.add('over');e.dataTransfer.dropEffect='move'}
+function envLeave(e){e.currentTarget.classList.remove('over')}
+function envDrop(e){
+ e.preventDefault();
+ const drop=e.currentTarget;drop.classList.remove('over');
+ const draggedKind=e.dataTransfer.getData('text/plain');
+ const targetKind=drop.dataset.kind;
+ if(!draggedKind)return;
+ if(draggedKind!==targetKind){setFeedback('Η περιγραφή δεν ταιριάζει σε αυτό το μέρος. Δοκίμασε ξανά.',false);return;}
+ if(envChosen.has(targetKind))return;
+ envChosen.add(targetKind);
+ const drag=document.getElementById(targetKind==='sim'?'dragSim':targetKind==='blocks'?'dragBlocks':'dragWork');
+ drag.classList.add('placed');drag.setAttribute('draggable','false');
+ drop.classList.add('correct');drop.innerHTML=`<span class="placedLabel">${drag.innerHTML}</span>`;
+ if(envChosen.size===3){
+   setFeedback('Σωστά! Αναγνώρισες τον προσομοιωτή, την περιοχή εντολών και τον χώρο προγράμματος.',true);
+   setTimeout(()=>{s++;render()},1000);
+ }else setFeedback('Σωστά! Συνέχισε με τις υπόλοιπες περιγραφές.',true);
+}
+function stage4(){hasStart=true;document.getElementById('card').innerHTML=noesis(`<div class="workrow"><button class="blockBtn" onclick="removeStart()"><div class="startWork" id="startWork">κατά την έναρξη</div></button><div class="foreverWork"><div class="foreverHead">για πάντα</div><div class="foreverInside"></div></div></div><div class="removeHint">Πάτησε την εντολή που δεν χρειάζεται.</div>`)}
+function removeStart(){if(!hasStart)return;hasStart=false;document.getElementById('startWork').style.display='none';setFeedback('Σωστά! Η «κατά την έναρξη» αφαιρέθηκε και η «για πάντα» έμεινε.',true);setTimeout(()=>{s++;render()},900)}
+function stage5(){iconBlocks=[];document.getElementById('card').innerHTML=noesis(drawForever());setTimeout(()=>showPattern([]),50)}
+function drawForever(){return `<div class="foreverWork"><div class="foreverHead">για πάντα</div><div class="foreverInside">${iconBlocks.map((x,i)=>iconBlockHTML(x,i)).join('')}</div></div><div class="removeHint">Άνοιξε τα Βασικά και πρόσθεσε ένα εικονίδιο μέσα στο «για πάντα».</div>${iconBlocks.length?'<button class="check" onclick="checkHeart()">Έλεγχος</button>':''}`}
+function iconBlockHTML(x,i){return `<button class="blockBtn" onclick="cycleIcon(${i})"><div class="iconWork"><span class="iconEmoji" role="img" aria-label="${x==='heart'?'καρδιά':x==='happy'?'χαρωπό προσωπάκι':'λυπημένο προσωπάκι'}">${x==='heart'?'❤️':x==='happy'?'😊':'😢'}</span>εμφάνιση εικονιδίου</div></button>`}
+function addIconBlock(){if(s===4&&iconBlocks.length>=1)return;if(s===5&&iconBlocks.length>=2)return;iconBlocks.push(s===4?'happy':'heart');document.querySelector('.workspace').innerHTML=s===4?drawForever():drawMoods();if(s===4)showPattern(happy);if(s===5&&iconBlocks.length===2)startMoodPreview()}
+function cycleIcon(i){const order=['heart','happy','sad'];const k=order.indexOf(iconBlocks[i]);iconBlocks[i]=order[(k+1)%order.length];document.querySelector('.workspace').innerHTML=s===4?drawForever():drawMoods();if(s===4)showPattern(iconBlocks[i]==='heart'?heart:iconBlocks[i]==='happy'?happy:sad);if(s===5&&iconBlocks.length===2)startMoodPreview()}
+function checkHeart(){if(iconBlocks.length!==1||iconBlocks[0]!=='heart'){setFeedback('Διάλεξε την καρδιά για την πρώτη εντολή.',false);return}showPattern(heart);setFeedback('Σωστά! Η καρδιά εμφανίζεται στο micro:bit.',true);setTimeout(()=>{s++;render()},1100)}
+function stage6(){iconBlocks=['heart'];document.getElementById('card').innerHTML=noesis(drawMoods());setTimeout(()=>showPattern(heart),50)}
+function drawMoods(){return `<div class="foreverWork"><div class="foreverHead">για πάντα</div><div class="foreverInside">${iconBlocks.map((x,i)=>iconBlockHTML(x,i)).join('')}</div></div><div class="removeHint">Το πρώτο εικονίδιο ξεκινά ως ❤️. Άλλαξέ το σε 😊. Πρόσθεσε δεύτερη εντολή, που επίσης ξεκινά ως ❤️, και άλλαξέ τη σε 😢.</div>${iconBlocks.length===2?'<button class="check" onclick="checkMoods()">Έλεγχος</button>':''}`}
+function checkMoods(){if(iconBlocks.length!==2||iconBlocks[0]!=='happy'||iconBlocks[1]!=='sad'){setFeedback('Η σειρά πρέπει να είναι πρώτα χαρωπό και μετά λυπημένο προσωπάκι.',false);return}startMoodPreview();setFeedback('Σωστά! Παρατήρησε τα δύο εικονίδια να εναλλάσσονται.',true);setTimeout(()=>{s++;render()},2600)}
+function startMoodPreview(){stopMood();if(iconBlocks.length<2)return;let i=0;const pats={heart,happy,sad};showPattern(pats[iconBlocks[0]]);moodTimer=setInterval(()=>{i=(i+1)%iconBlocks.length;showPattern(pats[iconBlocks[i]])},700)}
+function stage7(){document.getElementById('card').innerHTML=`<div class="row"><button class="choice" onclick="desc(false)">Εμφανίζει μόνο μία φορά το χαρωπό προσωπάκι.</button><button class="choice" onclick="desc(true)">Εμφανίζει χαρωπό και λυπημένο προσωπάκι ξανά και ξανά.</button><button class="choice" onclick="desc(false)">Εμφανίζει και τα δύο προσωπάκια ταυτόχρονα.</button></div>`}
+function desc(ok){if(!ok){setFeedback('Θυμήσου ότι και οι δύο εντολές βρίσκονται μέσα στο «για πάντα».',false);return}setFeedback('Σωστά! Οι δύο εντολές εκτελούνται συνεχώς, με την ίδια σειρά.',true);setTimeout(()=>{s++;render()},900)}
+function stage8(){selfChoice=null;document.getElementById('card').innerHTML=`<div class="finalBox"><div class="stars">⭐ ⭐ ⭐</div><div class="summary">Έμαθες τι είναι το micro:bit, να δημιουργείς ένα νέο έργο, να χρησιμοποιείς την εντολή εμφάνισης εικονιδίου και να βάζεις εντολές μέσα στο «για πάντα» ώστε να επαναλαμβάνονται.</div><div class="faces"><button class="face" onclick="selfPick(1,this)"><span>🙂</span>Θέλω λίγη εξάσκηση</button><button class="face" onclick="selfPick(2,this)"><span>😊</span>Τα κατάφερα</button><button class="face" onclick="selfPick(3,this)"><span>🤩</span>Τα κατάφερα πολύ καλά</button></div><button class="check" onclick="finish()">Ολοκλήρωση</button><button class="check" style="background:var(--blue);box-shadow:0 5px 0 var(--blue2)" onclick="restartAll()">↻ Επανάληψη δραστηριότητας</button></div>`}
+function selfPick(v,e){selfChoice=v;document.querySelectorAll('.face').forEach(x=>x.classList.remove('sel'));e.classList.add('sel')}
+function finish(){const f=document.getElementById('feedback');if(!selfChoice){f.className='feedback bad';f.textContent='Διάλεξε πρώτα πώς νιώθεις για όσα έμαθες.';return}finalCompleted=true;nav();f.className='feedback good';f.textContent='Μπράβο! Ολοκλήρωσες το Μάθημα 8.'}
+function restartAll(){stopMood();s=0;selfChoice=null;partSel=new Set();projectName='';hasStart=true;iconBlocks=[];envChosen=new Set();finalCompleted=false;render()}
+function help(){document.getElementById('helpText').textContent=steps[s].h;document.getElementById('modal').classList.add('show')}
+function closeHelp(){document.getElementById('modal').classList.remove('show')}
+render();
+</script>
+
+<footer class="nk-license" aria-label="Πληροφορίες δημιουργού και άδειας χρήσης">
+  <div><strong>Created by Nikos Kalakos · © 2026</strong></div>
+  <div>Original educational content and simulation design licensed under <a class="cc-badge" href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank" rel="license noopener noreferrer">CC BY-NC 4.0</a>.</div>
+  <div>Source code © 2026 Nikos Kalakos.</div>
+  <div>Third-party and textbook materials remain subject to the rights and licences of their respective copyright holders.</div>
+</footer>
+</body>
+</html>

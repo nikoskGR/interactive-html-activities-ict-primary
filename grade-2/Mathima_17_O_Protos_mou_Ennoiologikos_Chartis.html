@@ -1,0 +1,1064 @@
+<!--
+ICT Educational Simulation
+Created by Nikos Kalakos
+Copyright © 2026 Nikos Kalakos
+
+Original educational content and simulation design licensed under CC BY-NC 4.0.
+Source code © 2026 Nikos Kalakos.
+Third-party and textbook materials remain subject to the rights and licences of their respective copyright holders.
+-->
+<!doctype html>
+<html lang="el">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="author" content="Nikos Kalakos">
+<meta name="copyright" content="© 2026 Nikos Kalakos">
+<meta name="license" content="Original educational content and simulation design: CC BY-NC 4.0; source code © 2026 Nikos Kalakos; third-party and textbook materials excluded.">
+<title>Μάθημα 17 - Ο πρώτος μου εννοιολογικός χάρτης</title>
+<style>
+:root{
+  --unit-gold:#D19E11;
+  --unit-gold-dark:#A97D08;
+  --unit-cyan:#00A2E3;
+  --unit-cyan-dark:#007EB3;
+  --ink:#25334a;
+  --line:#d5dbe6;
+  --good:#eef7dc;
+  --bad:#fff0ed;
+  --athena:#5b4eb5;
+  --athena-dark:#463a96;
+  --soft:#fffaf0;
+  --shadow:0 10px 28px rgba(37,51,74,.12);
+}
+*{box-sizing:border-box}
+body{margin:0;background:#f7f9fb;color:var(--ink);font-family:Arial,"Noto Sans",sans-serif}
+button,input{font:inherit}
+button{cursor:pointer}
+.app{max-width:1180px;margin:auto;padding:16px}
+.top{
+  background:#fff;border:3px solid #ead9a6;border-radius:24px;padding:14px 18px;
+  display:flex;align-items:center;justify-content:space-between;box-shadow:var(--shadow)
+}
+.top h1{margin:0;font-size:clamp(27px,4vw,40px)}
+.badge{
+  width:70px;height:70px;border-radius:22px;background:var(--unit-gold);color:#fff;
+  display:grid;place-items:center;font-size:31px;font-weight:900;box-shadow:inset 0 -5px 0 rgba(0,0,0,.1)
+}
+.path{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin:16px 0}
+.dot{
+  width:44px;height:44px;border-radius:50%;display:grid;place-items:center;
+  border:3px solid #aeb7c7;background:#fff;color:#65718a;font-weight:900;font-size:20px
+}
+.dot.active{background:var(--unit-cyan);border-color:var(--unit-cyan-dark);color:#fff;transform:scale(1.1)}
+.dot.done{background:var(--unit-gold);border-color:var(--unit-gold-dark);color:#fff}
+.panel{
+  min-height:710px;background:#fff;border:3px solid #ead9a6;border-radius:28px;
+  padding:24px;box-shadow:var(--shadow)
+}
+.step-head{display:flex;justify-content:space-between;gap:12px;align-items:flex-start}
+.step-head h2{margin:0;font-size:clamp(25px,4vw,37px)}
+.help{
+  background:#edf9ff;color:#005b82;border:3px solid #80d4f3;
+  border-radius:16px;padding:10px 17px;font-weight:900
+}
+.instruction{
+  max-width:970px;margin:14px auto 18px;text-align:center;font-size:clamp(19px,2.3vw,24px);
+  font-weight:900;line-height:1.38
+}
+.card{
+  max-width:1040px;margin:auto;border:3px solid #ead9a6;border-radius:28px;
+  background:#fff;padding:22px;min-height:500px
+}
+.feedback{
+  display:none;max-width:860px;margin:16px auto 0;padding:12px 18px;border-radius:17px;
+  text-align:center;font-weight:900;font-size:20px
+}
+.feedback.good{display:block;background:var(--good);border:2px solid #9dbd57}
+.feedback.bad{display:block;background:var(--bad);border:2px solid #e5a59b}
+.check{
+  display:block;margin:18px auto 0;padding:13px 28px;border:0;border-radius:16px;
+  background:var(--unit-gold);color:#fff;font-size:21px;font-weight:900;
+  box-shadow:0 5px 0 var(--unit-gold-dark)
+}
+.note{
+  max-width:790px;margin:14px auto;padding:13px 17px;border-left:8px solid var(--unit-gold);
+  border-radius:12px;background:#fff7dc;font-weight:900
+}
+.smallhelp{text-align:center;font-size:14px;color:#6d7890;font-weight:800;margin-top:10px}
+.row{display:flex;gap:14px;justify-content:center;align-items:stretch;flex-wrap:wrap}
+.choice{
+  min-width:205px;max-width:285px;min-height:135px;border:3px solid var(--line);
+  border-radius:22px;background:#fff;padding:15px;font-weight:900;font-size:18px;
+  display:flex;flex-direction:column;justify-content:center;align-items:center;gap:10px
+}
+.choice:hover{transform:translateY(-2px);box-shadow:var(--shadow)}
+.choice.selected{border-color:var(--unit-gold);background:#fff7dc}
+.choice .big{font-size:50px}
+
+/* Ennoia app */
+.ennoia{
+  max-width:960px;margin:auto;border:5px solid #3f475c;border-radius:24px;overflow:hidden;
+  background:#1f2940;box-shadow:0 12px 28px rgba(20,28,45,.24)
+}
+.ennoia-top{
+  height:42px;background:linear-gradient(90deg,var(--athena),#7d66d3);color:#fff;
+  display:flex;align-items:center;justify-content:space-between;padding:0 12px;font-weight:900
+}
+.ennoia-brand{display:flex;align-items:center;gap:10px}
+.ennoia-logo{
+  width:30px;height:30px;border-radius:9px;background:#fff;position:relative
+}
+.ennoia-logo:before,.ennoia-logo:after{
+  content:"";position:absolute;width:8px;height:8px;border-radius:50%;background:var(--athena)
+}
+.ennoia-logo:before{left:5px;top:11px}
+.ennoia-logo:after{right:5px;top:11px}
+.ennoia-logo span{
+  position:absolute;left:11px;top:5px;width:8px;height:8px;border-radius:50%;background:var(--unit-gold)
+}
+.ennoia-logo i,.ennoia-logo b{
+  position:absolute;height:3px;background:#737d96;transform-origin:left center
+}
+.ennoia-logo i{left:9px;top:11px;width:10px;transform:rotate(-28deg)}
+.ennoia-logo b{left:12px;top:12px;width:10px;transform:rotate(28deg)}
+.ennoia-menu{
+  height:38px;background:#f3f4f7;border-bottom:2px solid #d7dbe3;
+  display:flex;align-items:center;gap:4px;padding:0 8px;font-size:14px
+}
+.menu-btn{border:0;background:transparent;padding:7px 10px;border-radius:7px}
+.menu-btn:hover{background:#e5e8ee}
+.ennoia-toolbar{
+  height:48px;background:#fafbfc;border-bottom:2px solid #e0e4ea;
+  display:flex;align-items:center;gap:8px;padding:0 10px
+}
+.toolbtn{
+  min-width:42px;height:37px;border:2px solid #b8c0cc;border-radius:8px;background:#fff;
+  display:grid;place-items:center;padding:0 10px;font-weight:900;color:#3f4c62
+}
+.toolbtn.newmap{background:#eefaff;border-color:#7dccea;color:#006992}
+.ennoia-canvas{
+  position:relative;height:430px;background:
+    linear-gradient(#eef1f5 1px,transparent 1px),
+    linear-gradient(90deg,#eef1f5 1px,transparent 1px),
+    #fff;
+  background-size:24px 24px;overflow:hidden
+}
+.blank-message{
+  position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);
+  color:#8a94a4;font-weight:900;text-align:center
+}
+.cm-node{
+  position:absolute;min-width:135px;min-height:54px;padding:10px 16px;
+  border:3px solid #626f83;border-radius:17px;background:#fff;
+  display:grid;place-items:center;text-align:center;font-weight:900;z-index:6;
+  box-shadow:0 3px 8px rgba(0,0,0,.12)
+}
+.cm-node.main{background:#fff8da;border-color:var(--unit-gold-dark)}
+.cm-node.child{background:#f5fcff;border-color:#6cbcd8}
+.cm-linklabel{
+  position:absolute;min-width:125px;min-height:42px;padding:7px 12px;
+  border:3px solid #7f8a9b;border-radius:14px;background:#f7f8fb;
+  display:grid;place-items:center;text-align:center;font-weight:900;z-index:7
+}
+.cm-linklabel.on-arrow{
+  transform:translate(-50%,-50%);
+  background:#f7f8fb;
+}
+.cap{
+  position:absolute;left:50%;top:-22px;transform:translateX(-50%);
+  width:56px;height:20px;border-radius:12px 12px 5px 5px;background:#e9edf2;
+  border:3px solid #687486;display:flex;align-items:center;justify-content:center;gap:6px;
+  cursor:grab;color:#4b5769;font-size:12px;z-index:12
+}
+.cap:active{cursor:grabbing}
+.cap .arr{font-weight:900}
+.drop-target{
+  position:absolute;width:180px;height:78px;border:4px dashed var(--unit-gold);
+  border-radius:18px;background:rgba(209,158,17,.08);display:grid;place-items:center;
+  text-align:center;font-weight:900;color:#8c6810;z-index:4
+}
+.drop-target.over{background:rgba(209,158,17,.18)}
+.map-line{
+  position:absolute;height:4px;background:#7a8798;transform-origin:left center;z-index:2;border-radius:4px
+}
+.map-svg{
+  position:absolute;inset:0;width:100%;height:100%;z-index:2;pointer-events:none
+}
+.map-svg line{
+  stroke:#7a8798;stroke-width:4;stroke-linecap:round
+}
+.entry-panel.stage4-guide{
+  top:12px;right:12px;bottom:auto;width:300px
+}
+.entry-panel{
+  position:absolute;right:12px;bottom:12px;width:270px;background:#fff;border:3px solid #ccd3de;
+  border-radius:16px;padding:12px;z-index:20;box-shadow:0 5px 15px rgba(0,0,0,.16)
+}
+.entry-panel label{display:block;font-weight:900;margin:8px 0 4px}
+.entry-panel input{
+  width:100%;padding:9px 10px;border:3px solid #9da8b7;border-radius:9px;font-size:16px
+}
+.entry-panel button{
+  width:100%;margin-top:10px;border:0;border-radius:10px;padding:9px 12px;
+  background:var(--unit-cyan);color:#fff;font-weight:900
+}
+.map-selectable{cursor:pointer}
+.map-selectable.sel{
+  outline:5px solid var(--unit-gold);outline-offset:3px
+}
+.map-selectable.wrongflash{animation:wrong .35s 2}
+@keyframes wrong{50%{transform:translateX(5px)}}
+
+/* stage 1 concepts */
+.concept-demo{
+  max-width:850px;margin:auto;border:4px solid var(--unit-cyan);border-radius:24px;
+  background:#f6fdff;padding:20px
+}
+.demo-map{
+  position:relative;height:245px;margin-bottom:18px;overflow:hidden
+}
+.demo-map-svg{
+  position:absolute;inset:0;width:100%;height:100%;z-index:1;pointer-events:none
+}
+.demo-map-svg line{
+  stroke:#7f8b9d;stroke-width:4;stroke-linecap:round
+}
+.demo-node,.demo-link{
+  position:absolute;padding:10px 16px;border:3px solid #677488;border-radius:15px;background:#fff;
+  font-family:Arial,"Noto Sans",sans-serif;font-size:17px;line-height:1.2;font-weight:900;
+  text-align:center;z-index:3
+}
+.demo-main{left:50%;top:14px;transform:translateX(-50%);min-width:120px}
+.demo-link{
+  transform:translateX(-50%);
+  min-width:150px;background:#f3f4f7
+}
+.demo-child{left:72px;top:172px;min-width:190px}
+.demo-child2{right:72px;top:172px;min-width:160px}
+
+
+/* transport-map construction stage */
+.transport-shell{
+  height:430px;display:grid;grid-template-columns:160px 1fr;background:#fff
+}
+.transport-tray{
+  border-right:3px solid #d8dde6;background:#f7f9fc;padding:10px 9px;overflow:auto
+}
+.transport-step{
+  border:3px solid var(--unit-cyan);background:#eefaff;color:#00648e;border-radius:12px;
+  padding:7px 9px;text-align:center;font-weight:900;margin-bottom:8px
+}
+.transport-tray h3{
+  margin:3px 0 8px;text-align:center;font-size:16px;color:#4a556b
+}
+.transport-token{
+  width:100%;border:3px solid #9da9ba;border-radius:12px;background:#fff;
+  padding:7px 6px;margin:6px 0;font-weight:900;font-size:13px;line-height:1.15;
+  cursor:grab;user-select:none;touch-action:none;text-align:center
+}
+.transport-token:hover{border-color:var(--unit-cyan);background:#f1fbff}
+.transport-token.selectedDrag{outline:4px solid var(--unit-gold);background:#fff8df}
+.transport-token.locked{opacity:.32;cursor:default}
+.transport-map{
+  position:relative;height:430px;overflow:hidden;
+  background:
+    linear-gradient(#eef1f5 1px,transparent 1px),
+    linear-gradient(90deg,#eef1f5 1px,transparent 1px),
+    #fff;
+  background-size:24px 24px
+}
+.transport-svg{
+  position:absolute;inset:0;width:100%;height:100%;z-index:1;pointer-events:none
+}
+.transport-svg line{stroke:#7a8798;stroke-width:4;stroke-linecap:round}
+.transport-slot{
+  position:absolute;height:47px;border:3px dashed #8ea1b7;border-radius:14px;background:#fff;
+  display:grid;place-items:center;text-align:center;font-weight:900;font-size:14px;
+  padding:5px;z-index:5;color:#718096
+}
+.transport-slot.main-slot{width:166px;border-color:var(--unit-gold-dark);background:#fffaf0}
+.transport-slot.cat-slot{width:132px;border-color:#4db8df;background:#f5fcff}
+.transport-slot.mean-slot{width:104px;font-size:13px}
+.transport-slot.inactive{
+  opacity:.34;pointer-events:none;background:#f5f6f8
+}
+.transport-slot.over{
+  background:#fff5cf;border-color:var(--unit-gold);transform:scale(1.03)
+}
+.transport-slot.filled{
+  border-style:solid;color:#26354b;background:#fff
+}
+.transport-slot.main-slot.filled{background:#fff7d6}
+.transport-slot.cat-slot.filled{background:#eefaff}
+.transport-relation{
+  position:absolute;min-width:88px;height:31px;border:3px dashed #8b96a6;
+  border-radius:11px;background:#f8f9fb;display:grid;place-items:center;text-align:center;
+  font-weight:900;font-size:11px;padding:2px 5px;z-index:8;color:#727d8e;
+  transform:translate(-50%,-50%)
+}
+.transport-relation.inactive{
+  opacity:1;
+  pointer-events:none;
+  background:#f8f9fb;
+  border-style:dashed;
+  color:#727d8e
+}
+.transport-relation.over{background:#fff5cf;border-color:var(--unit-gold)}
+.transport-relation.filled{
+  border-style:solid;background:#f7f8fb;color:#39475c
+}
+.transport-tip{
+  position:absolute;right:8px;bottom:7px;top:auto;z-index:12;background:#fff;border:2px solid #ccd4df;
+  border-radius:10px;padding:5px 8px;font-size:12px;font-weight:900;color:#657188
+}
+.transport-complete{
+  position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);z-index:20;
+  border:4px solid var(--unit-gold);background:#fffaf0;border-radius:22px;padding:18px 28px;
+  font-size:22px;font-weight:900;text-align:center;box-shadow:0 8px 24px rgba(0,0,0,.17)
+}
+
+/* stage 7 */
+.quiz{
+  max-width:820px;margin:auto;border:4px solid var(--unit-cyan);border-radius:24px;
+  background:#fafcff;padding:20px;text-align:center
+}
+.quiz-progress{height:14px;background:#e7edf1;border-radius:9px;overflow:hidden;max-width:520px;margin:0 auto 18px}
+.quiz-progress span{display:block;height:100%;background:var(--unit-gold);width:0;transition:.25s}
+.quiz-q{font-size:24px;font-weight:900;margin-bottom:18px}
+
+/* final */
+.finalBox{max-width:780px;margin:auto;text-align:center}
+.stars{font-size:58px;margin:18px}
+.summary{
+  padding:20px;border:4px solid var(--unit-cyan);background:#eefaff;border-radius:22px;
+  font-size:21px;font-weight:900;line-height:1.45
+}
+.faces{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:18px}
+.face{
+  min-height:130px;border:3px solid var(--line);border-radius:20px;background:#fff;
+  font-weight:900;font-size:17px
+}
+.face span{display:block;font-size:52px;margin-bottom:7px}
+.face.sel{border-color:var(--unit-gold);background:#fff7dc}
+.repeatBtn{
+  display:block;margin:15px auto 0;padding:12px 22px;border:0;border-radius:15px;
+  background:var(--unit-cyan);color:#fff;font-size:19px;font-weight:900;
+  box-shadow:0 5px 0 var(--unit-cyan-dark)
+}
+.modal{
+  position:fixed;inset:0;background:#24344d99;display:none;place-items:center;padding:18px;z-index:60
+}
+.modal.show{display:grid}
+.modal-box{
+  max-width:620px;background:#fff;border-radius:24px;border:4px solid var(--unit-gold);
+  padding:22px;text-align:center;font-size:20px
+}
+.modal-box button{
+  padding:10px 20px;border:0;border-radius:13px;background:var(--unit-gold);color:#fff;font-weight:900
+}
+@media(max-width:850px){
+  .faces{grid-template-columns:1fr}
+  .ennoia-canvas{height:520px}
+  .entry-panel{width:240px}
+}
+</style>
+
+
+<style id="nk-license-style">
+.nk-license{max-width:1100px;margin:14px auto 24px;padding:10px 16px;text-align:center;font:13px/1.45 Arial,"Noto Sans",sans-serif;color:#4e657c}
+.nk-license a{color:inherit;text-decoration:underline;text-underline-offset:2px}
+.nk-license .cc-badge{display:inline-block;margin:0 4px;padding:2px 7px;border:1px solid #8aa0b8;border-radius:6px;background:#fff;font-weight:700;white-space:nowrap}
+</style></head>
+<body>
+<div class="app">
+  <div class="top"><h1>Ο πρώτος μου εννοιολογικός χάρτης</h1><div class="badge">17</div></div>
+  <div class="path" id="path"></div>
+  <main class="panel">
+    <div class="step-head"><h2 id="title"></h2><button class="help" onclick="help()">❓ Βοήθεια</button></div>
+    <div class="instruction" id="inst"></div>
+    <div class="card" id="card"></div>
+    <div class="feedback" id="feedback"></div>
+  </main>
+</div>
+
+<div class="modal" id="modal">
+  <div class="modal-box"><h2>💡 Βοήθεια</h2><p id="helpText"></p><button onclick="closeHelp()">Εντάξει</button></div>
+</div>
+
+<script>
+const steps=[
+ {t:"Τι βάζουμε στα σχήματα;",i:"Διάλεξε τι γράφουμε μέσα στα σχήματα ενός εννοιολογικού χάρτη.",h:"Σε κάθε σχήμα βάζουμε μία έννοια. Οι έννοιες είναι συνήθως ουσιαστικά.",k:"concept"},
+ {t:"Γνωρίζω το Ennoia",i:"Δημιούργησε νέο χάρτη και μετά κάνε διπλό κλικ στον άδειο χώρο για να δημιουργήσεις την πρώτη έννοια: «Ζώα».",h:"Πάτησε «Νέος χάρτης». Μετά κάνε διπλό κλικ σε ένα κενό σημείο του καμβά και γράψε «Ζώα».",k:"firstNode"},
+ {t:"Φτιάχνω την πρώτη σύνδεση",i:"Σύρε το «καπελάκι» της έννοιας «Ζώα» στο πλαίσιο. Στη σύνδεση γράψε «χωρίζονται σε» και στη νέα έννοια γράψε «Ζώα της Φάρμας».",h:"Στη σύνδεση γράψε «χωρίζονται σε» και στη νέα έννοια γράψε «Ζώα της Φάρμας».",k:"firstLink"},
+ {t:"Συμπληρώνω τον χάρτη",i:"Σύρε το «καπελάκι» της έννοιας «Ζώα» σε καθένα από τα δύο πλαίσια και πρόσθεσε τις έννοιες «Ζώα του Δάσους» και «Κατοικίδια».",h:"Σύρε το «καπελάκι» της έννοιας «Ζώα» δύο φορές, μία σε κάθε πλαίσιο. Στα δύο νέα σχήματα γράψε «Ζώα του Δάσους» και «Κατοικίδια».",k:"expand"},
+ {t:"Βρίσκω τις έννοιες",i:"Πάτησε και τις τέσσερις έννοιες του χάρτη. Μην πατήσεις τη σύνδεση.",h:"Έννοιες είναι: Ζώα, Ζώα της Φάρμας, Ζώα του Δάσους και Κατοικίδια.",k:"identify"},
+ {t:"Βρίσκω την κύρια έννοια",i:"Πάτησε την κύρια έννοια του χάρτη.",h:"Κύρια έννοια είναι η πάνω πάνω έννοια, από την οποία ξεκινούν όλες οι άλλες.",k:"main"},
+ {t:"Ελέγχω όσα έμαθα",i:"Απάντησε σωστά και στις δύο ερωτήσεις.",h:"Οι έννοιες είναι συνήθως ουσιαστικά. Αυτό που γράφουμε πάνω στο βέλος είναι συνήθως ρήμα ή περιέχει ρήμα.",k:"quiz"},
+ {t:"Φτιάχνω έναν νέο χάρτη",i:"Δημιούργησε βήμα-βήμα στο Ennoia έναν νέο εννοιολογικό χάρτη με θέμα «Μέσα Μεταφοράς».",h:"Πρώτα τοποθέτησε την κύρια έννοια και τις κατηγορίες. Μετά τα μέσα μεταφοράς. Στο τέλος τοποθέτησε μία σύνδεση για κάθε ομάδα βελών.",k:"transport"},
+ {t:"Τα κατάφερες!",i:"Σκέψου τι έμαθες στο Μάθημα 17.",h:"Σκέψου πώς δημιουργούμε έννοιες και συνδέσεις και πώς αναγνωρίζουμε την κύρια έννοια.",k:"final"}
+];
+
+let s=0,selfChoice=null,answerOrders={};
+let newMapReady=false,firstNodeCreated=false;
+let firstLinkDropped=false,expandDropped={forest:false,pets:false};
+let identified=new Set(),quizIndex=0,quizOrder=[];
+let transportPhase=1,transportSelected=null;
+let transportPlaced={};
+let transportLocked=new Set();
+let transportTokens=[];
+
+function shuffled(arr){
+ const a=[...arr];
+ for(let i=a.length-1;i>0;i--){
+  const j=Math.floor(Math.random()*(i+1));
+  [a[i],a[j]]=[a[j],a[i]];
+ }
+ return a;
+}
+function norm(v){
+ return (v||"").replace(/\s+/g," ").trim();
+}
+function nav(){
+ document.getElementById("path").innerHTML=steps.map((_,i)=>`<div class="dot ${i<s?'done':i===s?'active':''}">${i+1}</div>`).join("");
+}
+function completeFinalDot(){s=steps.length;nav()}
+function clearFeedback(){const f=document.getElementById("feedback");f.className="feedback";f.textContent=""}
+function setFeedback(t,ok){const f=document.getElementById("feedback");f.className="feedback "+(ok?"good":"bad");f.textContent=t}
+function nextAfter(ms=900){setTimeout(()=>{s++;render()},ms)}
+function render(){
+ nav();clearFeedback();
+ const x=steps[s];
+ document.getElementById("title").textContent=x.t;
+ document.getElementById("inst").textContent=x.i;
+ if(x.k==="concept")stage1();
+ if(x.k==="firstNode")stage2();
+ if(x.k==="firstLink")stage3();
+ if(x.k==="expand")stage4();
+ if(x.k==="identify")stage5();
+ if(x.k==="main")stage6();
+ if(x.k==="quiz")stage7();
+ if(x.k==="transport")stage8();
+ if(x.k==="final")stage9();
+}
+
+function ennoiaShell(canvas,tools=""){
+ return `<div class="ennoia">
+  <div class="ennoia-top"><span class="ennoia-brand"><span class="ennoia-logo"><span></span><i></i><b></b></span>Ennoia</span><span>— □ ×</span></div>
+  <div class="ennoia-menu"><button class="menu-btn">Αρχείο</button><button class="menu-btn">Επεξεργασία</button><button class="menu-btn">Χάρτης</button><button class="menu-btn">Βοήθεια</button></div>
+  <div class="ennoia-toolbar"><button class="toolbtn newmap" onclick="newMap()">＋ Νέος χάρτης</button>${tools}</div>
+  <div class="ennoia-canvas" id="ennoiaCanvas">${canvas}</div>
+ </div>`;
+}
+
+/* Stage 1 */
+function stage1(){
+ const opts=shuffled([
+  {ok:true,icon:"▭",txt:"Μία έννοια"},
+  {ok:false,icon:"🔢",txt:"Έναν τυχαίο αριθμό"},
+  {ok:false,icon:"🎨",txt:"Μόνο ένα χρώμα"}
+ ]);
+ answerOrders.concept=opts;
+ document.getElementById("card").innerHTML=`
+  <div class="concept-demo">
+   <div class="demo-map">
+    <svg class="demo-map-svg" viewBox="0 0 810 245" preserveAspectRatio="none" aria-hidden="true">
+      <defs>
+        <marker id="demoArrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+          <path d="M 0 0 L 10 5 L 0 10 z" fill="#7f8b9d"></path>
+        </marker>
+      </defs>
+      <line x1="405" y1="66" x2="168" y2="172" marker-end="url(#demoArrow)"></line>
+      <line x1="405" y1="66" x2="648" y2="172" marker-end="url(#demoArrow)"></line>
+    </svg>
+    <div class="demo-node demo-main">Ζώα</div>
+    <div class="demo-link" style="left:287px;top:119px">χωρίζονται σε</div>
+    <div class="demo-link" style="left:527px;top:119px">χωρίζονται σε</div>
+    <div class="demo-node demo-child">Ζώα της Φάρμας</div>
+    <div class="demo-node demo-child2">Κατοικίδια</div>
+   </div>
+   <div class="row">${opts.map((o,i)=>`<button class="choice" onclick="conceptAns(${i})"><span class="big">${o.icon}</span>${o.txt}</button>`).join("")}</div>
+  </div>`;
+}
+function conceptAns(i){
+ if(!answerOrders.concept[i].ok){setFeedback("Στα σχήματα γράφουμε κάτι διαφορετικό.",false);return}
+ setFeedback("Σωστά! Σε κάθε σχήμα γράφουμε μία έννοια.",true);nextAfter();
+}
+
+/* Stage 2 */
+function stage2(){
+ newMapReady=false;firstNodeCreated=false;
+ document.getElementById("card").innerHTML=ennoiaShell(`<div class="blank-message" id="blankMsg">Ο καμβάς είναι ακόμη κενός.</div>`);
+ document.getElementById("ennoiaCanvas").ondblclick=canvasDoubleClick;
+}
+function newMap(){
+ if(s!==1)return;
+ newMapReady=true;
+ document.getElementById("blankMsg").textContent="Νέος χάρτης — κάνε διπλό κλικ σε ένα κενό σημείο.";
+ setFeedback("Ο νέος χάρτης είναι έτοιμος. Τώρα κάνε διπλό κλικ στον καμβά.",true);
+}
+function canvasDoubleClick(e){
+ if(s!==1||!newMapReady||firstNodeCreated)return;
+ const canvas=document.getElementById("ennoiaCanvas");
+ const r=canvas.getBoundingClientRect();
+ const x=Math.max(90,Math.min(e.clientX-r.left,canvas.clientWidth-90));
+ const y=Math.max(55,Math.min(e.clientY-r.top,canvas.clientHeight-55));
+ firstNodeCreated=true;
+ document.getElementById("blankMsg")?.remove();
+ canvas.insertAdjacentHTML("beforeend",`<div class="cm-node main" id="stage2node" style="left:${x-70}px;top:${y-28}px"><input id="nodeInput" style="width:115px;border:0;text-align:center;font-weight:900;font-size:18px" placeholder="Έννοια"></div>`);
+ setTimeout(()=>document.getElementById("nodeInput").focus(),50);
+ const input=document.getElementById("nodeInput");
+ input.addEventListener("keydown",ev=>{if(ev.key==="Enter")checkFirstNode()});
+ input.addEventListener("blur",checkFirstNode);
+}
+function checkFirstNode(){
+ const input=document.getElementById("nodeInput");
+ if(!input)return;
+ if(norm(input.value)!=="Ζώα"){
+  setFeedback("Η πρώτη έννοια πρέπει να γραφτεί ακριβώς ως «Ζώα».",false);return;
+ }
+ input.parentElement.textContent="Ζώα";
+ setFeedback("Σωστά! Δημιούργησες την πρώτη έννοια στο Ennoia.",true);
+ nextAfter(900);
+}
+
+/* common finished map */
+function line(x,y,w,deg){return `<div class="map-line" style="left:${x}px;top:${y}px;width:${w}px;transform:rotate(${deg}deg)"></div>`}
+function basicMap(extra=""){
+ return `
+  <svg class="map-svg" viewBox="0 0 950 430" preserveAspectRatio="none" aria-hidden="true">
+    <defs>
+      <marker id="finishedMapArrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+        <path d="M 0 0 L 10 5 L 0 10 z" fill="#7a8798"></path>
+      </marker>
+    </defs>
+    <line x1="465" y1="99" x2="178" y2="300" marker-end="url(#finishedMapArrow)"></line>
+    <line x1="465" y1="99" x2="465" y2="300" marker-end="url(#finishedMapArrow)"></line>
+    <line x1="465" y1="99" x2="738" y2="300" marker-end="url(#finishedMapArrow)"></line>
+  </svg>
+
+  <div class="cm-node main map-selectable" id="nodeAnimals" style="left:397px;top:45px">Ζώα</div>
+
+  <div class="cm-linklabel on-arrow map-selectable" id="nodeLinkFarm" style="left:322px;top:200px">χωρίζονται σε</div>
+  <div class="cm-linklabel on-arrow map-selectable" id="nodeLinkForest" style="left:465px;top:200px">χωρίζονται σε</div>
+  <div class="cm-linklabel on-arrow map-selectable" id="nodeLinkPets" style="left:603px;top:200px">χωρίζονται σε</div>
+
+  <div class="cm-node child map-selectable" id="nodeFarm" style="left:110px;top:300px">Ζώα της Φάρμας</div>
+  <div class="cm-node child map-selectable" id="nodeForest" style="left:397px;top:300px">Ζώα του Δάσους</div>
+  <div class="cm-node child map-selectable" id="nodePets" style="left:670px;top:300px">Κατοικίδια</div>
+  ${extra}`;
+}
+
+/* Stage 3 */
+function stage3(){
+ firstLinkDropped=false;
+ const canvas=`
+  <div class="cm-node main" style="left:390px;top:70px">Ζώα
+   <div class="cap" id="animalsCap" draggable="true" ondragstart="capStart(event,'first')"><span class="arr">↙</span><span class="arr">↘</span></div>
+  </div>
+  <div class="drop-target" id="firstTarget" style="left:390px;top:270px"
+    ondragover="targetOver(event)" ondragleave="targetLeave(event)" ondrop="dropFirst(event)">Σύρε εδώ το «καπελάκι»</div>`;
+ document.getElementById("card").innerHTML=ennoiaShell(canvas);
+}
+function capStart(ev,type){ev.dataTransfer.setData("text/plain",type);ev.dataTransfer.effectAllowed="copy"}
+function targetOver(ev){ev.preventDefault();ev.currentTarget.classList.add("over")}
+function targetLeave(ev){ev.currentTarget.classList.remove("over")}
+function dropFirst(ev){
+ ev.preventDefault();ev.currentTarget.classList.remove("over");
+ if(ev.dataTransfer.getData("text/plain")!=="first"||firstLinkDropped)return;
+ firstLinkDropped=true;
+ document.getElementById("firstTarget").remove();
+ const canvas=document.getElementById("ennoiaCanvas");
+ canvas.insertAdjacentHTML("beforeend",`
+  <svg class="map-svg" viewBox="0 0 950 430" preserveAspectRatio="none" aria-hidden="true">
+   <defs>
+    <marker id="stage3Arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+     <path d="M 0 0 L 10 5 L 0 10 z" fill="#7a8798"></path>
+    </marker>
+   </defs>
+   <line x1="460" y1="124" x2="460" y2="330" marker-end="url(#stage3Arrow)"></line>
+  </svg>
+  <div class="cm-linklabel on-arrow" style="left:460px;top:227px"><input id="linkInput" style="width:120px;border:0;text-align:center;font-weight:900;background:#f7f8fb" placeholder="Σύνδεση"></div>
+  <div class="cm-node child" style="left:368px;top:330px"><input id="farmInput" style="width:145px;border:0;text-align:center;font-weight:900" placeholder="Νέα έννοια"></div>
+  <div class="entry-panel"><strong>Σύνδεση:</strong> «χωρίζονται σε»<br><strong>Νέα έννοια:</strong> «Ζώα της Φάρμας»<button onclick="checkFirstLink()">Έλεγχος</button></div>`);
+ document.getElementById("linkInput").focus();
+}
+function checkFirstLink(){
+ const link=norm(document.getElementById("linkInput")?.value);
+ const farm=norm(document.getElementById("farmInput")?.value);
+ if(link!=="χωρίζονται σε"){setFeedback("Στο βέλος γράψε ακριβώς «χωρίζονται σε».",false);return}
+ if(farm!=="Ζώα της Φάρμας"){setFeedback("Η νέα έννοια πρέπει να γραφτεί ακριβώς ως «Ζώα της Φάρμας».",false);return}
+ setFeedback("Σωστά! Έφτιαξες την πρώτη σύνδεση.",true);nextAfter(900);
+}
+
+/* Stage 4 */
+function stage4(){
+ expandDropped={forest:false,pets:false};
+ const canvas=`
+  <svg class="map-svg" id="stage4Svg" viewBox="0 0 950 430" preserveAspectRatio="none" aria-hidden="true">
+    <defs>
+      <marker id="stage4Arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+        <path d="M 0 0 L 10 5 L 0 10 z" fill="#7a8798"></path>
+      </marker>
+    </defs>
+    <line x1="465" y1="99" x2="178" y2="300" marker-end="url(#stage4Arrow)"></line>
+  </svg>
+
+  <div class="cm-node main" style="left:397px;top:45px">Ζώα
+    <div class="cap" id="linkCap" draggable="true" ondragstart="capStart(event,'branch')">
+      <span class="arr">↙</span><span class="arr">↘</span>
+    </div>
+  </div>
+
+  <div class="cm-linklabel on-arrow" style="left:322px;top:200px">χωρίζονται σε</div>
+  <div class="cm-node child" style="left:110px;top:300px">Ζώα της Φάρμας</div>
+
+  <div class="drop-target" id="forestTarget" style="left:375px;top:300px"
+    ondragover="targetOver(event)" ondragleave="targetLeave(event)" ondrop="dropBranch(event,'forest')">Νέα έννοια</div>
+
+  <div class="drop-target" id="petsTarget" style="left:650px;top:300px"
+    ondragover="targetOver(event)" ondragleave="targetLeave(event)" ondrop="dropBranch(event,'pets')">Νέα έννοια</div>`;
+ document.getElementById("card").innerHTML=ennoiaShell(canvas);
+}
+
+function dropBranch(ev,type){
+ ev.preventDefault();ev.currentTarget.classList.remove("over");
+ if(ev.dataTransfer.getData("text/plain")!=="branch"||expandDropped[type])return;
+
+ expandDropped[type]=true;
+
+ const target=document.getElementById(type+"Target");
+ const style=type==="forest"
+   ?"left:375px;top:300px;width:180px"
+   :"left:650px;top:300px;width:180px";
+ const inputId=type+"Input";
+
+ target.outerHTML=`<div class="cm-node child" style="${style}">
+   <input id="${inputId}" style="width:150px;border:0;text-align:center;font-weight:900;font-size:16px" placeholder="Νέα έννοια">
+ </div>`;
+
+ const svg=document.getElementById("stage4Svg");
+ if(svg){
+   svg.insertAdjacentHTML("beforeend",
+     type==="forest"
+       ? '<line x1="465" y1="99" x2="465" y2="300" marker-end="url(#stage4Arrow)"></line>'
+       : '<line x1="465" y1="99" x2="740" y2="300" marker-end="url(#stage4Arrow)"></line>'
+   );
+ }
+
+ const canvas=document.getElementById("ennoiaCanvas");
+ if(type==="forest"){
+   canvas.insertAdjacentHTML("beforeend",
+     '<div class="cm-linklabel on-arrow" style="left:465px;top:200px">χωρίζονται σε</div>');
+ }else{
+   canvas.insertAdjacentHTML("beforeend",
+     '<div class="cm-linklabel on-arrow" style="left:603px;top:200px">χωρίζονται σε</div>');
+ }
+
+ if(expandDropped.forest&&expandDropped.pets){
+  canvas.insertAdjacentHTML("beforeend",
+   `<div class="entry-panel stage4-guide"><strong>Γράψε τις δύο νέες έννοιες:</strong><br>«Ζώα του Δάσους» και «Κατοικίδια».<button onclick="checkBranches()">Έλεγχος</button></div>`);
+ }
+}
+
+function checkBranches(){
+ const forest=norm(document.getElementById("forestInput")?.value);
+ const pets=norm(document.getElementById("petsInput")?.value);
+ const okA=forest==="Ζώα του Δάσους"&&pets==="Κατοικίδια";
+ const okB=forest==="Κατοικίδια"&&pets==="Ζώα του Δάσους";
+ if(!okA&&!okB){setFeedback("Γράψε ακριβώς τις έννοιες «Ζώα του Δάσους» και «Κατοικίδια».",false);return}
+ setFeedback("Μπράβο! Ο εννοιολογικός χάρτης ολοκληρώθηκε.",true);nextAfter(900);
+}
+
+/* Stage 5 */
+function stage5(){
+ identified=new Set();
+ document.getElementById("card").innerHTML=ennoiaShell(basicMap());
+ ["nodeAnimals","nodeFarm","nodeForest","nodePets"].forEach(id=>document.getElementById(id).onclick=()=>identifyConcept(id));
+ ["nodeLinkFarm","nodeLinkForest","nodeLinkPets"].forEach(id=>document.getElementById(id).onclick=()=>wrongConcept(id));
+}
+function identifyConcept(id){
+ if(identified.has(id))return;
+ identified.add(id);document.getElementById(id).classList.add("sel");
+ if(identified.size<4)setFeedback(`Σωστά! Βρήκες ${identified.size} από τις 4 έννοιες.`,true);
+ else{setFeedback("Μπράβο! Βρήκες και τις τέσσερις έννοιες.",true);nextAfter(950)}
+}
+function wrongConcept(id){
+ const el=document.getElementById(id);el.classList.add("wrongflash");setTimeout(()=>el.classList.remove("wrongflash"),800);
+ setFeedback("Το «χωρίζονται σε» είναι η σύνδεση που βρίσκεται πάνω στο βέλος, όχι έννοια.",false);
+}
+
+/* Stage 6 */
+function stage6(){
+ document.getElementById("card").innerHTML=ennoiaShell(basicMap());
+ ["nodeAnimals","nodeFarm","nodeForest","nodePets","nodeLinkFarm","nodeLinkForest","nodeLinkPets"].forEach(id=>document.getElementById(id).onclick=()=>mainConceptAns(id));
+}
+function mainConceptAns(id){
+ if(id!=="nodeAnimals"){setFeedback("Η κύρια έννοια είναι η πάνω πάνω έννοια, από την οποία ξεκινούν οι άλλες.",false);return}
+ document.getElementById(id).classList.add("sel");
+ setFeedback("Σωστά! Η κύρια έννοια είναι «Ζώα».",true);nextAfter(900);
+}
+
+/* Stage 7 */
+const quizQs=[
+ {q:"Οι έννοιες σε έναν εννοιολογικό χάρτη είναι συνήθως…",correct:"ουσιαστικά",wrong:["ρήματα","αριθμοί"]},
+ {q:"Αυτό που γράφουμε πάνω στο βέλος που συνδέει δύο έννοιες είναι συνήθως…",correct:"ρήμα ή περιέχει ρήμα",wrong:["μόνο αριθμός","μόνο χρώμα"]}
+];
+function stage7(){
+ quizIndex=0;quizOrder=shuffled(quizQs);drawQuiz();
+}
+function drawQuiz(){
+ const q=quizOrder[quizIndex];
+ const opts=shuffled([{ok:true,txt:q.correct},...q.wrong.map(txt=>({ok:false,txt}))]);
+ answerOrders.quiz=opts;
+ document.getElementById("card").innerHTML=`
+  <div class="quiz">
+   <div class="quiz-progress"><span style="width:${(quizIndex/quizOrder.length)*100}%"></span></div>
+   <div class="quiz-q">${q.q}</div>
+   <div class="row">${opts.map((o,i)=>`<button class="choice" onclick="quizAns(${i})">${o.txt}</button>`).join("")}</div>
+   <div class="smallhelp">${quizIndex+1} από ${quizOrder.length}</div>
+  </div>`;
+}
+function quizAns(i){
+ if(!answerOrders.quiz[i].ok){setFeedback("Δοκίμασε ξανά.",false);return}
+ quizIndex++;
+ if(quizIndex<quizOrder.length){
+  setFeedback("Σωστά! Πάμε στην επόμενη ερώτηση.",true);
+  setTimeout(()=>{clearFeedback();drawQuiz()},650);
+ }else{
+  setFeedback("Μπράβο! Ολοκλήρωσες την τελική δοκιμή.",true);nextAfter(900);
+ }
+}
+
+
+/* Stage 8 - Νέος χάρτης: Μέσα Μεταφοράς */
+const transportConcepts=[
+ {id:"main",label:"Μέσα Μεταφοράς",target:"main",phase:1},
+ {id:"land",label:"Στεριά",target:"land",phase:1},
+ {id:"sea",label:"Θάλασσα",target:"sea",phase:1},
+ {id:"air",label:"Αέρας",target:"air",phase:1},
+
+ {id:"car",label:"Αυτοκίνητο",target:"car",phase:2},
+ {id:"truck",label:"Φορτηγό",target:"truck",phase:2},
+ {id:"train",label:"Τρένο",target:"train",phase:2},
+ {id:"ship",label:"Πλοίο",target:"ship",phase:2},
+ {id:"sub",label:"Υποβρύχιο",target:"sub",phase:2},
+ {id:"plane",label:"Αεροπλάνο",target:"plane",phase:2},
+ {id:"heli",label:"Ελικόπτερο",target:"heli",phase:2}
+];
+
+const transportRelations=[
+ {id:"splitMain",label:"χωρίζονται σε",kind:"split",phase:3},
+ {id:"incLand",label:"περιλαμβάνει",kind:"include",phase:3},
+ {id:"incSea",label:"περιλαμβάνει",kind:"include",phase:3},
+ {id:"incAir",label:"περιλαμβάνει",kind:"include",phase:3}
+];
+
+const transportSlots={
+ main:{x:305,y:18,w:160,cls:"main-slot"},
+
+ land:{x:78,y:125,w:125,cls:"cat-slot"},
+ sea:{x:327,y:125,w:125,cls:"cat-slot"},
+ air:{x:576,y:125,w:125,cls:"cat-slot"},
+
+ car:{x:0,y:330,w:92,cls:"mean-slot"},
+ truck:{x:96,y:330,w:92,cls:"mean-slot"},
+ train:{x:192,y:330,w:92,cls:"mean-slot"},
+
+ ship:{x:320,y:330,w:92,cls:"mean-slot"},
+ sub:{x:416,y:330,w:92,cls:"mean-slot"},
+
+ plane:{x:584,y:330,w:92,cls:"mean-slot"},
+ heli:{x:680,y:330,w:92,cls:"mean-slot"}
+};
+
+const transportRelSlots={
+ rMain:{x:385,y:92,kind:"split"},
+ rLand:{x:141,y:220,kind:"include"},
+ rSea:{x:390,y:220,kind:"include"},
+ rAir:{x:639,y:220,kind:"include"}
+};
+
+function stage8(){
+ transportPhase=1;
+ transportSelected=null;
+ transportPlaced={};
+ transportLocked=new Set();
+ drawTransportStage();
+}
+
+function transportShell(inner,phase){
+ const phaseText={
+  1:"Βήμα 1 από 3 — Κύρια έννοια και κατηγορίες",
+  2:"Βήμα 2 από 3 — Μέσα μεταφοράς",
+  3:"Βήμα 3 από 3 — Συνδέσεις"
+ }[phase];
+
+ return `<div class="ennoia">
+  <div class="ennoia-top">
+   <span class="ennoia-brand"><span class="ennoia-logo"><span></span><i></i><b></b></span>Ennoia</span>
+   <span>— □ ×</span>
+  </div>
+  <div class="ennoia-menu">
+   <button class="menu-btn">Αρχείο</button><button class="menu-btn">Επεξεργασία</button>
+   <button class="menu-btn">Χάρτης</button><button class="menu-btn">Βοήθεια</button>
+  </div>
+  <div class="ennoia-toolbar">
+   <button class="toolbtn newmap" disabled>＋ Νέος χάρτης</button>
+   <span style="font-weight:900;color:#506078">${phaseText}</span>
+  </div>
+  <div class="ennoia-canvas">${inner}</div>
+ </div>`;
+}
+
+function drawTransportStage(){
+ transportSelected=null;
+
+ transportTokens=transportPhase<3
+   ? shuffled(transportConcepts.filter(x=>x.phase===transportPhase&&!transportLocked.has(x.id)))
+   : shuffled(transportRelations.filter(x=>!transportLocked.has(x.id)));
+
+ const trayTitle=transportPhase===1?"Έννοιες":
+                 transportPhase===2?"Μέσα μεταφοράς":"Συνδέσεις";
+
+ const tray=`<div class="transport-tray">
+   <div class="transport-step">Βήμα ${transportPhase} από 3</div>
+   <h3>${trayTitle}</h3>
+   <div id="transportTokens">
+    ${transportTokens.map(t=>transportTokenHTML(t)).join("")}
+   </div>
+   <div class="smallhelp">Σύρε ένα στοιχείο ή πάτησέ το και μετά πάτησε το σωστό διακεκομμένο πλαίσιο.</div>
+  </div>`;
+
+ const map=`<div class="transport-map" id="transportMap">
+   ${transportArrowSVG()}
+   ${Object.entries(transportSlots).map(([id,p])=>transportSlotHTML(id,p)).join("")}
+   ${Object.entries(transportRelSlots).map(([id,p])=>transportRelationSlotHTML(id,p)).join("")}
+   <div class="transport-tip">${transportPhase===1?"Τοποθέτησε την κύρια έννοια και τις 3 κατηγορίες.":transportPhase===2?"Τοποθέτησε κάθε μέσο στη σωστή κατηγορία.":"Τοποθέτησε μία σύνδεση για κάθε ομάδα βελών."}</div>
+  </div>`;
+
+ document.getElementById("card").innerHTML=transportShell(`<div class="transport-shell">${tray}${map}</div>`,transportPhase);
+}
+
+function transportTokenHTML(t){
+ return `<button class="transport-token" id="tt_${t.id}" draggable="true"
+   ondragstart="transportDragStart(event,'${t.id}')"
+   ondragend="transportDragEnd(event)"
+   onclick="transportPick('${t.id}')">${t.label}</button>`;
+}
+
+function transportArrowSVG(){
+ return `<svg class="transport-svg" viewBox="0 0 780 430" preserveAspectRatio="none" aria-hidden="true">
+  <defs>
+   <marker id="transportArrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+    <path d="M 0 0 L 10 5 L 0 10 z" fill="#7a8798"></path>
+   </marker>
+  </defs>
+
+  <!-- Μέσα Μεταφοράς -> κατηγορίες:
+       κοινός κορμός, μία σύνδεση στο κέντρο, μετά 3 βέλη -->
+  <line x1="385" y1="65" x2="385" y2="76"></line>
+  <line x1="385" y1="108" x2="141" y2="125" marker-end="url(#transportArrow)"></line>
+  <line x1="385" y1="108" x2="390" y2="125" marker-end="url(#transportArrow)"></line>
+  <line x1="385" y1="108" x2="639" y2="125" marker-end="url(#transportArrow)"></line>
+
+  <!-- Στεριά -> 3 μέσα:
+       κοινός κορμός, μία σύνδεση στο κέντρο, μετά 3 βέλη -->
+  <line x1="141" y1="172" x2="141" y2="204"></line>
+  <line x1="141" y1="236" x2="46" y2="330" marker-end="url(#transportArrow)"></line>
+  <line x1="141" y1="236" x2="142" y2="330" marker-end="url(#transportArrow)"></line>
+  <line x1="141" y1="236" x2="238" y2="330" marker-end="url(#transportArrow)"></line>
+
+  <!-- Θάλασσα -> 2 μέσα -->
+  <line x1="390" y1="172" x2="390" y2="204"></line>
+  <line x1="390" y1="236" x2="366" y2="330" marker-end="url(#transportArrow)"></line>
+  <line x1="390" y1="236" x2="462" y2="330" marker-end="url(#transportArrow)"></line>
+
+  <!-- Αέρας -> 2 μέσα -->
+  <line x1="639" y1="172" x2="639" y2="204"></line>
+  <line x1="639" y1="236" x2="630" y2="330" marker-end="url(#transportArrow)"></line>
+  <line x1="639" y1="236" x2="726" y2="330" marker-end="url(#transportArrow)"></line>
+ </svg>`;
+}
+
+function slotPhase(id){
+ return ["main","land","sea","air"].includes(id)?1:2;
+}
+
+function transportSlotHTML(id,p){
+ const phase=slotPhase(id);
+ const active=transportPhase===phase;
+ const filled=transportPlaced[id];
+ const inactive=!active&&!filled;
+ return `<div class="transport-slot ${p.cls} ${filled?"filled":""} ${inactive?"inactive":""}"
+   id="ts_${id}" style="left:${p.x}px;top:${p.y}px;width:${p.w}px"
+   ondragover="transportOver(event)" ondragleave="transportLeave(event)"
+   ondrop="transportDropConcept(event,'${id}')" onclick="transportTapConcept('${id}')">
+   ${filled?filled:"Έννοια"}
+  </div>`;
+}
+
+function transportRelationSlotHTML(id,p){
+ const active=transportPhase===3;
+ const filled=transportPlaced[id];
+ return `<div class="transport-relation ${filled?"filled":""} ${!active&&!filled?"inactive":""}"
+   id="tr_${id}" style="left:${p.x}px;top:${p.y}px"
+   ${active?`ondragover="transportOver(event)" ondragleave="transportLeave(event)" ondrop="transportDropRelation(event,'${id}')" onclick="transportTapRelation('${id}')"`:""}>
+   ${filled?filled:"Σύνδεση"}
+  </div>`;
+}
+
+function transportDragStart(ev,id){
+ transportSelected=id;
+ document.getElementById("tt_"+id)?.classList.add("selectedDrag");
+ if(ev.dataTransfer){ev.dataTransfer.setData("text/plain",id);ev.dataTransfer.effectAllowed="move"}
+}
+function transportDragEnd(ev){ev.currentTarget.classList.remove("selectedDrag")}
+
+function transportPick(id){
+ if(transportLocked.has(id))return;
+ document.querySelectorAll(".transport-token").forEach(x=>x.classList.remove("selectedDrag"));
+ transportSelected=transportSelected===id?null:id;
+ if(transportSelected)document.getElementById("tt_"+id)?.classList.add("selectedDrag");
+}
+
+function transportOver(ev){
+ ev.preventDefault();
+ ev.currentTarget.classList.add("over");
+}
+function transportLeave(ev){ev.currentTarget.classList.remove("over")}
+
+function transportDropConcept(ev,target){
+ ev.preventDefault();ev.currentTarget.classList.remove("over");
+ const id=(ev.dataTransfer&&ev.dataTransfer.getData("text/plain"))||transportSelected;
+ if(id)transportPlaceConcept(id,target);
+}
+function transportTapConcept(target){
+ if(transportSelected)transportPlaceConcept(transportSelected,target);
+}
+function transportPlaceConcept(id,target){
+ const item=transportConcepts.find(x=>x.id===id);
+ if(!item||item.phase!==transportPhase||transportLocked.has(id))return;
+ if(item.target!==target){
+  setFeedback("Αυτό το στοιχείο ανήκει σε διαφορετικό πλαίσιο.",false);return;
+ }
+
+ transportLocked.add(id);
+ transportPlaced[target]=item.label;
+ transportSelected=null;
+
+ const token=document.getElementById("tt_"+id);
+ if(token)token.classList.add("locked");
+
+ const slot=document.getElementById("ts_"+target);
+ if(slot){slot.textContent=item.label;slot.classList.add("filled");slot.classList.remove("inactive")}
+
+ const needed=transportConcepts.filter(x=>x.phase===transportPhase).length;
+ const done=transportConcepts.filter(x=>x.phase===transportPhase&&transportLocked.has(x.id)).length;
+
+ if(done===needed){
+  if(transportPhase===1){
+   setFeedback("Σωστά! Έβαλες την κύρια έννοια και τις τρεις κατηγορίες.",true);
+   setTimeout(()=>{transportPhase=2;clearFeedback();drawTransportStage()},850);
+  }else{
+   setFeedback("Σωστά! Όλα τα μέσα μεταφοράς βρίσκονται στη σωστή κατηγορία.",true);
+   setTimeout(()=>{transportPhase=3;clearFeedback();drawTransportStage()},850);
+  }
+ }else{
+  setFeedback("Σωστά! Συνέχισε.",true);
+ }
+}
+
+function transportDropRelation(ev,target){
+ ev.preventDefault();ev.currentTarget.classList.remove("over");
+ const id=(ev.dataTransfer&&ev.dataTransfer.getData("text/plain"))||transportSelected;
+ if(id)transportPlaceRelation(id,target);
+}
+function transportTapRelation(target){
+ if(transportSelected)transportPlaceRelation(transportSelected,target);
+}
+function transportPlaceRelation(id,target){
+ const item=transportRelations.find(x=>x.id===id);
+ const slot=transportRelSlots[target];
+ if(!item||transportPhase!==3||!slot||transportLocked.has(id))return;
+
+ if(item.kind!==slot.kind){
+  setFeedback(slot.kind==="split"
+   ?"Σε αυτή την ομάδα βελών χρειάζεται η σύνδεση «χωρίζονται σε»."
+   :"Σε αυτή την ομάδα βελών χρειάζεται η σύνδεση «περιλαμβάνει».",false);
+  return;
+ }
+
+ transportLocked.add(id);
+ transportPlaced[target]=item.label;
+ transportSelected=null;
+
+ const token=document.getElementById("tt_"+id);
+ if(token)token.classList.add("locked");
+
+ const rel=document.getElementById("tr_"+target);
+ if(rel){rel.textContent=item.label;rel.classList.add("filled")}
+
+ const done=transportRelations.filter(x=>transportLocked.has(x.id)).length;
+ if(done===transportRelations.length){
+  setFeedback("Μπράβο! Δημιούργησες μόνος σου έναν νέο εννοιολογικό χάρτη.",true);
+  const map=document.getElementById("transportMap");
+  if(map)map.insertAdjacentHTML("beforeend",
+   `<div class="transport-complete">✓ Ο χάρτης «Μέσα Μεταφοράς» ολοκληρώθηκε!</div>`);
+  nextAfter(1300);
+ }else{
+  setFeedback("Σωστά! Η σύνδεση μπήκε στην κατάλληλη ομάδα βελών.",true);
+ }
+}
+
+
+/* Stage 9 */
+function stage9(){
+ selfChoice=null;
+ document.getElementById("card").innerHTML=`
+  <div class="finalBox">
+   <div class="stars">⭐ ⭐ ⭐</div>
+   <div class="summary">
+    Έμαθες να δημιουργείς έναν απλό εννοιολογικό χάρτη στο Ennoia,
+    να ξεχωρίζεις τις έννοιες από τις συνδέσεις, να αναγνωρίζεις την κύρια έννοια
+    και να οργανώνεις νέες έννοιες σε έναν χάρτη όπως τα «Μέσα Μεταφοράς».
+   </div>
+   <div class="faces">
+    <button class="face" onclick="selfPick(1,this)"><span>🙂</span>Θέλω λίγη εξάσκηση</button>
+    <button class="face" onclick="selfPick(2,this)"><span>😊</span>Τα κατάφερα</button>
+    <button class="face" onclick="selfPick(3,this)"><span>🤩</span>Τα κατάφερα πολύ καλά</button>
+   </div>
+   <button class="check" onclick="finish()">Ολοκλήρωση</button>
+   <button class="repeatBtn" onclick="restartAll()">↻ Επανάληψη δραστηριότητας</button>
+  </div>`;
+}
+function selfPick(v,e){
+ selfChoice=v;document.querySelectorAll(".face").forEach(x=>x.classList.remove("sel"));e.classList.add("sel");
+}
+function finish(){
+ const f=document.getElementById("feedback");
+ if(!selfChoice){f.className="feedback bad";f.textContent="Διάλεξε πρώτα πώς νιώθεις για όσα έμαθες.";return}
+ completeFinalDot();f.className="feedback good";f.textContent="Μπράβο! Ολοκλήρωσες το Μάθημα 17.";
+}
+function restartAll(){
+ s=0;selfChoice=null;answerOrders={};newMapReady=false;firstNodeCreated=false;
+ firstLinkDropped=false;expandDropped={forest:false,pets:false};identified=new Set();quizIndex=0;quizOrder=[];
+ transportPhase=1;transportSelected=null;transportPlaced={};transportLocked=new Set();transportTokens=[];render();
+}
+function help(){
+ const idx=Math.min(s,steps.length-1);
+ document.getElementById("helpText").textContent=steps[idx].h;
+ document.getElementById("modal").classList.add("show");
+}
+function closeHelp(){document.getElementById("modal").classList.remove("show")}
+render();
+</script>
+
+
+<footer class="nk-license" aria-label="Πληροφορίες δημιουργού και άδειας χρήσης">
+  <div><strong>Created by Nikos Kalakos · © 2026</strong></div>
+  <div>Original educational content and simulation design licensed under <a class="cc-badge" href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank" rel="license noopener noreferrer">CC BY-NC 4.0</a>.</div>
+  <div>Source code © 2026 Nikos Kalakos.</div>
+  <div>Third-party and textbook materials remain subject to the rights and licences of their respective copyright holders.</div>
+</footer></body>
+</html>

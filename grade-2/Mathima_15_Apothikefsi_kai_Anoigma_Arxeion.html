@@ -1,0 +1,734 @@
+<!--
+ICT Educational Simulation
+Created by Nikos Kalakos
+Copyright © 2026 Nikos Kalakos
+
+Original educational content and simulation design licensed under CC BY-NC 4.0.
+Source code © 2026 Nikos Kalakos.
+Third-party and textbook materials remain subject to the rights and licences of their respective copyright holders.
+-->
+<!doctype html>
+<html lang="el">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="author" content="Nikos Kalakos">
+<meta name="copyright" content="© 2026 Nikos Kalakos">
+<meta name="license" content="Original educational content and simulation design: CC BY-NC 4.0; source code © 2026 Nikos Kalakos; third-party and textbook materials excluded.">
+<title>Μάθημα 15 - Αποθήκευση και άνοιγμα αρχείων</title>
+<style>
+:root{
+  --unit-gold:#D19E11;
+  --unit-gold-dark:#A97D08;
+  --unit-cyan:#00A2E3;
+  --unit-cyan-dark:#007EB3;
+  --ink:#25334a;
+  --line:#d5dbe6;
+  --good:#eef7dc;
+  --bad:#fff0ed;
+  --soft:#fffaf0;
+  --athena:#5b4eb5;
+  --athena-dark:#463a96;
+  --shadow:0 10px 28px rgba(37,51,74,.12);
+}
+*{box-sizing:border-box}
+body{margin:0;background:#f7f9fb;color:var(--ink);font-family:Arial,"Noto Sans",sans-serif}
+button,input{font:inherit}
+button{cursor:pointer}
+.app{max-width:1180px;margin:auto;padding:16px}
+.top{
+  background:#fff;border:3px solid #ead9a6;border-radius:24px;padding:14px 18px;
+  display:flex;align-items:center;justify-content:space-between;box-shadow:var(--shadow)
+}
+.top h1{margin:0;font-size:clamp(28px,4vw,41px)}
+.badge{
+  width:70px;height:70px;border-radius:22px;background:var(--unit-gold);color:#fff;
+  display:grid;place-items:center;font-size:31px;font-weight:900;
+  box-shadow:inset 0 -5px 0 rgba(0,0,0,.10)
+}
+.path{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin:16px 0}
+.dot{
+  width:44px;height:44px;border-radius:50%;display:grid;place-items:center;
+  border:3px solid #aeb7c7;background:#fff;color:#65718a;font-weight:900;font-size:20px
+}
+.dot.active{background:var(--unit-cyan);border-color:var(--unit-cyan-dark);color:#fff;transform:scale(1.1)}
+.dot.done{background:var(--unit-gold);border-color:var(--unit-gold-dark);color:#fff}
+.panel{
+  min-height:710px;background:#fff;border:3px solid #ead9a6;border-radius:28px;
+  padding:24px;box-shadow:var(--shadow)
+}
+.step-head{display:flex;justify-content:space-between;gap:12px;align-items:flex-start}
+.step-head h2{margin:0;font-size:clamp(25px,4vw,37px)}
+.help{
+  background:#edf9ff;color:#005b82;border:3px solid #80d4f3;
+  border-radius:16px;padding:10px 17px;font-weight:900
+}
+.instruction{
+  max-width:970px;margin:14px auto 18px;text-align:center;font-size:clamp(19px,2.3vw,24px);
+  font-weight:900;line-height:1.38
+}
+.card{
+  max-width:1040px;margin:auto;border:3px solid #ead9a6;border-radius:28px;
+  background:#fff;padding:22px;min-height:500px
+}
+.feedback{
+  display:none;max-width:860px;margin:16px auto 0;padding:12px 18px;border-radius:17px;
+  text-align:center;font-weight:900;font-size:20px
+}
+.feedback.good{display:block;background:var(--good);border:2px solid #9dbd57}
+.feedback.bad{display:block;background:var(--bad);border:2px solid #e5a59b}
+.check{
+  display:block;margin:18px auto 0;padding:13px 28px;border:0;border-radius:16px;
+  background:var(--unit-gold);color:#fff;font-size:21px;font-weight:900;
+  box-shadow:0 5px 0 var(--unit-gold-dark)
+}
+.note{
+  max-width:790px;margin:14px auto;padding:13px 17px;border-left:8px solid var(--unit-gold);
+  border-radius:12px;background:#fff7dc;font-weight:900
+}
+.smallhelp{text-align:center;font-size:14px;color:#6d7890;font-weight:800;margin-top:10px}
+.row{display:flex;gap:14px;justify-content:center;align-items:stretch;flex-wrap:wrap}
+.choice{
+  min-width:205px;max-width:285px;min-height:135px;border:3px solid var(--line);
+  border-radius:22px;background:#fff;padding:15px;font-weight:900;font-size:18px;
+  display:flex;flex-direction:column;justify-content:center;align-items:center;gap:10px
+}
+.choice:hover{transform:translateY(-2px);box-shadow:var(--shadow)}
+.choice.selected{border-color:var(--unit-gold);background:#fff7dc;box-shadow:inset 0 0 0 2px #efd792}
+.choice .big{font-size:50px}
+
+/* Generic drag/drop */
+.drag-layout{display:grid;grid-template-columns:310px 1fr;gap:20px;align-items:start}
+.tray{
+  border:3px solid #cbd1df;border-radius:20px;padding:14px;background:#f9fafe;min-height:320px
+}
+.tray h3,.targets h3{text-align:center;margin:0 0 12px;color:#684f07}
+.dragitem{
+  user-select:none;touch-action:none;border:3px solid #9ea8ca;border-radius:15px;background:#fff;
+  padding:11px 12px;margin:9px 0;font-weight:900;box-shadow:0 3px 0 #d5d9e8;cursor:grab;
+  display:flex;align-items:center;gap:10px
+}
+.dragitem .ico{font-size:30px}
+.dragitem.selectedDrag{outline:4px solid var(--unit-gold);background:#fff7dc}
+.dragitem.locked{opacity:.45;cursor:default}
+.targets{display:grid;gap:13px}
+.dropzone{
+  min-height:105px;border:4px dashed #8dcfe8;border-radius:22px;background:#f8fdff;
+  padding:14px;display:flex;align-items:center;gap:13px
+}
+.dropzone.over{background:#eaf8ff;border-color:var(--unit-cyan)}
+.dropzone.correct{border-style:solid;border-color:var(--unit-gold);background:#fff8df}
+.zone-icon{font-size:42px;min-width:55px;text-align:center}
+.zone-title{min-width:140px;font-weight:900}
+.zone-answer{font-weight:800}
+
+/* File icons */
+.file-icon{
+  width:50px;height:58px;border-radius:8px;background:#fff;border:3px solid #8290a3;
+  position:relative;display:grid;place-items:center;font-size:26px;color:#38445b;
+}
+.file-icon:before{
+  content:"";position:absolute;right:-3px;top:-3px;width:18px;height:18px;background:#e7ebf1;
+  border-left:3px solid #8290a3;border-bottom:3px solid #8290a3;border-radius:0 7px 0 6px
+}
+.file-icon.text{color:#266ba0}
+.file-icon.image{color:#34865b}
+.file-icon.audio{color:#b4427b}
+
+/* Webcam / scanner CSS icons */
+.webcamIcon{
+  display:inline-block;width:42px;height:29px;border:4px solid #57616e;border-radius:10px;
+  background:#cfd6df;position:relative;vertical-align:middle
+}
+.webcamIcon:before{
+  content:"";position:absolute;width:11px;height:11px;border-radius:50%;background:#596574;
+  border:3px solid #f3f5f8;left:50%;top:50%;transform:translate(-50%,-50%)
+}
+.webcamIcon:after{
+  content:"";position:absolute;width:25px;height:5px;border-radius:4px;background:#57616e;
+  left:50%;bottom:-12px;transform:translateX(-50%)
+}
+.scannerIcon{
+  display:inline-block;width:46px;height:30px;border-radius:7px;background:#929daa;
+  border:4px solid #616c79;position:relative;vertical-align:middle
+}
+.scannerIcon:before{
+  content:"";position:absolute;left:5px;right:5px;top:-14px;height:14px;background:#e9edf1;
+  border:3px solid #7d8793;border-bottom:0;border-radius:4px 4px 0 0;transform:skewX(-14deg)
+}
+
+/* Save icon question */
+.icon-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;max-width:850px;margin:auto}
+.icon-choice{
+  min-height:150px;border:3px solid #cfd6e3;border-radius:20px;background:#fff;padding:14px;
+  font-weight:900;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px
+}
+.saveIcon{
+  width:64px;height:64px;border-radius:7px;background:#49586a;border:5px solid #26313d;
+  position:relative;display:inline-block;box-shadow:inset 0 -5px 0 rgba(0,0,0,.14)
+}
+.saveIcon:before{
+  content:"";position:absolute;left:9px;right:9px;top:5px;height:24px;
+  background:#dce4ea;border:3px solid #8e9aa5;border-radius:2px
+}
+.saveIcon:after{
+  content:"";position:absolute;left:12px;right:12px;bottom:6px;height:23px;
+  background:#f6f7f8;border:3px solid #9aa5af;border-radius:2px
+}
+.saveIcon .disk-notch{
+  position:absolute;right:9px;top:7px;width:10px;height:19px;background:#27323e;border-radius:1px;z-index:2
+}
+.saveIcon .disk-label-line{
+  position:absolute;left:18px;right:18px;bottom:15px;height:3px;background:#b9c2ca;z-index:2
+}
+.saveIcon.small{
+  width:29px;height:29px;border-width:3px;border-radius:4px;box-shadow:inset 0 -3px 0 rgba(0,0,0,.14)
+}
+.saveIcon.small:before{
+  left:4px;right:4px;top:2px;height:10px;border-width:2px
+}
+.saveIcon.small:after{
+  left:5px;right:5px;bottom:2px;height:10px;border-width:2px
+}
+.saveIcon.small .disk-notch{
+  right:4px;top:3px;width:5px;height:8px
+}
+.saveIcon.small .disk-label-line{
+  left:9px;right:9px;bottom:6px;height:2px
+}
+
+.floppySvg{display:block;width:72px;height:72px}
+.floppySvg.small{width:30px;height:30px}
+.floppySvg .disk-body{fill:#4f6b86;stroke:#26384a;stroke-width:4}
+.floppySvg .disk-top{fill:#dce8f1;stroke:#26384a;stroke-width:3}
+.floppySvg .disk-slot{fill:#26384a}
+.floppySvg .disk-label{fill:#ffffff;stroke:#26384a;stroke-width:3}
+.floppySvg .disk-line{stroke:#8aa2b5;stroke-width:3;stroke-linecap:round}
+
+.folderArt{
+  width:70px;height:52px;background:#e9bf3e;border:4px solid #a98212;border-radius:8px;position:relative
+}
+.folderArt:before{
+  content:"";position:absolute;left:7px;top:-13px;width:30px;height:14px;background:#e9bf3e;
+  border:4px solid #a98212;border-bottom:0;border-radius:7px 7px 0 0
+}
+
+/* AthenaOS + Graphis */
+.os{
+  max-width:930px;margin:auto;border:5px solid #3f475c;border-radius:24px;overflow:hidden;
+  background:#1f2940;box-shadow:0 12px 28px rgba(20,28,45,.24)
+}
+.os-top{
+  height:38px;background:#20283b;color:#fff;display:flex;align-items:center;justify-content:space-between;
+  padding:0 12px;font-size:14px;font-weight:900
+}
+.brand{display:flex;align-items:center;gap:8px}
+.owl{width:25px;height:25px;border-radius:9px 9px 12px 12px;background:var(--athena);position:relative}
+.owl:before,.owl:after{content:"";position:absolute;top:6px;width:6px;height:6px;border-radius:50%;background:#fff}
+.owl:before{left:5px}.owl:after{right:5px}
+.owl span{position:absolute;left:10px;top:13px;width:0;height:0;border-left:3px solid transparent;border-right:3px solid transparent;border-top:6px solid #f2c84a}
+.desktop{
+  position:relative;height:500px;overflow:hidden;
+  background:
+    radial-gradient(circle at 72% 18%,rgba(255,255,255,.10),transparent 25%),
+    linear-gradient(140deg,#5964a6 0%,#3f477b 50%,#273453 100%)
+}
+.taskbar{
+  position:absolute;left:0;right:0;bottom:0;height:50px;background:rgba(28,34,50,.94);
+  display:flex;align-items:center;gap:9px;padding:0 12px;z-index:25
+}
+.task-item{height:36px;min-width:45px;border:2px solid #737d9b;border-radius:10px;background:#414b67;color:#fff;display:grid;place-items:center;padding:0 8px;font-weight:900}
+.window{
+  position:absolute;left:80px;top:45px;width:670px;height:380px;background:#fff;border:4px solid #313b54;
+  border-radius:14px;overflow:hidden;box-shadow:0 13px 28px rgba(0,0,0,.28);z-index:12
+}
+.titlebar{
+  height:42px;background:var(--athena);color:#fff;display:flex;align-items:center;justify-content:space-between;
+  padding:0 8px 0 13px;font-weight:900
+}
+.window-buttons{display:flex;gap:5px}
+.winbtn{width:34px;height:29px;border:0;border-radius:7px;background:#f6f4ff;color:#443b81;font-weight:900}
+.winbtn.close{background:#f7d9df;color:#9c2f40}
+.menurow{
+  height:38px;background:#f2f3f7;border-bottom:2px solid #d8dce4;display:flex;align-items:center;gap:3px;
+  padding:0 8px;font-size:14px
+}
+.menuBtn{border:0;background:transparent;padding:7px 10px;border-radius:7px}
+.menuBtn.open{background:#e7eaf0}
+.toolbar{height:45px;background:#fafbfc;border-bottom:2px solid #e0e4ea;display:flex;align-items:center;gap:8px;padding:0 10px}
+.toolbtn{
+  width:42px;height:38px;border:2px solid #b8c0cc;border-radius:8px;background:#fff;
+  display:grid;place-items:center;padding:0;overflow:hidden
+}
+.document{height:calc(100% - 125px);background:#eceff4;padding:16px}
+.paper{
+  width:78%;height:92%;margin:auto;background:#fff;box-shadow:0 3px 8px rgba(0,0,0,.12);
+  padding:22px;font-size:20px;color:#35445d
+}
+.dropdown{
+  position:absolute;left:8px;top:80px;width:175px;background:#fff;border:3px solid #8f9aaa;border-radius:10px;
+  box-shadow:0 7px 16px rgba(0,0,0,.20);z-index:30;overflow:hidden
+}
+.dropitem{
+  width:100%;border:0;background:#fff;text-align:left;padding:10px 12px;font-weight:900
+}
+.dropitem:hover{background:#eef8ff}
+.dialog{
+  position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);
+  width:455px;background:#fff;border:4px solid #485267;border-radius:18px;box-shadow:0 15px 32px rgba(0,0,0,.34);
+  z-index:40;overflow:hidden
+}
+.dialog-title{background:#e9edf4;padding:11px 14px;font-weight:900;border-bottom:2px solid #cdd3dd}
+.dialog-body{padding:16px}
+.dialog input{
+  width:100%;padding:11px 12px;border:3px solid #9ca8b8;border-radius:11px;font-size:18px;margin:7px 0
+}
+.dialog-actions{display:flex;justify-content:flex-end;gap:9px;margin-top:12px}
+.dialog-actions button{
+  border:0;border-radius:10px;padding:9px 16px;background:var(--unit-cyan);color:#fff;font-weight:900
+}
+.file-browser{
+  height:230px;border:3px solid #c8d0da;border-radius:12px;background:#fafcfe;padding:10px;
+  display:grid;grid-template-columns:repeat(3,1fr);gap:10px
+}
+.browser-file{
+  border:3px solid transparent;border-radius:12px;background:#fff;padding:8px;text-align:center;font-weight:900
+}
+.browser-file:hover,.browser-file.sel{border-color:var(--unit-gold);background:#fff7dc}
+.browser-file .ficon{font-size:39px;display:block;margin-bottom:7px}
+.status{
+  position:absolute;left:18px;bottom:62px;background:#fff;border:3px solid var(--unit-gold);
+  border-radius:13px;padding:8px 12px;font-weight:900;z-index:30
+}
+
+/* Final challenge */
+.challenge{
+  max-width:900px;margin:auto;border:4px solid var(--unit-cyan);border-radius:24px;background:#f8fdff;padding:20px
+}
+.challenge-progress{height:14px;background:#e7edf1;border-radius:9px;overflow:hidden;max-width:520px;margin:0 auto 18px}
+.challenge-progress span{display:block;height:100%;background:var(--unit-gold);width:0;transition:.25s}
+.challenge-q{font-size:24px;font-weight:900;text-align:center;margin-bottom:18px}
+
+/* Final */
+.finalBox{max-width:780px;margin:auto;text-align:center}
+.stars{font-size:58px;margin:18px}
+.summary{
+  padding:20px;border:4px solid var(--unit-cyan);background:#eefaff;border-radius:22px;
+  font-size:21px;font-weight:900;line-height:1.45
+}
+.faces{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:18px}
+.face{
+  min-height:130px;border:3px solid var(--line);border-radius:20px;background:#fff;
+  font-weight:900;font-size:17px
+}
+.face span{display:block;font-size:52px;margin-bottom:7px}
+.face.sel{border-color:var(--unit-gold);background:#fff7dc}
+.repeatBtn{
+  display:block;margin:15px auto 0;padding:12px 22px;border:0;border-radius:15px;
+  background:var(--unit-cyan);color:#fff;font-size:19px;font-weight:900;
+  box-shadow:0 5px 0 var(--unit-cyan-dark)
+}
+.modal{
+  position:fixed;inset:0;background:#24344d99;display:none;place-items:center;padding:18px;z-index:60
+}
+.modal.show{display:grid}
+.modal-box{
+  max-width:620px;background:#fff;border-radius:24px;border:4px solid var(--unit-gold);
+  padding:22px;text-align:center;font-size:20px
+}
+.modal-box button{
+  padding:10px 20px;border:0;border-radius:13px;background:var(--unit-gold);
+  color:#fff;font-weight:900
+}
+@media(max-width:850px){
+  .drag-layout{grid-template-columns:1fr}
+  .icon-grid,.faces{grid-template-columns:1fr}
+  .window{left:4%;width:92%}
+}
+</style>
+
+
+<style id="nk-license-style">
+.nk-license{max-width:1100px;margin:14px auto 24px;padding:10px 16px;text-align:center;font:13px/1.45 Arial,"Noto Sans",sans-serif;color:#4e657c}
+.nk-license a{color:inherit;text-decoration:underline;text-underline-offset:2px}
+.nk-license .cc-badge{display:inline-block;margin:0 4px;padding:2px 7px;border:1px solid #8aa0b8;border-radius:6px;background:#fff;font-weight:700;white-space:nowrap}
+</style></head>
+<body>
+<div class="app">
+  <div class="top">
+    <h1>Αποθήκευση και άνοιγμα αρχείων</h1>
+    <div class="badge">15</div>
+  </div>
+  <div class="path" id="path"></div>
+
+  <main class="panel">
+    <div class="step-head">
+      <h2 id="title"></h2>
+      <button class="help" onclick="help()">❓ Βοήθεια</button>
+    </div>
+    <div class="instruction" id="inst"></div>
+    <div class="card" id="card"></div>
+    <div class="feedback" id="feedback"></div>
+  </main>
+</div>
+
+<div class="modal" id="modal">
+  <div class="modal-box">
+    <h2>💡 Βοήθεια</h2>
+    <p id="helpText"></p>
+    <button onclick="closeHelp()">Εντάξει</button>
+  </div>
+</div>
+
+<script>
+const steps=[
+ {t:"Τρία είδη αρχείων",i:"Ταίριαξε κάθε αρχείο της εργασίας με το σωστό είδος: κείμενο, εικόνα ή ήχο.",h:"Η εργασία για το κατοικίδιο μπορεί να έχει αρχείο κειμένου, αρχείο εικόνας και αρχείο ήχου.",k:"fileTypes"},
+ {t:"Πώς δημιουργώ τα αρχεία;",i:"Ταίριαξε κάθε συσκευή εισόδου με την εργασία που κάνει.",h:"Ο σαρωτής εισάγει εικόνα από χαρτί, η κάμερα δημιουργεί φωτογραφία και το μικρόφωνο εισάγει ήχο.",k:"devices"},
+ {t:"Ποιο εικονίδιο αποθηκεύει;",i:"Διάλεξε το εικονίδιο που χρησιμοποιούμε για αποθήκευση.",h:"Στο μάθημα το εικονίδιο αποθήκευσης μοιάζει με δισκέτα.",k:"saveIcon"},
+ {t:"Αποθηκεύω την εργασία",i:"Στο Graphis αποθήκευσε το κείμενο με όνομα «Ο σκύλος μου».",h:"Πάτησε το εικονίδιο αποθήκευσης, γράψε το όνομα του αρχείου και πάτησε «Αποθήκευση».",k:"saveFile"},
+ {t:"Ανοίγω με διπλό κλικ",i:"Από το μενού «Αρχείο» επίλεξε «Άνοιγμα» και άνοιξε το «Ο σκύλος μου» με διπλό κλικ.",h:"Πρώτα Αρχείο → Άνοιγμα. Στο παράθυρο αρχείων κάνε διπλό κλικ στο σωστό αρχείο.",k:"openDouble"},
+ {t:"Ανοίγω με μονό κλικ",i:"Δοκίμασε τον δεύτερο τρόπο: Αρχείο → Άνοιγμα, μονό κλικ στο αρχείο και μετά «Άνοιγμα».",h:"Με τον δεύτερο τρόπο επιλέγεις πρώτα το αρχείο με μονό κλικ και μετά πατάς το κουμπί «Άνοιγμα».",k:"openSingle"},
+ {t:"Τελική δοκιμή",i:"Απάντησε σωστά και στις τέσσερις μικρές ερωτήσεις.",h:"Θυμήσου τις συσκευές εισόδου, το εικονίδιο αποθήκευσης και τα βήματα ανοίγματος αρχείου.",k:"challenge"},
+ {t:"Τα κατάφερες!",i:"Σκέψου τι έμαθες στο Μάθημα 15.",h:"Σκέψου πώς δημιουργούμε, αποθηκεύουμε και ανοίγουμε αρχεία κειμένου, εικόνας και ήχου.",k:"final"}
+];
+
+let s=0,selfChoice=null,selectedDrag=null;
+let dragState={locked:new Set(),items:[]};
+let answerOrders={};
+let saveDialogOpen=false,savedFile=false;
+let openDialogMode=null,selectedFile=null,menuOpen=false;
+let challengeIndex=0,challengeOrder=[];
+
+function shuffled(arr){
+ const a=[...arr];
+ for(let i=a.length-1;i>0;i--){
+  const j=Math.floor(Math.random()*(i+1));
+  [a[i],a[j]]=[a[j],a[i]];
+ }
+ return a;
+}
+function nav(){
+ document.getElementById("path").innerHTML=steps.map((_,i)=>`<div class="dot ${i<s?'done':i===s?'active':''}">${i+1}</div>`).join("");
+}
+function completeFinalDot(){s=steps.length;nav()}
+function clearFeedback(){const f=document.getElementById("feedback");f.className="feedback";f.textContent=""}
+function setFeedback(t,ok){const f=document.getElementById("feedback");f.className="feedback "+(ok?"good":"bad");f.textContent=t}
+function nextAfter(ms=900){setTimeout(()=>{s++;render()},ms)}
+function render(){
+ selectedDrag=null;nav();clearFeedback();
+ const x=steps[s];
+ document.getElementById("title").textContent=x.t;
+ document.getElementById("inst").textContent=x.i;
+ if(x.k==="fileTypes")stage1();
+ if(x.k==="devices")stage2();
+ if(x.k==="saveIcon")stage3();
+ if(x.k==="saveFile")stage4();
+ if(x.k==="openDouble")stage5();
+ if(x.k==="openSingle")stage6();
+ if(x.k==="challenge")stage7();
+ if(x.k==="final")stage8();
+}
+
+/* drag helpers */
+function dragStart(ev,id){
+ selectedDrag=id;
+ ev.currentTarget.classList.add("selectedDrag");
+ if(ev.dataTransfer){ev.dataTransfer.setData("text/plain",id);ev.dataTransfer.effectAllowed="move"}
+}
+function dragEnd(ev){ev.currentTarget.classList.remove("selectedDrag")}
+function pickDrag(id){
+ if(dragState.locked.has(id))return;
+ document.querySelectorAll(".dragitem").forEach(x=>x.classList.remove("selectedDrag"));
+ selectedDrag=selectedDrag===id?null:id;
+ if(selectedDrag)document.getElementById("drag_"+id)?.classList.add("selectedDrag");
+}
+function allowDrop(ev){ev.preventDefault();ev.currentTarget.classList.add("over")}
+function leaveDrop(ev){ev.currentTarget.classList.remove("over")}
+function dropItem(ev,target){
+ ev.preventDefault();ev.currentTarget.classList.remove("over");
+ const id=(ev.dataTransfer&&ev.dataTransfer.getData("text/plain"))||selectedDrag;
+ if(id)placeItem(id,target);
+}
+function tapDrop(target){if(selectedDrag)placeItem(selectedDrag,target)}
+function placeItem(id,target){
+ const item=dragState.items.find(x=>x.id===id);
+ if(!item||dragState.locked.has(id))return;
+ document.querySelectorAll(".dragitem").forEach(x=>x.classList.remove("selectedDrag"));
+ selectedDrag=null;
+ if(item.target!==target){setFeedback("Αυτό ταιριάζει σε διαφορετική κατηγορία.",false);return}
+ dragState.locked.add(id);
+ document.getElementById("drag_"+id).classList.add("locked");
+ document.getElementById("zone_"+target).classList.add("correct");
+ document.getElementById("ans_"+target).textContent=item.label;
+ const needed=dragState.items.length;
+ if(dragState.locked.size===needed){
+  setFeedback("Μπράβο! Ταίριαξες σωστά όλα τα στοιχεία.",true);nextAfter(1000);
+ }else setFeedback("Σωστά! Συνέχισε.",true);
+}
+
+/* Stage 1 */
+function stage1(){
+ const items=[
+  {id:"text",target:"text",label:"Το κατοικίδιο που αγαπώ είναι ο σκύλος μου.",icon:'<span class="file-icon text">T</span>'},
+  {id:"image",target:"image",label:"Ζωγραφιά / φωτογραφία του σκύλου",icon:'<span class="file-icon image">▧</span>'},
+  {id:"sound",target:"sound",label:"Ηχογράφηση: «γαβ»",icon:'<span class="file-icon audio">♪</span>'}
+ ];
+ dragState={locked:new Set(),items};
+ const order=shuffled(items);
+ document.getElementById("card").innerHTML=`
+  <div class="drag-layout">
+   <div class="tray"><h3>Αρχεία</h3>
+    ${order.map(o=>`<div class="dragitem" id="drag_${o.id}" draggable="true" ondragstart="dragStart(event,'${o.id}')" ondragend="dragEnd(event)" onclick="pickDrag('${o.id}')"><span class="ico">${o.icon}</span><span>${o.label}</span></div>`).join("")}
+    <div class="smallhelp">Σύρε ένα αρχείο ή πάτησέ το και μετά πάτησε τη σωστή κατηγορία.</div>
+   </div>
+   <div class="targets">
+    ${zone("text","📝","Κείμενο")}
+    ${zone("image","🖼️","Εικόνα")}
+    ${zone("sound","🔊","Ήχος")}
+   </div>
+  </div>`;
+}
+function zone(id,icon,title){
+ return `<div class="dropzone" id="zone_${id}" ondragover="allowDrop(event)" ondragleave="leaveDrop(event)" ondrop="dropItem(event,'${id}')" onclick="tapDrop('${id}')"><span class="zone-icon">${icon}</span><span class="zone-title">${title}</span><span class="zone-answer" id="ans_${id}"></span></div>`;
+}
+
+/* Stage 2 */
+function stage2(){
+ const items=[
+  {id:"scanner",target:"paper",label:"Σαρωτής",icon:'<span class="scannerIcon"></span>'},
+  {id:"camera",target:"photo",label:"Κάμερα / webcam",icon:'<span class="webcamIcon"></span>'},
+  {id:"mic",target:"sound",label:"Μικρόφωνο",icon:"🎙️"}
+ ];
+ dragState={locked:new Set(),items};
+ const order=shuffled(items);
+ document.getElementById("card").innerHTML=`
+  <div class="drag-layout">
+   <div class="tray"><h3>Συσκευές εισόδου</h3>
+    ${order.map(o=>`<div class="dragitem" id="drag_${o.id}" draggable="true" ondragstart="dragStart(event,'${o.id}')" ondragend="dragEnd(event)" onclick="pickDrag('${o.id}')"><span class="ico">${o.icon}</span><span>${o.label}</span></div>`).join("")}
+    <div class="smallhelp">Σύρε τη συσκευή ή πάτησέ την και μετά πάτησε τη σωστή εργασία.</div>
+   </div>
+   <div class="targets">
+    ${zone("paper","🖼️","Εισάγω ζωγραφιά από χαρτί")}
+    ${zone("photo","🐶","Δημιουργώ φωτογραφία του σκύλου")}
+    ${zone("sound","🔊","Ηχογραφώ φωνή ή γάβγισμα")}
+   </div>
+  </div>`;
+}
+
+/* Stage 3 */
+function stage3(){
+ const opts=shuffled([
+  {ok:true,html:'<svg class="floppySvg" viewBox="0 0 72 72" aria-hidden="true">  <path class="disk-body" d="M10 6h42l10 10v50H10z"/>  <rect class="disk-top" x="18" y="10" width="31" height="22" rx="2"/>  <rect class="disk-slot" x="39" y="12" width="7" height="16" rx="1"/>  <rect class="disk-label" x="18" y="40" width="36" height="21" rx="2"/>  <line class="disk-line" x1="24" y1="47" x2="48" y2="47"/>  <line class="disk-line" x1="24" y1="53" x2="43" y2="53"/></svg>'},
+  {ok:false,html:'<span class="folderArt"></span>'},
+  {ok:false,html:'<span style="font-size:58px">🖱️</span>'},
+  {ok:false,html:'<span style="font-size:58px">🎨</span>'}
+ ]);
+ answerOrders.saveIcon=opts;
+ document.getElementById("card").innerHTML=`
+  <div class="icon-grid">
+   ${opts.map((o,i)=>`<button class="icon-choice" onclick="saveIconAns(${i})">${o.html}</button>`).join("")}
+  </div>`;
+}
+function saveIconAns(i){
+ if(!answerOrders.saveIcon[i].ok){setFeedback("Αυτό δεν είναι το εικονίδιο αποθήκευσης.",false);return}
+ setFeedback("Σωστά! Το εικονίδιο αποθήκευσης μοιάζει με δισκέτα.",true);nextAfter();
+}
+
+/* AthenaOS helpers */
+function owlHTML(){return `<span class="owl"><span></span></span>`}
+function osShell(content){
+ return `<div class="os">
+   <div class="os-top"><span class="brand">${owlHTML()} AthenaOS</span><span>12:30</span></div>
+   <div class="desktop">${content}<div class="taskbar"><div class="task-item">Α</div><div class="task-item">Graphis</div></div></div>
+  </div>`;
+}
+function graphisWindow(extra=""){
+ return `<div class="window">
+   <div class="titlebar"><span>Graphis — ${savedFile?"Ο σκύλος μου":"Νέο έγγραφο"}</span><span class="window-buttons"><button class="winbtn">—</button><button class="winbtn">□</button><button class="winbtn close">×</button></span></div>
+   <div class="menurow"><button class="menuBtn" id="fileMenuBtn" onclick="toggleFileMenu()">Αρχείο</button><button class="menuBtn">Επεξεργασία</button><button class="menuBtn">Μορφοποίηση</button></div>
+   <div class="toolbar"><button class="toolbtn" title="Αποθήκευση" onclick="openSaveDialog()"><svg class="floppySvg small" viewBox="0 0 72 72" aria-hidden="true">  <path class="disk-body" d="M10 6h42l10 10v50H10z"/>  <rect class="disk-top" x="18" y="10" width="31" height="22" rx="2"/>  <rect class="disk-slot" x="39" y="12" width="7" height="16" rx="1"/>  <rect class="disk-label" x="18" y="40" width="36" height="21" rx="2"/>  <line class="disk-line" x1="24" y1="47" x2="48" y2="47"/>  <line class="disk-line" x1="24" y1="53" x2="43" y2="53"/></svg></button><button class="toolbtn">↶</button><button class="toolbtn">B</button></div>
+   <div class="document"><div class="paper">Το κατοικίδιο που αγαπώ είναι ο σκύλος μου.</div></div>
+   ${extra}
+  </div>`;
+}
+function toggleFileMenu(){
+ menuOpen=!menuOpen;
+ document.getElementById("fileMenuBtn")?.classList.toggle("open",menuOpen);
+ const old=document.getElementById("fileDropdown");
+ if(old){old.remove();if(!menuOpen)return}
+ if(menuOpen){
+  document.querySelector(".window").insertAdjacentHTML("beforeend",`<div class="dropdown" id="fileDropdown"><button class="dropitem">Δημιουργία</button><button class="dropitem" onclick="openFileDialogFromMenu()">Άνοιγμα…</button><button class="dropitem" onclick="openSaveDialog()">Αποθήκευση</button></div>`);
+ }
+}
+
+/* Stage 4 */
+function stage4(){
+ saveDialogOpen=false;savedFile=false;menuOpen=false;
+ document.getElementById("card").innerHTML=osShell(graphisWindow(`<div class="status">Αποθήκευσε το αρχείο με όνομα «Ο σκύλος μου».</div>`));
+}
+function openSaveDialog(){
+ if(s!==3)return;
+ menuOpen=false;document.getElementById("fileDropdown")?.remove();
+ if(document.getElementById("saveDialog"))return;
+ document.querySelector(".window").insertAdjacentHTML("beforeend",`
+  <div class="dialog" id="saveDialog">
+   <div class="dialog-title">Αποθήκευση αρχείου</div>
+   <div class="dialog-body">
+    <label style="font-weight:900">Όνομα αρχείου</label>
+    <input id="saveName" placeholder="Γράψε ένα όνομα">
+    <div class="dialog-actions"><button onclick="confirmSave()">Αποθήκευση</button></div>
+   </div>
+  </div>`);
+ setTimeout(()=>document.getElementById("saveName")?.focus(),50);
+}
+function confirmSave(){
+ const v=document.getElementById("saveName")?.value.trim();
+ if(v!=="Ο σκύλος μου"){
+  setFeedback("Γράψε ακριβώς το όνομα «Ο σκύλος μου».",false);return;
+ }
+ savedFile=true;
+ document.getElementById("saveDialog")?.remove();
+ setFeedback("Σωστά! Η εργασία αποθηκεύτηκε ως «Ο σκύλος μου».",true);nextAfter(1000);
+}
+
+/* File dialog helper */
+function fileDialogHTML(mode){
+ const files=shuffled([
+  {id:"dog",name:"Ο σκύλος μου",icon:"📝"},
+  {id:"drawing",name:"Η ζωγραφιά μου",icon:"🖼️"},
+  {id:"sound",name:"Το γάβγισμα",icon:"🔊"}
+ ]);
+ answerOrders.openFiles=files;
+ return `<div class="dialog" id="openDialog">
+   <div class="dialog-title">Άνοιγμα αρχείου</div>
+   <div class="dialog-body">
+    <div class="file-browser">
+     ${files.map(f=>`<button class="browser-file" id="bf_${f.id}" onclick="selectBrowserFile('${f.id}')" ondblclick="doubleOpenFile('${f.id}')"><span class="ficon">${f.icon}</span>${f.name}</button>`).join("")}
+    </div>
+    <div class="dialog-actions"><button onclick="openSelectedFile()">Άνοιγμα</button></div>
+   </div>
+  </div>`;
+}
+function openFileDialogFromMenu(){
+ if(s!==4&&s!==5)return;
+ menuOpen=false;document.getElementById("fileDropdown")?.remove();
+ selectedFile=null;
+ document.querySelector(".window").insertAdjacentHTML("beforeend",fileDialogHTML(s===4?"double":"single"));
+}
+function selectBrowserFile(id){
+ selectedFile=id;
+ document.querySelectorAll(".browser-file").forEach(x=>x.classList.remove("sel"));
+ document.getElementById("bf_"+id)?.classList.add("sel");
+ if(s===4)setFeedback("Έκανες μονό κλικ. Σε αυτό το βήμα άνοιξε το αρχείο με διπλό κλικ.",false);
+}
+function doubleOpenFile(id){
+ if(s!==4)return;
+ if(id!=="dog"){setFeedback("Άνοιξε το αρχείο «Ο σκύλος μου».",false);return}
+ document.getElementById("openDialog")?.remove();
+ setFeedback("Σωστά! Άνοιξες το αποθηκευμένο αρχείο με διπλό κλικ.",true);nextAfter(950);
+}
+function openSelectedFile(){
+ if(s===4){
+  setFeedback("Σε αυτό το βήμα χρησιμοποίησε διπλό κλικ πάνω στο αρχείο.",false);return;
+ }
+ if(s!==5)return;
+ if(selectedFile!=="dog"){setFeedback("Επίλεξε πρώτα το αρχείο «Ο σκύλος μου».",false);return}
+ document.getElementById("openDialog")?.remove();
+ setFeedback("Σωστά! Έκανες μονό κλικ στο αρχείο και μετά πάτησες «Άνοιγμα».",true);nextAfter(950);
+}
+
+/* Stage 5 */
+function stage5(){
+ menuOpen=false;selectedFile=null;savedFile=true;
+ document.getElementById("card").innerHTML=osShell(graphisWindow(`<div class="status">Αρχείο → Άνοιγμα → διπλό κλικ στο «Ο σκύλος μου».</div>`));
+}
+/* Stage 6 */
+function stage6(){
+ menuOpen=false;selectedFile=null;savedFile=true;
+ document.getElementById("card").innerHTML=osShell(graphisWindow(`<div class="status">Αρχείο → Άνοιγμα → μονό κλικ στο αρχείο → «Άνοιγμα».</div>`));
+}
+
+/* Stage 7 */
+const challengeQs=[
+ {q:"Ποια συσκευή χρησιμοποιώ για να εισαγάγω ζωγραφιά από χαρτί;",correct:"Σαρωτής",wrong:["Μικρόφωνο","Ηχεία"]},
+ {q:"Ποια συσκευή χρησιμοποιώ για να ηχογραφήσω τη φωνή μου;",correct:"Μικρόφωνο",wrong:["Σαρωτής","Οθόνη"]},
+ {q:"Ποια εντολή του μενού «Αρχείο» χρησιμοποιώ για να βρω αποθηκευμένο αρχείο;",correct:"Άνοιγμα",wrong:["Δημιουργία","Εκτύπωση"]},
+ {q:"Ποια σειρά περιγράφει τον δεύτερο τρόπο ανοίγματος;",correct:"Μονό κλικ στο αρχείο και μετά «Άνοιγμα»",wrong:["Μόνο διπλό κλικ στο μενού «Αρχείο»","Πάτημα του εικονιδίου αποθήκευσης"]}
+];
+function stage7(){
+ challengeIndex=0;challengeOrder=shuffled(challengeQs);drawChallenge();
+}
+function drawChallenge(){
+ const q=challengeOrder[challengeIndex];
+ const opts=shuffled([{ok:true,txt:q.correct},...q.wrong.map(txt=>({ok:false,txt}))]);
+ answerOrders.challenge=opts;
+ document.getElementById("card").innerHTML=`
+  <div class="challenge">
+   <div class="challenge-progress"><span style="width:${(challengeIndex/challengeOrder.length)*100}%"></span></div>
+   <div class="challenge-q">${q.q}</div>
+   <div class="row">${opts.map((o,i)=>`<button class="choice" onclick="challengeAns(${i})">${o.txt}</button>`).join("")}</div>
+   <div class="smallhelp">${challengeIndex+1} από ${challengeOrder.length}</div>
+  </div>`;
+}
+function challengeAns(i){
+ if(!answerOrders.challenge[i].ok){setFeedback("Δοκίμασε ξανά.",false);return}
+ challengeIndex++;
+ if(challengeIndex<challengeOrder.length){
+  setFeedback("Σωστά! Πάμε στην επόμενη ερώτηση.",true);
+  setTimeout(()=>{clearFeedback();drawChallenge()},650);
+ }else{
+  setFeedback("Μπράβο! Ολοκλήρωσες την τελική δοκιμή.",true);nextAfter(900);
+ }
+}
+
+/* Stage 8 */
+function stage8(){
+ selfChoice=null;
+ document.getElementById("card").innerHTML=`
+  <div class="finalBox">
+   <div class="stars">⭐ ⭐ ⭐</div>
+   <div class="summary">
+    Έμαθες να δημιουργείς και να εισάγεις αρχεία κειμένου, εικόνας και ήχου,
+    να αποθηκεύεις μια εργασία και να ανοίγεις ένα αποθηκευμένο αρχείο με δύο διαφορετικούς τρόπους.
+   </div>
+   <div class="faces">
+    <button class="face" onclick="selfPick(1,this)"><span>🙂</span>Θέλω λίγη εξάσκηση</button>
+    <button class="face" onclick="selfPick(2,this)"><span>😊</span>Τα κατάφερα</button>
+    <button class="face" onclick="selfPick(3,this)"><span>🤩</span>Τα κατάφερα πολύ καλά</button>
+   </div>
+   <button class="check" onclick="finish()">Ολοκλήρωση</button>
+   <button class="repeatBtn" onclick="restartAll()">↻ Επανάληψη δραστηριότητας</button>
+  </div>`;
+}
+function selfPick(v,e){
+ selfChoice=v;document.querySelectorAll(".face").forEach(x=>x.classList.remove("sel"));e.classList.add("sel");
+}
+function finish(){
+ const f=document.getElementById("feedback");
+ if(!selfChoice){
+  f.className="feedback bad";f.textContent="Διάλεξε πρώτα πώς νιώθεις για όσα έμαθες.";return;
+ }
+ completeFinalDot();
+ f.className="feedback good";f.textContent="Μπράβο! Ολοκλήρωσες το Μάθημα 15.";
+}
+function restartAll(){
+ s=0;selfChoice=null;selectedDrag=null;dragState={locked:new Set(),items:[]};answerOrders={};
+ saveDialogOpen=false;savedFile=false;openDialogMode=null;selectedFile=null;menuOpen=false;
+ challengeIndex=0;challengeOrder=[];render();
+}
+function help(){
+ const idx=Math.min(s,steps.length-1);
+ document.getElementById("helpText").textContent=steps[idx].h;document.getElementById("modal").classList.add("show");
+}
+function closeHelp(){document.getElementById("modal").classList.remove("show")}
+render();
+</script>
+
+
+<footer class="nk-license" aria-label="Πληροφορίες δημιουργού και άδειας χρήσης">
+  <div><strong>Created by Nikos Kalakos · © 2026</strong></div>
+  <div>Original educational content and simulation design licensed under <a class="cc-badge" href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank" rel="license noopener noreferrer">CC BY-NC 4.0</a>.</div>
+  <div>Source code © 2026 Nikos Kalakos.</div>
+  <div>Third-party and textbook materials remain subject to the rights and licences of their respective copyright holders.</div>
+</footer></body>
+</html>

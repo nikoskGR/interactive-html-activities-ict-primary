@@ -1,0 +1,520 @@
+<!--
+ICT Educational Simulation
+Created by Nikos Kalakos
+Copyright © 2026 Nikos Kalakos
+
+Original educational content and simulation design licensed under CC BY-NC 4.0.
+Source code © 2026 Nikos Kalakos.
+Third-party and textbook materials remain subject to the rights and licences of their respective copyright holders.
+-->
+<!doctype html>
+<html lang="el">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="author" content="Nikos Kalakos">
+<meta name="copyright" content="© 2026 Nikos Kalakos">
+<meta name="license" content="Original educational content and simulation design: CC BY-NC 4.0; source code © 2026 Nikos Kalakos; third-party and textbook materials excluded.">
+<title>Μάθημα 12 - Οι συσκευές του υπολογιστή</title>
+<style>
+:root{
+  --unit-lime:#B8BE25;
+  --unit-lime-dark:#8f9615;
+  --unit-indigo:#545F99;
+  --unit-indigo-dark:#3f4878;
+  --ink:#24344d;
+  --line:#d5dbe6;
+  --soft:#f7f8ef;
+  --good:#eef5d6;
+  --bad:#fff0ed;
+  --shadow:0 10px 28px rgba(36,52,77,.12);
+}
+*{box-sizing:border-box}
+body{margin:0;background:#f7f8fb;color:var(--ink);font-family:Arial,"Noto Sans",sans-serif}
+button{font:inherit;cursor:pointer}
+.app{max-width:1180px;margin:auto;padding:16px}
+.top{background:#fff;border:3px solid #dde1c4;border-radius:24px;padding:14px 18px;display:flex;align-items:center;justify-content:space-between;box-shadow:var(--shadow)}
+.top h1{margin:0;font-size:clamp(28px,4vw,42px)}
+.badge{width:70px;height:70px;border-radius:22px;background:var(--unit-lime);color:#fff;display:grid;place-items:center;font-size:31px;font-weight:900;box-shadow:inset 0 -5px 0 rgba(0,0,0,.10)}
+.path{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin:16px 0}
+.dot{width:44px;height:44px;border-radius:50%;display:grid;place-items:center;border:3px solid #aeb7c7;background:#fff;color:#65718a;font-weight:900;font-size:20px}
+.dot.active{background:var(--unit-indigo);border-color:var(--unit-indigo);color:#fff;transform:scale(1.1)}
+.dot.done{background:var(--unit-lime);border-color:var(--unit-lime-dark);color:#fff}
+.panel{min-height:710px;background:#fff;border:3px solid #d7dcc0;border-radius:28px;padding:24px;box-shadow:var(--shadow)}
+.step-head{display:flex;justify-content:space-between;gap:12px;align-items:flex-start}
+.step-head h2{margin:0;font-size:clamp(25px,4vw,37px)}
+.help{background:#f2f0fb;color:var(--unit-indigo-dark);border:3px solid #9ba3cf;border-radius:16px;padding:10px 17px;font-weight:900}
+.instruction{max-width:960px;margin:14px auto 18px;text-align:center;font-size:clamp(19px,2.3vw,24px);font-weight:900;line-height:1.38}
+.card{max-width:1040px;margin:auto;border:3px solid #d8ddbf;border-radius:28px;background:#fff;padding:22px;min-height:500px}
+.feedback{display:none;max-width:860px;margin:16px auto 0;padding:12px 18px;border-radius:17px;text-align:center;font-weight:900;font-size:20px}
+.feedback.good{display:block;background:var(--good);border:2px solid #9ab35b}
+.feedback.bad{display:block;background:var(--bad);border:2px solid #e5a59b}
+.check{display:block;margin:18px auto 0;padding:13px 28px;border:0;border-radius:16px;background:var(--unit-lime);color:#fff;font-size:21px;font-weight:900;box-shadow:0 5px 0 var(--unit-lime-dark)}
+.row{display:flex;gap:14px;justify-content:center;align-items:stretch;flex-wrap:wrap}
+.choice{min-width:205px;max-width:280px;min-height:135px;border:3px solid var(--line);border-radius:22px;background:#fff;padding:15px;font-weight:900;font-size:18px;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:10px}
+.choice:hover{transform:translateY(-2px);box-shadow:var(--shadow)}
+.choice.selected{border-color:var(--unit-lime);background:#f3f6d7;box-shadow:inset 0 0 0 2px #d9df83}
+.choice .big{font-size:50px}
+.smallhelp{text-align:center;font-size:14px;color:#6d7890;font-weight:800;margin-top:10px}
+
+/* central unit */
+.central-wrap{max-width:790px;margin:auto;border:4px solid var(--unit-indigo);border-radius:26px;background:#f7f8fd;padding:22px;text-align:center}
+.tower{width:128px;height:220px;margin:5px auto 18px;border-radius:18px;background:linear-gradient(90deg,#d7dce2,#bfc7d0);border:6px solid #7f8996;position:relative;box-shadow:inset -14px 0 0 rgba(0,0,0,.06)}
+.tower::before{content:"";position:absolute;left:25px;right:25px;top:28px;height:56px;border-radius:7px;background:#8f99a5;border:4px solid #707b86}
+.tower::after{content:"●";position:absolute;bottom:23px;left:0;right:0;color:var(--unit-lime);font-size:34px;text-align:center}
+.note{max-width:720px;margin:15px auto;padding:13px 17px;border-left:8px solid var(--unit-lime);border-radius:12px;background:#f6f7df;font-weight:900}
+
+/* classification */
+.classify{display:grid;grid-template-columns:1fr 1.25fr;gap:18px;align-items:start}
+.tray{border:3px solid #cbd1df;border-radius:20px;padding:14px;background:#f9fafe;min-height:410px}
+.tray h3,.zones h3{text-align:center;margin:0 0 12px;color:var(--unit-indigo-dark)}
+.dragitem{user-select:none;touch-action:none;border:3px solid #9ea8ca;border-radius:15px;background:#fff;padding:10px 12px;margin:8px 0;font-weight:900;box-shadow:0 3px 0 #d5d9e8;cursor:grab;display:flex;gap:9px;align-items:center}
+.dragitem .ico{font-size:28px}
+.webcamIcon{
+  display:inline-block;
+  width:38px;
+  height:27px;
+  border:4px solid #555f6c;
+  border-radius:10px;
+  background:#cfd6df;
+  position:relative;
+  vertical-align:middle;
+}
+.webcamIcon::before{
+  content:"";
+  position:absolute;
+  width:11px;
+  height:11px;
+  border-radius:50%;
+  background:#596574;
+  border:3px solid #f3f5f8;
+  left:50%;
+  top:50%;
+  transform:translate(-50%,-50%);
+}
+.webcamIcon::after{
+  content:"";
+  position:absolute;
+  width:24px;
+  height:5px;
+  border-radius:4px;
+  background:#555f6c;
+  left:50%;
+  bottom:-11px;
+  transform:translateX(-50%);
+}
+.dragitem.selectedDrag{outline:4px solid var(--unit-lime);background:#f5f7db}
+.dragitem.locked{opacity:.42;cursor:default}
+.zones{display:grid;grid-template-columns:1fr 1fr;gap:13px}
+.zone{min-height:355px;border:4px dashed #9ca6c9;border-radius:22px;background:#fbfbfe;padding:13px}
+.zone.over{background:#f2f4ff;border-color:var(--unit-indigo)}
+.zone.input{border-top:10px solid var(--unit-lime)}
+.zone.output{border-top:10px solid var(--unit-indigo)}
+.zone-title{text-align:center;font-size:21px;font-weight:900;margin-bottom:10px}
+.zone-items{display:flex;gap:7px;flex-wrap:wrap;align-content:flex-start}
+.placed{border:2px solid #c8cfdb;border-radius:12px;background:#fff;padding:7px 9px;font-weight:900;font-size:14px}
+
+/* question runner */
+.device-question{max-width:850px;margin:auto;border:4px solid var(--unit-indigo);border-radius:24px;background:#fafbff;padding:20px;text-align:center}
+.device-hero{display:inline-flex;align-items:center;gap:12px;margin-bottom:14px;padding:10px 18px;border-radius:18px;background:#fff;border:3px solid #d4dae5;font-size:23px;font-weight:900}
+.device-hero .ico{font-size:48px}
+.progress-mini{margin:0 auto 16px;max-width:470px;height:14px;background:#e6e9ef;border-radius:8px;overflow:hidden}
+.progress-mini span{display:block;height:100%;background:var(--unit-lime);width:0;transition:.25s}
+
+/* storage */
+.storage-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:13px}
+.storage-card{border:3px solid #cfd6e3;border-radius:20px;background:#fff;padding:14px;text-align:center;min-height:145px;font-weight:900}
+.storage-card .big{display:block;font-size:52px;margin-bottom:9px}
+.storage-card.selected{border-color:var(--unit-lime);background:#f2f5d4}
+
+/* touch */
+.touch-demo{max-width:780px;margin:auto;border:4px solid var(--unit-lime);border-radius:24px;background:#fbfce8;padding:20px;text-align:center}
+.phone{width:125px;height:230px;margin:0 auto 14px;border:8px solid #444d59;border-radius:25px;background:linear-gradient(145deg,#d7efff,#eef4fa);position:relative;padding:22px 12px}
+.phone::before{content:"";position:absolute;top:9px;left:43px;width:30px;height:6px;border-radius:4px;background:#717984}
+.appdots{display:grid;grid-template-columns:repeat(3,1fr);gap:11px;margin-top:16px}
+.appdot{height:28px;border-radius:8px;background:var(--unit-indigo)}
+.appdot:nth-child(2n){background:var(--unit-lime)}
+.finger{position:absolute;right:-31px;bottom:50px;font-size:48px;transform:rotate(-20deg)}
+
+/* challenge */
+.challenge{max-width:900px;margin:auto;border:4px solid var(--unit-indigo);border-radius:25px;background:#fafbff;padding:20px}
+.match-list{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:12px}
+.match-devices,.match-functions{display:grid;gap:10px}
+.match-btn{min-height:62px;border:3px solid #cbd2df;border-radius:14px;background:#fff;padding:10px;font-weight:900;text-align:left}
+.match-btn.pick{outline:4px solid var(--unit-lime);background:#f4f6dc}
+.match-btn.done{border-color:var(--unit-lime);background:#f0f4d4;opacity:.65}
+
+/* final */
+.finalBox{max-width:780px;margin:auto;text-align:center}
+.stars{font-size:58px;margin:18px}
+.summary{padding:20px;border:4px solid var(--unit-indigo);background:#f4f5fb;border-radius:22px;font-size:21px;font-weight:900;line-height:1.45}
+.faces{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:18px}
+.face{min-height:130px;border:3px solid var(--line);border-radius:20px;background:#fff;font-weight:900;font-size:17px}
+.face span{display:block;font-size:52px;margin-bottom:7px}
+.face.sel{border-color:var(--unit-lime);background:#f2f5d4}
+.repeatBtn{display:block;margin:15px auto 0;padding:12px 22px;border:0;border-radius:15px;background:var(--unit-indigo);color:#fff;font-size:19px;font-weight:900;box-shadow:0 5px 0 var(--unit-indigo-dark)}
+.modal{position:fixed;inset:0;background:#24344d99;display:none;place-items:center;padding:18px;z-index:20}
+.modal.show{display:grid}
+.modal-box{max-width:620px;background:#fff;border-radius:24px;border:4px solid var(--unit-lime);padding:22px;text-align:center;font-size:20px}
+.modal-box button{padding:10px 20px;border:0;border-radius:13px;background:var(--unit-lime);color:#fff;font-weight:900}
+@media(max-width:850px){
+  .classify{grid-template-columns:1fr}
+  .zones{grid-template-columns:1fr}
+  .storage-grid,.faces{grid-template-columns:1fr}
+  .match-list{grid-template-columns:1fr}
+}
+</style>
+
+
+<style id="nk-license-style">
+.nk-license{max-width:1100px;margin:14px auto 24px;padding:10px 16px;text-align:center;font:13px/1.45 Arial,"Noto Sans",sans-serif;color:#4e657c}
+.nk-license a{color:inherit;text-decoration:underline;text-underline-offset:2px}
+.nk-license .cc-badge{display:inline-block;margin:0 4px;padding:2px 7px;border:1px solid #8aa0b8;border-radius:6px;background:#fff;font-weight:700;white-space:nowrap}
+</style></head>
+<body>
+<div class="app">
+  <div class="top"><h1>Οι συσκευές του υπολογιστή</h1><div class="badge">12</div></div>
+  <div class="path" id="path"></div>
+  <main class="panel">
+    <div class="step-head"><h2 id="title"></h2><button class="help" onclick="help()">❓ Βοήθεια</button></div>
+    <div class="instruction" id="inst"></div>
+    <div class="card" id="card"></div>
+    <div class="feedback" id="feedback"></div>
+  </main>
+</div>
+<div class="modal" id="modal"><div class="modal-box"><h2>💡 Βοήθεια</h2><p id="helpText"></p><button onclick="closeHelp()">Εντάξει</button></div></div>
+
+<script>
+const steps=[
+ {t:"Η κεντρική μονάδα",i:"Ποια είναι η βασική δουλειά της κεντρικής μονάδας;",h:"Στην κεντρική μονάδα ο υπολογιστής επεξεργάζεται και αποθηκεύει τα δεδομένα.",k:"central"},
+ {t:"Συσκευές εισόδου και εξόδου",i:"Τοποθέτησε κάθε συσκευή στη σωστή ομάδα.",h:"Οι συσκευές εισόδου περνούν δεδομένα ή οδηγίες στον υπολογιστή. Οι συσκευές εξόδου δίνουν πληροφορίες από τον υπολογιστή.",k:"classify"},
+ {t:"Τι κάνουν οι συσκευές εισόδου;",i:"Για κάθε συσκευή διάλεξε τη σωστή λειτουργία.",h:"Θυμήσου: πληκτρολόγιο για γράψιμο, ποντίκι για δείκτη και οδηγίες, μικρόφωνο για ήχο, κάμερα για εικόνα ή βίντεο, σαρωτής για εικόνες από χαρτί.",k:"inputFunctions"},
+ {t:"Τι κάνουν οι συσκευές εξόδου;",i:"Για κάθε συσκευή διάλεξε τη σωστή λειτουργία.",h:"Η οθόνη εμφανίζει, ο εκτυπωτής τυπώνει και τα ηχεία ή ακουστικά αναπαράγουν ήχο.",k:"outputFunctions"},
+ {t:"Πού αποθηκεύει ο υπολογιστής;",i:"Διάλεξε και τις δύο συσκευές που αποθηκεύουν δεδομένα.",h:"Ο δίσκος αποθήκευσης βρίσκεται μέσα στον υπολογιστή. Η μνήμη φλας συνδέεται για εύκολη μεταφορά δεδομένων.",k:"storage"},
+ {t:"Η οθόνη αφής",i:"Πρώτα διάλεξε τι είδους συσκευή είναι η οθόνη αφής και μετά βρες πού τη συναντάμε.",h:"Η οθόνη αφής κάνει και είσοδο και έξοδο. Στο μάθημα αναφέρονται η ταμπλέτα και το έξυπνο κινητό τηλέφωνο.",k:"touch"},
+ {t:"Τελική δοκιμή",i:"Ολοκλήρωσε τις δύο μικρές δοκιμές για τις συσκευές του υπολογιστή.",h:"Πρώτα βρες όσα αποθηκεύουν. Μετά σύνδεσε πληκτρολόγιο, οθόνη, εκτυπωτή και ηχεία με τη λειτουργία τους.",k:"challenge"},
+ {t:"Τα κατάφερες!",i:"Σκέψου τι έμαθες στο Μάθημα 12.",h:"Σκέψου τις συσκευές εισόδου και εξόδου και πού αποθηκεύει ο υπολογιστής.",k:"final"}
+];
+
+const inputDevices=[
+ {id:"keyboard",icon:"⌨️",name:"Πληκτρολόγιο"},
+ {id:"mouse",icon:"🖱️",name:"Ποντίκι"},
+ {id:"mic",icon:"🎙️",name:"Μικρόφωνο"},
+ {id:"camera",icon:"<span class=\"webcamIcon\"></span>",name:"Κάμερα"},
+ {id:"scanner",icon:"📄",name:"Σαρωτής"}
+];
+const outputDevices=[
+ {id:"monitor",icon:"🖥️",name:"Οθόνη"},
+ {id:"printer",icon:"🖨️",name:"Εκτυπωτής"},
+ {id:"speakers",icon:"🔊",name:"Ηχεία"},
+ {id:"headphones",icon:"🎧",name:"Ακουστικά"}
+];
+
+let s=0,selfChoice=null;
+let answerOrders={},selections={};
+let selectedDrag=null,classState={};
+let qIndex=0,qOrder=[];
+let touchPhase=1;
+let challengePhase=1,challengeSelected=new Set(),matchPick=null,matchDone=new Set();
+
+function shuffled(arr){
+ const a=[...arr];
+ for(let i=a.length-1;i>0;i--){
+  const j=Math.floor(Math.random()*(i+1));
+  [a[i],a[j]]=[a[j],a[i]];
+ }
+ return a;
+}
+function nav(){
+ document.getElementById("path").innerHTML=steps.map((_,i)=>`<div class="dot ${i<s?'done':i===s?'active':''}">${i+1}</div>`).join("");
+}
+function completeFinalDot(){s=steps.length;nav()}
+function clearFeedback(){const f=document.getElementById("feedback");f.className="feedback";f.textContent=""}
+function setFeedback(t,ok){const f=document.getElementById("feedback");f.className="feedback "+(ok?"good":"bad");f.textContent=t}
+function nextAfter(ms=900){setTimeout(()=>{s++;render()},ms)}
+function render(){
+ selectedDrag=null;nav();clearFeedback();
+ const x=steps[s];
+ document.getElementById("title").textContent=x.t;
+ document.getElementById("inst").textContent=x.i;
+ if(x.k==="central")stage1();
+ if(x.k==="classify")stage2();
+ if(x.k==="inputFunctions")stage3();
+ if(x.k==="outputFunctions")stage4();
+ if(x.k==="storage")stage5();
+ if(x.k==="touch")stage6();
+ if(x.k==="challenge")stage7();
+ if(x.k==="final")stage8();
+}
+
+/* Stage 1 */
+function stage1(){
+ const opts=shuffled([
+  {ok:true,icon:"⚙️",txt:"Επεξεργάζεται και αποθηκεύει δεδομένα"},
+  {ok:false,icon:"🖨️",txt:"Τυπώνει μόνη της στο χαρτί"},
+  {ok:false,icon:"🎙️",txt:"Καταγράφει μόνη της ήχους"}
+ ]);
+ answerOrders.central=opts;
+ document.getElementById("card").innerHTML=`
+  <div class="central-wrap">
+   <div class="tower"></div>
+   <div class="note">Η κεντρική μονάδα είναι η βασική συσκευή του υπολογιστή γραφείου.</div>
+   <div class="row">${opts.map((o,i)=>`<button class="choice" onclick="centralAns(${i})"><span class="big">${o.icon}</span>${o.txt}</button>`).join("")}</div>
+  </div>`;
+}
+function centralAns(i){
+ if(!answerOrders.central[i].ok){setFeedback("Αυτή είναι δουλειά άλλης συσκευής.",false);return}
+ setFeedback("Σωστά! Στην κεντρική μονάδα γίνεται επεξεργασία και αποθήκευση δεδομένων.",true);nextAfter();
+}
+
+/* Stage 2 */
+function stage2(){
+ const all=shuffled([...inputDevices.map(x=>({...x,target:"input"})),...outputDevices.map(x=>({...x,target:"output"}))]);
+ classState={locked:new Set(),items:all};
+ document.getElementById("card").innerHTML=`
+  <div class="classify">
+   <div class="tray"><h3>Συσκευές</h3>
+    ${all.map(o=>`<div class="dragitem" id="dev_${o.id}" draggable="true" ondragstart="dragStart(event,'${o.id}')" ondragend="dragEnd(event)" onclick="pickDrag('${o.id}')"><span class="ico">${o.icon}</span><span>${o.name}</span></div>`).join("")}
+    <div class="smallhelp">Σύρε μια συσκευή ή πάτησέ την και μετά πάτησε τη σωστή ομάδα.</div>
+   </div>
+   <div class="zones">
+    <div class="zone input" id="zone_input" ondragover="allowDrop(event)" ondragleave="leaveDrop(event)" ondrop="dropClass(event,'input')" onclick="tapClass('input')"><div class="zone-title">Είσοδος</div><div class="zone-items" id="items_input"></div></div>
+    <div class="zone output" id="zone_output" ondragover="allowDrop(event)" ondragleave="leaveDrop(event)" ondrop="dropClass(event,'output')" onclick="tapClass('output')"><div class="zone-title">Έξοδος</div><div class="zone-items" id="items_output"></div></div>
+   </div>
+  </div>`;
+}
+function dragStart(ev,id){
+ selectedDrag=id;ev.currentTarget.classList.add("selectedDrag");
+ if(ev.dataTransfer){ev.dataTransfer.setData("text/plain",id);ev.dataTransfer.effectAllowed="move"}
+}
+function dragEnd(ev){ev.currentTarget.classList.remove("selectedDrag")}
+function pickDrag(id){
+ if(classState.locked.has(id))return;
+ document.querySelectorAll(".dragitem").forEach(x=>x.classList.remove("selectedDrag"));
+ selectedDrag=selectedDrag===id?null:id;
+ if(selectedDrag)document.getElementById("dev_"+id)?.classList.add("selectedDrag");
+}
+function allowDrop(ev){ev.preventDefault();ev.currentTarget.classList.add("over")}
+function leaveDrop(ev){ev.currentTarget.classList.remove("over")}
+function dropClass(ev,target){
+ ev.preventDefault();ev.currentTarget.classList.remove("over");
+ const id=(ev.dataTransfer&&ev.dataTransfer.getData("text/plain"))||selectedDrag;
+ if(id)placeClass(id,target);
+}
+function tapClass(target){if(selectedDrag)placeClass(selectedDrag,target)}
+function placeClass(id,target){
+ const item=classState.items.find(x=>x.id===id);
+ if(!item||classState.locked.has(id))return;
+ document.querySelectorAll(".dragitem").forEach(x=>x.classList.remove("selectedDrag"));
+ selectedDrag=null;
+ if(item.target!==target){setFeedback("Αυτή η συσκευή ανήκει στην άλλη ομάδα.",false);return}
+ classState.locked.add(id);
+ document.getElementById("dev_"+id).classList.add("locked");
+ document.getElementById("items_"+target).insertAdjacentHTML("beforeend",`<span class="placed">${item.icon} ${item.name}</span>`);
+ if(classState.locked.size===classState.items.length){setFeedback("Μπράβο! Χώρισες σωστά όλες τις συσκευές σε είσοδο και έξοδο.",true);nextAfter(1100)}
+ else setFeedback("Σωστά! Συνέχισε.",true);
+}
+
+/* Stages 3-4 */
+const inputQs=[
+ {icon:"⌨️",name:"Πληκτρολόγιο",correct:"Γράφω γράμματα, σύμβολα και αριθμούς",wrong:["Περνάει ήχους στον υπολογιστή","Τυπώνει κείμενο στο χαρτί"]},
+ {icon:"🖱️",name:"Ποντίκι",correct:"Κινώ τον δείκτη και δίνω οδηγίες",wrong:["Αναπαράγει μουσική","Περνάει εικόνες από χαρτί"]},
+ {icon:"🎙️",name:"Μικρόφωνο",correct:"Περνάει ήχους στον υπολογιστή",wrong:["Εμφανίζει εικόνες στην οθόνη","Γράφει αριθμούς στο χαρτί"]},
+ {icon:"<span class=\"webcamIcon\"></span>",name:"Κάμερα",correct:"Περνάει εικόνες ή βίντεο στον υπολογιστή",wrong:["Τυπώνει εικόνες","Αποθηκεύει αρχεία για μεταφορά"]},
+ {icon:"📄",name:"Σαρωτής",correct:"Περνάει στον υπολογιστή εικόνες τυπωμένες σε χαρτί",wrong:["Αναπαράγει ήχο","Κινεί τον δείκτη στην οθόνη"]}
+];
+const outputQs=[
+ {icon:"🖥️",name:"Οθόνη",correct:"Εμφανίζει κείμενο και εικόνες",wrong:["Περνάει ήχους στον υπολογιστή","Μεταφέρει αρχεία σε άλλον υπολογιστή"]},
+ {icon:"🖨️",name:"Εκτυπωτής",correct:"Τυπώνει σε χαρτί κείμενο και εικόνες",wrong:["Κινεί τον δείκτη","Περνάει βίντεο στον υπολογιστή"]},
+ {icon:"🔊",name:"Ηχεία",correct:"Αναπαράγουν ήχους από τον υπολογιστή",wrong:["Γράφουν γράμματα","Σαρώνουν εικόνες από χαρτί"]},
+ {icon:"🎧",name:"Ακουστικά",correct:"Αναπαράγουν ήχους από τον υπολογιστή",wrong:["Τυπώνουν εικόνες","Δέχονται οδηγίες με το δάχτυλο"]}
+];
+function stage3(){startQuestionRun(inputQs)}
+function stage4(){startQuestionRun(outputQs)}
+function startQuestionRun(base){qIndex=0;qOrder=shuffled(base);drawQuestion()}
+function drawQuestion(){
+ const q=qOrder[qIndex];
+ const opts=shuffled([{ok:true,txt:q.correct},...q.wrong.map(txt=>({ok:false,txt}))]);
+ answerOrders.deviceQ=opts;
+ const percent=(qIndex/qOrder.length)*100;
+ document.getElementById("card").innerHTML=`
+  <div class="device-question">
+   <div class="progress-mini"><span style="width:${percent}%"></span></div>
+   <div class="device-hero"><span class="ico">${q.icon}</span>${q.name}</div>
+   <div class="row">${opts.map((o,i)=>`<button class="choice" onclick="deviceQAns(${i})">${o.txt}</button>`).join("")}</div>
+   <div class="smallhelp">${qIndex+1} από ${qOrder.length}</div>
+  </div>`;
+}
+function deviceQAns(i){
+ if(!answerOrders.deviceQ[i].ok){setFeedback("Δοκίμασε ξανά. Σκέψου τη λειτουργία αυτής της συσκευής.",false);return}
+ qIndex++;
+ if(qIndex<qOrder.length){setFeedback("Σωστά! Πάμε στην επόμενη συσκευή.",true);setTimeout(()=>{clearFeedback();drawQuestion()},650)}
+ else{setFeedback("Μπράβο! Γνώρισες τις λειτουργίες όλων των συσκευών.",true);nextAfter(900)}
+}
+
+/* Stage 5 */
+function stage5(){
+ selections.storage=new Set();
+ answerOrders.storage=shuffled([
+  {ok:true,icon:"💽",txt:"Δίσκος αποθήκευσης"},
+  {ok:true,icon:"USB",txt:"Μνήμη φλας"},
+  {ok:false,icon:"⌨️",txt:"Πληκτρολόγιο"},
+  {ok:false,icon:"🎧",txt:"Ακουστικά"},
+  {ok:false,icon:"🖱️",txt:"Ποντίκι"}
+ ]);
+ document.getElementById("card").innerHTML=`
+  <div class="note">Διάλεξε και τις δύο συσκευές που αποθηκεύουν δεδομένα.</div>
+  <div class="storage-grid">${answerOrders.storage.map((o,i)=>`<button class="storage-card" id="storage${i}" onclick="toggleStorage(${i})"><span class="big">${o.icon}</span>${o.txt}</button>`).join("")}</div>
+  <button class="check" onclick="checkStorage()">Έλεγχος</button>`;
+}
+function toggleStorage(i){
+ const set=selections.storage;set.has(i)?set.delete(i):set.add(i);
+ document.getElementById("storage"+i)?.classList.toggle("selected",set.has(i));
+}
+function checkStorage(){
+ const correct=answerOrders.storage.map((o,i)=>o.ok?i:-1).filter(i=>i>=0);
+ if(selections.storage.size!==2||!correct.every(i=>selections.storage.has(i))){setFeedback("Χρειάζονται δύο σωστές επιλογές.",false);return}
+ setFeedback("Σωστά! Ο δίσκος αποθήκευσης και η μνήμη φλας αποθηκεύουν δεδομένα.",true);nextAfter();
+}
+
+/* Stage 6 */
+function stage6(){touchPhase=1;drawTouch()}
+function drawTouch(){
+ if(touchPhase===1){
+  const opts=shuffled([{ok:false,txt:"Μόνο είσοδος"},{ok:false,txt:"Μόνο έξοδος"},{ok:true,txt:"Είσοδος και έξοδος"}]);
+  answerOrders.touchType=opts;
+  document.getElementById("card").innerHTML=`
+   <div class="touch-demo">
+    <div class="phone"><div class="appdots">${Array.from({length:9},()=>'<span class="appdot"></span>').join("")}</div><span class="finger">☝️</span></div>
+    <div class="note">Η οθόνη αφής εμφανίζει πληροφορίες και δέχεται οδηγίες με το δάχτυλο.</div>
+    <div class="row">${opts.map((o,i)=>`<button class="choice" onclick="touchTypeAns(${i})">${o.txt}</button>`).join("")}</div>
+   </div>`;
+ }else{
+  selections.touchDevices=new Set();
+  answerOrders.touchDevices=shuffled([
+   {ok:true,icon:"📱",txt:"Έξυπνο κινητό"},
+   {ok:true,icon:"▣",txt:"Ταμπλέτα"},
+   {ok:false,icon:"🖨️",txt:"Εκτυπωτής"},
+   {ok:false,icon:"🎙️",txt:"Μικρόφωνο"}
+  ]);
+  document.getElementById("card").innerHTML=`
+   <div class="touch-demo">
+    <div class="note">Σε ποιες δύο συσκευές αναφέρεται ότι υπάρχει οθόνη αφής;</div>
+    <div class="row">${answerOrders.touchDevices.map((o,i)=>`<button class="choice" id="touchDev${i}" onclick="toggleTouchDevice(${i})"><span class="big">${o.icon}</span>${o.txt}</button>`).join("")}</div>
+    <button class="check" onclick="checkTouchDevices()">Έλεγχος</button>
+   </div>`;
+ }
+}
+function touchTypeAns(i){
+ if(!answerOrders.touchType[i].ok){setFeedback("Η οθόνη αφής και εμφανίζει πληροφορίες και δέχεται οδηγίες.",false);return}
+ setFeedback("Σωστά! Η οθόνη αφής είναι και είσοδος και έξοδος.",true);touchPhase=2;setTimeout(()=>{clearFeedback();drawTouch()},700);
+}
+function toggleTouchDevice(i){
+ const set=selections.touchDevices;set.has(i)?set.delete(i):set.add(i);
+ document.getElementById("touchDev"+i)?.classList.toggle("selected",set.has(i));
+}
+function checkTouchDevices(){
+ const correct=answerOrders.touchDevices.map((o,i)=>o.ok?i:-1).filter(i=>i>=0);
+ if(selections.touchDevices.size!==2||!correct.every(i=>selections.touchDevices.has(i))){setFeedback("Διάλεξε τις δύο συσκευές που αναφέρονται στο μάθημα.",false);return}
+ setFeedback("Σωστά! Η ταμπλέτα και το έξυπνο κινητό έχουν οθόνη αφής.",true);nextAfter();
+}
+
+/* Stage 7 */
+const finalMatch=[
+ {id:"keyboard",device:"⌨️ Πληκτρολόγιο",func:"Γράφω γράμματα, σύμβολα και αριθμούς."},
+ {id:"monitor",device:"🖥️ Οθόνη",func:"Δείχνει κείμενο, αριθμούς και εικόνες."},
+ {id:"printer",device:"🖨️ Εκτυπωτής",func:"Τυπώνει σε χαρτί κείμενο, αριθμούς και εικόνες."},
+ {id:"speakers",device:"🔊 Ηχεία",func:"Ακούω μουσική."}
+];
+function stage7(){challengePhase=1;challengeSelected=new Set();matchPick=null;matchDone=new Set();drawChallenge()}
+function drawChallenge(){
+ if(challengePhase===1){
+  answerOrders.challengeStorage=shuffled([
+   {ok:true,icon:"USB",txt:"Μνήμη φλας"},
+   {ok:true,icon:"💽",txt:"Δίσκος αποθήκευσης"},
+   {ok:false,icon:"⌨️",txt:"Πληκτρολόγιο"},
+   {ok:false,icon:"🎧",txt:"Ακουστικά"},
+   {ok:false,icon:"🖱️",txt:"Ποντίκι"}
+  ]);
+  document.getElementById("card").innerHTML=`
+   <div class="challenge">
+    <h3 style="text-align:center;margin-top:0">1. Βρες όλα όσα αποθηκεύουν.</h3>
+    <div class="row">${answerOrders.challengeStorage.map((o,i)=>`<button class="choice" id="chStore${i}" onclick="toggleChallengeStorage(${i})"><span class="big">${o.icon}</span>${o.txt}</button>`).join("")}</div>
+    <button class="check" onclick="checkChallengeStorage()">Έλεγχος</button>
+   </div>`;
+ }else{
+  const devs=shuffled(finalMatch),funcs=shuffled(finalMatch);
+  document.getElementById("card").innerHTML=`
+   <div class="challenge">
+    <h3 style="text-align:center;margin-top:0">2. Σύνδεσε κάθε συσκευή με τη λειτουργία της.</h3>
+    <div class="match-list">
+     <div class="match-devices">${devs.map(o=>`<button class="match-btn" id="mdev_${o.id}" onclick="pickMatch('${o.id}')">${o.device}</button>`).join("")}</div>
+     <div class="match-functions">${funcs.map(o=>`<button class="match-btn" id="mfunc_${o.id}" onclick="tryMatch('${o.id}')">${o.func}</button>`).join("")}</div>
+    </div>
+    <div class="smallhelp">Πάτησε πρώτα μια συσκευή και μετά τη λειτουργία της.</div>
+   </div>`;
+ }
+}
+function toggleChallengeStorage(i){
+ challengeSelected.has(i)?challengeSelected.delete(i):challengeSelected.add(i);
+ document.getElementById("chStore"+i)?.classList.toggle("selected",challengeSelected.has(i));
+}
+function checkChallengeStorage(){
+ const correct=answerOrders.challengeStorage.map((o,i)=>o.ok?i:-1).filter(i=>i>=0);
+ if(challengeSelected.size!==2||!correct.every(i=>challengeSelected.has(i))){setFeedback("Διάλεξε μόνο τις δύο συσκευές που αποθηκεύουν.",false);return}
+ setFeedback("Σωστά! Πάμε στη δεύτερη δοκιμή.",true);challengePhase=2;setTimeout(()=>{clearFeedback();drawChallenge()},700);
+}
+function pickMatch(id){
+ if(matchDone.has(id))return;
+ matchPick=id;document.querySelectorAll(".match-devices .match-btn").forEach(x=>x.classList.remove("pick"));
+ document.getElementById("mdev_"+id)?.classList.add("pick");
+}
+function tryMatch(id){
+ if(!matchPick){setFeedback("Πάτησε πρώτα μια συσκευή.",false);return}
+ if(matchPick!==id){setFeedback("Αυτή η λειτουργία ανήκει σε άλλη συσκευή.",false);document.getElementById("mdev_"+matchPick)?.classList.remove("pick");matchPick=null;return}
+ matchDone.add(id);document.getElementById("mdev_"+id)?.classList.add("done");document.getElementById("mdev_"+id)?.classList.remove("pick");document.getElementById("mfunc_"+id)?.classList.add("done");matchPick=null;
+ if(matchDone.size===finalMatch.length){setFeedback("Μπράβο! Ολοκλήρωσες σωστά και τις δύο δοκιμές.",true);nextAfter(1000)}
+ else setFeedback("Σωστά! Συνέχισε.",true);
+}
+
+/* Stage 8 */
+function stage8(){
+ selfChoice=null;
+ document.getElementById("card").innerHTML=`
+  <div class="finalBox">
+   <div class="stars">⭐ ⭐ ⭐</div>
+   <div class="summary">Έμαθες ποιες συσκευές δίνουν είσοδο στον υπολογιστή, ποιες δίνουν έξοδο, πού αποθηκεύονται δεδομένα και γιατί η οθόνη αφής λειτουργεί και ως είσοδος και ως έξοδος.</div>
+   <div class="faces">
+    <button class="face" onclick="selfPick(1,this)"><span>🙂</span>Θέλω λίγη εξάσκηση</button>
+    <button class="face" onclick="selfPick(2,this)"><span>😊</span>Τα κατάφερα</button>
+    <button class="face" onclick="selfPick(3,this)"><span>🤩</span>Τα κατάφερα πολύ καλά</button>
+   </div>
+   <button class="check" onclick="finish()">Ολοκλήρωση</button>
+   <button class="repeatBtn" onclick="restartAll()">↻ Επανάληψη δραστηριότητας</button>
+  </div>`;
+}
+function selfPick(v,e){selfChoice=v;document.querySelectorAll(".face").forEach(x=>x.classList.remove("sel"));e.classList.add("sel")}
+function finish(){
+ const f=document.getElementById("feedback");
+ if(!selfChoice){f.className="feedback bad";f.textContent="Διάλεξε πρώτα πώς νιώθεις για όσα έμαθες.";return}
+ completeFinalDot();f.className="feedback good";f.textContent="Μπράβο! Ολοκλήρωσες το Μάθημα 12.";
+}
+function restartAll(){
+ s=0;selfChoice=null;answerOrders={};selections={};selectedDrag=null;classState={};qIndex=0;qOrder=[];touchPhase=1;challengePhase=1;challengeSelected=new Set();matchPick=null;matchDone=new Set();render();
+}
+function help(){
+ const idx=Math.min(s,steps.length-1);
+ document.getElementById("helpText").textContent=steps[idx].h;document.getElementById("modal").classList.add("show");
+}
+function closeHelp(){document.getElementById("modal").classList.remove("show")}
+render();
+</script>
+
+
+<footer class="nk-license" aria-label="Πληροφορίες δημιουργού και άδειας χρήσης">
+  <div><strong>Created by Nikos Kalakos · © 2026</strong></div>
+  <div>Original educational content and simulation design licensed under <a class="cc-badge" href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank" rel="license noopener noreferrer">CC BY-NC 4.0</a>.</div>
+  <div>Source code © 2026 Nikos Kalakos.</div>
+  <div>Third-party and textbook materials remain subject to the rights and licences of their respective copyright holders.</div>
+</footer></body>
+</html>

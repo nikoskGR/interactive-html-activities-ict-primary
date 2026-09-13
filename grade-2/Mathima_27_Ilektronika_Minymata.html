@@ -1,0 +1,651 @@
+<!--
+ICT Educational Simulation
+Created by Nikos Kalakos
+Copyright © 2026 Nikos Kalakos
+
+Original educational content and simulation design licensed under CC BY-NC 4.0.
+Source code © 2026 Nikos Kalakos.
+Third-party and textbook materials remain subject to the rights and licences of their respective copyright holders.
+-->
+<!doctype html>
+<html lang="el">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="author" content="Nikos Kalakos">
+<meta name="copyright" content="© 2026 Nikos Kalakos">
+<meta name="license" content="Original educational content and simulation design: CC BY-NC 4.0; source code © 2026 Nikos Kalakos; third-party and textbook materials excluded.">
+<title>Μάθημα 27 - Ηλεκτρονικά μηνύματα</title>
+<style>
+:root{
+  --unit-red:#D93A2E;
+  --unit-red-dark:#A92920;
+  --unit-red-soft:#FFF0EE;
+  --ink:#25334a;
+  --line:#d5dbe6;
+  --good:#eef7dc;
+  --bad:#fff0ed;
+  --shadow:0 10px 28px rgba(37,51,74,.12);
+}
+*{box-sizing:border-box}
+body{margin:0;background:#f7f9fb;color:var(--ink);font-family:Arial,"Noto Sans",sans-serif}
+button{font:inherit;cursor:pointer}
+.app{max-width:1180px;margin:auto;padding:16px}
+.top{
+  background:#fff;border:3px solid #f0c3be;border-radius:24px;padding:14px 18px;
+  display:flex;align-items:center;justify-content:space-between;box-shadow:var(--shadow)
+}
+.top h1{margin:0;font-size:clamp(28px,4vw,41px)}
+.badge{
+  width:70px;height:70px;border-radius:22px;background:var(--unit-red);color:#fff;
+  display:grid;place-items:center;font-size:31px;font-weight:900;
+  box-shadow:inset 0 -5px 0 rgba(0,0,0,.10)
+}
+.path{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin:16px 0}
+.dot{
+  width:44px;height:44px;border-radius:50%;display:grid;place-items:center;
+  border:3px solid #aeb7c7;background:#fff;color:#65718a;font-weight:900;font-size:20px
+}
+.dot.active{background:var(--unit-red);border-color:var(--unit-red-dark);color:#fff;transform:scale(1.1)}
+.dot.done{background:var(--unit-red);border-color:var(--unit-red-dark);color:#fff}
+.panel{
+  min-height:710px;background:#fff;border:3px solid #f0c3be;border-radius:28px;
+  padding:24px;box-shadow:var(--shadow)
+}
+.step-head{display:flex;justify-content:space-between;gap:12px;align-items:flex-start}
+.step-head h2{margin:0;font-size:clamp(25px,4vw,37px)}
+.help{
+  background:#fff3f2;color:#8c241d;border:3px solid #efaaa4;
+  border-radius:16px;padding:10px 17px;font-weight:900
+}
+.instruction{
+  max-width:970px;margin:14px auto 18px;text-align:center;font-size:clamp(19px,2.3vw,24px);
+  font-weight:900;line-height:1.38
+}
+.card{
+  max-width:1040px;margin:auto;border:3px solid #f0c3be;border-radius:28px;
+  background:#fff;padding:22px;min-height:500px
+}
+.feedback{
+  display:none;max-width:860px;margin:16px auto 0;padding:12px 18px;border-radius:17px;
+  text-align:center;font-weight:900;font-size:20px
+}
+.feedback.good{display:block;background:var(--good);border:2px solid #9dbd57}
+.feedback.bad{display:block;background:var(--bad);border:2px solid #e5a59b}
+.check{
+  display:block;margin:18px auto 0;padding:13px 28px;border:0;border-radius:16px;
+  background:var(--unit-red);color:#fff;font-size:21px;font-weight:900;
+  box-shadow:0 5px 0 var(--unit-red-dark)
+}
+.smallhelp{text-align:center;font-size:14px;color:#6d7890;font-weight:800;margin-top:10px}
+.row{display:flex;gap:14px;justify-content:center;align-items:stretch;flex-wrap:wrap}
+.choice{
+  min-width:205px;max-width:285px;min-height:125px;border:3px solid var(--line);
+  border-radius:22px;background:#fff;padding:15px;font-weight:900;font-size:18px;
+  display:flex;flex-direction:column;justify-content:center;align-items:center;gap:10px
+}
+.choice:hover{transform:translateY(-2px);box-shadow:var(--shadow)}
+.choice.selected{border-color:var(--unit-red);background:var(--unit-red-soft)}
+
+.options-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;max-width:900px;margin:auto}
+.option-card{
+  min-height:145px;border:3px solid #d0d7e2;border-radius:20px;background:#fff;
+  padding:14px;text-align:center;font-weight:900;font-size:17px;
+  display:grid;place-items:center;gap:6px
+}
+.option-card .ico{font-size:48px;display:block}
+.option-card.sel{border-color:var(--unit-red);background:var(--unit-red-soft)}
+
+.resource-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:13px;max-width:860px;margin:auto}
+.resource{
+  min-height:125px;border:3px solid #d1d8e2;border-radius:18px;background:#fff;
+  display:grid;place-items:center;text-align:center;padding:12px;font-weight:900
+}
+.resource .ico{font-size:43px;display:block;margin-bottom:5px}
+.resource.sel{border-color:var(--unit-red);background:var(--unit-red-soft)}
+
+.message-app{
+  max-width:900px;margin:auto;border:5px solid #3f475c;border-radius:22px;overflow:hidden;
+  background:#fff;box-shadow:0 12px 28px rgba(20,28,45,.18)
+}
+.msg-top{
+  height:44px;background:#3b4658;color:#fff;display:flex;align-items:center;justify-content:space-between;
+  padding:0 13px;font-weight:900
+}
+.msg-brand{display:flex;align-items:center;gap:10px}
+.msg-bubble{
+  width:31px;height:25px;border-radius:9px;background:#fff;position:relative
+}
+.msg-bubble:after{
+  content:"";position:absolute;left:5px;bottom:-6px;border-top:8px solid #fff;border-right:8px solid transparent
+}
+.msg-main{display:grid;grid-template-columns:180px 1fr;min-height:385px}
+.msg-side{background:#f2f4f7;border-right:3px solid #d9dee6;padding:12px}
+.side-item{
+  border:3px solid #c1c9d4;border-radius:12px;background:#fff;padding:10px;margin-bottom:9px;
+  font-weight:900;text-align:center
+}
+.side-item.active{border-color:var(--unit-red);background:#fff2f0}
+.compose{padding:18px;background:#fbfcfd;position:relative}
+.field{
+  border:3px solid #aeb8c5;border-radius:12px;background:#fff;margin-bottom:14px;padding:10px 12px;
+  min-height:54px
+}
+.field strong{display:block;font-size:12px;color:#66758a;margin-bottom:4px}
+.field.body{min-height:150px}
+.send-btn{
+  border:0;border-radius:12px;background:#e1b21d;color:#4b3b00;padding:12px 25px;
+  font-weight:900;font-size:17px;float:right
+}
+
+.label-tray{
+  display:flex;gap:9px;flex-wrap:wrap;justify-content:center;margin-bottom:15px;
+  border:3px solid #d6dde6;background:#f8fafc;border-radius:15px;padding:10px
+}
+.label-token{
+  border:3px solid #9ca8b7;border-radius:12px;background:#fff;padding:8px 12px;
+  font-weight:900;cursor:grab;user-select:none
+}
+.label-token.selectedDrag{outline:4px solid var(--unit-red);background:var(--unit-red-soft)}
+.label-token.locked{opacity:.35}
+.label-target{
+  border:3px dashed var(--unit-red);border-radius:10px;background:#fff8f7;
+  color:#8f2d25;font-size:12px;font-weight:900;text-align:center;
+  min-height:36px;display:grid;place-items:center;margin-top:6px
+}
+.label-target.over{background:#ffe4e0}
+.label-target.filled{border-style:solid;background:#fff;color:#3e4c61}
+
+.steps-layout{display:grid;grid-template-columns:310px 1fr;gap:18px;max-width:900px;margin:auto}
+.step-tray{
+  border:3px solid #d4dae4;border-radius:18px;background:#f7f9fc;padding:12px
+}
+.step-token{
+  border:3px solid #9ca8b7;border-radius:13px;background:#fff;padding:12px;margin:9px 0;
+  font-weight:900;cursor:grab;user-select:none
+}
+.step-token.selectedDrag{outline:4px solid var(--unit-red);background:var(--unit-red-soft)}
+.step-token.locked{opacity:.35}
+.order-boxes{display:grid;gap:12px}
+.order-slot{
+  min-height:91px;border:4px dashed #9eaaba;border-radius:17px;background:#fbfcfd;
+  display:grid;grid-template-columns:58px 1fr;align-items:center;overflow:hidden
+}
+.order-slot.over{background:#fff0ee;border-color:var(--unit-red)}
+.order-slot.filled{border-style:solid;border-color:#8190a5;background:#fff}
+.order-num{
+  height:100%;background:#eef1f5;display:grid;place-items:center;font-size:28px;font-weight:900;color:#59687c
+}
+.order-text{padding:13px;font-weight:900}
+
+.safety-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px;max-width:900px;margin:auto}
+.phone{
+  border:5px solid #3f475c;border-radius:28px;background:#1e2634;padding:12px;min-height:360px
+}
+.phone-screen{background:#fff;border-radius:19px;min-height:325px;padding:12px}
+.sender{
+  border-bottom:2px solid #e0e4ea;padding:8px 5px 12px;font-weight:900;
+  display:flex;align-items:center;gap:9px
+}
+.avatar{
+  width:43px;height:43px;border-radius:50%;display:grid;place-items:center;background:#e8edf4;font-size:24px
+}
+.chat-bubble{
+  max-width:80%;margin:20px 0 12px auto;background:#445c8c;color:#fff;border-radius:16px 16px 5px 16px;
+  padding:11px 13px;font-weight:800
+}
+.safety-actions{display:grid;gap:9px;margin-top:12px}
+.safety-btn{
+  border:3px solid #aeb8c5;border-radius:13px;background:#fff;padding:10px;font-weight:900
+}
+
+.quiz{
+  max-width:860px;margin:auto;border:4px solid var(--unit-red);border-radius:24px;
+  background:#fff9f8;padding:20px;text-align:center
+}
+.quiz-progress{height:14px;background:#e7edf1;border-radius:9px;overflow:hidden;max-width:520px;margin:0 auto 18px}
+.quiz-progress span{display:block;height:100%;background:var(--unit-red);width:0;transition:.25s}
+.quiz-q{font-size:24px;font-weight:900;margin-bottom:18px}
+.finalBox{max-width:780px;margin:auto;text-align:center}
+.stars{font-size:58px;margin:18px}
+.summary{
+  padding:20px;border:4px solid var(--unit-red);background:#fff4f2;border-radius:22px;
+  font-size:21px;font-weight:900;line-height:1.45
+}
+.faces{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:18px}
+.face{
+  min-height:130px;border:3px solid var(--line);border-radius:20px;background:#fff;
+  font-weight:900;font-size:17px
+}
+.face span{display:block;font-size:52px;margin-bottom:7px}
+.face.sel{border-color:var(--unit-red);background:var(--unit-red-soft)}
+.repeatBtn{
+  display:block;margin:15px auto 0;padding:12px 22px;border:0;border-radius:15px;
+  background:#4f6b86;color:#fff;font-size:19px;font-weight:900;box-shadow:0 5px 0 #31475b
+}
+.modal{
+  position:fixed;inset:0;background:#24344d99;display:none;place-items:center;padding:18px;z-index:60
+}
+.modal.show{display:grid}
+.modal-box{
+  max-width:620px;background:#fff;border-radius:24px;border:4px solid var(--unit-red);
+  padding:22px;text-align:center;font-size:20px
+}
+.modal-box button{
+  padding:10px 20px;border:0;border-radius:13px;background:var(--unit-red);color:#fff;font-weight:900
+}
+@media(max-width:850px){
+  .options-grid,.resource-grid,.safety-grid,.faces{grid-template-columns:1fr}
+  .steps-layout{grid-template-columns:1fr}
+  .msg-main{grid-template-columns:135px 1fr}
+}
+</style>
+
+
+<style id="nk-license-style">
+.nk-license{max-width:1100px;margin:14px auto 24px;padding:10px 16px;text-align:center;font:13px/1.45 Arial,"Noto Sans",sans-serif;color:#4e657c}
+.nk-license a{color:inherit;text-decoration:underline;text-underline-offset:2px}
+.nk-license .cc-badge{display:inline-block;margin:0 4px;padding:2px 7px;border:1px solid #8aa0b8;border-radius:6px;background:#fff;font-weight:700;white-space:nowrap}
+</style></head>
+<body>
+<div class="app">
+  <div class="top"><h1>Ηλεκτρονικά μηνύματα</h1><div class="badge">27</div></div>
+  <div class="path" id="path"></div>
+
+  <main class="panel">
+    <div class="step-head">
+      <h2 id="title"></h2>
+      <button class="help" onclick="help()">❓ Βοήθεια</button>
+    </div>
+    <div class="instruction" id="inst"></div>
+    <div class="card" id="card"></div>
+    <div class="feedback" id="feedback"></div>
+  </main>
+</div>
+
+<div class="modal" id="modal">
+  <div class="modal-box">
+    <h2>💡 Βοήθεια</h2>
+    <p id="helpText"></p>
+    <button onclick="closeHelp()">Εντάξει</button>
+  </div>
+</div>
+
+<script>
+const steps=[
+ {t:"Επικοινωνώ από μακριά",i:"Διάλεξε και τους τρεις τρόπους επικοινωνίας μέσω διαδικτύου.",h:"Στο μάθημα αναφέρονται το ηλεκτρονικό μήνυμα, η βιντεοκλήση και το ηλεκτρονικό ταχυδρομείο.",k:"ways"},
+ {t:"Τι χρειάζομαι;",i:"Διάλεξε και τα δύο πράγματα που χρειάζεσαι για να στείλεις ηλεκτρονικό μήνυμα.",h:"Χρειάζεσαι μία ψηφιακή συσκευή συνδεδεμένη στο διαδίκτυο και τα στοιχεία του παραλήπτη.",k:"needs"},
+ {t:"Τι μπορεί να περιέχει;",i:"Διάλεξε και τους έξι ψηφιακούς πόρους που μπορεί να περιέχει ένα ηλεκτρονικό μήνυμα.",h:"Μπορεί να περιέχει φωτογραφία, βίντεο, αντιδράσεις, κείμενο, ήχο και emoticons.",k:"contents"},
+ {t:"Βασικά στοιχεία μηνύματος",i:"Ταίριαξε τα τρία ονόματα με τα σωστά μέρη του παραθύρου δημιουργίας μηνύματος.",h:"Τα βασικά στοιχεία που παρουσιάζει το μάθημα είναι ο παραλήπτης, το κείμενο του μηνύματος και το κουμπί «Αποστολή».",k:"parts"},
+ {t:"Βάζω τα βήματα στη σειρά",i:"Τοποθέτησε τα τρία βήματα στη σωστή σειρά.",h:"Πρώτα γράφεις τον παραλήπτη, μετά γράφεις το μήνυμα και στο τέλος πατάς «Αποστολή».",k:"order"},
+ {t:"Μήνυμα από άγνωστο χρήστη",i:"Διάλεξε τι πρέπει να κάνεις όταν λαμβάνεις μήνυμα από άτομο που δεν γνωρίζεις.",h:"Δεν ανοίγουμε και δεν απαντάμε σε μηνύματα από άτομα ή χρήστες που δεν γνωρίζουμε.",k:"safety"},
+ {t:"Τελική δοκιμή",i:"Απάντησε σωστά και στις τέσσερις ερωτήσεις.",h:"Θυμήσου τι χρειάζεται ένα ηλεκτρονικό μήνυμα, ποια είναι τα βασικά μέρη του και τι κάνουμε όταν ο αποστολέας είναι άγνωστος.",k:"quiz"},
+ {t:"Τα κατάφερες!",i:"Σκέψου τι έμαθες στο Μάθημα 27.",h:"Σκέψου τι είναι ένα ηλεκτρονικό μήνυμα, ποια βασικά στοιχεία έχει και πώς το χρησιμοποιούμε με ασφάλεια.",k:"final"}
+];
+
+let s=0,selfChoice=null,selected=new Set(),answerOrder=[];
+let labelSelected=null,labelLocked=new Set(),labelItems=[];
+let stepSelected=null,stepLocked=new Set(),stepItems=[];
+let quizIndex=0,quizOrder=[],quizOptions=[];
+
+function shuffled(arr){
+ const a=[...arr];
+ for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}
+ return a;
+}
+function nav(){
+ document.getElementById("path").innerHTML=steps.map((_,i)=>`<div class="dot ${i<s?'done':i===s?'active':''}">${i+1}</div>`).join("");
+}
+function completeFinalDot(){s=steps.length;nav()}
+function clearFeedback(){const f=document.getElementById("feedback");f.className="feedback";f.textContent=""}
+function setFeedback(t,ok){const f=document.getElementById("feedback");f.className="feedback "+(ok?"good":"bad");f.textContent=t}
+function nextAfter(ms=850){setTimeout(()=>{s++;render()},ms)}
+function render(){
+ nav();clearFeedback();
+ const x=steps[s];
+ document.getElementById("title").textContent=x.t;
+ document.getElementById("inst").textContent=x.i;
+ if(x.k==="ways")stage1();
+ if(x.k==="needs")stage2();
+ if(x.k==="contents")stage3();
+ if(x.k==="parts")stage4();
+ if(x.k==="order")stage5();
+ if(x.k==="safety")stage6();
+ if(x.k==="quiz")stage7();
+ if(x.k==="final")stage8();
+}
+
+/* Stage 1 */
+function stage1(){
+ selected=new Set();
+ answerOrder=shuffled([
+  {ok:true,icon:"💬",txt:"Ηλεκτρονικό μήνυμα"},
+  {ok:true,icon:"📹",txt:"Βιντεοκλήση"},
+  {ok:true,icon:"✉️",txt:"Ηλεκτρονικό ταχυδρομείο"},
+  {ok:false,icon:"📄",txt:"Χάρτινο σημείωμα"},
+  {ok:false,icon:"📦",txt:"Δέμα"},
+  {ok:false,icon:"🖍️",txt:"Ζωγραφιά σε χαρτί"}
+ ]);
+ document.getElementById("card").innerHTML=`
+  <div class="options-grid">
+   ${answerOrder.map((o,i)=>`<button class="option-card" id="opt${i}" onclick="toggleOption(${i})"><span><span class="ico">${o.icon}</span>${o.txt}</span></button>`).join("")}
+  </div>
+  <button class="check" onclick="checkStage1()">Έλεγχος</button>`;
+}
+function toggleOption(i){
+ selected.has(i)?selected.delete(i):selected.add(i);
+ document.getElementById("opt"+i).classList.toggle("sel",selected.has(i));
+}
+function checkStage1(){
+ const good=answerOrder.map((o,i)=>o.ok?i:-1).filter(i=>i>=0);
+ if(selected.size!==3||!good.every(i=>selected.has(i))){
+  setFeedback("Χρειάζονται ακριβώς τρεις τρόποι επικοινωνίας μέσω διαδικτύου.",false);return;
+ }
+ setFeedback("Σωστά! Και οι τρεις τρόποι χρησιμοποιούν το διαδίκτυο για επικοινωνία από μακριά.",true);nextAfter();
+}
+
+/* Stage 2 */
+function stage2(){
+ selected=new Set();
+ answerOrder=shuffled([
+  {ok:true,icon:"📱",txt:"Ψηφιακή συσκευή συνδεδεμένη στο διαδίκτυο"},
+  {ok:true,icon:"👤",txt:"Στοιχεία του παραλήπτη"},
+  {ok:false,icon:"🖨️",txt:"Εκτυπωτής"},
+  {ok:false,icon:"🎨",txt:"Εφαρμογή ζωγραφικής"}
+ ]);
+ document.getElementById("card").innerHTML=`
+  <div class="options-grid" style="grid-template-columns:repeat(2,1fr);max-width:760px">
+   ${answerOrder.map((o,i)=>`<button class="option-card" id="opt${i}" onclick="toggleOption(${i})"><span><span class="ico">${o.icon}</span>${o.txt}</span></button>`).join("")}
+  </div>
+  <button class="check" onclick="checkStage2()">Έλεγχος</button>`;
+}
+function checkStage2(){
+ const good=answerOrder.map((o,i)=>o.ok?i:-1).filter(i=>i>=0);
+ if(selected.size!==2||!good.every(i=>selected.has(i))){
+  setFeedback("Χρειάζονται ακριβώς δύο σωστά στοιχεία.",false);return;
+ }
+ setFeedback("Σωστά! Χρειάζεσαι σύνδεση στο διαδίκτυο και να γνωρίζεις σε ποιον στέλνεις το μήνυμα.",true);nextAfter();
+}
+
+/* Stage 3 */
+function stage3(){
+ selected=new Set();
+ answerOrder=shuffled([
+  {ok:true,icon:"🖼️",txt:"Φωτογραφία"},
+  {ok:true,icon:"🎬",txt:"Βίντεο"},
+  {ok:true,icon:"👍",txt:"Αντιδράσεις"},
+  {ok:true,icon:"📝",txt:"Κείμενο"},
+  {ok:true,icon:"🔊",txt:"Ήχος"},
+  {ok:true,icon:"😊",txt:"Emoticons"},
+  {ok:false,icon:"🪑",txt:"Καρέκλα"},
+  {ok:false,icon:"📚",txt:"Βιβλία σε ράφι"}
+ ]);
+ document.getElementById("card").innerHTML=`
+  <div class="resource-grid">
+   ${answerOrder.map((o,i)=>`<button class="resource" id="opt${i}" onclick="toggleOption(${i})"><span><span class="ico">${o.icon}</span>${o.txt}</span></button>`).join("")}
+  </div>
+  <button class="check" onclick="checkStage3()">Έλεγχος</button>`;
+}
+function checkStage3(){
+ const good=answerOrder.map((o,i)=>o.ok?i:-1).filter(i=>i>=0);
+ if(selected.size!==6||!good.every(i=>selected.has(i))){
+  setFeedback("Διάλεξε ακριβώς τους έξι ψηφιακούς πόρους που μπορούν να σταλούν μέσα σε μήνυμα.",false);return;
+ }
+ setFeedback("Μπράβο! Ένα ηλεκτρονικό μήνυμα μπορεί να περιέχει πολλούς διαφορετικούς ψηφιακούς πόρους.",true);nextAfter();
+}
+
+function messageComposer(withTargets=false){
+ const recipientTarget=withTargets?'<div class="label-target" id="lt_recipient" ondragover="labelOver(event)" ondragleave="labelLeave(event)" ondrop="labelDrop(event,&quot;recipient&quot;)" onclick="labelTap(&quot;recipient&quot;)">Όνομα</div>':"";
+ const bodyTarget=withTargets?'<div class="label-target" id="lt_body" ondragover="labelOver(event)" ondragleave="labelLeave(event)" ondrop="labelDrop(event,&quot;body&quot;)" onclick="labelTap(&quot;body&quot;)">Όνομα</div>':"";
+ const sendTarget=withTargets?'<div class="label-target" id="lt_send" style="clear:both;margin-top:58px" ondragover="labelOver(event)" ondragleave="labelLeave(event)" ondrop="labelDrop(event,&quot;send&quot;)" onclick="labelTap(&quot;send&quot;)">Όνομα</div>':"";
+ return `<div class="message-app">
+  <div class="msg-top">
+   <span class="msg-brand"><span class="msg-bubble"></span>e-me — Μηνύματα</span>
+   <span>— □ ×</span>
+  </div>
+  <div class="msg-main">
+   <div class="msg-side">
+    <div class="side-item active">Νέο μήνυμα</div>
+    <div class="side-item">Εισερχόμενα</div>
+    <div class="side-item">Απεσταλμένα</div>
+   </div>
+   <div class="compose">
+    <div class="field">
+     <strong>Προς</strong>
+     Ήρωνας
+     ${recipientTarget}
+    </div>
+    <div class="field body">
+     <strong>Μήνυμα</strong>
+     Γεια σου! Τι κάνεις;
+     ${bodyTarget}
+    </div>
+    <button class="send-btn">✓ Αποστολή</button>
+    ${sendTarget}
+   </div>
+  </div>
+ </div>`;
+}
+
+/* Stage 4 */
+function stage4(){
+ labelSelected=null;labelLocked=new Set();
+ labelItems=shuffled([
+  {id:"recipient",label:"Παραλήπτης",target:"recipient"},
+  {id:"body",label:"Μήνυμα",target:"body"},
+  {id:"send",label:"Αποστολή",target:"send"}
+ ]);
+ document.getElementById("card").innerHTML=`
+  <div class="label-tray">
+   ${labelItems.map(x=>`<button class="label-token" id="lab_${x.id}" draggable="true"
+    ondragstart="labelDragStart(event,'${x.id}')" ondragend="labelDragEnd(event)"
+    onclick="labelPick('${x.id}')">${x.label}</button>`).join("")}
+  </div>
+  ${messageComposer(true)}`;
+}
+function labelDragStart(ev,id){
+ labelSelected=id;document.getElementById("lab_"+id)?.classList.add("selectedDrag");
+ ev.dataTransfer?.setData("text/plain",id);
+}
+function labelDragEnd(ev){ev.currentTarget.classList.remove("selectedDrag")}
+function labelPick(id){
+ if(labelLocked.has(id))return;
+ document.querySelectorAll(".label-token").forEach(x=>x.classList.remove("selectedDrag"));
+ labelSelected=labelSelected===id?null:id;
+ if(labelSelected)document.getElementById("lab_"+id)?.classList.add("selectedDrag");
+}
+function labelOver(ev){ev.preventDefault();ev.currentTarget.classList.add("over")}
+function labelLeave(ev){ev.currentTarget.classList.remove("over")}
+function labelDrop(ev,target){
+ ev.preventDefault();ev.currentTarget.classList.remove("over");
+ const id=(ev.dataTransfer&&ev.dataTransfer.getData("text/plain"))||labelSelected;
+ if(id)placeLabel(id,target);
+}
+function labelTap(target){if(labelSelected)placeLabel(labelSelected,target)}
+function placeLabel(id,target){
+ const item=labelItems.find(x=>x.id===id);
+ if(!item||labelLocked.has(id))return;
+ if(item.target!==target){setFeedback("Αυτό το όνομα ανήκει σε διαφορετικό μέρος του μηνύματος.",false);return}
+ labelLocked.add(id);labelSelected=null;
+ document.getElementById("lab_"+id).classList.add("locked");
+ const t=document.getElementById("lt_"+target);t.textContent=item.label;t.classList.add("filled");
+ if(labelLocked.size===3){
+  setFeedback("Μπράβο! Αναγνώρισες τον παραλήπτη, το μήνυμα και την «Αποστολή».",true);nextAfter();
+ }else setFeedback("Σωστά! Συνέχισε.",true);
+}
+
+/* Stage 5 */
+function stage5(){
+ stepSelected=null;stepLocked=new Set();
+ stepItems=shuffled([
+  {id:"recipient",label:"Γράφω το όνομα ή το επώνυμο του παραλήπτη.",target:"1"},
+  {id:"message",label:"Γράφω το μήνυμά μου.",target:"2"},
+  {id:"send",label:"Πατάω «Αποστολή».",target:"3"}
+ ]);
+ document.getElementById("card").innerHTML=`
+  <div class="steps-layout">
+   <div class="step-tray">
+    <h3 style="text-align:center;margin:2px 0 8px">Βήματα</h3>
+    ${stepItems.map(x=>`<div class="step-token" id="st_${x.id}" draggable="true"
+      ondragstart="stepDragStart(event,'${x.id}')" ondragend="stepDragEnd(event)"
+      onclick="stepPick('${x.id}')">${x.label}</div>`).join("")}
+    <div class="smallhelp">Σύρε ένα βήμα ή πάτησέ το και μετά πάτησε τη σωστή θέση.</div>
+   </div>
+   <div class="order-boxes">
+    ${[1,2,3].map(n=>`<div class="order-slot" id="os_${n}" ondragover="stepOver(event)"
+      ondragleave="stepLeave(event)" ondrop="stepDrop(event,'${n}')" onclick="stepTap('${n}')">
+      <div class="order-num">${n}</div><div class="order-text">Τοποθέτησε το βήμα</div>
+     </div>`).join("")}
+   </div>
+  </div>`;
+}
+function stepDragStart(ev,id){
+ stepSelected=id;document.getElementById("st_"+id)?.classList.add("selectedDrag");
+ ev.dataTransfer?.setData("text/plain",id);
+}
+function stepDragEnd(ev){ev.currentTarget.classList.remove("selectedDrag")}
+function stepPick(id){
+ if(stepLocked.has(id))return;
+ document.querySelectorAll(".step-token").forEach(x=>x.classList.remove("selectedDrag"));
+ stepSelected=stepSelected===id?null:id;
+ if(stepSelected)document.getElementById("st_"+id)?.classList.add("selectedDrag");
+}
+function stepOver(ev){ev.preventDefault();ev.currentTarget.classList.add("over")}
+function stepLeave(ev){ev.currentTarget.classList.remove("over")}
+function stepDrop(ev,target){
+ ev.preventDefault();ev.currentTarget.classList.remove("over");
+ const id=(ev.dataTransfer&&ev.dataTransfer.getData("text/plain"))||stepSelected;
+ if(id)placeStep(id,target);
+}
+function stepTap(target){if(stepSelected)placeStep(stepSelected,target)}
+function placeStep(id,target){
+ const item=stepItems.find(x=>x.id===id);
+ if(!item||stepLocked.has(id))return;
+ if(item.target!==target){setFeedback("Αυτό το βήμα μπαίνει σε διαφορετική θέση.",false);return}
+ stepLocked.add(id);stepSelected=null;
+ document.getElementById("st_"+id).classList.add("locked");
+ const slot=document.getElementById("os_"+target);slot.classList.add("filled");
+ slot.querySelector(".order-text").textContent=item.label;
+ if(stepLocked.size===3){
+  setFeedback("Σωστά! Έβαλες τα τρία βήματα στη σωστή σειρά.",true);nextAfter();
+ }else setFeedback("Σωστά! Συνέχισε.",true);
+}
+
+/* Stage 6 */
+function stage6(){
+ document.getElementById("card").innerHTML=`
+  <div class="safety-grid">
+   <div class="phone">
+    <div class="phone-screen">
+     <div class="sender"><div class="avatar">?</div><div>Άγνωστος χρήστης</div></div>
+     <div class="chat-bubble">Γεια! Άνοιξε το μήνυμά μου.</div>
+     <div class="safety-actions">
+      <button class="safety-btn" onclick="safetyAnswer('open')">Ανοίγω και απαντώ</button>
+      <button class="safety-btn" onclick="safetyAnswer('ignore')">Δεν ανοίγω και δεν απαντώ</button>
+     </div>
+    </div>
+   </div>
+   <div style="display:grid;place-items:center;padding:20px">
+    <div style="max-width:330px;text-align:center">
+     <div style="font-size:70px">🛡️</div>
+     <h3>Ασφαλής επιλογή</h3>
+     <p style="font-size:19px;font-weight:800;line-height:1.45">
+      Ο αποστολέας δεν είναι κάποιος που γνωρίζεις.
+     </p>
+    </div>
+   </div>
+  </div>`;
+}
+function safetyAnswer(a){
+ if(a!=="ignore"){
+  setFeedback("Όταν δεν γνωρίζεις τον αποστολέα, δεν ανοίγεις και δεν απαντάς στο μήνυμα.",false);return;
+ }
+ setFeedback("Σωστά! Δεν ανοίγουμε ούτε απαντάμε σε μηνύματα από άγνωστους χρήστες.",true);nextAfter();
+}
+
+/* Stage 7 */
+const quizQs=[
+ {q:"Τι χρειάζεσαι για να στείλεις ηλεκτρονικό μήνυμα;",correct:"Συσκευή με διαδίκτυο και στοιχεία παραλήπτη",wrong:["Μόνο εκτυπωτή","Μόνο ζωγραφική"]},
+ {q:"Ποιο είναι το πρώτο βήμα όταν δημιουργείς μήνυμα;",correct:"Γράφω τον παραλήπτη",wrong:["Πατάω «Αποστολή»","Κλείνω την εφαρμογή"]},
+ {q:"Τι μπορεί να υπάρχει μέσα σε ηλεκτρονικό μήνυμα;",correct:"Κείμενο, εικόνα, ήχος ή άλλος ψηφιακός πόρος",wrong:["Μόνο κείμενο","Μόνο αριθμοί"]},
+ {q:"Τι κάνεις με μήνυμα από άγνωστο χρήστη;",correct:"Δεν το ανοίγω και δεν απαντώ",wrong:["Απαντώ αμέσως","Στέλνω κι εγώ προσωπικά στοιχεία"]}
+];
+function stage7(){
+ quizIndex=0;quizOrder=shuffled(quizQs);drawQuiz();
+}
+function drawQuiz(){
+ const q=quizOrder[quizIndex];
+ quizOptions=shuffled([{ok:true,txt:q.correct},...q.wrong.map(txt=>({ok:false,txt}))]);
+ document.getElementById("card").innerHTML=`
+  <div class="quiz">
+   <div class="quiz-progress"><span style="width:${(quizIndex/quizOrder.length)*100}%"></span></div>
+   <div class="quiz-q">${q.q}</div>
+   <div class="row">
+    ${quizOptions.map((o,i)=>`<button class="choice" onclick="quizAnswer(${i})">${o.txt}</button>`).join("")}
+   </div>
+   <div class="smallhelp">${quizIndex+1} από ${quizOrder.length}</div>
+  </div>`;
+}
+function quizAnswer(i){
+ if(!quizOptions[i].ok){setFeedback("Δοκίμασε ξανά.",false);return}
+ quizIndex++;
+ if(quizIndex<quizOrder.length){
+  setFeedback("Σωστά! Πάμε στην επόμενη ερώτηση.",true);
+  setTimeout(()=>{clearFeedback();drawQuiz()},600);
+ }else{
+  setFeedback("Μπράβο! Ολοκλήρωσες την τελική δοκιμή.",true);nextAfter();
+ }
+}
+
+/* Stage 8 */
+function stage8(){
+ selfChoice=null;
+ document.getElementById("card").innerHTML=`
+  <div class="finalBox">
+   <div class="stars">⭐ ⭐ ⭐</div>
+   <div class="summary">
+    Έμαθες τι είναι ένα ηλεκτρονικό μήνυμα, τι χρειάζεσαι για να το στείλεις,
+    ποια είναι τα βασικά στοιχεία του και ποια σειρά ακολουθούμε.
+    Έμαθες επίσης ότι δεν ανοίγουμε ούτε απαντάμε σε μηνύματα από άγνωστους χρήστες.
+   </div>
+   <div class="faces">
+    <button class="face" onclick="selfPick(1,this)"><span>🙂</span>Θέλω λίγη εξάσκηση</button>
+    <button class="face" onclick="selfPick(2,this)"><span>😊</span>Τα κατάφερα</button>
+    <button class="face" onclick="selfPick(3,this)"><span>🤩</span>Τα κατάφερα πολύ καλά</button>
+   </div>
+   <button class="check" onclick="finish()">Ολοκλήρωση</button>
+   <button class="repeatBtn" onclick="restartAll()">↻ Επανάληψη δραστηριότητας</button>
+  </div>`;
+}
+function selfPick(v,e){
+ selfChoice=v;document.querySelectorAll(".face").forEach(x=>x.classList.remove("sel"));e.classList.add("sel");
+}
+function finish(){
+ const f=document.getElementById("feedback");
+ if(!selfChoice){f.className="feedback bad";f.textContent="Διάλεξε πρώτα πώς νιώθεις για όσα έμαθες.";return}
+ completeFinalDot();
+ f.className="feedback good";f.textContent="Μπράβο! Ολοκλήρωσες το Μάθημα 27.";
+}
+function restartAll(){
+ s=0;selfChoice=null;selected=new Set();answerOrder=[];
+ labelSelected=null;labelLocked=new Set();labelItems=[];
+ stepSelected=null;stepLocked=new Set();stepItems=[];
+ quizIndex=0;quizOrder=[];quizOptions=[];render();
+}
+function help(){
+ const idx=Math.min(s,steps.length-1);
+ document.getElementById("helpText").textContent=steps[idx].h;
+ document.getElementById("modal").classList.add("show");
+}
+function closeHelp(){document.getElementById("modal").classList.remove("show")}
+render();
+</script>
+
+
+<footer class="nk-license" aria-label="Πληροφορίες δημιουργού και άδειας χρήσης">
+  <div><strong>Created by Nikos Kalakos · © 2026</strong></div>
+  <div>Original educational content and simulation design licensed under <a class="cc-badge" href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank" rel="license noopener noreferrer">CC BY-NC 4.0</a>.</div>
+  <div>Source code © 2026 Nikos Kalakos.</div>
+  <div>Third-party and textbook materials remain subject to the rights and licences of their respective copyright holders.</div>
+</footer></body>
+</html>

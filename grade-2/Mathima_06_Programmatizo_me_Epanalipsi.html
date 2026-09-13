@@ -1,0 +1,773 @@
+<!--
+ICT Educational Simulation
+Created by Nikos Kalakos
+Copyright © 2026 Nikos Kalakos
+
+Original educational content and simulation design licensed under CC BY-NC 4.0.
+Source code © 2026 Nikos Kalakos.
+Third-party and textbook materials remain subject to the rights and licences of their respective copyright holders.
+-->
+<!doctype html>
+<html lang="el">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="author" content="Nikos Kalakos">
+<meta name="copyright" content="© 2026 Nikos Kalakos">
+<meta name="license" content="Original educational content and simulation design: CC BY-NC 4.0; source code © 2026 Nikos Kalakos; third-party and textbook materials excluded.">
+<title>Μάθημα 6 - Προγραμματίζω με την εντολή επανάληψης</title>
+<style>
+:root{
+  --ink:#17324d;--blue:#147ca8;--blue2:#0b648b;--soft:#eaf7fb;
+  --lime:#9abd22;--lime2:#789b12;--line:#c9d8e7;--orange:#f08a28;
+  --orange2:#c96818;--purple:#7358c7;--purple2:#563ca6;
+  --red:#d93a2e;--bad:#d85c4b;--shadow:0 10px 28px rgba(23,50,77,.12)
+}
+*{box-sizing:border-box}
+body{margin:0;background:#f7fafc;color:var(--ink);font-family:Arial,"Noto Sans",sans-serif}
+button{font:inherit;cursor:pointer}
+.app{max-width:1180px;margin:auto;padding:16px}
+.top{
+  background:#fff;border:3px solid #b8dfea;border-radius:24px;padding:14px 18px;
+  display:flex;align-items:center;justify-content:space-between;box-shadow:var(--shadow)
+}
+.top h1{margin:0;font-size:clamp(26px,3.4vw,39px)}
+.badge{
+  width:68px;height:68px;border-radius:22px;background:var(--blue);
+  display:grid;place-items:center;color:#fff;font-size:31px;font-weight:900;flex:0 0 auto
+}
+.path{display:flex;gap:10px;justify-content:center;margin:16px 0;flex-wrap:wrap}
+.dot{
+  width:44px;height:44px;border-radius:50%;border:3px solid #aab9c9;background:#fff;color:#5e7389;
+  display:grid;place-items:center;font-weight:900;font-size:20px
+}
+.dot.active{background:var(--blue);border-color:var(--blue);color:#fff;transform:scale(1.1)}
+.dot.done{background:var(--lime);border-color:var(--lime2);color:#fff}
+.panel{
+  min-height:720px;background:#fff;border:3px solid #b8dfea;border-radius:28px;
+  padding:24px;box-shadow:var(--shadow)
+}
+.step-head{display:flex;justify-content:space-between;gap:12px}
+.step-head h2{margin:0;font-size:clamp(26px,4vw,38px)}
+.help{
+  background:#fff7d6;color:#624700;border:3px solid #dfbc44;border-radius:16px;
+  padding:10px 17px;font-weight:900
+}
+.instruction{
+  max-width:980px;margin:14px auto 18px;text-align:center;
+  font-size:clamp(20px,2.35vw,25px);font-weight:900;line-height:1.35
+}
+.card{
+  max-width:1040px;margin:auto;border:3px solid #c7e4ec;border-radius:28px;
+  background:#fff;padding:22px;min-height:500px
+}
+.feedback{
+  display:none;max-width:860px;margin:16px auto 0;padding:12px 18px;border-radius:17px;
+  text-align:center;font-weight:900;font-size:20px
+}
+.feedback.good{display:block;background:#e5f8ef;border:2px solid #87cdae}
+.feedback.bad{display:block;background:#fff0ed;border:2px solid #e5a59b}
+.check{
+  display:block;margin:18px auto 0;padding:13px 28px;border:0;border-radius:16px;
+  background:var(--lime);color:#fff;font-size:21px;font-weight:900;box-shadow:0 5px 0 var(--lime2)
+}
+
+/* Noesis Icons */
+.noesis{
+  max-width:980px;margin:auto;border:4px solid var(--purple);
+  border-radius:22px;background:#fff;overflow:hidden;box-shadow:0 10px 22px rgba(23,50,77,.16)
+}
+.ntitle{
+  height:52px;background:linear-gradient(90deg,#6b56c7,#8d63d4);color:#fff;
+  display:flex;align-items:center;justify-content:space-between;padding:0 15px;
+  font-size:21px;font-weight:900
+}
+.nbrand{display:flex;align-items:center;gap:10px}
+.nlogo{
+  width:32px;height:32px;border-radius:10px;background:#fff;color:#6c54bf;
+  display:grid;place-items:center;font-size:19px;font-weight:900
+}
+.nmenu{
+  height:38px;background:#faf8ff;border-bottom:2px solid #e3d9ee;
+  display:flex;align-items:center;gap:18px;padding:0 13px;font-size:14px
+}
+.nbody{display:grid;grid-template-columns:1.05fr .95fr;min-height:430px}
+.stagePane{
+  background:#fff;
+  border-right:2px solid #ddd2ec;padding:12px;position:relative
+}
+.stagePane.customStagePane{
+  background:#fff;
+  padding:10px;
+  display:flex;
+  align-items:center;
+  justify-content:center
+}
+.sceneTitle{text-align:center;font-weight:900;margin-bottom:10px}
+.field{
+  position:relative;width:100%;height:310px;background:
+    radial-gradient(circle at 25% 20%,rgba(255,255,255,.65),transparent 20%),
+    linear-gradient(#c8eeff 0 44%,#8fca63 44% 100%);
+  border:4px solid #8aa4b8;border-radius:18px;overflow:hidden
+}
+.field::after{
+  content:"";position:absolute;left:8%;right:8%;bottom:42px;height:4px;background:rgba(255,255,255,.72)
+}
+.kidL,.kidR{position:absolute;bottom:58px;font-size:72px;line-height:1}
+.kidL{left:38px}.kidR{right:38px}
+.ball{
+  position:absolute;left:126px;bottom:68px;width:46px;height:46px;border-radius:50%;
+  display:grid;place-items:center;font-size:42px;line-height:1;
+  transition:left .48s ease,bottom .38s ease,transform .38s ease
+}
+.ball.jumping{bottom:125px;transform:rotate(35deg)}
+.stopBtn{
+  position:absolute;right:12px;top:12px;width:58px;height:52px;
+  border:0;background:transparent;display:none;place-items:center;
+  padding:0;z-index:20;cursor:pointer;box-shadow:none
+}
+.stopBtn.show{display:grid}
+.hex{
+  width:45px;height:41px;background:var(--red);
+  clip-path:polygon(25% 0,75% 0,100% 50%,75% 100%,25% 100%,0 50%);
+  display:block;filter:drop-shadow(0 2px 1px rgba(0,0,0,.18))
+}
+.programPane{background:#f7f5fb;padding:14px;display:flex;flex-direction:column}
+.areaTitle{font-weight:900;text-align:center;margin-bottom:8px}
+.palette{
+  min-height:92px;border:3px solid #d5cbea;border-radius:16px;background:#fff;
+  padding:9px;display:flex;gap:8px;align-items:center;justify-content:center;flex-wrap:wrap
+}
+.workspace{
+  flex:1;margin-top:12px;border:3px dashed #a996cb;border-radius:16px;
+  background:#fff;padding:13px;min-height:170px
+}
+.workspace .hint{text-align:center;color:#7b6b92;font-weight:900;padding:25px 8px}
+.runbar{
+  margin-top:10px;display:flex;justify-content:center;gap:10px;flex-wrap:wrap
+}
+.run{
+  border:0;border-radius:14px;padding:10px 18px;background:#29a85f;color:white;font-weight:900
+}
+.resetMini{
+  border:2px solid #9aacc0;border-radius:14px;padding:10px 18px;background:#fff;color:var(--ink);font-weight:900
+}
+
+/* icon blocks */
+.iblock{
+  min-width:66px;height:62px;border-radius:14px;background:#2aa5d4;border:4px solid #0d7ca8;
+  color:#fff;display:grid;grid-template-rows:1fr 21px;place-items:center;
+  font-size:29px;font-weight:900;box-shadow:0 4px 0 #075f83;padding-top:2px
+}
+.iblock .val{
+  min-width:28px;padding:0 7px;height:21px;border-radius:11px;background:#fff;color:#0b6f96;
+  border:2px solid #2aa5d4;font-size:13px;line-height:17px;display:grid;place-items:center
+}
+.startBlock{background:#3876d3;border-color:#235aa8}
+.jumpBlock{background:#2aa5d4;border-color:#0d7ca8}
+.speedBlock{background:#e68b33;border-color:#b65d15}
+.speedBlock .val{color:#9b4b0f;border-color:#e68b33}
+.blockBtn{border:0;background:transparent;padding:0}
+
+.repeatBlock{
+  position:relative;display:flex;align-items:center;gap:7px;
+  min-height:88px;padding:13px 75px 13px 18px;border-radius:18px;
+  background:var(--orange);box-shadow:0 5px 0 #b95f13
+}
+.repeatBlock::before{
+  content:"";position:absolute;left:14px;right:56px;top:14px;bottom:14px;
+  background:#fff;border-radius:8px;z-index:0
+}
+.repeatBlock::after{
+  content:"";position:absolute;right:43px;top:14px;bottom:14px;width:22px;
+  background:var(--orange);border-radius:0 8px 8px 0;z-index:1
+}
+.repeatBlock>.iblock,.repeatBlock>.blockBtn,.repeatBlock>.slot{position:relative;z-index:2}
+.rend{
+  position:absolute;z-index:3;right:4px;top:50%;transform:translateY(-50%);
+  width:58px;height:64px;border-radius:14px;background:var(--orange);
+  border:4px solid var(--orange2);color:#fff;display:grid;place-items:center;
+  font-size:31px;font-weight:900;box-shadow:0 4px 0 #a85010
+}
+.rend .rcount{
+  position:absolute;bottom:-16px;left:50%;transform:translateX(-50%);
+  min-width:32px;height:24px;padding:0 7px;border:3px solid #d6741e;border-radius:12px;
+  background:#fff;color:#a84f0c;font-size:14px;display:grid;place-items:center;font-weight:900
+}
+.programLine{display:flex;align-items:center;gap:8px;flex-wrap:wrap;justify-content:center}
+.slot{
+  width:72px;height:66px;border:3px dashed #9c8cbc;border-radius:14px;background:#fbfaff;
+  display:grid;place-items:center;color:#7a6b95;font-weight:900
+}
+.slot.filled{border:0;background:transparent;cursor:pointer}
+.slot.filled:hover{outline:3px solid #f0c440;outline-offset:2px;border-radius:14px}
+.row{display:flex;gap:14px;justify-content:center;align-items:stretch;flex-wrap:wrap}
+.choice{
+  min-width:210px;min-height:130px;border:3px solid var(--line);border-radius:22px;
+  background:#fff;padding:14px;font-weight:900;font-size:18px;
+  display:flex;flex-direction:column;justify-content:center;align-items:center;gap:10px
+}
+.choice:hover{transform:translateY(-2px);box-shadow:var(--shadow)}
+.counter{display:flex;align-items:center;justify-content:center;gap:14px;margin:14px}
+.counter button{
+  width:50px;height:50px;border:3px solid #9bc5d5;border-radius:14px;background:#fff;
+  font-size:28px;font-weight:900
+}
+.num{font-size:35px;font-weight:900;min-width:42px;text-align:center}
+.taskStrip{
+  max-width:860px;margin:0 auto 14px;border:3px solid var(--blue);background:var(--soft);
+  border-radius:17px;padding:11px 15px;text-align:center;font-weight:900;font-size:19px
+}
+.checklist{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin:12px 0}
+.checkitem{padding:8px 12px;border:2px solid #b9c9d7;border-radius:12px;background:#f7fafc;font-weight:900}
+.checkitem.done{background:#e9fff3;border-color:#2f9b63;color:#07583c}
+
+/* final */
+.finalBox{max-width:780px;margin:auto;text-align:center}
+.stars{font-size:58px;margin:18px}
+.summary{
+  padding:20px;border:4px solid var(--blue);background:var(--soft);border-radius:22px;
+  font-size:21px;font-weight:900;line-height:1.45
+}
+.faces{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:18px}
+.face{
+  min-height:130px;border:3px solid var(--line);border-radius:20px;background:#fff;
+  font-weight:900;font-size:17px
+}
+.face span{display:block;font-size:52px;margin-bottom:7px}
+.face.sel{border-color:var(--lime);background:#eef8d8}
+.modal{
+  position:fixed;inset:0;background:#17324d99;display:none;place-items:center;padding:18px;z-index:20
+}
+.modal.show{display:grid}
+.modal-box{
+  max-width:620px;background:#fff;border-radius:24px;border:4px solid #dfbc44;
+  padding:22px;text-align:center;font-size:20px
+}
+.modal-box button{
+  padding:10px 20px;border:0;border-radius:13px;background:#dfbc44;font-weight:900
+}
+
+
+/* Stage 1: book-like park scene with a clear rectangular grid overlay */
+.countScene{padding:0;width:100%}
+.countTitle{font-weight:900;text-align:center;margin:2px 0 10px;color:#25425f}
+.parkScene{
+  position:relative;
+  width:100%;
+  aspect-ratio:9 / 5;
+  height:auto;
+  border:3px solid #687f8e;
+  border-radius:14px;
+  overflow:hidden;
+  background:linear-gradient(to bottom,#ffe984 0 36%,#72b54b 36% 100%);
+}
+.citySkyline{
+  position:absolute;left:0;right:0;top:18px;height:94px;z-index:1;
+  display:flex;align-items:flex-end;justify-content:center;gap:7px;opacity:.58;
+}
+.citySkyline span{display:block;width:24px;background:#bd8e37;border-radius:2px 2px 0 0;position:relative}
+.citySkyline span::after{content:"";position:absolute;left:50%;top:-11px;transform:translateX(-50%);width:3px;height:11px;background:#9a742e}
+.citySkyline span:nth-child(1){height:40px}.citySkyline span:nth-child(2){height:63px}.citySkyline span:nth-child(3){height:48px}.citySkyline span:nth-child(4){height:78px}.citySkyline span:nth-child(5){height:57px}.citySkyline span:nth-child(6){height:70px}.citySkyline span:nth-child(7){height:44px}.citySkyline span:nth-child(8){height:82px}.citySkyline span:nth-child(9){height:53px}.citySkyline span:nth-child(10){height:69px}.citySkyline span:nth-child(11){height:42px}
+.parkHorizon{position:absolute;left:0;right:0;top:112px;height:8px;background:#365e47;z-index:1}
+.parkPath{position:absolute;left:0;right:0;top:121px;height:19px;background:#86715c;z-index:1;border-top:3px solid #4d624d;border-bottom:3px solid #4d624d}
+.treeRight{position:absolute;right:-10px;top:35px;width:105px;height:205px;z-index:1}
+.treeRight .trunk{position:absolute;left:49px;top:82px;width:26px;height:123px;background:#6b452f;border-radius:10px}
+.treeRight .crown{position:absolute;border-radius:50%;background:#39823f}
+.treeRight .c1{width:92px;height:88px;left:2px;top:0}.treeRight .c2{width:74px;height:70px;left:40px;top:28px}.treeRight .c3{width:70px;height:67px;left:0;top:43px}
+.bench{position:absolute;right:88px;bottom:70px;width:105px;height:54px;z-index:1}
+.bench::before,.bench::after{content:"";position:absolute;left:0;right:0;height:12px;background:#7b4a2c;border-radius:4px;border:2px solid #4f3322}
+.bench::before{top:4px}.bench::after{top:25px}
+.benchLeg{position:absolute;top:36px;width:8px;height:18px;background:#454545}.benchLeg.l{left:18px}.benchLeg.r{right:18px}
+.parkGrid{
+  position:absolute;inset:0;z-index:3;pointer-events:none;
+  background-image:
+    linear-gradient(to right,rgba(0,0,0,.62) 1px,transparent 1.4px),
+    linear-gradient(to bottom,rgba(0,0,0,.62) 1px,transparent 1.4px);
+  background-size:calc(100% / 9) 100%,100% calc(100% / 5);
+  background-position:0 0,0 0;
+}
+.animalPlayer{
+  position:absolute;
+  z-index:5;
+  width:88px;
+  height:88px;
+  display:grid;
+  place-items:end center;
+  font-size:76px;
+  line-height:1;
+  filter:drop-shadow(0 3px 2px rgba(0,0,0,.20));
+  pointer-events:none;
+  transform-origin:center bottom;
+}
+/* Both animals stand on the bottom-row base tiles, but their bodies may extend above them. */
+.animalPlayer.rabbit{
+  left:calc((100% / 9) * .5 - 44px);
+  bottom:0;
+  transform:scaleX(-1); /* the bunny faces right, toward the cat */
+}
+.animalPlayer.cat{
+  left:calc((100% / 9) * 8.5 - 44px);
+  bottom:0;
+}
+.ballGrid{
+  position:absolute;
+  z-index:6;
+  width:38px;
+  height:38px;
+  border-radius:50%;
+  display:grid;
+  place-items:center;
+  font-size:32px;
+  line-height:1;
+  left:calc((100% / 9) * .5 - 19px);
+  top:calc((100% / 5) * 4.5 - 19px);
+  transition:left .30s ease,top .30s ease,transform .20s ease;
+  filter:drop-shadow(0 2px 1px rgba(0,0,0,.15));
+  pointer-events:none;
+}
+.ballGrid.jump{transform:scale(1.08)}
+.ballGrid.spotJump{transform:translateY(-52px) rotate(12deg) scale(1.08)}
+.sceneHint{margin:10px 0 0;text-align:center;font-size:15px;font-weight:900;color:#405970}
+@media(max-width:840px){.nbody{grid-template-columns:1fr}.stagePane{border-right:0;border-bottom:2px solid #ddd2ec}.faces{grid-template-columns:1fr}}
+</style>
+
+<style id="nk-license-style">
+.nk-license{max-width:1100px;margin:14px auto 24px;padding:10px 16px;text-align:center;font:13px/1.45 Arial,"Noto Sans",sans-serif;color:#4e657c}
+.nk-license a{color:inherit;text-decoration:underline;text-underline-offset:2px}
+.nk-license .cc-badge{display:inline-block;margin:0 4px;padding:2px 7px;border:1px solid #8aa0b8;border-radius:6px;background:#fff;font-weight:700;white-space:nowrap}
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="top">
+    <h1>Προγραμματίζω με την εντολή επανάληψης</h1>
+    <div class="badge">6</div>
+  </div>
+  <div class="path" id="path"></div>
+  <main class="panel">
+    <div class="step-head">
+      <h2 id="title"></h2>
+      <button class="help" onclick="help()">❓ Βοήθεια</button>
+    </div>
+    <div class="instruction" id="inst"></div>
+    <div class="card" id="card"></div>
+    <div class="feedback" id="feedback"></div>
+  </main>
+</div>
+
+<div class="modal" id="modal">
+  <div class="modal-box">
+    <h2>💡 Βοήθεια</h2>
+    <p id="helpText"></p>
+    <button onclick="closeHelp()">Εντάξει</button>
+  </div>
+</div>
+
+<script>
+const steps=[
+ {t:"Στέλνω την μπάλα δεξιά",i:"Στο Noesis Icons, όρισε πόσα βήματα πρέπει να κάνει η μπάλα προς τα δεξιά για να φτάσει από το ίδιο τετράγωνο με το λαγουδάκι στο ίδιο τετράγωνο με το γατάκι. Μετά εκτέλεσε το πρόγραμμα.",h:"Μέτρησε τα τετράγωνα από το λαγουδάκι ως το γατάκι. Η μπάλα ξεκινά από το κέντρο του πρώτου τετραγώνου και κινείται στο κέντρο του επόμενου.",k:"right"},
+ {t:"Επιστρέφω την μπάλα",i:"Τώρα η μπάλα βρίσκεται στο ίδιο τετράγωνο με το γατάκι. Ποια εντολή χρειάζεται για να επιστρέψει στο λαγουδάκι;",h:"Η μπάλα πρέπει να κινηθεί προς την αντίθετη κατεύθυνση, πηγαίνοντας από το γατάκι πίσω στο λαγουδάκι.",k:"left"},
+ {t:"Φτιάχνω την επανάληψη",i:"Συμπλήρωσε το πρόγραμμα ώστε η μπάλα να πηγαίνει από το λαγουδάκι στο γατάκι και να επιστρέφει, 4 φορές.",h:"Μέσα στην επανάληψη χρειάζεσαι πρώτα κίνηση προς τα δεξιά και μετά κίνηση προς τα αριστερά.",k:"repeat"},
+ {t:"Αλλάζω τις επαναλήψεις",i:"Άλλαξε τον αριθμό της επανάληψης σε 3 και εκτέλεσε ξανά το πρόγραμμα.",h:"Το κυκλάκι της επανάληψης δείχνει πόσες φορές θα εκτελεστούν οι εντολές που βρίσκονται μέσα.",k:"count"},
+ {t:"Πήδα, πιο γρήγορα και σταμάτα",i:"Πρόσθεσε την εντολή ΠΗΔΑ και την πιο γρήγορη ταχύτητα. Εκτέλεσε το πρόγραμμα και σταμάτησέ το με το κόκκινο εξάγωνο.",h:"Η ΠΗΔΑ κάνει τη μπάλα να αναπηδά, η ταχύτητα αλλάζει πόσο γρήγορα κινείται και το κόκκινο εξάγωνο σταματά την εκτέλεση.",k:"jump"},
+ {t:"Ξεκινώ από το γατάκι",i:"Η μπάλα ξεκινά τώρα από το ίδιο τετράγωνο με το γατάκι. Ποια αλλαγή πρέπει να κάνεις ώστε να κινηθεί πρώτα προς το λαγουδάκι;",h:"Όταν αλλάζει η αρχική θέση της μπάλας, πρέπει να αλλάξει και η πρώτη κατεύθυνση του προγράμματος.",k:"reverse"},
+ {t:"Τα κατάφερες!",i:"Σκέψου τι έμαθες στο Noesis Icons.",h:"Μπορείς να χρησιμοποιείς επανάληψη, άλμα, ταχύτητα, να αλλάζεις τον αριθμό επαναλήψεων και να σταματάς ένα πρόγραμμα.",k:"final"}
+];
+let s=0,stepsRight=8,repeatCount=4,selfChoice=null,buildSlots=[null,null],jumpAdded=false,speedFast=false,stopped=false,liveTimer=null,jumpSlots=0,stage5RunToken=0;
+
+function nav(){
+ document.getElementById("path").innerHTML=steps.map((_,i)=>`<div class="dot ${i<s?'done':i===s?'active':''}">${i+1}</div>`).join("");
+}
+function clearFeedback(){const f=document.getElementById("feedback");f.className="feedback";f.textContent=""}
+function setFeedback(text,ok){const f=document.getElementById("feedback");f.className="feedback "+(ok?"good":"bad");f.textContent=text}
+function advance(text,delay=900){setFeedback(text,true);setTimeout(()=>{s++;render()},delay)}
+function B(icon,val,cls=""){return `<div class="iblock ${cls}"><div>${icon}</div><div class="val">${val}</div></div>`}
+function repeatHTML(count,inside){return `<div class="repeatBlock">${inside}<div class="rend">↻<span class="rcount">${count}</span></div></div>`}
+function noesis(sceneSide,programHtml,paletteHtml,extra="",customScene=""){
+ return `<div class="noesis">
+  <div class="ntitle"><div class="nbrand"><span class="nlogo">Ν</span><span>Noesis Icons</span></div><span>— □ ×</span></div>
+  <div class="nmenu"><span>Αρχείο</span><span>Έργο</span><span>Χαρακτήρες</span><span>Σκηνικό</span><span>Βοήθεια</span></div>
+  <div class="nbody">
+   <div class="stagePane ${customScene?'customStagePane':''}">
+    ${customScene ? '' : '<div class="sceneTitle">Σκηνή</div>'}
+    ${customScene || `<div class="field">
+      <div class="kidL">👧</div><div class="kidR">👦</div>
+      <div class="ball" id="ball" style="left:${sceneSide==='right'? '355px':'126px'}">⚽</div>
+      <button class="stopBtn" id="stopBtn" onclick="stopProgram()"><span class="hex"></span></button>
+    </div>`}
+   </div>
+   <div class="programPane">
+    <div class="areaTitle">Εντολές</div>
+    <div class="palette">${paletteHtml}</div>
+    <div class="areaTitle" style="margin-top:12px">Χώρος προγράμματος</div>
+    <div class="workspace">${programHtml||'<div class="hint">Διάλεξε τις εντολές που χρειάζεσαι.</div>'}</div>
+    ${extra}
+   </div>
+  </div>
+ </div>`;
+}
+function render(){
+ nav();clearFeedback();
+ const x=steps[s];document.getElementById("title").textContent=x.t;document.getElementById("inst").textContent=x.i;
+ if(x.k==="right")stage1();
+ if(x.k==="left")stage2();
+ if(x.k==="repeat")stage3();
+ if(x.k==="count")stage4();
+ if(x.k==="jump")stage5();
+ if(x.k==="reverse")stage6();
+ if(x.k==="final")stage7();
+}
+function animateBallSequence(moves,done,speed=430,loops=1){
+ const ball=document.getElementById("ball");
+ let seq=[];
+ for(let k=0;k<loops;k++)seq=seq.concat(moves);
+ let i=0;
+ const timer=setInterval(()=>{
+   if(stopped){clearInterval(timer);return;}
+   const m=seq[i];
+   if(m.type==="move"){
+      ball.style.left=m.dir==="right"?"355px":"126px";
+   }else if(m.type==="jump"){
+      ball.classList.add("jumping");
+      setTimeout(()=>ball.classList.remove("jumping"),260);
+   }
+   i++;
+   if(i===seq.length){
+     clearInterval(timer);
+     setTimeout(()=>{if(done&&!stopped)done()},450);
+   }
+ },speed);
+}
+
+/* 1 */
+function stage1(){
+ stepsRight=1;
+ const palette=`${B("➡",1)}${B("⬅",1)}`;
+ const program=`<div class="taskStrip">Η μπάλα ξεκινά στο ίδιο τετράγωνο με το λαγουδάκι και πρέπει να φτάσει στο ίδιο τετράγωνο με το γατάκι. Μέτρησε πόσες μετακινήσεις προς τα δεξιά χρειάζονται.</div><div class="programLine">${B("➡",'<span id="rightVal">1</span>')}</div>`;
+ const extra=`<div class="counter"><button onclick="chgRight(-1)">−</button><div class="num" id="rightNum">1</div><button onclick="chgRight(1)">+</button></div><div class="runbar"><button class="run" onclick="runRight()">▶ Εκτέλεση</button><button class="resetMini" onclick="resetStage1Grid()">↺ Αρχή</button></div>`;
+ const scene=parkSceneHTML(0);
+ document.getElementById("card").innerHTML=noesis("left",program,palette,extra,scene);
+}
+function chgRight(d){
+ stepsRight=Math.max(1,Math.min(12,stepsRight+d));
+ document.getElementById("rightNum").textContent=stepsRight;
+ document.getElementById("rightVal").textContent=stepsRight;
+}
+function moveGridBall(tileIndex,rowIndex=4){
+ const ball=document.getElementById('ballGrid');
+ if(!ball)return;
+ ball.style.left=`calc((100% / 9) * ${tileIndex + 0.5} - 19px)`;
+ ball.style.top=`calc((100% / 5) * ${rowIndex + 0.5} - 19px)`;
+}
+function parkSceneHTML(ballTile=0){
+ const skyline='<div class="citySkyline">'+Array.from({length:11},()=>'<span></span>').join('')+'</div>' ;
+ return `<div class="countScene"><div class="parkScene">${skyline}<div class="parkHorizon"></div><div class="parkPath"></div><div class="treeRight"><span class="trunk"></span><span class="crown c1"></span><span class="crown c2"></span><span class="crown c3"></span></div><div class="bench"><span class="benchLeg l"></span><span class="benchLeg r"></span></div><div class="parkGrid"></div><div class="animalPlayer rabbit" aria-label="λαγουδάκι">🐇</div><div class="animalPlayer cat" aria-label="γατάκι">🐈</div><div class="ballGrid" id="ballGrid" style="left:calc((100% / 9) * ${ballTile + 0.5} - 19px);top:calc((100% / 5) * 4.5 - 19px)">⚽</div><button class="stopBtn" id="stopBtn" onclick="stopProgram()"><span class="hex"></span></button></div></div>`;
+}
+function bounceGridBall(){
+ const ball=document.getElementById('ballGrid');
+ if(!ball)return;
+ ball.classList.add('jump');
+ setTimeout(()=>ball.classList.remove('jump'),170);
+}
+function pathBetween(start,end){
+ const arr=[start];
+ const step=start<end?1:-1;
+ let p=start;
+ while(p!==end){ p+=step; arr.push(p); }
+ return arr;
+}
+function thereAndBack(loops,start=0,end=8){
+ let seq=[start];
+ for(let i=0;i<loops;i++){
+   seq=seq.concat(pathBetween(seq[seq.length-1],end).slice(1));
+   seq=seq.concat(pathBetween(end,start).slice(1));
+ }
+ return seq;
+}
+function animateGridPath(path,done,speed=200,bounce=true){
+ clearInterval(liveTimer);
+ stopped=false;
+ if(!path || path.length===0){ if(done)done(); return; }
+ moveGridBall(path[0],4);
+ let i=0;
+ liveTimer=setInterval(()=>{
+   if(stopped){ clearInterval(liveTimer); liveTimer=null; return; }
+   i++;
+   if(i>=path.length){
+     clearInterval(liveTimer); liveTimer=null;
+     setTimeout(()=>{ if(done&&!stopped)done(); },350);
+     return;
+   }
+   moveGridBall(path[i],4);
+   if(bounce) bounceGridBall();
+ },speed);
+}
+function animateGridRight(done){
+ let pos=0;
+ const timer=setInterval(()=>{
+   pos++;
+   moveGridBall(pos,4);
+   const ball=document.getElementById('ballGrid');
+   if(ball){ball.classList.add('jump');setTimeout(()=>ball.classList.remove('jump'),160);}
+   if(pos>=8){clearInterval(timer);setTimeout(done,420);}
+ },330);
+}
+function runRight(){
+ if(stepsRight!==8){
+   setFeedback("Η μπάλα δεν έφτασε ακόμη στο γατάκι. Μέτρησε ξανά τις μετακινήσεις από το τετράγωνο του λαγού ως το τετράγωνο του γάτου.",false);
+   return;
+ }
+ setFeedback("Σωστά! Η μπάλα χρειάζεται 8 βήματα προς τα δεξιά. Παρατήρησε την κίνησή της από το κέντρο ενός τετραγώνου στο κέντρο του επόμενου.",true);
+ animateGridRight(()=>{s++;render()});
+}
+function resetStage1Grid(){moveGridBall(0,4);}
+function resetBall(side){const b=document.getElementById("ball"); if(b) b.style.left=side==="right"?"355px":"126px"; const g=document.getElementById('ballGrid'); if(g) moveGridBall(side==="right"?8:0,4);}
+
+/* 2 */
+function stage2(){
+ const palette=`<button class="blockBtn" onclick="chooseReturn('right')">${B("➡",8)}</button><button class="blockBtn" onclick="chooseReturn('left')">${B("⬅",8)}</button>`;
+ const program=`<div class="hint">Η μπάλα είναι στο ίδιο τετράγωνο με το γατάκι. Διάλεξε την εντολή που θα την επιστρέψει στο λαγουδάκι.</div>`;
+ document.getElementById("card").innerHTML=noesis("right",program,palette,"",parkSceneHTML(8));
+}
+function chooseReturn(dir){
+ if(dir!=="left"){setFeedback("Από το γατάκι προς το λαγουδάκι η μπάλα πρέπει να κινηθεί αριστερά.",false);return;}
+ const w=document.querySelector(".workspace");w.innerHTML=`<div class="programLine">${B("⬅",8)}</div>`;
+ setFeedback("Σωστά! Η μπάλα θα επιστρέψει στο λαγουδάκι, πηγαίνοντας από το κέντρο κάθε τετραγώνου στο επόμενο.",true);
+ animateGridPath(pathBetween(8,0),()=>{s++;render()},330,true);
+}
+
+/* 3 */
+function stage3(){
+ buildSlots=[null,null];
+ const palette=`
+   <button class="blockBtn" onclick="fillRepeat('right')">${B("➡",8)}</button>
+   <button class="blockBtn" onclick="fillRepeat('left')">${B("⬅",8)}</button>
+   ${repeatHTML(4,'<span style="font-weight:900;color:#a44f0b">ΕΠΑΝΑΛΑΒΕ</span>')}
+ `;
+ const program=`<div class="hint">Συμπλήρωσε το μπλοκ επανάληψης για να πηγαίνει η μπάλα στο γατάκι και να επιστρέφει στο λαγουδάκι.</div><div class="programLine">${B("↩","Αρχή","startBlock")} ${repeatHTML(4,'<div class="slot" id="slot0" onclick="removeRepeatSlot(0)">1</div><div class="slot" id="slot1" onclick="removeRepeatSlot(1)">2</div>')}</div>`;
+ const extra=`<div class="runbar"><button class="run" onclick="checkRepeatBuild()">▶ Εκτέλεση</button></div>`;
+ document.getElementById("card").innerHTML=noesis("left",program,palette,extra,parkSceneHTML(0));
+}
+function fillRepeat(dir){
+ let idx=buildSlots.indexOf(null);if(idx<0)return;
+ buildSlots[idx]=dir;
+ const slot=document.getElementById("slot"+idx);
+ slot.classList.add("filled");
+ slot.innerHTML=B(dir==="right"?"➡":"⬅",8);
+}
+function removeRepeatSlot(idx){
+ if(buildSlots[idx]===null)return;
+ buildSlots[idx]=null;
+ const slot=document.getElementById("slot"+idx);
+ slot.classList.remove("filled");
+ slot.innerHTML=String(idx+1);
+ const f=document.getElementById("feedback");f.className="feedback good";f.textContent="Η εντολή αφαιρέθηκε. Μπορείς να διαλέξεις ξανά.";
+}
+function checkRepeatBuild(){
+ if(buildSlots[0]!=="right"||buildSlots[1]!=="left"){
+   setFeedback("Μέσα στην επανάληψη χρειάζεται πρώτα κίνηση προς τα δεξιά και μετά κίνηση προς τα αριστερά.",false);return;
+ }
+ setFeedback("Σωστά! Η μπάλα θα πηγαίνει στο γατάκι και θα επιστρέφει στο λαγουδάκι 4 φορές.",true);
+ animateGridPath(thereAndBack(4,0,8),()=>{s++;render()},330,true);
+}
+
+/* 4 */
+function stage4(){
+ repeatCount=4;
+ const palette=`${B("↩","Αρχή","startBlock")}${B("➡",8)}${B("⬅",8)}`;
+ const program=`<div class="hint">Άλλαξε τον αριθμό της επανάληψης ώστε η μπάλα να κάνει το δρομολόγιο 3 φορές.</div><div class="programLine">${B("↩","Αρχή","startBlock")} ${repeatHTML('<span id="rc">4</span>',B("➡",8)+B("⬅",8))}</div>`;
+ const extra=`<div class="counter"><button onclick="chgRepeat(-1)">−</button><div class="num" id="repeatNum">4</div><button onclick="chgRepeat(1)">+</button></div><div class="runbar"><button class="run" onclick="runCount()">▶ Εκτέλεση</button></div>`;
+ document.getElementById("card").innerHTML=noesis("left",program,palette,extra,parkSceneHTML(0));
+}
+function chgRepeat(d){
+ repeatCount=Math.max(1,Math.min(6,repeatCount+d));
+ document.getElementById("repeatNum").textContent=repeatCount;
+ document.getElementById("rc").textContent=repeatCount;
+}
+function runCount(){
+ if(repeatCount!==3){setFeedback("Ζητείται να εκτελεστεί το μοτίβο 3 φορές.",false);return;}
+ setFeedback("Σωστά! Ο αριθμός της επανάληψης άλλαξε σε 3.",true);
+ animateGridPath(thereAndBack(3,0,8),()=>{s++;render()},330,true);
+}
+
+/* 5 */
+function stage5(){
+ jumpAdded=false;speedFast=false;stopped=false;jumpSlots=0;stage5RunToken++;
+ const palette=`
+   <button class="blockBtn" onclick="addJump()">${B("↷",2,"jumpBlock")}</button>
+   <button class="blockBtn" onclick="setSpeed('slow')">${B("🐢","αργά","speedBlock")}</button>
+   <button class="blockBtn" onclick="setSpeed('fast')">${B("⚡","γρήγορα","speedBlock")}</button>
+ `;
+ const repeatInside=`
+   <div class="slot" id="jumpSlot0">ΠΗΔΑ</div>
+   ${B("➡",8)}
+   <div class="slot" id="jumpSlot1">ΠΗΔΑ</div>
+   ${B("⬅",8)}
+ `;
+ const program=`
+   <div class="hint">Βάλε ΠΗΔΑ πριν από κάθε κίνηση και διάλεξε τη γρήγορη ταχύτητα. Η ΠΗΔΑ κάνει την μπάλα να αναπηδά στο ίδιο τετράγωνο.</div>
+   <div class="programLine" id="p5line">
+     ${B("↩","Αρχή","startBlock")}
+     <span id="speedPlace"></span>
+     ${repeatHTML(4,repeatInside)}
+   </div>`;
+ const extra=`
+   <div class="checklist">
+     <span class="checkitem" id="jumpCheck">ΠΗΔΑ × 2</span>
+     <span class="checkitem" id="speedCheck">Γρήγορη ταχύτητα</span>
+     <span class="checkitem" id="stopCheck">Σταμάτημα</span>
+   </div>
+   <div class="runbar"><button class="run" onclick="runJumpStage()">▶ Εκτέλεση</button></div>`;
+ document.getElementById("card").innerHTML=noesis("left",program,palette,extra,parkSceneHTML(0));
+}
+function addJump(){
+ if(jumpSlots>=2)return;
+ const idx=jumpSlots;
+ const slot=document.getElementById("jumpSlot"+idx);
+ if(!slot)return;
+ slot.classList.add("filled");
+ slot.innerHTML=B("↷",2,"jumpBlock");
+ jumpSlots++;
+ jumpAdded=(jumpSlots===2);
+ document.getElementById("jumpCheck").classList.toggle("done",jumpAdded);
+}
+function setSpeed(v){
+ speedFast=(v==="fast");
+ document.getElementById("speedCheck").classList.toggle("done",speedFast);
+ const place=document.getElementById("speedPlace");
+ if(speedFast){
+   place.innerHTML=B("⚡","γρήγορα","speedBlock");
+ }else{
+   place.innerHTML=B("🐢","αργά","speedBlock");
+   setFeedback("Για αυτή τη δραστηριότητα διάλεξε την πιο γρήγορη ταχύτητα.",false);
+ }
+}
+function stage5JumpOnce(token,next){
+ if(stopped||token!==stage5RunToken)return;
+ const ball=document.getElementById("ballGrid");
+ if(!ball)return;
+ ball.classList.add("spotJump");
+ setTimeout(()=>{
+   if(token!==stage5RunToken)return;
+   ball.classList.remove("spotJump");
+   setTimeout(()=>{ if(!stopped&&token===stage5RunToken)next(); },180);
+ },330);
+}
+function runJumpStage(){
+ if(jumpSlots<2||!speedFast){
+   setFeedback("Πρόσθεσε δύο εντολές ΠΗΔΑ και διάλεξε την πιο γρήγορη ταχύτητα.",false);
+   return;
+ }
+ stopped=false;
+ stage5RunToken++;
+ const token=stage5RunToken;
+ const stop=document.getElementById("stopBtn");
+ if(stop)stop.classList.add("show");
+ setFeedback("Το πρόγραμμα εκτελείται. Η ΠΗΔΑ αναπηδά στο ίδιο τετράγωνο. Πάτησε το κόκκινο εξάγωνο για να σταματήσεις το πρόγραμμα.",true);
+ moveGridBall(0,4);
+
+ // Four repetitions: jump on the spot -> move to cat -> jump on the spot -> return.
+ const actions=[];
+ for(let loop=0;loop<4;loop++){
+   actions.push({type:"jump"});
+   for(let p=1;p<=8;p++)actions.push({type:"move",pos:p});
+   actions.push({type:"jump"});
+   for(let p=7;p>=0;p--)actions.push({type:"move",pos:p});
+ }
+ let i=0;
+ function next(){
+   if(stopped||token!==stage5RunToken)return;
+   if(i>=actions.length){
+     if(stop)stop.classList.remove("show");
+     setFeedback("Το πρόγραμμα ολοκληρώθηκε. Εκτέλεσέ το ξανά και πάτησε το κόκκινο εξάγωνο όσο κινείται.",false);
+     return;
+   }
+   const a=actions[i++];
+   if(a.type==="jump"){
+     stage5JumpOnce(token,next);
+   }else{
+     moveGridBall(a.pos,4);
+     setTimeout(next,220); // faster than the normal 330 ms movement, as requested by the speed block
+   }
+ }
+ next();
+}
+function stopProgram(){
+ if(s!==4)return;
+ stopped=true;
+ stage5RunToken++;
+ clearInterval(liveTimer);liveTimer=null;
+ const stop=document.getElementById("stopBtn");
+ if(stop)stop.classList.remove("show");
+ const check=document.getElementById("stopCheck");
+ if(check)check.classList.add("done");
+ setFeedback("Μπράβο! Σταμάτησες σωστά το πρόγραμμα με το κόκκινο εξάγωνο.",true);
+ setTimeout(()=>{s++;render()},900);
+}
+
+/* 6 */
+function stage6(){
+ const palette=`<button class="blockBtn" onclick="reverseAns('right')">${B("➡",8)}</button><button class="blockBtn" onclick="reverseAns('left')">${B("⬅",8)}</button>`;
+ const program=`<div class="hint">Η μπάλα ξεκινά τώρα από το ίδιο τετράγωνο με το γατάκι. Συμπλήρωσε την πρώτη εντολή της επανάληψης.</div><div class="programLine">${B("↩","Αρχή","startBlock")} ${repeatHTML(4,'<div class="slot">1η εντολή;</div>'+B("➡",8))}</div>`;
+ document.getElementById("card").innerHTML=noesis("right",program,palette,"",parkSceneHTML(8));
+}
+function reverseAns(dir){
+ if(dir!=="left"){setFeedback("Η μπάλα ξεκινά από το γατάκι, άρα πρέπει πρώτα να κινηθεί προς τα αριστερά.",false);return;}
+ document.querySelector(".repeatBlock .slot").outerHTML=B("⬅",8);
+ setFeedback("Σωστά! Η μπάλα θα κινηθεί πρώτα προς τα αριστερά και θα επαναλάβει ολόκληρο το δρομολόγιο 4 φορές.",true);
+ const path=thereAndBack(4,8,0);
+ animateGridPath(path,()=>{
+   s++;
+   render();
+ },330,true);
+}
+
+/* 7 */
+function stage7(){
+ selfChoice=null;
+ document.getElementById("card").innerHTML=`
+ <div class="finalBox">
+   <div class="stars">⭐ ⭐ ⭐</div>
+   <div class="summary">
+     Έμαθες να προγραμματίζεις την κίνηση της μπάλας στο Noesis Icons,
+     να χρησιμοποιείς την εντολή ΕΠΑΝΑΛΑΒΕ και την εντολή ΠΗΔΑ,
+     να αλλάζεις τον αριθμό επαναλήψεων και την ταχύτητα,
+     και να σταματάς ένα πρόγραμμα με το κόκκινο εξάγωνο.
+   </div>
+   <div class="faces">
+     <button class="face" onclick="selfPick(1,this)"><span>🙂</span>Θέλω λίγη εξάσκηση</button>
+     <button class="face" onclick="selfPick(2,this)"><span>😊</span>Τα κατάφερα</button>
+     <button class="face" onclick="selfPick(3,this)"><span>🤩</span>Τα κατάφερα πολύ καλά</button>
+   </div>
+   <button class="check" onclick="finish()">Ολοκλήρωση</button>
+   <button class="check" style="background:var(--blue);box-shadow:0 5px 0 var(--blue2)" onclick="restartAll()">↻ Επανάληψη δραστηριότητας</button>
+ </div>`;
+}
+function selfPick(v,el){
+ selfChoice=v;document.querySelectorAll(".face").forEach(x=>x.classList.remove("sel"));el.classList.add("sel");
+}
+function finish(){
+ const f=document.getElementById("feedback");
+ if(!selfChoice){f.className="feedback bad";f.textContent="Διάλεξε πρώτα πώς νιώθεις για όσα έμαθες.";return;}
+ f.className="feedback good";f.textContent="Μπράβο! Ολοκλήρωσες το Μάθημα 6.";
+}
+function restartAll(){
+ clearInterval(liveTimer); liveTimer=null; stage5RunToken++; stopped=true; s=0;stepsRight=1;repeatCount=4;selfChoice=null;buildSlots=[null,null];jumpAdded=false;speedFast=false;stopped=false;render();
+}
+function help(){
+ document.getElementById("helpText").textContent=steps[s].h;
+ document.getElementById("modal").classList.add("show");
+}
+function closeHelp(){document.getElementById("modal").classList.remove("show")}
+render();
+</script>
+
+<footer class="nk-license" aria-label="Πληροφορίες δημιουργού και άδειας χρήσης">
+  <div><strong>Created by Nikos Kalakos · © 2026</strong></div>
+  <div>Original educational content and simulation design licensed under <a class="cc-badge" href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank" rel="license noopener noreferrer">CC BY-NC 4.0</a>.</div>
+  <div>Source code © 2026 Nikos Kalakos.</div>
+  <div>Third-party and textbook materials remain subject to the rights and licences of their respective copyright holders.</div>
+</footer>
+</body>
+</html>
